@@ -1,0 +1,43 @@
+{
+  "fileKey": "cgFBrVCTbmYZHzVHA1fI1O",
+  "url": "https://www.figma.com/design/cgFBrVCTbmYZHzVHA1fI1O",
+  "primitive": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"createdNodeIds\":[],\"mutatedNodeIds\":[\"0:1\"],\"collection\":\"VariableCollectionId:2:2\",\"variables\":{\"teal\":\"VariableID:2:3\",\"tealSoft\":\"VariableID:2:4\",\"orange\":\"VariableID:2:5\",\"orangeSoft\":\"VariableID:2:6\",\"blue\":\"VariableID:2:7\",\"blueSoft\":\"VariableID:2:8\",\"ink\":\"VariableID:2:9\",\"muted\":\"VariableID:2:10\",\"paper\":\"VariableID:2:11\",\"white\":\"VariableID:2:12\",\"border\":\"VariableID:2:13\",\"danger\":\"VariableID:2:14\",\"space4\":\"VariableID:2:15\",\"space8\":\"VariableID:2:16\",\"space12\":\"VariableID:2:17\",\"space16\":\"VariableID:2:18\",\"space24\":\"VariableID:2:19\",\"space32\":\"VariableID:2:20\",\"space48\":\"VariableID:2:21\"},\"page\":\"0:1\"}"
+      }
+    ],
+    "isError": false
+  },
+  "semantic": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"createdNodeIds\":[],\"variables\":{\"action/primary\":\"VariableID:3:3\",\"surface/tint\":\"VariableID:3:4\",\"surface/default\":\"VariableID:3:5\",\"surface/canvas\":\"VariableID:3:6\",\"text/primary\":\"VariableID:3:7\",\"text/secondary\":\"VariableID:3:8\",\"text/inverse\":\"VariableID:3:9\",\"border/default\":\"VariableID:3:10\",\"feedback/error\":\"VariableID:3:11\"},\"collection\":\"VariableCollectionId:3:2\",\"styles\":[{\"id\":\"S:4b6b3455b2825ddd10f454d6c648ba21e053920d,\",\"name\":\"Draft/Display\"},{\"id\":\"S:e287b3b45305a3057e9bb3e1f6ab6c2c144a0744,\",\"name\":\"Draft/Heading\"},{\"id\":\"S:03a23119483c71e949a2f6df98a541955ccae136,\",\"name\":\"Draft/Title\"},{\"id\":\"S:bb700182afe784e38a184f5dc1f856f2339df044,\",\"name\":\"Draft/Body\"},{\"id\":\"S:f0a59dff9ed41c21dc180aef195cc765d917d5e9,\",\"name\":\"Draft/Label\"},{\"id\":\"S:84e374168212c2df26db9e5cdceef3cb554dd357,\",\"name\":\"Draft/Caption\"}]}"
+      }
+    ],
+    "isError": false
+  },
+  "boards": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"createdNodeIds\":[\"4:2\",\"4:3\",\"4:4\",\"4:5\",\"4:6\",\"4:7\",\"4:8\",\"4:9\",\"4:10\",\"4:11\",\"4:12\",\"4:13\",\"4:14\",\"4:15\",\"4:16\",\"4:17\",\"4:18\",\"4:19\",\"4:20\",\"4:21\",\"4:22\",\"4:23\",\"4:24\",\"4:25\",\"4:26\",\"4:27\",\"4:28\",\"4:29\",\"4:30\",\"4:31\",\"4:32\",\"4:33\",\"4:34\",\"4:35\",\"4:36\",\"4:37\",\"4:38\",\"4:39\",\"4:40\"],\"boards\":{\"cover\":\"4:2\",\"foundations\":\"4:7\"}}"
+      }
+    ],
+    "isError": false
+  },
+  "boards_v01": {
+    "cover": "4:2",
+    "A": "8:2",
+    "B": "9:3",
+    "C": "9:26",
+    "foundations": "4:7",
+    "button": "5:2",
+    "input": "6:2",
+    "partner_invoice": "10:3",
+    "admin": "10:37"
+  },
+  "verification": "Final visual QA pending: Figma MCP Starter limit"
+}

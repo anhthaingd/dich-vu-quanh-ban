@@ -1,0 +1,33 @@
+name: dvqb-foundation
+services:
+  db:
+    image: postgis/postgis:17-3.5@sha256:01a6a70e41e6c4467c8f55f6063555ed72db2d6662cd0d571040d42eadaeb6f6
+    platform: linux/amd64
+    environment:
+      POSTGRES_USER: dvqb
+      POSTGRES_PASSWORD: local-only-password
+      POSTGRES_DB: dvqb_local
+    ports: ["127.0.0.1:55432:5432"]
+    volumes: ["catalog-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dvqb -d dvqb_local"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  db-test:
+    image: postgis/postgis:17-3.5@sha256:01a6a70e41e6c4467c8f55f6063555ed72db2d6662cd0d571040d42eadaeb6f6
+    platform: linux/amd64
+    profiles: ["test"]
+    environment:
+      POSTGRES_USER: dvqb_test
+      POSTGRES_PASSWORD: test-only-password
+      POSTGRES_DB: dvqb_test
+    ports: ["127.0.0.1:55433:5432"]
+    tmpfs: ["/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dvqb_test -d dvqb_test"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+volumes:
+  catalog-data:

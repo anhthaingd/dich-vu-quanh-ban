@@ -1,0 +1,30 @@
+{
+  "name": "@dvqb/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --import tsx src/main.ts",
+    "build": "tsc -p tsconfig.json && node ../../infra/scripts/build-api.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --import tsx --test test/unit.test.ts",
+    "test:integration": "node --import tsx --test --test-concurrency=1 test/integration.test.ts",
+    "db:migrate": "node --env-file-if-exists=.env --import tsx src/db/cli.ts migrate",
+    "db:seed": "node --env-file-if-exists=.env --import tsx src/db/cli.ts seed"
+  },
+  "dependencies": {
+    "@nestjs/common": "12.1.0",
+    "@nestjs/core": "12.1.0",
+    "@nestjs/platform-express": "12.1.0",
+    "pg": "8.23.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.0",
+    "@types/pg": "8.23.1",
+    "tsx": "4.23.15",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1"
+  }
+}

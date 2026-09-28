@@ -1,0 +1,943 @@
+[
+  {
+    "operation_id": "register",
+    "contract_case": "CT-register",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "login",
+    "contract_case": "CT-login",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-002"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "requestOtp",
+    "contract_case": "CT-requestOtp",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "verifyOtp",
+    "contract_case": "CT-verifyOtp",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-001"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "resetPassword",
+    "contract_case": "CT-resetPassword",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "refreshSession",
+    "contract_case": "CT-refreshSession",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-003"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "logout",
+    "contract_case": "CT-logout",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getMe",
+    "contract_case": "CT-getMe",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-054"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "editMe",
+    "contract_case": "CT-editMe",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listSessions",
+    "contract_case": "CT-listSessions",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "revokeSession",
+    "contract_case": "CT-revokeSession",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "requestDeletion",
+    "contract_case": "CT-requestDeletion",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-006"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listAddresses",
+    "contract_case": "CT-listAddresses",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "addAddress",
+    "contract_case": "CT-addAddress",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "editAddress",
+    "contract_case": "CT-editAddress",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "archiveAddress",
+    "contract_case": "CT-archiveAddress",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listCategories",
+    "contract_case": "CT-listCategories",
+    "checks": "Public read; schema/error/input/cursor/filter active ancestors; evidence DOC-065",
+    "scenario_ids": [
+      "QA-056",
+      "QA-057",
+      "QA-058",
+      "QA-059",
+      "QA-060"
+    ],
+    "status": "Contract/integration/web đạt local; native chưa kiểm"
+  },
+  {
+    "operation_id": "listSkills",
+    "contract_case": "CT-listSkills",
+    "checks": "Public read; schema/error/input/cursor/filter active ancestors; evidence DOC-065",
+    "scenario_ids": [
+      "QA-056",
+      "QA-057",
+      "QA-058",
+      "QA-059",
+      "QA-060"
+    ],
+    "status": "Contract/integration/web đạt local; native chưa kiểm"
+  },
+  {
+    "operation_id": "searchPartners",
+    "contract_case": "CT-searchPartners",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-010",
+      "QA-011",
+      "QA-053"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getPartner",
+    "contract_case": "CT-getPartner",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-012"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "createPartner",
+    "contract_case": "CT-createPartner",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-008"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "editPartner",
+    "contract_case": "CT-editPartner",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "setAvailability",
+    "contract_case": "CT-setAvailability",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-009"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "setSkills",
+    "contract_case": "CT-setSkills",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "setAreas",
+    "contract_case": "CT-setAreas",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "setLocations",
+    "contract_case": "CT-setLocations",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "submitVerification",
+    "contract_case": "CT-submitVerification",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listMembers",
+    "contract_case": "CT-listMembers",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "inviteMember",
+    "contract_case": "CT-inviteMember",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-013"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "acceptInvitation",
+    "contract_case": "CT-acceptInvitation",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "editGrants",
+    "contract_case": "CT-editGrants",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "deactivateMember",
+    "contract_case": "CT-deactivateMember",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "setCallContact",
+    "contract_case": "CT-setCallContact",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "createJob",
+    "contract_case": "CT-createJob",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-017"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listJobs",
+    "contract_case": "CT-listJobs",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getJob",
+    "contract_case": "CT-getJob",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-055"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "acceptJob",
+    "contract_case": "CT-acceptJob",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-018"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "declineJob",
+    "contract_case": "CT-declineJob",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "withdrawJob",
+    "contract_case": "CT-withdrawJob",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "assignJob",
+    "contract_case": "CT-assignJob",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-014",
+      "QA-015"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "rescheduleJob",
+    "contract_case": "CT-rescheduleJob",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-019"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "stopJob",
+    "contract_case": "CT-stopJob",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-020"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getInvoice",
+    "contract_case": "CT-getInvoice",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "saveInvoiceDraft",
+    "contract_case": "CT-saveInvoiceDraft",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-027"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "sendInvoice",
+    "contract_case": "CT-sendInvoice",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-016",
+      "QA-026"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "requestInvoiceRevision",
+    "contract_case": "CT-requestInvoiceRevision",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "confirmInvoice",
+    "contract_case": "CT-confirmInvoice",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-028",
+      "QA-030",
+      "QA-031",
+      "QA-032"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "reportPayment",
+    "contract_case": "CT-reportPayment",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-036"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "settleInvoice",
+    "contract_case": "CT-settleInvoice",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-029",
+      "QA-035",
+      "QA-037"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getWallet",
+    "contract_case": "CT-getWallet",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getLedger",
+    "contract_case": "CT-getLedger",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-043"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getPoints",
+    "contract_case": "CT-getPoints",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getPointLedger",
+    "contract_case": "CT-getPointLedger",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "createTopup",
+    "contract_case": "CT-createTopup",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "createPayout",
+    "contract_case": "CT-createPayout",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-033",
+      "QA-042"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getPayout",
+    "contract_case": "CT-getPayout",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getBank",
+    "contract_case": "CT-getBank",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "setBank",
+    "contract_case": "CT-setBank",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "openConversation",
+    "contract_case": "CT-openConversation",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-021"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listConversations",
+    "contract_case": "CT-listConversations",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listMessages",
+    "contract_case": "CT-listMessages",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-022"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "sendMessage",
+    "contract_case": "CT-sendMessage",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-023"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "readConversation",
+    "contract_case": "CT-readConversation",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "startCall",
+    "contract_case": "CT-startCall",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-024"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "actOnCall",
+    "contract_case": "CT-actOnCall",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listPartnerReviews",
+    "contract_case": "CT-listPartnerReviews",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getJobReviews",
+    "contract_case": "CT-getJobReviews",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-046"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "createReview",
+    "contract_case": "CT-createReview",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-044"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "editReview",
+    "contract_case": "CT-editReview",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "toggleOwnReview",
+    "contract_case": "CT-toggleOwnReview",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-045"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "replyReview",
+    "contract_case": "CT-replyReview",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "createReport",
+    "contract_case": "CT-createReport",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listReports",
+    "contract_case": "CT-listReports",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getReport",
+    "contract_case": "CT-getReport",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "addReportUpdate",
+    "contract_case": "CT-addReportUpdate",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "adminReports",
+    "contract_case": "CT-adminReports",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "decideReport",
+    "contract_case": "CT-decideReport",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-047"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "previewCompletion",
+    "contract_case": "CT-previewCompletion",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "completeOnBehalf",
+    "contract_case": "CT-completeOnBehalf",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-034",
+      "QA-039"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "adminListTopups",
+    "contract_case": "CT-adminListTopups",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "adminDecideTopups",
+    "contract_case": "CT-adminDecideTopups",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-040"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "adminListPayouts",
+    "contract_case": "CT-adminListPayouts",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "adminDecidePayouts",
+    "contract_case": "CT-adminDecidePayouts",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-041"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "queueBank",
+    "contract_case": "CT-queueBank",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "decideBank",
+    "contract_case": "CT-decideBank",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "queueVerification",
+    "contract_case": "CT-queueVerification",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "decideVerification",
+    "contract_case": "CT-decideVerification",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "queuePartner",
+    "contract_case": "CT-queuePartner",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "decidePartner",
+    "contract_case": "CT-decidePartner",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "queueUser",
+    "contract_case": "CT-queueUser",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "decideUser",
+    "contract_case": "CT-decideUser",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-048"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "queueReview",
+    "contract_case": "CT-queueReview",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "decideReview",
+    "contract_case": "CT-decideReview",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "editCategory",
+    "contract_case": "CT-editCategory",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "editSkill",
+    "contract_case": "CT-editSkill",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-049"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getAudit",
+    "contract_case": "CT-getAudit",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getMetrics",
+    "contract_case": "CT-getMetrics",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "adminInvoices",
+    "contract_case": "CT-adminInvoices",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-038"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "createUpload",
+    "contract_case": "CT-createUpload",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "completeUpload",
+    "contract_case": "CT-completeUpload",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-052"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getAsset",
+    "contract_case": "CT-getAsset",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getSettings",
+    "contract_case": "CT-getSettings",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "setSettings",
+    "contract_case": "CT-setSettings",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-025"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "registerDevice",
+    "contract_case": "CT-registerDevice",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listNotifications",
+    "contract_case": "CT-listNotifications",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-050"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "readNotification",
+    "contract_case": "CT-readNotification",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getOperation",
+    "contract_case": "CT-getOperation",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-051"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "changeIdentity",
+    "contract_case": "CT-changeIdentity",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "confirmIdentityChange",
+    "contract_case": "CT-confirmIdentityChange",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-004"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "openRecovery",
+    "contract_case": "CT-openRecovery",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "decideRecovery",
+    "contract_case": "CT-decideRecovery",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-005"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "deactivatePartner",
+    "contract_case": "CT-deactivatePartner",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "leavePartner",
+    "contract_case": "CT-leavePartner",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "editAdminGrants",
+    "contract_case": "CT-editAdminGrants",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "createCategory",
+    "contract_case": "CT-createCategory",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "createSkill",
+    "contract_case": "CT-createSkill",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [
+      "QA-007"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "liveness",
+    "contract_case": "CT-liveness",
+    "checks": "200 status; readiness503 khi DB không sẵn sàng; không lộ lỗi nội bộ",
+    "scenario_ids": [
+      "QA-057"
+    ],
+    "status": "Đạt local 28/09/2026"
+  },
+  {
+    "operation_id": "readiness",
+    "contract_case": "CT-readiness",
+    "checks": "200 status; readiness503 khi DB không sẵn sàng; không lộ lỗi nội bộ",
+    "scenario_ids": [
+      "QA-057"
+    ],
+    "status": "Đạt local 28/09/2026"
+  }
+]

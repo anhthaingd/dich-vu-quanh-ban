@@ -1,0 +1,3101 @@
+[
+  {
+    "name": "users",
+    "group": "Tài khoản",
+    "purpose": "Một người dùng có thể thuê và cung cấp dịch vụ.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "display_name",
+        "text",
+        "NOT NULL",
+        "Tên hiển thị"
+      ],
+      [
+        "status",
+        "text",
+        "NOT NULL DEFAULT 'active'",
+        "active / suspended / deletion_requested / anonymized"
+      ],
+      [
+        "locale",
+        "text",
+        "NOT NULL DEFAULT 'vi'",
+        "vi hiện tại, en/ja về sau"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "Khóa lạc quan"
+      ],
+      [
+        "anonymized_at",
+        "timestamptz",
+        "",
+        "Giữ ID lịch sử; không cascade tiền"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK (status IN ('active','suspended','deletion_requested','anonymized')), CHECK(version>0)",
+    "indexes": ""
+  },
+  {
+    "name": "identities",
+    "group": "Tài khoản",
+    "purpose": "Thông tin đăng nhập riêng với hồ sơ công khai.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Chủ sở hữu"
+      ],
+      [
+        "provider",
+        "text",
+        "NOT NULL",
+        "phone / email; provider xã hội để sau"
+      ],
+      [
+        "subject",
+        "text",
+        "NOT NULL",
+        "E.164 hoặc email chuẩn hóa"
+      ],
+      [
+        "password_hash",
+        "text",
+        "",
+        "Chỉ dùng với mật khẩu; không lưu plaintext"
+      ],
+      [
+        "verified_at",
+        "timestamptz",
+        "",
+        "Xác minh liên hệ"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(provider,subject)",
+    "indexes": "\nCREATE UNIQUE INDEX identities_one_contact ON identities(user_id,provider) WHERE provider IN ('phone','email');"
+  },
+  {
+    "name": "auth_challenges",
+    "group": "Tài khoản",
+    "purpose": "OTP và khôi phục; không lưu OTP thô.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "identity_id",
+        "uuid",
+        "REFERENCES identities(id)",
+        "Có thể null khi đăng ký"
+      ],
+      [
+        "subject_hash",
+        "text",
+        "NOT NULL",
+        "Không log liên hệ thô"
+      ],
+      [
+        "purpose",
+        "text",
+        "NOT NULL",
+        "login / verify / recover"
+      ],
+      [
+        "secret_hash",
+        "text",
+        "NOT NULL",
+        "OTP hash có secret server"
+      ],
+      [
+        "expires_at",
+        "timestamptz",
+        "NOT NULL",
+        "TTL cấu hình"
+      ],
+      [
+        "attempts",
+        "integer",
+        "NOT NULL DEFAULT 0",
+        "Kiểm giới hạn trong transaction"
+      ],
+      [
+        "consumed_at",
+        "timestamptz",
+        "",
+        "Một lần"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ],
+      [
+        "context",
+        "jsonb",
+        "NOT NULL DEFAULT '{}'::jsonb",
+        "Ngữ cảnh và chủ thể challenge; không lưu bí mật rõ"
+      ]
+    ],
+    "checks": "CHECK(attempts>=0)",
+    "indexes": ""
+  },
+  {
+    "name": "sessions",
+    "group": "Tài khoản",
+    "purpose": "Refresh session có thể thu hồi và phát hiện dùng lại.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Tài khoản"
+      ],
+      [
+        "refresh_hash",
+        "text",
+        "NOT NULL UNIQUE",
+        "Hash refresh token"
+      ],
+      [
+        "family_id",
+        "uuid",
+        "NOT NULL",
+        "Nhóm token rotation"
+      ],
+      [
+        "expires_at",
+        "timestamptz",
+        "NOT NULL",
+        "TTL cấu hình"
+      ],
+      [
+        "revoked_at",
+        "timestamptz",
+        "",
+        "Thu hồi tức thời khi khóa"
+      ],
+      [
+        "last_seen_at",
+        "timestamptz",
+        "",
+        "Quản lý thiết bị"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "saved_addresses",
+    "group": "Tài khoản",
+    "purpose": "Địa chỉ khách riêng tư.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Chỉ chủ sở hữu"
+      ],
+      [
+        "label",
+        "text",
+        "NOT NULL",
+        "Tên gợi nhớ"
+      ],
+      [
+        "address_text",
+        "text",
+        "NOT NULL",
+        "Địa chỉ"
+      ],
+      [
+        "point",
+        "geography(Point,4326)",
+        "NOT NULL",
+        "Tọa độ"
+      ],
+      [
+        "archived_at",
+        "timestamptz",
+        "",
+        "Không làm đổi snapshot việc"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "partners",
+    "group": "Nguồn cung",
+    "purpose": "Thợ tự do, cửa hàng, doanh nghiệp cùng một mô hình ví và dịch vụ.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "kind",
+        "text",
+        "NOT NULL",
+        "solo / shop / company"
+      ],
+      [
+        "name",
+        "text",
+        "NOT NULL",
+        "Tên công khai"
+      ],
+      [
+        "bio",
+        "text",
+        "NOT NULL DEFAULT ''",
+        "Giới thiệu năng lực"
+      ],
+      [
+        "verification_status",
+        "text",
+        "NOT NULL DEFAULT 'unverified'",
+        "Tách xác minh khỏi đình chỉ"
+      ],
+      [
+        "accepting_jobs",
+        "boolean",
+        "NOT NULL DEFAULT false",
+        "Tắt: ẩn tìm kiếm, chặn yêu cầu mới"
+      ],
+      [
+        "moderation_status",
+        "text",
+        "NOT NULL DEFAULT 'active'",
+        "active / new_work_suspended / suspended"
+      ],
+      [
+        "profile",
+        "jsonb",
+        "NOT NULL DEFAULT '{}'",
+        "Kinh nghiệm, portfolio, kênh liên hệ; schema kiểm server"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "Chống ghi đè"
+      ],
+      [
+        "archived_at",
+        "timestamptz",
+        "",
+        "Không cascade lịch sử"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK(kind IN ('solo','shop','company')), CHECK(verification_status IN ('unverified','pending','verified','rejected')), CHECK(moderation_status IN ('active','new_work_suspended','suspended'))",
+    "indexes": ""
+  },
+  {
+    "name": "memberships",
+    "group": "Nguồn cung",
+    "purpose": "Quyền có thể gộp; không bắt buộc chức danh điều phối.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL REFERENCES partners(id)",
+        "Tenant"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người thao tác"
+      ],
+      [
+        "is_owner",
+        "boolean",
+        "NOT NULL DEFAULT false",
+        "Chủ; chuyển chủ pending"
+      ],
+      [
+        "active",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Kiểm mỗi request"
+      ],
+      [
+        "left_at",
+        "timestamptz",
+        "",
+        "Giữ lịch sử"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "Thu hồi quyền"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(partner_id,user_id), UNIQUE(id,partner_id)",
+    "indexes": "CREATE UNIQUE INDEX one_active_owner ON memberships(partner_id) WHERE is_owner AND active;"
+  },
+  {
+    "name": "membership_grants",
+    "group": "Nguồn cung",
+    "purpose": "Quyền cụ thể thay vì chức danh cứng.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "membership_id",
+        "uuid",
+        "NOT NULL REFERENCES memberships(id)",
+        "Thành viên"
+      ],
+      [
+        "permission",
+        "text",
+        "NOT NULL",
+        "jobs.accept, jobs.assign, wallet.read..."
+      ],
+      [
+        "granted_by",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Không cấp vượt quyền mình có"
+      ],
+      [
+        "revoked_at",
+        "timestamptz",
+        "",
+        "Audit thay đổi"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": "CREATE UNIQUE INDEX active_grant ON membership_grants(membership_id,permission) WHERE revoked_at IS NULL;"
+  },
+  {
+    "name": "member_invitations",
+    "group": "Nguồn cung",
+    "purpose": "Mời người vào doanh nghiệp, nhận lời bằng tài khoản đã xác minh.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL REFERENCES partners(id)",
+        "Doanh nghiệp"
+      ],
+      [
+        "inviter_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người mời"
+      ],
+      [
+        "contact_hash",
+        "text",
+        "NOT NULL",
+        "Đối chiếu liên hệ đã xác minh"
+      ],
+      [
+        "token_hash",
+        "text",
+        "NOT NULL UNIQUE",
+        "Không lưu token thô"
+      ],
+      [
+        "permissions",
+        "jsonb",
+        "NOT NULL",
+        "Mảng quyền được cấp hợp lệ"
+      ],
+      [
+        "expires_at",
+        "timestamptz",
+        "NOT NULL",
+        "Cấu hình kỹ thuật"
+      ],
+      [
+        "accepted_by",
+        "uuid",
+        "REFERENCES users(id)",
+        "Một lần"
+      ],
+      [
+        "revoked_at",
+        "timestamptz",
+        "",
+        "Hủy mời"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "partner_contacts",
+    "group": "Nguồn cung",
+    "purpose": "Đầu mối nhận gọi của doanh nghiệp.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL UNIQUE REFERENCES partners(id)",
+        "Một đầu mối mặc định"
+      ],
+      [
+        "membership_id",
+        "uuid",
+        "NOT NULL",
+        "Phải active và cùng tenant"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "FOREIGN KEY(membership_id,partner_id) REFERENCES memberships(id,partner_id)",
+    "indexes": ""
+  },
+  {
+    "name": "categories",
+    "group": "Nguồn cung",
+    "purpose": "Nhóm ngành có mã ổn định, ẩn thay vì xóa đã dùng.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "code",
+        "text",
+        "NOT NULL UNIQUE CHECK (code ~ '^[a-z][a-z0-9_]*$')",
+        "Mã ngành"
+      ],
+      [
+        "name_vi",
+        "text",
+        "NOT NULL CHECK (length(trim(name_vi)) > 0)",
+        "Tên hiển thị"
+      ],
+      [
+        "parent_id",
+        "uuid",
+        "REFERENCES categories(id) ON DELETE RESTRICT",
+        "Cây không được có chu kỳ"
+      ],
+      [
+        "active",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Ẩn khỏi lựa chọn mới"
+      ],
+      [
+        "translations",
+        "jsonb",
+        "NOT NULL DEFAULT '{}' CHECK (jsonb_typeof(translations) = 'object')",
+        "Chưa triển khai bản dịch"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK (parent_id IS DISTINCT FROM id); trigger check_category_tree chặn chu kỳ; API lọc toàn bộ tổ tiên active.",
+    "indexes": "categories_parent(parent_id); categories_page(created_at,id)",
+    "implementation": "Đợt 1 local: services/api/migrations/001_catalog.sql; DOC-065, ADR-001."
+  },
+  {
+    "name": "skills",
+    "group": "Nguồn cung",
+    "purpose": "Dịch vụ là kỹ năng partner lựa chọn.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "code",
+        "text",
+        "NOT NULL UNIQUE CHECK (code ~ '^[a-z][a-z0-9_]*$')",
+        "Mã ổn định"
+      ],
+      [
+        "name_vi",
+        "text",
+        "NOT NULL CHECK (length(trim(name_vi)) > 0)",
+        "Tên"
+      ],
+      [
+        "active",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Giữ tham chiếu lịch sử"
+      ],
+      [
+        "form_schema",
+        "jsonb",
+        "NOT NULL DEFAULT '{}' CHECK (jsonb_typeof(form_schema) = 'object')",
+        "JSON Schema phần mở rộng ngành"
+      ],
+      [
+        "schema_version",
+        "integer",
+        "NOT NULL DEFAULT 1 CHECK (schema_version > 0)",
+        "Snapshot trên việc"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": "skills_page(created_at,id)",
+    "implementation": "Đợt 1 local: services/api/migrations/001_catalog.sql; DOC-065, ADR-001."
+  },
+  {
+    "name": "partner_skills",
+    "group": "Nguồn cung",
+    "purpose": "Một partner có nhiều kỹ năng và nhiều ngành.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL REFERENCES partners(id)",
+        "Partner"
+      ],
+      [
+        "skill_id",
+        "uuid",
+        "NOT NULL REFERENCES skills(id)",
+        "Kỹ năng"
+      ],
+      [
+        "modes",
+        "text[]",
+        "NOT NULL",
+        "at_shop / at_customer / custom"
+      ],
+      [
+        "reference_labor",
+        "whole_amount",
+        "",
+        "Giá tham khảo tùy chọn"
+      ],
+      [
+        "inspection_fee",
+        "whole_amount",
+        "",
+        "Không bắt buộc"
+      ],
+      [
+        "travel_fee",
+        "whole_amount",
+        "",
+        "Không bắt buộc"
+      ],
+      [
+        "active",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Không đổi việc đã nhận"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(partner_id,skill_id)",
+    "indexes": ""
+  },
+  {
+    "name": "partner_locations",
+    "group": "Nguồn cung",
+    "purpose": "Địa chỉ cửa hàng công khai; không phải GPS cá nhân.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL REFERENCES partners(id)",
+        "Partner"
+      ],
+      [
+        "address_text",
+        "text",
+        "NOT NULL",
+        "Địa chỉ"
+      ],
+      [
+        "point",
+        "geography(Point,4326)",
+        "NOT NULL",
+        "Điểm cửa hàng"
+      ],
+      [
+        "public",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Lọc DTO theo quyền"
+      ],
+      [
+        "active",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Hiệu lực"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": "CREATE INDEX location_geo ON partner_locations USING gist(point);"
+  },
+  {
+    "name": "service_areas",
+    "group": "Nguồn cung",
+    "purpose": "Vùng phục vụ dạng tâm+bán kính hoặc polygon.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL REFERENCES partners(id)",
+        "Partner"
+      ],
+      [
+        "center",
+        "geography(Point,4326)",
+        "",
+        "Vùng tròn"
+      ],
+      [
+        "radius_m",
+        "integer",
+        "",
+        "Đơn vị mét"
+      ],
+      [
+        "boundary",
+        "geography(MultiPolygon,4326)",
+        "",
+        "Vùng polygon"
+      ],
+      [
+        "label",
+        "text",
+        "NOT NULL",
+        "Tên khu vực"
+      ],
+      [
+        "active",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Hiệu lực"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK ((center IS NOT NULL AND radius_m IS NOT NULL AND radius_m>0 AND boundary IS NULL) OR (center IS NULL AND radius_m IS NULL AND boundary IS NOT NULL))",
+    "indexes": "CREATE INDEX area_center_geo ON service_areas USING gist(center); CREATE INDEX area_boundary_geo ON service_areas USING gist(boundary);"
+  },
+  {
+    "name": "assets",
+    "group": "Hạ tầng",
+    "purpose": "Ảnh kết quả, chứng cứ, portfolio; không URL công khai.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "uploader_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người tải"
+      ],
+      [
+        "object_key",
+        "text",
+        "NOT NULL UNIQUE",
+        "Khóa object storage"
+      ],
+      [
+        "purpose",
+        "text",
+        "NOT NULL",
+        "result / evidence / portfolio / review / chat / verification"
+      ],
+      [
+        "mime",
+        "text",
+        "NOT NULL",
+        "MIME đã kiểm server"
+      ],
+      [
+        "bytes",
+        "bigint",
+        "NOT NULL",
+        "Giới hạn upload cấu hình"
+      ],
+      [
+        "status",
+        "text",
+        "NOT NULL",
+        "pending / ready / rejected"
+      ],
+      [
+        "checksum",
+        "text",
+        "",
+        "Đối chiếu nội dung"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1 CHECK(version>0)",
+        "Version CAS"
+      ]
+    ],
+    "checks": "CHECK(bytes>=0), CHECK(status IN ('pending','ready','rejected'))",
+    "indexes": ""
+  },
+  {
+    "name": "verification_requests",
+    "group": "Nguồn cung",
+    "purpose": "Xét duyệt hồ sơ partner, giữ lý do và ảnh riêng tư.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL REFERENCES partners(id)",
+        "Đối tượng"
+      ],
+      [
+        "submitted_by",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người nộp"
+      ],
+      [
+        "private_data",
+        "jsonb",
+        "NOT NULL",
+        "Tham chiếu dữ liệu mã hóa và assets theo ACL"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL DEFAULT 'pending'",
+        "pending / approved / rejected"
+      ],
+      [
+        "reviewer_id",
+        "uuid",
+        "REFERENCES users(id)",
+        "Admin"
+      ],
+      [
+        "reason",
+        "text",
+        "",
+        "Lý do"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "Chống duyệt bản cũ"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "jobs",
+    "group": "Công việc",
+    "purpose": "Yêu cầu thuê nhẹ; không có nút bắt đầu.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "customer_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Khách"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL REFERENCES partners(id)",
+        "Bên nhận yêu cầu"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL DEFAULT 'requested'",
+        "requested / accepted / awaiting_settlement / completed / declined / withdrawn / stopped"
+      ],
+      [
+        "service_mode",
+        "text",
+        "NOT NULL",
+        "at_shop / at_customer / custom"
+      ],
+      [
+        "location_id",
+        "uuid",
+        "REFERENCES partner_locations(id)",
+        "Phải cùng partner nếu tại shop"
+      ],
+      [
+        "address_snapshot",
+        "jsonb",
+        "NOT NULL",
+        "Không đổi theo saved address"
+      ],
+      [
+        "point",
+        "geography(Point,4326)",
+        "NOT NULL",
+        "Vị trí cần làm, riêng tư"
+      ],
+      [
+        "time_mode",
+        "text",
+        "NOT NULL",
+        "now / scheduled"
+      ],
+      [
+        "scheduled_at",
+        "timestamptz",
+        "",
+        "Hẹn trước hoặc ETA khi nhận ngay"
+      ],
+      [
+        "schedule_version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "Vô hiệu nhắc lịch cũ"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "CAS"
+      ],
+      [
+        "note",
+        "text",
+        "NOT NULL DEFAULT ''",
+        "Ghi chú"
+      ],
+      [
+        "accepted_at",
+        "timestamptz",
+        "",
+        "Khi partner nhận"
+      ],
+      [
+        "completed_at",
+        "timestamptz",
+        "",
+        "Khi quyết toán"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK(state IN ('requested','accepted','awaiting_settlement','completed','declined','withdrawn','stopped')), CHECK(service_mode IN ('at_shop','at_customer','custom')), CHECK(time_mode IN ('now','scheduled')), CHECK(time_mode<>'scheduled' OR scheduled_at IS NOT NULL), UNIQUE(id,partner_id)",
+    "indexes": "CREATE INDEX jobs_customer ON jobs(customer_id,created_at DESC,id); CREATE INDEX jobs_partner ON jobs(partner_id,state,created_at DESC,id);"
+  },
+  {
+    "name": "job_skills",
+    "group": "Công việc",
+    "purpose": "Kỹ năng và trường ngành được chụp tại lúc thuê.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "job_id",
+        "uuid",
+        "NOT NULL REFERENCES jobs(id)",
+        "Việc"
+      ],
+      [
+        "skill_id",
+        "uuid",
+        "NOT NULL REFERENCES skills(id)",
+        "Kỹ năng"
+      ],
+      [
+        "name_snapshot",
+        "text",
+        "NOT NULL",
+        "Lịch sử tên"
+      ],
+      [
+        "schema_version",
+        "integer",
+        "NOT NULL",
+        "Phiên bản form"
+      ],
+      [
+        "answers",
+        "jsonb",
+        "NOT NULL DEFAULT '{}'",
+        "Không chứa tiền công/vật tư lõi"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(job_id,skill_id)",
+    "indexes": ""
+  },
+  {
+    "name": "assignments",
+    "group": "Công việc",
+    "purpose": "Một nhân viên hiệu lực; lịch sử bàn giao không bị xóa.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "job_id",
+        "uuid",
+        "NOT NULL",
+        "Việc"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL",
+        "Chống cross-tenant FK"
+      ],
+      [
+        "membership_id",
+        "uuid",
+        "NOT NULL",
+        "Người thực hiện"
+      ],
+      [
+        "assigned_by",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Quản lý/solo"
+      ],
+      [
+        "ended_at",
+        "timestamptz",
+        "",
+        "Null nghĩa đang được giao"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "FOREIGN KEY(job_id,partner_id) REFERENCES jobs(id,partner_id), FOREIGN KEY(membership_id,partner_id) REFERENCES memberships(id,partner_id)",
+    "indexes": "CREATE UNIQUE INDEX assignment_active ON assignments(job_id) WHERE ended_at IS NULL;"
+  },
+  {
+    "name": "schedule_history",
+    "group": "Công việc",
+    "purpose": "Lịch cũ/mới và người sửa.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "job_id",
+        "uuid",
+        "NOT NULL REFERENCES jobs(id)",
+        "Việc"
+      ],
+      [
+        "actor_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người đổi"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL",
+        "Schedule version mới"
+      ],
+      [
+        "old_at",
+        "timestamptz",
+        "",
+        "Trước"
+      ],
+      [
+        "new_at",
+        "timestamptz",
+        "NOT NULL",
+        "Sau"
+      ],
+      [
+        "reason",
+        "text",
+        "NOT NULL DEFAULT ''",
+        "Hai bên đã trao đổi ngoài bước xác nhận"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(job_id,version)",
+    "indexes": ""
+  },
+  {
+    "name": "conversations",
+    "group": "Liên lạc",
+    "purpose": "Phòng cá nhân theo cặp hoặc khách–partner; không tạo lại theo đơn.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "kind",
+        "text",
+        "NOT NULL",
+        "direct / partner"
+      ],
+      [
+        "user_low",
+        "uuid",
+        "REFERENCES users(id)",
+        "Cặp direct đã sắp UUID"
+      ],
+      [
+        "user_high",
+        "uuid",
+        "REFERENCES users(id)",
+        "Cặp direct đã sắp UUID"
+      ],
+      [
+        "customer_id",
+        "uuid",
+        "REFERENCES users(id)",
+        "Phòng với cửa hàng"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "REFERENCES partners(id)",
+        "Phòng với cửa hàng"
+      ],
+      [
+        "next_sequence",
+        "bigint",
+        "NOT NULL DEFAULT 1",
+        "Cấp sequence trong transaction"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK((kind='direct' AND user_low IS NOT NULL AND user_high IS NOT NULL AND user_low<user_high AND customer_id IS NULL AND partner_id IS NULL) OR (kind='partner' AND customer_id IS NOT NULL AND partner_id IS NOT NULL AND user_low IS NULL AND user_high IS NULL)), UNIQUE(user_low,user_high), UNIQUE(customer_id,partner_id)",
+    "indexes": ""
+  },
+  {
+    "name": "job_conversations",
+    "group": "Liên lạc",
+    "purpose": "Tham chiếu việc vào phòng; không cấp quyền đọc bằng liên kết này.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "job_id",
+        "uuid",
+        "NOT NULL REFERENCES jobs(id)",
+        "Việc"
+      ],
+      [
+        "conversation_id",
+        "uuid",
+        "NOT NULL REFERENCES conversations(id)",
+        "Phòng"
+      ],
+      [
+        "assignment_id",
+        "uuid",
+        "REFERENCES assignments(id)",
+        "Nếu là phòng nhân viên"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(job_id,conversation_id)",
+    "indexes": ""
+  },
+  {
+    "name": "messages",
+    "group": "Liên lạc",
+    "purpose": "Lưu trước ACK; đọc theo sequence trong phòng.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "conversation_id",
+        "uuid",
+        "NOT NULL REFERENCES conversations(id)",
+        "Phòng"
+      ],
+      [
+        "sequence",
+        "bigint",
+        "NOT NULL",
+        "Thứ tự server"
+      ],
+      [
+        "sender_id",
+        "uuid",
+        "REFERENCES users(id)",
+        "Null cho tin hệ thống"
+      ],
+      [
+        "client_message_id",
+        "uuid",
+        "",
+        "Dedupe client"
+      ],
+      [
+        "system_event_key",
+        "text",
+        "UNIQUE",
+        "Dedupe tin nhận việc/phân công"
+      ],
+      [
+        "body",
+        "text",
+        "NOT NULL",
+        "Không ghi vào log vận hành"
+      ],
+      [
+        "asset_id",
+        "uuid",
+        "REFERENCES assets(id)",
+        "Ảnh tùy chọn"
+      ],
+      [
+        "job_id",
+        "uuid",
+        "REFERENCES jobs(id)",
+        "Chỉ tham chiếu, không mở quyền phòng"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(conversation_id,sequence), UNIQUE(sender_id,client_message_id)",
+    "indexes": "CREATE INDEX message_page ON messages(conversation_id,sequence DESC);"
+  },
+  {
+    "name": "conversation_reads",
+    "group": "Liên lạc",
+    "purpose": "Con trỏ đã đọc riêng mỗi người.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "conversation_id",
+        "uuid",
+        "NOT NULL REFERENCES conversations(id)",
+        "Phòng"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Phải có quyền phòng"
+      ],
+      [
+        "last_sequence",
+        "bigint",
+        "NOT NULL DEFAULT 0",
+        "Không vượt sequence hiện có"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(conversation_id,user_id), CHECK(last_sequence>=0)",
+    "indexes": ""
+  },
+  {
+    "name": "call_sessions",
+    "group": "Liên lạc",
+    "purpose": "Chỉ metadata cuộc gọi; không ghi âm mặc định.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "job_id",
+        "uuid",
+        "NOT NULL REFERENCES jobs(id)",
+        "Đã được nhận hoặc đã hoàn tất"
+      ],
+      [
+        "caller_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Caller"
+      ],
+      [
+        "recipient_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người được giao/đầu mối hiện tại"
+      ],
+      [
+        "provider_ref",
+        "text",
+        "UNIQUE",
+        "Không lưu token dịch vụ"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL",
+        "ringing / connected / ended / missed / declined"
+      ],
+      [
+        "ended_at",
+        "timestamptz",
+        "",
+        "Kết thúc"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1 CHECK(version>0)",
+        "Version CAS"
+      ]
+    ],
+    "checks": "CHECK(caller_id<>recipient_id)",
+    "indexes": ""
+  },
+  {
+    "name": "invoices",
+    "group": "Tài chính",
+    "purpose": "Một hồ sơ hóa đơn/việc, tiền ở phiên bản.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "job_id",
+        "uuid",
+        "NOT NULL UNIQUE REFERENCES jobs(id)",
+        "Một invoice"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL DEFAULT 'draft'",
+        "draft / sent / revision_requested / locked / settled"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "Version tài nguyên"
+      ],
+      [
+        "current_version_id",
+        "uuid",
+        "",
+        "FK bổ sung sau tạo invoice_versions"
+      ],
+      [
+        "locked_version_id",
+        "uuid",
+        "",
+        "Cố định khi khách xác nhận"
+      ],
+      [
+        "customer_payment_reported_at",
+        "timestamptz",
+        "",
+        "Không tự quyết toán"
+      ],
+      [
+        "worker_receipt_confirmed_at",
+        "timestamptz",
+        "",
+        "Admin không được điền thay"
+      ],
+      [
+        "worker_receipt_by",
+        "uuid",
+        "REFERENCES users(id)",
+        "Người thực hiện"
+      ],
+      [
+        "settled_by_kind",
+        "text",
+        "",
+        "worker / admin"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK(state IN ('draft','sent','revision_requested','locked','settled')), CHECK((worker_receipt_confirmed_at IS NULL)=(worker_receipt_by IS NULL))",
+    "indexes": ""
+  },
+  {
+    "name": "invoice_versions",
+    "group": "Tài chính",
+    "purpose": "Bản đã gửi bất biến; sửa bằng phiên bản mới.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "invoice_id",
+        "uuid",
+        "NOT NULL REFERENCES invoices(id)",
+        "Hồ sơ"
+      ],
+      [
+        "version_no",
+        "integer",
+        "NOT NULL",
+        "1,2,..."
+      ],
+      [
+        "author_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người làm lúc gửi"
+      ],
+      [
+        "labor",
+        "whole_amount",
+        "NOT NULL",
+        "L tiền công"
+      ],
+      [
+        "materials",
+        "whole_amount",
+        "NOT NULL",
+        "M vật tư"
+      ],
+      [
+        "note",
+        "text",
+        "NOT NULL DEFAULT ''",
+        "Mô tả"
+      ],
+      [
+        "industry_details",
+        "jsonb",
+        "NOT NULL DEFAULT '{}'",
+        "Tùy ngành; không thay L/M"
+      ],
+      [
+        "sent_at",
+        "timestamptz",
+        "",
+        "Nháp có thể null"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(invoice_id,version_no), UNIQUE(invoice_id,id), CHECK(version_no>0)",
+    "indexes": ""
+  },
+  {
+    "name": "invoice_assets",
+    "group": "Tài chính",
+    "purpose": "Ít nhất một ảnh ready trước khi gửi (transaction guard).",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "version_id",
+        "uuid",
+        "NOT NULL REFERENCES invoice_versions(id)",
+        "Phiên bản"
+      ],
+      [
+        "asset_id",
+        "uuid",
+        "NOT NULL REFERENCES assets(id)",
+        "Ảnh thuộc người có quyền"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(version_id,asset_id)",
+    "indexes": ""
+  },
+  {
+    "name": "invoice_revision_requests",
+    "group": "Tài chính",
+    "purpose": "Khách yêu cầu sửa trước khóa.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "invoice_id",
+        "uuid",
+        "NOT NULL REFERENCES invoices(id)",
+        "Invoice"
+      ],
+      [
+        "version_id",
+        "uuid",
+        "NOT NULL",
+        "Đúng phiên bản hiện hành"
+      ],
+      [
+        "customer_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Khách việc"
+      ],
+      [
+        "reason",
+        "text",
+        "NOT NULL",
+        "Yêu cầu sửa"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "FOREIGN KEY(invoice_id,version_id) REFERENCES invoice_versions(invoice_id,id)",
+    "indexes": ""
+  },
+  {
+    "name": "invoice_confirmations",
+    "group": "Tài chính",
+    "purpose": "Snapshot công thức khi khách khóa; không nhận phí/thưởng từ client.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "invoice_id",
+        "uuid",
+        "NOT NULL UNIQUE REFERENCES invoices(id)",
+        "Một confirmation"
+      ],
+      [
+        "version_id",
+        "uuid",
+        "NOT NULL",
+        "Đúng locked version"
+      ],
+      [
+        "customer_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Khách"
+      ],
+      [
+        "points_used",
+        "whole_amount",
+        "NOT NULL",
+        "R"
+      ],
+      [
+        "fee",
+        "whole_amount",
+        "NOT NULL",
+        "F"
+      ],
+      [
+        "reward",
+        "whole_amount",
+        "NOT NULL",
+        "Q"
+      ],
+      [
+        "cash_due",
+        "whole_amount",
+        "NOT NULL",
+        "C"
+      ],
+      [
+        "rule_version",
+        "text",
+        "NOT NULL",
+        "money-v1"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "FOREIGN KEY(invoice_id,version_id) REFERENCES invoice_versions(invoice_id,id)",
+    "indexes": ""
+  },
+  {
+    "name": "ledger_accounts",
+    "group": "Tài chính",
+    "purpose": "Point theo user, ví VND theo partner; platform là đối ứng.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "owner_user_id",
+        "uuid",
+        "REFERENCES users(id)",
+        "Nếu point khách"
+      ],
+      [
+        "owner_partner_id",
+        "uuid",
+        "REFERENCES partners(id)",
+        "Nếu ví partner"
+      ],
+      [
+        "system_code",
+        "text",
+        "",
+        "Đối ứng hệ thống"
+      ],
+      [
+        "unit",
+        "text",
+        "NOT NULL",
+        "VND / POINT"
+      ],
+      [
+        "balance",
+        "signed_whole",
+        "NOT NULL DEFAULT 0",
+        "Projection; nguồn thật là entries"
+      ],
+      [
+        "version",
+        "bigint",
+        "NOT NULL DEFAULT 1",
+        "Khóa hàng trước giữ/quyết toán"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK(num_nonnulls(owner_user_id,owner_partner_id,system_code)=1), CHECK(unit IN ('VND','POINT')), CHECK(owner_user_id IS NULL OR unit='POINT'), CHECK(owner_partner_id IS NULL OR unit='VND'), UNIQUE(owner_user_id,unit), UNIQUE(owner_partner_id,unit), UNIQUE(system_code,unit), UNIQUE(id,unit)",
+    "indexes": ""
+  },
+  {
+    "name": "ledger_transactions",
+    "group": "Tài chính",
+    "purpose": "Nhật ký bút toán chỉ thêm, không sửa/xóa từ ứng dụng.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "operation_key",
+        "text",
+        "NOT NULL UNIQUE",
+        "invoice:<id>:settle / payout:<id>:settle"
+      ],
+      [
+        "kind",
+        "text",
+        "NOT NULL",
+        "settlement / topup / payout"
+      ],
+      [
+        "actor_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người khởi tạo"
+      ],
+      [
+        "correlation_id",
+        "uuid",
+        "NOT NULL",
+        "Theo dõi"
+      ],
+      [
+        "posted_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "Commit cùng entries"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "ledger_entries",
+    "group": "Tài chính",
+    "purpose": "Tổng delta từng transaction+unit phải bằng 0.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "transaction_id",
+        "uuid",
+        "NOT NULL REFERENCES ledger_transactions(id)",
+        "Giao dịch"
+      ],
+      [
+        "account_id",
+        "uuid",
+        "NOT NULL",
+        "Account"
+      ],
+      [
+        "unit",
+        "text",
+        "NOT NULL",
+        "Không trộn VND/POINT"
+      ],
+      [
+        "delta",
+        "signed_whole",
+        "NOT NULL",
+        "Số nguyên có dấu"
+      ],
+      [
+        "posting_code",
+        "text",
+        "NOT NULL",
+        "fee / redemption / reward..."
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "FOREIGN KEY(account_id,unit) REFERENCES ledger_accounts(id,unit), UNIQUE(transaction_id,account_id,posting_code), CHECK(delta<>0)",
+    "indexes": "CREATE INDEX ledger_account_history ON ledger_entries(account_id,created_at,id);"
+  },
+  {
+    "name": "holds",
+    "group": "Tài chính",
+    "purpose": "Giữ khả dụng; không phải phí đã thu.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "account_id",
+        "uuid",
+        "NOT NULL REFERENCES ledger_accounts(id)",
+        "Ví/point"
+      ],
+      [
+        "kind",
+        "text",
+        "NOT NULL",
+        "invoice_fee / invoice_points / payout"
+      ],
+      [
+        "reference_id",
+        "uuid",
+        "NOT NULL",
+        "ID invoice hoặc payout, guard đúng loại trong service"
+      ],
+      [
+        "amount",
+        "whole_amount",
+        "NOT NULL",
+        "Không tạo hold 0"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL DEFAULT 'active'",
+        "active / consumed / released"
+      ],
+      [
+        "ended_at",
+        "timestamptz",
+        "",
+        "Cùng transaction quyết toán"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(kind,reference_id), CHECK(amount>0), CHECK(state IN ('active','consumed','released')), CHECK(kind IN ('invoice_fee','invoice_points','payout'))",
+    "indexes": "CREATE INDEX hold_active ON holds(account_id) WHERE state='active';"
+  },
+  {
+    "name": "settlements",
+    "group": "Tài chính",
+    "purpose": "Chống quyết toán trùng ở cấp DB.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "invoice_id",
+        "uuid",
+        "NOT NULL UNIQUE REFERENCES invoices(id)",
+        "Invoice"
+      ],
+      [
+        "transaction_id",
+        "uuid",
+        "NOT NULL UNIQUE REFERENCES ledger_transactions(id)",
+        "Bút toán"
+      ],
+      [
+        "actor_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Thợ/admin"
+      ],
+      [
+        "actor_kind",
+        "text",
+        "NOT NULL",
+        "worker / admin"
+      ],
+      [
+        "report_id",
+        "uuid",
+        "",
+        "FK sau tạo reports"
+      ],
+      [
+        "reason",
+        "text",
+        "",
+        "Bắt buộc cho admin"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK(actor_kind IN ('worker','admin')), CHECK(actor_kind<>'admin' OR (report_id IS NOT NULL AND reason IS NOT NULL AND length(trim(reason))>0))",
+    "indexes": ""
+  },
+  {
+    "name": "bank_accounts",
+    "group": "Tài chính",
+    "purpose": "Một ngân hàng effective; bản cũ giữ lịch sử.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL REFERENCES partners(id)",
+        "Partner"
+      ],
+      [
+        "bank_code",
+        "text",
+        "NOT NULL",
+        "Mã ngân hàng"
+      ],
+      [
+        "account_ciphertext",
+        "text",
+        "NOT NULL",
+        "Mã hóa, key ở secret store"
+      ],
+      [
+        "account_last4",
+        "text",
+        "NOT NULL",
+        "DTO che số"
+      ],
+      [
+        "holder_name",
+        "text",
+        "NOT NULL",
+        "Tên chủ"
+      ],
+      [
+        "status",
+        "text",
+        "NOT NULL",
+        "pending / verified / rejected"
+      ],
+      [
+        "is_current",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Không thay khi payout chưa kết thúc"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "CAS"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": "CREATE UNIQUE INDEX current_bank ON bank_accounts(partner_id) WHERE is_current;"
+  },
+  {
+    "name": "topups",
+    "group": "Tài chính",
+    "purpose": "Chỉ ghi có sau đối chiếu, không dựa ảnh đơn lẻ.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL REFERENCES partners(id)",
+        "Ví"
+      ],
+      [
+        "amount",
+        "whole_amount",
+        "NOT NULL",
+        "Tiền nạp"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL DEFAULT 'pending'",
+        "pending / credited / rejected"
+      ],
+      [
+        "bank_reference",
+        "text",
+        "UNIQUE",
+        "Chuẩn hóa bank+account+transaction; một lần"
+      ],
+      [
+        "transaction_id",
+        "uuid",
+        "UNIQUE REFERENCES ledger_transactions(id)",
+        "Nếu đã ghi có"
+      ],
+      [
+        "evidence_id",
+        "uuid",
+        "REFERENCES assets(id)",
+        "Chứng cứ"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "CAS"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK(amount>0)",
+    "indexes": ""
+  },
+  {
+    "name": "payouts",
+    "group": "Tài chính",
+    "purpose": "Rút tối thiểu 50k, không dùng credit; unknown giữ tiền.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "NOT NULL REFERENCES partners(id)",
+        "Ví"
+      ],
+      [
+        "bank_id",
+        "uuid",
+        "NOT NULL REFERENCES bank_accounts(id)",
+        "Đã verified"
+      ],
+      [
+        "bank_snapshot",
+        "jsonb",
+        "NOT NULL",
+        "Tham chiếu encrypted bank version, không số thô"
+      ],
+      [
+        "amount",
+        "whole_amount",
+        "NOT NULL",
+        "Ít nhất 50.000"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL DEFAULT 'pending'",
+        "pending / transferring / unknown / succeeded / rejected / failed_verified"
+      ],
+      [
+        "bank_reference",
+        "text",
+        "UNIQUE",
+        "Bằng chứng mã ngân hàng"
+      ],
+      [
+        "transaction_id",
+        "uuid",
+        "UNIQUE REFERENCES ledger_transactions(id)",
+        "Rút thành công"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "CAS"
+      ],
+      [
+        "resolved_at",
+        "timestamptz",
+        "",
+        "Kết quả xác minh"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK(amount>=50000), CHECK(state IN ('pending','transferring','unknown','succeeded','rejected','failed_verified'))",
+    "indexes": ""
+  },
+  {
+    "name": "reviews",
+    "group": "Đánh giá và hỗ trợ",
+    "purpose": "Một đánh giá mỗi chiều trên việc đủ Q01.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "job_id",
+        "uuid",
+        "NOT NULL REFERENCES jobs(id)",
+        "Đúng invoice settled + hai dấu"
+      ],
+      [
+        "direction",
+        "text",
+        "NOT NULL",
+        "customer_to_partner / partner_to_customer"
+      ],
+      [
+        "author_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người viết thật"
+      ],
+      [
+        "stars",
+        "smallint",
+        "NOT NULL",
+        "1..5"
+      ],
+      [
+        "body",
+        "text",
+        "NOT NULL DEFAULT ''",
+        "Tùy chọn"
+      ],
+      [
+        "asset_id",
+        "uuid",
+        "REFERENCES assets(id)",
+        "Ảnh tùy chọn"
+      ],
+      [
+        "hidden_at",
+        "timestamptz",
+        "",
+        "Admin ẩn"
+      ],
+      [
+        "removed_at",
+        "timestamptz",
+        "",
+        "Tác giả gỡ"
+      ],
+      [
+        "moderation_reason",
+        "text",
+        "",
+        "Lý do"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "CAS"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(job_id,direction), CHECK(stars BETWEEN 1 AND 5), CHECK(direction IN ('customer_to_partner','partner_to_customer'))",
+    "indexes": ""
+  },
+  {
+    "name": "review_replies",
+    "group": "Đánh giá và hỗ trợ",
+    "purpose": "Một phản hồi, sửa giữ audit; không sửa sao người khác.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "review_id",
+        "uuid",
+        "NOT NULL UNIQUE REFERENCES reviews(id)",
+        "Review"
+      ],
+      [
+        "author_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Bên được đánh giá/người có quyền"
+      ],
+      [
+        "body",
+        "text",
+        "NOT NULL",
+        "Nội dung"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "CAS"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "reports",
+    "group": "Đánh giá và hỗ trợ",
+    "purpose": "Báo cáo chứng cứ; đóng không tạo bút toán.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "reporter_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người báo"
+      ],
+      [
+        "job_id",
+        "uuid",
+        "REFERENCES jobs(id)",
+        "Nếu liên quan việc"
+      ],
+      [
+        "invoice_id",
+        "uuid",
+        "REFERENCES invoices(id)",
+        "Nếu liên quan hóa đơn"
+      ],
+      [
+        "invoice_version_id",
+        "uuid",
+        "",
+        "Phiên bản được báo"
+      ],
+      [
+        "review_id",
+        "uuid",
+        "REFERENCES reviews(id)",
+        "Nếu báo đánh giá"
+      ],
+      [
+        "kind",
+        "text",
+        "NOT NULL",
+        "invoice / account / review / service"
+      ],
+      [
+        "body",
+        "text",
+        "NOT NULL",
+        "Mô tả"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL DEFAULT 'open'",
+        "open / reviewing / awaiting_evidence / resolved / closed"
+      ],
+      [
+        "assignee_id",
+        "uuid",
+        "REFERENCES users(id)",
+        "Admin"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "CAS"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "FOREIGN KEY(invoice_id,invoice_version_id) REFERENCES invoice_versions(invoice_id,id)",
+    "indexes": ""
+  },
+  {
+    "name": "report_evidence",
+    "group": "Đánh giá và hỗ trợ",
+    "purpose": "Chỉ chứng cứ chủ động nộp; không cấp quyền toàn bộ chat.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "report_id",
+        "uuid",
+        "NOT NULL REFERENCES reports(id)",
+        "Case"
+      ],
+      [
+        "asset_id",
+        "uuid",
+        "NOT NULL REFERENCES assets(id)",
+        "Chứng cứ"
+      ],
+      [
+        "submitted_by",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người nộp"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(report_id,asset_id)",
+    "indexes": ""
+  },
+  {
+    "name": "report_updates",
+    "group": "Đánh giá và hỗ trợ",
+    "purpose": "Trao đổi hỗ trợ và kết luận theo case.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "report_id",
+        "uuid",
+        "NOT NULL REFERENCES reports(id)",
+        "Case"
+      ],
+      [
+        "actor_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người có quyền"
+      ],
+      [
+        "body",
+        "text",
+        "NOT NULL",
+        "Nội dung"
+      ],
+      [
+        "visibility",
+        "text",
+        "NOT NULL",
+        "participants / admin_only"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "CHECK(visibility IN ('participants','admin_only'))",
+    "indexes": ""
+  },
+  {
+    "name": "admin_grants",
+    "group": "Hạ tầng",
+    "purpose": "Quyền admin độc lập membership doanh nghiệp.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Admin"
+      ],
+      [
+        "permission",
+        "text",
+        "NOT NULL",
+        "finance.review, moderation.manage..."
+      ],
+      [
+        "revoked_at",
+        "timestamptz",
+        "",
+        "Thu hồi"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": "CREATE UNIQUE INDEX admin_grant_active ON admin_grants(user_id,permission) WHERE revoked_at IS NULL;"
+  },
+  {
+    "name": "notification_settings",
+    "group": "Hạ tầng",
+    "purpose": "Opt-out push tin nhắn và cuộc gọi theo user.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL UNIQUE REFERENCES users(id)",
+        "Chủ"
+      ],
+      [
+        "message_push",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Không xóa lịch sử tin"
+      ],
+      [
+        "call_push",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Không gọi đổ chuông khi tắt"
+      ],
+      [
+        "service_push",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "Lịch, hóa đơn"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "device_tokens",
+    "group": "Hạ tầng",
+    "purpose": "Thiết bị nhận push, logout thu hồi.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Chủ"
+      ],
+      [
+        "provider",
+        "text",
+        "NOT NULL",
+        "Adapter push"
+      ],
+      [
+        "token_ciphertext",
+        "text",
+        "NOT NULL",
+        "Không log"
+      ],
+      [
+        "token_hash",
+        "text",
+        "NOT NULL UNIQUE",
+        "Dedupe"
+      ],
+      [
+        "revoked_at",
+        "timestamptz",
+        "",
+        "Không gửi tiếp"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "notifications",
+    "group": "Hạ tầng",
+    "purpose": "Inbox bền vững; push chỉ là tín hiệu.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Người nhận"
+      ],
+      [
+        "event_key",
+        "text",
+        "NOT NULL",
+        "Dedupe"
+      ],
+      [
+        "kind",
+        "text",
+        "NOT NULL",
+        "Loại"
+      ],
+      [
+        "resource_ref",
+        "jsonb",
+        "NOT NULL",
+        "ID, không chứa số dư/chứng cứ"
+      ],
+      [
+        "read_at",
+        "timestamptz",
+        "",
+        "Đã đọc"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(user_id,event_key)",
+    "indexes": ""
+  },
+  {
+    "name": "reminders",
+    "group": "Hạ tầng",
+    "purpose": "Đổi lịch làm vô hiệu nhắc phiên bản cũ.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "job_id",
+        "uuid",
+        "NOT NULL REFERENCES jobs(id)",
+        "Việc"
+      ],
+      [
+        "schedule_version",
+        "integer",
+        "NOT NULL",
+        "Đối chiếu lúc gửi"
+      ],
+      [
+        "lead_seconds",
+        "integer",
+        "NOT NULL",
+        "86400 hoặc 3600"
+      ],
+      [
+        "due_at",
+        "timestamptz",
+        "NOT NULL",
+        "UTC"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL DEFAULT 'pending'",
+        "pending / sent / obsolete"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(job_id,schedule_version,lead_seconds), CHECK(lead_seconds IN (86400,3600))",
+    "indexes": ""
+  },
+  {
+    "name": "idempotency_keys",
+    "group": "Hạ tầng",
+    "purpose": "Scope actor+operation+key; hash khác trả 409.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "actor_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "Actor"
+      ],
+      [
+        "operation",
+        "text",
+        "NOT NULL",
+        "operationId API"
+      ],
+      [
+        "request_key",
+        "text",
+        "NOT NULL",
+        "UUID client"
+      ],
+      [
+        "request_hash",
+        "text",
+        "NOT NULL",
+        "Canonical payload"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL",
+        "processing / completed"
+      ],
+      [
+        "resource_id",
+        "uuid",
+        "",
+        "Đối tượng đã commit"
+      ],
+      [
+        "response_snapshot",
+        "jsonb",
+        "",
+        "Chỉ DTO tối thiểu, tái kiểm quyền trước trả"
+      ],
+      [
+        "expires_at",
+        "timestamptz",
+        "",
+        "Chưa chốt retention; không xóa key tiền trước chính sách"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(actor_id,operation,request_key)",
+    "indexes": ""
+  },
+  {
+    "name": "outbox_events",
+    "group": "Hạ tầng",
+    "purpose": "Cùng commit nghiệp vụ; worker có lease/retry.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "event_key",
+        "text",
+        "NOT NULL UNIQUE",
+        "Dedupe"
+      ],
+      [
+        "aggregate_id",
+        "uuid",
+        "NOT NULL",
+        "ID tài nguyên"
+      ],
+      [
+        "aggregate_version",
+        "bigint",
+        "NOT NULL",
+        "Bỏ sự kiện cũ khi cần"
+      ],
+      [
+        "event_type",
+        "text",
+        "NOT NULL",
+        "Versioned event"
+      ],
+      [
+        "payload",
+        "jsonb",
+        "NOT NULL",
+        "ID tối thiểu"
+      ],
+      [
+        "attempts",
+        "integer",
+        "NOT NULL DEFAULT 0",
+        "Retry có giới hạn/alert"
+      ],
+      [
+        "next_attempt_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "Lịch chạy"
+      ],
+      [
+        "lease_until",
+        "timestamptz",
+        "",
+        "Khôi phục khi worker chết"
+      ],
+      [
+        "processed_at",
+        "timestamptz",
+        "",
+        "Đã phát; không đảm bảo client đã nhận"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": "CREATE INDEX outbox_due ON outbox_events(next_attempt_at) WHERE processed_at IS NULL;"
+  },
+  {
+    "name": "audit_events",
+    "group": "Hạ tầng",
+    "purpose": "Audit append-only; không OTP/token/nội dung chat.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa ổn định"
+      ],
+      [
+        "actor_id",
+        "uuid",
+        "REFERENCES users(id)",
+        "Actor hoặc hệ thống"
+      ],
+      [
+        "action",
+        "text",
+        "NOT NULL",
+        "Hành động"
+      ],
+      [
+        "resource_type",
+        "text",
+        "NOT NULL",
+        "Loại"
+      ],
+      [
+        "resource_id",
+        "uuid",
+        "NOT NULL",
+        "ID"
+      ],
+      [
+        "correlation_id",
+        "uuid",
+        "NOT NULL",
+        "Trace"
+      ],
+      [
+        "reason",
+        "text",
+        "",
+        "Lý do admin"
+      ],
+      [
+        "changes_redacted",
+        "jsonb",
+        "NOT NULL DEFAULT '{}'",
+        "Before/after đã loại dữ liệu nhạy cảm"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "skill_categories",
+    "group": "Nguồn cung",
+    "purpose": "Kỹ năng dùng chung nhiều ngành, không nhân bản mã kỹ năng.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Khóa"
+      ],
+      [
+        "skill_id",
+        "uuid",
+        "NOT NULL REFERENCES skills(id) ON DELETE RESTRICT",
+        "Kỹ năng"
+      ],
+      [
+        "category_id",
+        "uuid",
+        "NOT NULL REFERENCES categories(id) ON DELETE RESTRICT",
+        "Ngành"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "UNIQUE(skill_id,category_id)",
+    "indexes": "skill_categories_category(category_id,skill_id)",
+    "implementation": "Đợt 1 local: services/api/migrations/001_catalog.sql; DOC-065, ADR-001."
+  },
+  {
+    "name": "recovery_requests",
+    "group": "Tài khoản",
+    "purpose": "Báo mất mọi kênh đăng nhập; không yêu cầu tài khoản đăng nhập để gửi. Admin xem bằng quyền riêng; audit mọi xử lý.",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "Mã hồ sơ"
+      ],
+      [
+        "claimed_user_id",
+        "uuid",
+        "REFERENCES users(id)",
+        "Không công khai tài khoản có tồn tại"
+      ],
+      [
+        "contact_claim_ciphertext",
+        "text",
+        "NOT NULL",
+        "Định danh khai báo mã hóa"
+      ],
+      [
+        "reachable_contact_ciphertext",
+        "text",
+        "NOT NULL",
+        "Kênh liên hệ mã hóa"
+      ],
+      [
+        "description",
+        "text",
+        "NOT NULL",
+        "Mô tả mất truy cập"
+      ],
+      [
+        "evidence_ids",
+        "uuid[]",
+        "NOT NULL DEFAULT '{}'",
+        "Tệp kiểm ACL riêng"
+      ],
+      [
+        "status",
+        "text",
+        "NOT NULL DEFAULT 'open' CHECK(status IN ('open','evidence_requested','approved','rejected'))",
+        "Trạng thái"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1 CHECK(version>0)",
+        "CAS"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "UTC"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  }
+]

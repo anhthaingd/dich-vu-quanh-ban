@@ -1,0 +1,36 @@
+{
+  "name": "dich-vu-quanh-ban",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/mobile",
+    "services/api"
+  ],
+  "engines": {
+    "node": "24.7.0",
+    "npm": "11.5.1"
+  },
+  "packageManager": "npm@11.5.1",
+  "scripts": {
+    "lint": "eslint apps/mobile services/api infra/scripts",
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "npm run test --workspaces",
+    "test:integration": "npm run test:integration -w services/api",
+    "build": "npm run build --workspaces",
+    "api": "npm run dev -w services/api",
+    "mobile": "npm run start -w apps/mobile --",
+    "mobile:web": "npm run web -w apps/mobile --",
+    "db:up": "docker compose -f infra/compose.yaml up -d --wait db",
+    "db:stop": "docker compose -f infra/compose.yaml stop db",
+    "db:migrate": "npm run db:migrate -w services/api",
+    "db:seed": "npm run db:seed -w services/api",
+    "test:smoke": "npm run build -w services/api && node infra/scripts/smoke.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "playwright": "1.63.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.1"
+  }
+}

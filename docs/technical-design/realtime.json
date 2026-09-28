@@ -1,0 +1,159 @@
+{
+  "version": "0.1",
+  "transport": "WebSocket abstraction; thư viện/provider chưa chốt",
+  "envelope": {
+    "event_id": "uuid",
+    "type": "versioned.name.v1",
+    "occurred_at": "UTC RFC3339",
+    "aggregate_version": "integer",
+    "correlation_id": "uuid",
+    "data": "payload tối thiểu"
+  },
+  "events": [
+    {
+      "name": "job.accepted.v1",
+      "audience": "Khách và partner đúng quyền",
+      "payload": [
+        "job_id",
+        "job_version",
+        "conversation_id"
+      ],
+      "recovery": "GET /jobs/{id}"
+    },
+    {
+      "name": "job.assigned.v1",
+      "audience": "Khách, nhân viên mới; người cũ nhận revocation không nhận chat mới",
+      "payload": [
+        "job_id",
+        "job_version",
+        "assignment_id",
+        "conversation_id"
+      ],
+      "recovery": "GET job; API thu hồi quyền người cũ ngay, không chờ event"
+    },
+    {
+      "name": "job.schedule_changed.v1",
+      "audience": "Khách và người có quyền việc",
+      "payload": [
+        "job_id",
+        "schedule_version",
+        "scheduled_at"
+      ],
+      "recovery": "GET job; bỏ reminder version cũ"
+    },
+    {
+      "name": "invoice.sent.v1",
+      "audience": "Khách của việc",
+      "payload": [
+        "invoice_id",
+        "version_id",
+        "resource_version"
+      ],
+      "recovery": "GET invoice; point mặc định 0"
+    },
+    {
+      "name": "invoice.locked.v1",
+      "audience": "Khách/thợ, DTO theo vai",
+      "payload": [
+        "invoice_id",
+        "version_id",
+        "resource_version"
+      ],
+      "recovery": "GET invoice; không phát wallet balance vào room khách"
+    },
+    {
+      "name": "invoice.payment_reported.v1",
+      "audience": "Người thực hiện và khách",
+      "payload": [
+        "invoice_id",
+        "resource_version"
+      ],
+      "recovery": "GET invoice; không gọi settle từ event"
+    },
+    {
+      "name": "invoice.settled.v1",
+      "audience": "Hai bên, thông tin ví ở kênh riêng",
+      "payload": [
+        "invoice_id",
+        "settlement_id",
+        "actor_kind",
+        "review_eligible"
+      ],
+      "recovery": "GET invoice/points/wallet theo quyền; không tự mở review nếu thiếu dấu"
+    },
+    {
+      "name": "conversation.message_created.v1",
+      "audience": "Chính participant direct hoặc inbox partner theo quyền",
+      "payload": [
+        "conversation_id",
+        "message_id",
+        "sequence"
+      ],
+      "recovery": "GET messages after_sequence; message body chỉ fetch theo ACL"
+    },
+    {
+      "name": "conversation.read.v1",
+      "audience": "Participant phòng",
+      "payload": [
+        "conversation_id",
+        "user_id",
+        "last_sequence"
+      ],
+      "recovery": "Lưu max cursor; sự kiện cũ không làm unread tăng lại"
+    },
+    {
+      "name": "call.ringing.v1",
+      "audience": "Đúng recipient nếu call_push bật",
+      "payload": [
+        "call_id",
+        "job_id",
+        "caller_id"
+      ],
+      "recovery": "GET/accept qua API, token ngắn hạn; không gửi credential qua push"
+    },
+    {
+      "name": "call.ended.v1",
+      "audience": "Caller và recipient",
+      "payload": [
+        "call_id",
+        "reason"
+      ],
+      "recovery": "Dọn UI; không retry gọi mới tự động"
+    },
+    {
+      "name": "wallet.changed.v1",
+      "audience": "Chủ ví/người wallet.read đúng tenant",
+      "payload": [
+        "partner_id",
+        "account_version"
+      ],
+      "recovery": "GET wallet; không phát sang phòng công việc"
+    },
+    {
+      "name": "points.changed.v1",
+      "audience": "Đúng user",
+      "payload": [
+        "user_id",
+        "account_version"
+      ],
+      "recovery": "GET /me/points; không cộng delta từ event"
+    },
+    {
+      "name": "report.updated.v1",
+      "audience": "Participant case theo visibility",
+      "payload": [
+        "report_id",
+        "version"
+      ],
+      "recovery": "GET report với filter admin_only"
+    },
+    {
+      "name": "notification.created.v1",
+      "audience": "Đúng user",
+      "payload": [
+        "notification_id"
+      ],
+      "recovery": "GET inbox; kiểm quyền tài nguyên lại khi mở"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+# Template only: place at .github/workflows/foundation.yml after repository-root decision.
+name: Foundation
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  local-contract:
+    runs-on: ubuntu-latest
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+      EXPO_PUBLIC_API_URL: http://127.0.0.1:3100/v1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm install --global npm@11.5.1
+      - run: npm ci
+      - run: docker compose -f infra/compose.yaml --profile test up -d --wait db-test
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run test:integration
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:smoke
+      - if: always()
+        run: docker compose -f infra/compose.yaml --profile test stop db-test

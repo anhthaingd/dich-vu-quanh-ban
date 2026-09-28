@@ -1,0 +1,421 @@
+[
+  {
+    "id": "B00",
+    "title": "Nền dự án và kiểm hợp đồng",
+    "depends_on": [],
+    "scope": [
+      "Expo app và NestJS API trong npm workspace; web/admin chưa triển khai theo DOC-064",
+      "Module danh mục đọc PostgreSQL/PostGIS; chưa cần worker",
+      "Local/test tách biệt; migration/seed/contract có kiểm thật"
+    ],
+    "acceptance": [
+      "Lint, typecheck, build và test chạy được",
+      "Contract và migration có phiên bản, CI cơ bản hoạt động",
+      "Không kết nối tiền thật"
+    ],
+    "qa": [
+      "QA-055",
+      "QA-056",
+      "QA-057",
+      "QA-058",
+      "QA-059",
+      "QA-060"
+    ],
+    "docs": [
+      "PLAN-001",
+      "PLAN-002",
+      "PLAN-004"
+    ],
+    "status": "Đợt 1 local đạt; native và CI từ xa chưa kiểm",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu",
+    "evidence": "DOC-065; 7 unit/app,8 integration và smoke web; native/remoteCI chưa chạy"
+  },
+  {
+    "id": "B01",
+    "title": "Tài khoản và quyền nền",
+    "depends_on": [
+      "B00"
+    ],
+    "scope": [
+      "Email/mật khẩu, điện thoại/OTP và phiên đăng nhập",
+      "Liên kết định danh, khôi phục, xác thực tăng cường",
+      "Quyền admin và membership theo doanh nghiệp"
+    ],
+    "acceptance": [
+      "Đổi vai không cấp quyền; thu hồi token có hiệu lực",
+      "Không lộ tài khoản tồn tại hoặc lưu OTP/token thô",
+      "Xóa tài khoản kiểm nghĩa vụ, giữ lịch sử tài chính"
+    ],
+    "qa": [
+      "QA-001",
+      "QA-002",
+      "QA-003",
+      "QA-004",
+      "QA-005",
+      "QA-006"
+    ],
+    "docs": [
+      "PLAN-001",
+      "PLAN-002",
+      "PLAN-003"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "B02",
+    "title": "Nguồn cung đa ngành",
+    "depends_on": [
+      "B01"
+    ],
+    "scope": [
+      "10 ngành và kỹ năng dùng chung nhiều ngành",
+      "Hồ sơ, ảnh, địa chỉ và vùng phục vụ",
+      "Bật/tắt nhận việc; admin xác minh và quản lý danh mục"
+    ],
+    "acceptance": [
+      "Thợ/cửa hàng/doanh nghiệp đăng ký được",
+      "Tắt nhận việc chặn cả yêu cầu từ tab cũ",
+      "Giấy tờ và dữ liệu ví không rò qua hồ sơ"
+    ],
+    "qa": [
+      "QA-007",
+      "QA-008",
+      "QA-009",
+      "QA-012",
+      "QA-049"
+    ],
+    "docs": [
+      "DOC-004",
+      "PLAN-001",
+      "PLAN-002"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "B03",
+    "title": "Tìm thợ và gửi yêu cầu",
+    "depends_on": [
+      "B02"
+    ],
+    "scope": [
+      "Danh sách/bản đồ, vị trí tay/GPS, bán kính10km và mở rộng",
+      "Liên hệ trước thuê, nhiều kỹ năng, làm ngay/hẹn trước",
+      "Nhận, từ chối và rút yêu cầu"
+    ],
+    "acceptance": [
+      "Lọc kỹ năng/nơi làm/vùng trước xếp hạng",
+      "Điện thoại xác minh trước thuê; retry không trùng việc",
+      "Làm ngay nhập ETA; không có bước bắt đầu",
+      "Chặn tự thuê/thuê doanh nghiệp đang tham gia. Việc đã nhận không tự hết hạn, tự đóng hay ép đổi lịch theo thời gian; hoàn tất bình thường cần hai dấu thanh toán."
+    ],
+    "qa": [
+      "QA-010",
+      "QA-011",
+      "QA-017",
+      "QA-018",
+      "QA-053"
+    ],
+    "docs": [
+      "PLAN-006",
+      "PLAN-002",
+      "PLAN-003"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "B04",
+    "title": "Doanh nghiệp và bàn giao",
+    "depends_on": [
+      "B03"
+    ],
+    "scope": [
+      "Mời thành viên7ngày, cấp quyền, rời doanh nghiệp",
+      "Phân công, đổi nhân viên và đầu mối cuộc gọi",
+      "Một quản lý kiêm nhiều quyền; chuyển chủ vẫn pending"
+    ],
+    "acceptance": [
+      "Chặn truy cập sai doanh nghiệp",
+      "Một assignment hiệu lực, lịch sử đầy đủ",
+      "Người cũ mất quyền công việc, giữ chat riêng"
+    ],
+    "qa": [
+      "QA-013",
+      "QA-014",
+      "QA-015",
+      "QA-016"
+    ],
+    "docs": [
+      "PLAN-001",
+      "PLAN-002",
+      "PLAN-003"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "B05",
+    "title": "Chat, lịch và thông báo",
+    "depends_on": [
+      "B04"
+    ],
+    "scope": [
+      "Phòng cá nhân/cửa hàng, lịch sử, cursor và retry",
+      "Outbox, inbox, đổi lịch và nhắc24h/1h",
+      "Cài đặt thông báo tin nhắn/cuộc gọi"
+    ],
+    "acceptance": [
+      "Chat trước và sau thuê, dùng lại đúng phòng",
+      "ACK sau commit, reconnect phục hồi đủ",
+      "Quản lý không đọc phòng riêng nhân viên",
+      "Đổi lịch chỉ đổi giờ hẹn; không thêm luồng đổi lịch qua admin/report. Không nhắc theo lịch cũ."
+    ],
+    "qa": [
+      "QA-019",
+      "QA-021",
+      "QA-022",
+      "QA-023",
+      "QA-025",
+      "QA-050"
+    ],
+    "docs": [
+      "PLAN-002",
+      "PLAN-007",
+      "PLAN-003"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "B06",
+    "title": "Hóa đơn chưa chạy tiền thật",
+    "depends_on": [
+      "B05"
+    ],
+    "scope": [
+      "Ảnh kết quả, nháp, công/vật tư và phiên bản hóa đơn",
+      "Yêu cầu sửa, preview point mặc định0",
+      "Dừng việc và kiểm cạnh tranh phiên bản"
+    ],
+    "acceptance": [
+      "Gửi cần ảnh ready, không chờ quản lý duyệt",
+      "Bản đã gửi bất biến; sau khóa không sửa số tiền",
+      "Kiểm cạnh tranh yêu cầu sửa và xác nhận"
+    ],
+    "qa": [
+      "QA-020",
+      "QA-026",
+      "QA-027",
+      "QA-028"
+    ],
+    "docs": [
+      "PLAN-001",
+      "PLAN-002",
+      "PLAN-003"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "B07",
+    "title": "Sổ ví/point và quyết toán test",
+    "depends_on": [
+      "B06"
+    ],
+    "scope": [
+      "Tài khoản sổ, holds, bút toán cân bằng và phiên bản công thức",
+      "Giữ phí/point, thợ nhận tiền, khách báo đã trả",
+      "Nhiều việc, đồng thời và khôi phục sau crash"
+    ],
+    "acceptance": [
+      "Kết quả số nguyên đúng bộ mẫu; projection khớp entries",
+      "Một settlement; hạn mức âm chỉ trả phí",
+      "Thưởng chưa quyết toán không tiêu được; cash trực tiếp không vào sổ platform"
+    ],
+    "qa": [
+      "QA-029",
+      "QA-030",
+      "QA-031",
+      "QA-032",
+      "QA-033",
+      "QA-034",
+      "QA-035",
+      "QA-036",
+      "QA-037",
+      "QA-043"
+    ],
+    "docs": [
+      "PLAN-001",
+      "PLAN-002",
+      "PLAN-003"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "B08",
+    "title": "Nạp/rút và ngân hàng sandbox",
+    "depends_on": [
+      "B07"
+    ],
+    "scope": [
+      "Một ngân hàng đã xác minh, duyệt thủ công, mức rút50000",
+      "Đối soát mã ngân hàng và payout chưa rõ kết quả",
+      "Hàng đợi admin và nhật ký"
+    ],
+    "acceptance": [
+      "Không rút credit; giữ tiền khi unknown",
+      "Không ghi có hai lần hoặc chuyển lại mù",
+      "Không lộ ví partner cho khách"
+    ],
+    "qa": [
+      "QA-040",
+      "QA-041",
+      "QA-042"
+    ],
+    "docs": [
+      "PLAN-007",
+      "PLAN-003",
+      "PLAN-004"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "B09",
+    "title": "Báo cáo/admin hoàn tất thay",
+    "depends_on": [
+      "B07"
+    ],
+    "scope": [
+      "Báo cáo, chứng cứ và URL có quyền",
+      "Preview tác động, fresh auth, lý do và recheck",
+      "Admin hoàn tất dùng cùng service quyết toán"
+    ],
+    "acceptance": [
+      "Không giả dấu thợ nhận tiền",
+      "Đóng báo cáo không sinh bút toán",
+      "Giữ rõ gate Q02, không coi đã giải quyết khoản giữ treo"
+    ],
+    "qa": [
+      "QA-038",
+      "QA-039",
+      "QA-047",
+      "QA-048"
+    ],
+    "docs": [
+      "PLAN-002",
+      "PLAN-003",
+      "PLAN-005"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "B10",
+    "title": "Đánh giá và gọi trong app",
+    "depends_on": [
+      "B05",
+      "B07",
+      "B09"
+    ],
+    "scope": [
+      "Q01 hai dấu, mỗi chiều một đánh giá",
+      "Ẩn/gỡ, phản hồi và sao trung bình",
+      "Adapter gọi, thợ/cửa hàng, gọi sau hoàn tất"
+    ],
+    "acceptance": [
+      "Admin hoàn tất không tự mở đánh giá",
+      "Đánh giá bị ẩn/gỡ không tính sao",
+      "Kiểm quyền gọi hiện hành; chọn provider trước tích hợp thật"
+    ],
+    "qa": [
+      "QA-024",
+      "QA-044",
+      "QA-045",
+      "QA-046"
+    ],
+    "docs": [
+      "PLAN-007",
+      "PLAN-003"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "B11",
+    "title": "Admin vận hành và UAT",
+    "depends_on": [
+      "B08",
+      "B09",
+      "B10"
+    ],
+    "scope": [
+      "Tra cứu tài khoản/việc/hóa đơn, hỗ trợ, audit và funnel",
+      "Design System, trạng thái field và khả năng truy cập",
+      "E2E iOS/Android/web, diễn tập phục hồi"
+    ],
+    "acceptance": [
+      "FR→API→QA có bằng chứng, các caP0 pass",
+      "Chủ dự án duyệt UAT; prototype không thay kết quả sản phẩm",
+      "Deploy/backup/restore được kiểm thực tế"
+    ],
+    "qa": [
+      "QA-051",
+      "QA-052",
+      "QA-054",
+      "QA-055"
+    ],
+    "docs": [
+      "PLAN-003",
+      "PLAN-004",
+      "PLAN-006"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  },
+  {
+    "id": "G-MONEY",
+    "title": "Cổng bắt buộc trước tiền thật",
+    "depends_on": [
+      "B11"
+    ],
+    "scope": [
+      "Chốt và triển khai cách xử lý khoản giữ treo qua báo cáo/admin",
+      "Ngân hàng, đối soát và dự trữ nguồn tiền bù point",
+      "Chính sách lưu giữ, chống gian lận và xử lý sự cố"
+    ],
+    "acceptance": [
+      "Runbook PLAN-005 và test ngoại lệ được duyệt",
+      "Chưa mở nạp/rút/giữ phí tiền thật khi gate chưa đạt",
+      "Ngân sách và nhà cung cấp được chủ dự án chọn"
+    ],
+    "qa": [
+      "QA-038",
+      "QA-043",
+      "QA-055"
+    ],
+    "docs": [
+      "PLAN-005",
+      "PLAN-007",
+      "PLAN-004"
+    ],
+    "status": "Chưa triển khai",
+    "owner": "Chủ dự án + trợ lý",
+    "estimate": "Chưa ước lượng; đo sau lát đầu"
+  }
+]

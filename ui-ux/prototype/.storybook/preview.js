@@ -1,0 +1,1 @@
+import '../src/style.css';import '../src/neighborhood.css';import {INITIAL_VIEWPORTS} from 'storybook/viewport';export default {parameters:{layout:'fullscreen',viewport:{options:INITIAL_VIEWPORTS},a11y:{test:'todo'}}};

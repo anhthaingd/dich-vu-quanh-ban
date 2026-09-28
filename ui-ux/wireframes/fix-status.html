@@ -1,0 +1,36 @@
+<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kết quả sửa v0.22</title><style>body{font:16px/1.65 system-ui;margin:30px auto;max-width:1000px;padding:20px;background:#f8fafc;color:#172033}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;background:white;padding:24px;border:1px solid #ddd;border-radius:12px}a{color:#1455bb}</style><a href="/">← Mở wireframe v0.22</a><pre># Kết quả sửa sau audit — Wireframe v0.22
+
+Phạm vi: sửa bản mẫu tương tác, không triển khai backend hay giao dịch thật. Bản audit v0.21 và 146 dòng đối chiếu vẫn là ảnh chụp trước sửa, không được dùng như tỷ lệ hoàn thành hiện tại.
+
+## Quyết định đã chốt
+
+- Tìm mặc định 10 km; khách có thể thu hẹp/mở rộng. Các mức 5/10/20/30/50 km là lựa chọn wireframe, không chốt giới hạn backend. Điều kiện vùng phục vụ vẫn bắt buộc.
+- Thông báo tin nhắn và cuộc gọi có hai công tắc trong cài đặt tài khoản, dùng cả hai chế độ. Không xóa lịch sử, không tắt kèm các sự kiện nghiệp vụ. Email chỉ bảo mật/khôi phục.
+- Mỗi hóa đơn/phiên bản mới bắt đầu với 0 point; chỉ dùng khi khách lựa chọn.
+- Hóa đơn đã xác nhận không có tự sửa/hủy/hoàn. Khi có vấn đề, khách/thợ gửi report gắn công việc, phiên bản và chứng cứ; admin xem xét. Gửi/đóng report không tự thay đổi tiền, point hoặc trạng thái thanh toán. Mục can thiệp bút toán vẫn pending; không tự đưa hoàn tiền trở lại.
+- Doanh nghiệp chọn một tài khoản thành viên đang hoạt động làm đầu mối gọi cửa hàng. Trước phân công gọi đầu mối; sau giao có thể gọi thợ hoặc cửa hàng; sau hoàn tất vẫn gọi lại. Thợ nghỉ mất quyền gọi theo tổ chức, giữ chat riêng.
+
+## Theo từng phát hiện
+
+| Mã | Kết quả lượt này | Giới hạn còn lại |
+|---|---|---|
+| F01 | Đã sửa: gửi thiếu ảnh/không hợp lệ không làm mất số tiền; chặn gửi lặp hóa đơn không có yêu cầu sửa. | Chưa kiểm thử upload ảnh/API thật. |
+| F02 | Đã sửa: Làm ngay mở form ngày giờ dự kiến; không tự nhận rồi cộng 30 phút. | ETA không phải GPS. |
+| F03 | Đã đồng bộ các đoạn SRS và FR/NFR liên quan phòng riêng, bàn giao/nghỉ và quyền quản lý. | Tài liệu UX lịch sử giữ nguyên phiên bản; bản phạm vi hiện tại có cập nhật mới. |
+| F04 | Đã sửa luồng gọi trước phân công và sau hoàn tất; có cấu hình đầu mối cửa hàng. | WebRTC/push/gọi nền chưa tích hợp, không coi là cuộc gọi thật. |
+| F05 | Đã sửa địa chỉ cửa hàng công khai, kiểm tra khu vực thuê, bán kính và sao tối thiểu. | Dữ liệu quận/khoảng cách vẫn mô phỏng; chưa geocoding/GPS. |
+| F06 | Danh sách/hồ sơ dùng cùng tập đánh giá; loại đánh giá ẩn/gỡ. | Dữ liệu nền là đánh giá mẫu. |
+| F07 | Thêm report hóa đơn trước/sau hoàn tất, gắn đúng phiên bản; kết luận report độc lập, không đổi bút toán hoặc bị chặn bởi khoản giữ ở việc khác. | **Chưa giải quyết bút toán treo nếu hai bên không thể tiếp tục.** Can thiệp tài chính vẫn pending theo quyết định chủ dự án. |
+| F08 | Chọn nhiều kỹ năng; nhiều việc trong lượt thử; giữ riêng hóa đơn/phân công/ảnh/nháp; tách giữ phí theo partner; onboarding mới nối tìm→hồ sơ→thuê. | Chỉ một khách mẫu; quản trị nhiều tổ chức/tài khoản thật chưa nghiệm thu. |
+| F09 | Cài đặt tin nhắn/cuộc gọi chung tài khoản, bỏ email mọi hoạt động; thông báo việc mở đúng việc đã lưu. | Push hệ điều hành chưa tích hợp; định nghĩa đã đọc nhiều quản lý còn mở. |
+| F10 | Ngân hàng lần đầu cần xác minh; rút bị chặn khi chưa có ngân hàng; hàng đợi 24h tính từ xác nhận; lọc kỳ báo cáo, khách quay lại/partner có việc, sổ giữ/quyết toán; tra cứu ảnh/phiên bản/bàn giao. | Funnel liên hệ→thuê và kho audit bất biến đầy đủ chưa có; nguồn audit cũ thiếu timestamp được ghi riêng, không giả thứ tự. |
+| F11 | Thêm lỗi mất mạng/dịch vụ tại màn hiện tại, giữ form và yêu cầu gửi lại chủ động; bổ sung bản dịch nhãn mới. | **Chưa dịch hết VI/EN/JA trên toàn bộ màn và thông báo.** Chưa có API/backend để nghiệm thu retry/khôi phục phiên thật. |
+
+## Kiểm tra
+
+16 kiểm tra logic trong `work/wf23/test.cjs` đều qua: giữ form khi thiếu ảnh; ETA; bán kính/vùng; guest địa chỉ; nhiều kỹ năng/việc; từ chối ngoài vùng; sao ẩn; ngân hàng lần đầu; gọi sau hoàn tất/đầu mối; report không đổi tiền; mốc24h; hai hóa đơn giữ/thu đúng một lần; onboarding→thuê; cài đặt chung; mất mạng không gửi/gửi lặp không thêm hóa đơn; phòng riêng khi giao lại.
+
+Trực tiếp Browser: tái hiện rồi kiểm tra lỗi mất số tiền đã sửa; hóa đơn100k+50k và point0; dùng toàn150kpoint rồi thợ hoàn tất; tắt thông báo ở Partner nhìn lại Khách vẫn tắt; doanh nghiệp chưa phân công gọi đúng Chủ/quản lý. Mẫu điện thoại được kiểm tra riêng. Các kiểm tra logic dùng DOM giả chỉ xác minh trạng thái/quy tắc, không thay thế Browser hoặc nghiệm thu server.
+
+Tài liệu đã đồng bộ: SRS v0.13, FR/NFR v0.15 và `ux-scope-current.md`. Không có tích hợp/hiệu năng/bảo mật production nào được ghi đạt. Chưa tuyên bố đã đóng mọi khoảng trống của 146 yêu cầu.
+</pre></html><aside style="padding:20px;background:#e7f5ee;color:#173c2e"><strong>Cập nhật v0.23: Đã bổ sung admin xác nhận hoàn tất thay thợ từ báo cáo có chứng cứ, lý do bắt buộc, nhật ký và thông báo hai bên. Quyết toán một lần. Hủy/hoàn/đảo vẫn để sau. Bản dịch Anh/Nhật tạm hoãn theo yêu cầu; báo cáo/nhật ký tổng thể còn các phần đã nêu ở bản audit trước.</strong><p><a href="http://127.0.0.1:8765/">Mở wireframe v0.23 để thử</a></p><small>Nội dung audit phía dưới là lịch sử; áp dụng cập nhật này cho nhánh admin hoàn tất thay thợ.</small></aside>

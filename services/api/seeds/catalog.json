@@ -1,0 +1,248 @@
+{
+  "source": "DOC-002 PRD v0.3 sections 6-7; FR-CAT-001/002. Local/test fixture, not a production catalog release. Group labels are a technical browsing subdivision.",
+  "categories": [
+    {
+      "code": "home_utilities",
+      "name_vi": "Điện nước",
+      "parent_code": null
+    },
+    {
+      "code": "home_utilities_services",
+      "name_vi": "Dịch vụ điện nước",
+      "parent_code": "home_utilities"
+    },
+    {
+      "code": "hvac_appliances",
+      "name_vi": "Điện lạnh / gia dụng",
+      "parent_code": null
+    },
+    {
+      "code": "hvac_appliances_services",
+      "name_vi": "Dịch vụ điện lạnh / gia dụng",
+      "parent_code": "hvac_appliances"
+    },
+    {
+      "code": "cleaning",
+      "name_vi": "Vệ sinh",
+      "parent_code": null
+    },
+    {
+      "code": "cleaning_services",
+      "name_vi": "Dịch vụ vệ sinh",
+      "parent_code": "cleaning"
+    },
+    {
+      "code": "digital_repair",
+      "name_vi": "Điện thoại / máy tính",
+      "parent_code": null
+    },
+    {
+      "code": "digital_repair_services",
+      "name_vi": "Dịch vụ điện thoại / máy tính",
+      "parent_code": "digital_repair"
+    },
+    {
+      "code": "vehicle_care",
+      "name_vi": "Xe máy / ô tô",
+      "parent_code": null
+    },
+    {
+      "code": "vehicle_care_services",
+      "name_vi": "Dịch vụ xe máy / ô tô",
+      "parent_code": "vehicle_care"
+    },
+    {
+      "code": "pet_care",
+      "name_vi": "Thú cưng",
+      "parent_code": null
+    },
+    {
+      "code": "pet_care_services",
+      "name_vi": "Dịch vụ thú cưng",
+      "parent_code": "pet_care"
+    },
+    {
+      "code": "beauty",
+      "name_vi": "Làm đẹp không y tế",
+      "parent_code": null
+    },
+    {
+      "code": "beauty_services",
+      "name_vi": "Dịch vụ làm đẹp không y tế",
+      "parent_code": "beauty"
+    },
+    {
+      "code": "moving",
+      "name_vi": "Chuyển nhà / bốc xếp",
+      "parent_code": null
+    },
+    {
+      "code": "moving_services",
+      "name_vi": "Dịch vụ chuyển nhà / bốc xếp",
+      "parent_code": "moving"
+    },
+    {
+      "code": "laundry",
+      "name_vi": "Giặt / chăm sóc đồ",
+      "parent_code": null
+    },
+    {
+      "code": "laundry_services",
+      "name_vi": "Dịch vụ giặt / chăm sóc đồ",
+      "parent_code": "laundry"
+    },
+    {
+      "code": "installation_it",
+      "name_vi": "Lắp đặt thiết bị",
+      "parent_code": null
+    },
+    {
+      "code": "installation_it_services",
+      "name_vi": "Dịch vụ lắp đặt thiết bị",
+      "parent_code": "installation_it"
+    }
+  ],
+  "skills": [
+    {
+      "code": "electrical_repair",
+      "name_vi": "Sửa điện dân dụng",
+      "category_codes": [
+        "home_utilities_services"
+      ]
+    },
+    {
+      "code": "plumbing_repair",
+      "name_vi": "Sửa vòi nước / đường ống",
+      "category_codes": [
+        "home_utilities_services"
+      ]
+    },
+    {
+      "code": "aircon_cleaning",
+      "name_vi": "Vệ sinh điều hòa",
+      "category_codes": [
+        "hvac_appliances_services"
+      ]
+    },
+    {
+      "code": "washing_machine_repair",
+      "name_vi": "Sửa máy giặt",
+      "category_codes": [
+        "hvac_appliances_services"
+      ]
+    },
+    {
+      "code": "house_cleaning",
+      "name_vi": "Dọn nhà",
+      "category_codes": [
+        "cleaning_services"
+      ]
+    },
+    {
+      "code": "sofa_cleaning",
+      "name_vi": "Vệ sinh sofa",
+      "category_codes": [
+        "cleaning_services"
+      ]
+    },
+    {
+      "code": "computer_repair",
+      "name_vi": "Sửa máy tính",
+      "category_codes": [
+        "digital_repair_services"
+      ]
+    },
+    {
+      "code": "phone_repair",
+      "name_vi": "Sửa điện thoại",
+      "category_codes": [
+        "digital_repair_services"
+      ]
+    },
+    {
+      "code": "vehicle_maintenance",
+      "name_vi": "Bảo dưỡng xe",
+      "category_codes": [
+        "vehicle_care_services"
+      ]
+    },
+    {
+      "code": "vehicle_wash",
+      "name_vi": "Rửa xe",
+      "category_codes": [
+        "vehicle_care_services"
+      ]
+    },
+    {
+      "code": "pet_grooming",
+      "name_vi": "Grooming thú cưng",
+      "category_codes": [
+        "pet_care_services"
+      ]
+    },
+    {
+      "code": "pet_hygiene",
+      "name_vi": "Vệ sinh móng / tai thú cưng",
+      "category_codes": [
+        "pet_care_services"
+      ]
+    },
+    {
+      "code": "nail_care",
+      "name_vi": "Làm nail",
+      "category_codes": [
+        "beauty_services"
+      ]
+    },
+    {
+      "code": "makeup",
+      "name_vi": "Trang điểm",
+      "category_codes": [
+        "beauty_services"
+      ]
+    },
+    {
+      "code": "moving_packing",
+      "name_vi": "Đóng gói chuyển nhà",
+      "category_codes": [
+        "moving_services"
+      ]
+    },
+    {
+      "code": "moving_loading",
+      "name_vi": "Bốc xếp",
+      "category_codes": [
+        "moving_services"
+      ]
+    },
+    {
+      "code": "clothes_laundry",
+      "name_vi": "Giặt quần áo",
+      "category_codes": [
+        "laundry_services"
+      ]
+    },
+    {
+      "code": "shoe_care",
+      "name_vi": "Chăm sóc giày",
+      "category_codes": [
+        "laundry_services"
+      ]
+    },
+    {
+      "code": "camera_installation",
+      "name_vi": "Lắp camera",
+      "category_codes": [
+        "installation_it_services",
+        "home_utilities_services"
+      ]
+    },
+    {
+      "code": "wifi_setup",
+      "name_vi": "Cài mạng Wi-Fi",
+      "category_codes": [
+        "installation_it_services"
+      ]
+    }
+  ]
+}
