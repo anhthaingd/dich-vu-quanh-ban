@@ -1,6 +1,6 @@
 # DOC-065 — Đợt 1: nền tảng và danh mục
 
-v1.1 · 28/09/2026 · Đã triển khai và kiểm local theo DOC-064. Còn kiểm native thiết bị/simulator và kích hoạt CI từ xa.
+v1.2 · 28/09/2026 · Đã triển khai và kiểm local theo DOC-064. Còn kiểm native thiết bị/simulator và kích hoạt CI từ xa.
 
 ## Baseline trước thay đổi
 
@@ -102,4 +102,4 @@ Trạng thái Drive và kiểm bảo toàn workbook được ghi trong `Dong bo`
 
 Chủ dự án yêu cầu push lên `https://github.com/anhthaingd/dich-vu-quanh-ban`. Đã tạo Git riêng tại gốc dự án, origin trỏ repo này, giữ nguyên Git cha. Chuyển symlink nội bộ sang tương đối, bảo toàn đích; bỏ qua tools/work local, `.env`, cache, build, Storybook output và báo cáo inspect tạm. Đã quét file dự kiến commit và nội dung ZIP, không phát hiện mẫu credential; `.env.example` chỉ có giá trị local mẫu.
 
-Tại thời điểm chuẩn bị, chưa xác minh được lịch sử remote/push: `gh` trả token không hợp lệ; SSH đăng nhập `thainda-0252` nhưng repo trả `Repository not found`. Cần đăng nhập tài khoản có quyền ghi. Không force-push; kiểm lịch sử remote trước khi push. CI template chưa được kích hoạt; không deployment.
+Đã kiểm repo private và trống, đăng nhập `anhthaingd` qua macOS Keychain, push commit nền tảng `1f070655aad0a0487b8d600e84554daa95b5465d` lên `origin/main` thành công. `main` theo dõi `origin/main`; không force-push. Lệnh sandbox trước đó không đọc được Keychain nên báo token invalid; chạy qua quyền truy cập Keychain đã xác minh đăng nhập hoạt động. CI template chưa được kích hoạt; không deployment.
