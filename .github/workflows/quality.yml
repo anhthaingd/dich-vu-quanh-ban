@@ -1,0 +1,82 @@
+name: Quality
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  CI: '1'
+  NODE_ENV: test
+  EXPO_NO_TELEMETRY: '1'
+  EXPO_PUBLIC_API_URL: http://127.0.0.1:3100/v1
+jobs:
+  static-and-mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm install --global npm@11.5.1
+      - run: npm ci
+      - run: npm run lint && npm run typecheck && npm run test:tooling
+      - run: npm run test:coverage -w apps/mobile
+      - run: npm run build
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: mobile-quality-${{ github.sha }}
+          path: |
+            coverage/mobile
+            test-results/mobile
+          retention-days: 7
+  api-postgis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm install --global npm@11.5.1
+      - run: npm ci
+      - run: docker compose -f infra/compose.yaml --profile test up -d --wait db-test
+      - run: npm run test:coverage -w services/api
+      - run: npm run test:load
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: api-quality-${{ github.sha }}
+          path: |
+            coverage/api
+            test-results/api
+            test-results/performance
+          retention-days: 7
+      - if: always()
+        run: docker compose -f infra/compose.yaml --profile test stop db-test
+  web-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm install --global npm@11.5.1
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: docker compose -f infra/compose.yaml --profile test up -d --wait db-test
+      - run: npm run test:smoke
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: web-e2e-${{ github.sha }}
+          path: test-results/web
+          retention-days: 7
+      - if: always()
+        run: docker compose -f infra/compose.yaml --profile test stop db-test

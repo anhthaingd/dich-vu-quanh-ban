@@ -1,6 +1,6 @@
 # Backlog và Definition of Done
 
-Phiên bản 0.1.1 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
+Phiên bản 0.1.2 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
 
 ## Trình tự triển khai
 
@@ -285,3 +285,10 @@ PLAN-004 CI/CD/deploy/backup runbook, PLAN-005 runbook ngoại lệ tài chính,
 Xác thực tăng cường và MFA admin đã có trong yêu cầu. Phương thức kỹ thuật cụ thể (ví dụ TOTP cho admin) sẽ chọn khi làm B01; không hỏi duyệt lại nguyên tắc bảo mật.
 
 Chưa cần hỏi lại công thức, Q01, chat riêng, nhận việc hay Q02: các điểm đó giữ đúng baseline hiện hành.
+
+
+## LOGTEST-01 · 28/09/2026
+
+Phương án A đã triển khai và kiểm local; chi tiết vận hành/bằng chứng tại [DOC-071](../implementation/logging-testing.md). Native còn BLOCKED; `.github/workflows/quality.yml` đã chuẩn bị, chưa push/chạy remote CI.
+
+B00 đã có log/test local và workflow quality. Chưa đóng toàn bộ B00/PLAN-004: còn native, remoteCI và deploy/backup production ngoài phạm vi. DOC-071 là runbook local hiện hành.

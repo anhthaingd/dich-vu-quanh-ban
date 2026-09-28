@@ -6,7 +6,8 @@
     "scope": [
       "Expo app và NestJS API trong npm workspace; web/admin chưa triển khai theo DOC-064",
       "Module danh mục đọc PostgreSQL/PostGIS; chưa cần worker",
-      "Local/test tách biệt; migration/seed/contract có kiểm thật"
+      "Local/test tách biệt; migration/seed/contract có kiểm thật",
+      "LOGTEST-01: structured log, request ID, mobile diagnostic, file export, isolation/coverage/report, Playwright và workflow quality"
     ],
     "acceptance": [
       "Lint, typecheck, build và test chạy được",
@@ -19,17 +20,23 @@
       "QA-057",
       "QA-058",
       "QA-059",
-      "QA-060"
+      "QA-060",
+      "QA-061",
+      "QA-062",
+      "QA-063",
+      "QA-064",
+      "QA-065",
+      "QA-066"
     ],
     "docs": [
       "PLAN-001",
       "PLAN-002",
       "PLAN-004"
     ],
-    "status": "Đợt 1 local đạt; native và CI từ xa chưa kiểm",
+    "status": "Local Đợt1 + log/test A đạt; native và remote CI chưa kiểm",
     "owner": "Chủ dự án + trợ lý",
     "estimate": "Chưa ước lượng; đo sau lát đầu",
-    "evidence": "DOC-065; 7 unit/app,8 integration và smoke web; native/remoteCI chưa chạy"
+    "evidence": "DOC-071: unit/component/API/DB/coverage, web E2E, negative controls và200 request local; CI chưa push/run."
   },
   {
     "id": "B01",

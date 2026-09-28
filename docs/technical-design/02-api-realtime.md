@@ -1,6 +1,6 @@
 # Hợp đồng API và realtime
 
-Phiên bản 0.1.1 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
+Phiên bản 0.1.2 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
 
 ## Contract đã triển khai local
 
@@ -208,3 +208,10 @@ Nguồn định dạng: [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0.html)
 
 | liveness | GET /health | Public | Không body → Health |
 | readiness | GET /ready | Public | Không body → Ready |
+
+
+## LOGTEST-01 · 28/09/2026
+
+Phương án A đã triển khai và kiểm local; chi tiết vận hành/bằng chứng tại [DOC-071](../implementation/logging-testing.md). Native còn BLOCKED; `.github/workflows/quality.yml` đã chuẩn bị, chưa push/chạy remote CI.
+
+Bốn GET danh mục/health/ready trả `X-Request-Id`; lỗi có `correlation_id` bằng header. `X-Client-Request-Id` UUID hợp lệ được ghi metadata, không xác thực. CORS expose ID cho app web. Lỗi input400, không tìm thấy404, nội bộ500 (`INTERNAL`), DB unavailable/timeout503; không trả stack/SQL. OpenAPI0.1.2 phản ánh header và lỗi; không mở endpoint ngoài phạm vi.

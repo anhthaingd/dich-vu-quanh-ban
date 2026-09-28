@@ -1,0 +1,59 @@
+import { test as base } from '@playwright/test';
+import { Pool } from 'pg';
+import { randomUUID } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { createServer } from 'node:http';
+import { readFile, rm } from 'node:fs/promises';
+import { resolve, extname } from 'node:path';
+import { Writable } from 'node:stream';
+import { createApp } from '../../../services/api/dist/src/bootstrap.js';
+import { AppLog } from '../../../services/api/dist/src/logging/logger.js';
+import { migrate } from '../../../services/api/dist/src/database/migrate.js';
+import { seed } from '../../../services/api/dist/src/database/seed.js';
+export const test = base.extend({
+  // eslint-disable-next-line no-empty-pattern -- Playwright requires destructured fixture dependencies.
+  environment: async ({}, use, testInfo) => {
+    const url = process.env.TEST_DATABASE_URL ?? 'postgresql://dvqb_test:test-only-password@127.0.0.1:55433/dvqb_test';
+    if (new URL(url).pathname !== '/dvqb_test') throw Error('E2E requires dvqb_test');
+    const schema = `web_${randomUUID().replaceAll('-', '')}`;
+    const directory = resolve('.local', schema);
+    const admin = new Pool({ connectionString: url, connectionTimeoutMillis: 3000 });
+    const pool = new Pool({ connectionString: url, options: `-c search_path=${schema},public`, connectionTimeoutMillis: 3000, statement_timeout: 5000 });
+    const logs = [];
+    const log = new AppLog(new Writable({ write(chunk, _, done) { logs.push(chunk.toString()); done(); } }), 'debug', 'test');
+    let app, server, created = false;
+    try {
+      await admin.query(`CREATE SCHEMA ${schema}`); created = true;
+      await migrate(pool); await seed(pool);
+      server = createServer(async (req, res) => {
+        try {
+          const name = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+          const file = resolve(directory, '.' + (name === '/' ? '/index.html' : name));
+          if (!file.startsWith(directory + '/')) { res.writeHead(403).end(); return; }
+          res.setHeader('Content-Type', { '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json' }[extname(file)] ?? 'application/octet-stream');
+          res.end(await readFile(file));
+        } catch { res.writeHead(404).end(); }
+      });
+      await new Promise(r => server.listen(0, '127.0.0.1', r));
+      const webUrl = `http://127.0.0.1:${server.address().port}`;
+      app = await createApp({ databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
+      await app.listen(0, '127.0.0.1');
+      const apiUrl = await app.getUrl() + '/v1';
+      if (!(await fetch(apiUrl + '/ready')).ok) throw Error('API readiness failed');
+      execFileSync('npm', ['exec','-w','apps/mobile','--','expo','export','--clear','--platform','web','--output-dir',directory], { stdio: 'pipe', env: { ...process.env, CI: '1', EXPO_NO_TELEMETRY: '1', EXPO_PUBLIC_API_URL: apiUrl } });
+      await use({ webUrl, apiUrl, pool, app, logs });
+    } finally {
+      try { await testInfo.attach('api-log.jsonl', { body: logs.join(''), contentType: 'application/x-ndjson' }); }
+      finally {
+        try { await app?.close(); } finally {
+          try { await new Promise(r => server ? server.close(r) : r()); } finally {
+            try { await pool.end(); } finally {
+              try { if (created) await admin.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`); } finally { await admin.end(); await rm(directory, { recursive: true, force: true }); }
+            }
+          }
+        }
+      }
+    }
+  },
+});
+export { expect } from '@playwright/test';

@@ -1,4 +1,4 @@
-# Template only: place at .github/workflows/foundation.yml after repository-root decision.
+# Historical foundation template. Current quality definition: .github/workflows/quality.yml (DOC-071).
 name: Foundation
 on: [push, pull_request]
 permissions:

@@ -1,10 +1,14 @@
 # DOC-064 — Prompt bàn giao triển khai cho Codex
 
-Phiên bản 1.1 · 28/09/2026 · Dự án **Dịch vụ quanh bạn**.
+Phiên bản 1.3 · 28/09/2026 · Dự án **Dịch vụ quanh bạn**.
 
 Tài liệu này là hướng dẫn cho phiên triển khai tiếp theo. Việc tạo tài liệu chưa khởi chạy triển khai. Khi chủ dự án yêu cầu Codex làm theo tài liệu này, phạm vi thực hiện là **Đợt 1** bên dưới; không tự mở toàn bộ roadmap.
 
 > Cập nhật triển khai 28/09/2026: Đợt 1 đã được kích hoạt. Đọc [DOC-065](../implementation/dot-1.md) và [ADR-001](../implementation/ADR-001-foundation.md) để tiếp tục từ hiện trạng, không dựng lại hoặc reset dữ liệu. Các mốc baseline bên dưới giữ để đối chiếu; native/remote CI chưa nghiệm thu.
+
+> Cập nhật STRUCTURE-01: khung code đã được tổ chức theo [DOC-070](../implementation/project-structure.md). Log/test [phương án A](../specs/2026-09-28-logging-testing-design.md) đã duyệt, là bước tiếp theo sau khung. Các mục hiện trạng bàn giao ban đầu bên dưới là baseline lịch sử; đọc DOC-065/070 trước khi tiếp tục. Repo hiện là Git riêng đã push; đợt cấu trúc này chưa commit/push mới.
+
+> Cập nhật LOGTEST-01: phương án A đã triển khai/kiểm local, đọc [DOC-071](../implementation/logging-testing.md). Không dựng lại logger/test. Native thiếu môi trường, quality workflow chưa push/run; chưa production/tiền thật. Các con trỏ baseline trước giữ để đối chiếu.
 
 ## Cách chủ dự án sử dụng
 

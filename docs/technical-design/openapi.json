@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Dịch vụ quanh bạn — API thiết kế",
-    "version": "0.1.1",
-    "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật."
+    "version": "0.1.2",
+    "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local."
   },
   "servers": [
     {
@@ -2065,6 +2065,16 @@
               "default": 20
             },
             "description": "Giới hạn kỹ thuật đề xuất, không giới hạn nghiệp vụ."
+          },
+          {
+            "name": "X-Client-Request-Id",
+            "in": "header",
+            "required": false,
+            "description": "UUID tùy chọn để nối diagnostic; ID không hợp lệ bị bỏ qua, không thay server ID.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -2074,6 +2084,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/listCategoriesPage"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -2086,6 +2105,15 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           },
           "401": {
@@ -2094,6 +2122,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -2106,6 +2143,15 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           },
           "404": {
@@ -2114,6 +2160,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -2126,6 +2181,15 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           },
           "422": {
@@ -2134,6 +2198,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -2146,6 +2219,15 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           },
           "503": {
@@ -2154,6 +2236,34 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Lỗi nội bộ; không lộ message/stack/SQL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -2202,6 +2312,16 @@
               "default": 20
             },
             "description": "Giới hạn kỹ thuật đề xuất, không giới hạn nghiệp vụ."
+          },
+          {
+            "name": "X-Client-Request-Id",
+            "in": "header",
+            "required": false,
+            "description": "UUID tùy chọn để nối diagnostic; ID không hợp lệ bị bỏ qua, không thay server ID.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -2211,6 +2331,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/listSkillsPage"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -2223,6 +2352,15 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           },
           "401": {
@@ -2231,6 +2369,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -2243,6 +2390,15 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           },
           "404": {
@@ -2251,6 +2407,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -2263,6 +2428,15 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           },
           "422": {
@@ -2271,6 +2445,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -2283,6 +2466,15 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           },
           "503": {
@@ -2291,6 +2483,34 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Lỗi nội bộ; không lộ message/stack/SQL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -15577,6 +15797,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           },
           "503": {
@@ -15587,9 +15816,49 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Lỗi nội bộ; không lộ message/stack/SQL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "X-Client-Request-Id",
+            "in": "header",
+            "required": false,
+            "description": "UUID tùy chọn để nối diagnostic; ID không hợp lệ bị bỏ qua, không thay server ID.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
       }
     },
     "/ready": {
@@ -15616,6 +15885,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           },
           "503": {
@@ -15626,9 +15904,49 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Lỗi nội bộ; không lộ message/stack/SQL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "UUID do server sinh; bằng correlation_id khi lỗi. Không dùng để xác thực.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "X-Client-Request-Id",
+            "in": "header",
+            "required": false,
+            "description": "UUID tùy chọn để nối diagnostic; ID không hợp lệ bị bỏ qua, không thay server ID.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
       }
     }
   },
@@ -15708,7 +16026,7 @@
         "properties": {
           "code": {
             "type": "string",
-            "description": "Mã ổn định, không dùng message làm logic"
+            "description": "Mã ổn định. Endpoint đã triển khai: VALIDATION (400), NOT_FOUND (404), INTERNAL (500), SERVICE_UNAVAILABLE (503). Không dùng message làm logic."
           },
           "message": {
             "type": "string",
@@ -15716,7 +16034,8 @@
           },
           "correlation_id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "Bằng header X-Request-Id do server sinh cho request."
           },
           "retryable": {
             "type": "boolean"

@@ -127,25 +127,21 @@
     "checks": "Public read; schema/error/input/cursor/filter active ancestors; evidence DOC-065",
     "scenario_ids": [
       "QA-056",
-      "QA-057",
-      "QA-058",
-      "QA-059",
-      "QA-060"
+      "QA-061",
+      "QA-062",
+      "QA-065",
+      "QA-066"
     ],
-    "status": "Contract/integration/web đạt local; native chưa kiểm"
+    "status": "Đã kiểm local Đợt1 + LOGTEST-01; native/remoteCI chưa nghiệm thu"
   },
   {
     "operation_id": "listSkills",
     "contract_case": "CT-listSkills",
     "checks": "Public read; schema/error/input/cursor/filter active ancestors; evidence DOC-065",
     "scenario_ids": [
-      "QA-056",
-      "QA-057",
-      "QA-058",
-      "QA-059",
-      "QA-060"
+      "QA-063"
     ],
-    "status": "Contract/integration/web đạt local; native chưa kiểm"
+    "status": "Đã kiểm local Đợt1 + LOGTEST-01; native/remoteCI chưa nghiệm thu"
   },
   {
     "operation_id": "searchPartners",
@@ -927,17 +923,15 @@
     "contract_case": "CT-liveness",
     "checks": "200 status; readiness503 khi DB không sẵn sàng; không lộ lỗi nội bộ",
     "scenario_ids": [
-      "QA-057"
+      "QA-064"
     ],
-    "status": "Đạt local 28/09/2026"
+    "status": "Đã kiểm local Đợt1 + LOGTEST-01; native/remoteCI chưa nghiệm thu"
   },
   {
     "operation_id": "readiness",
     "contract_case": "CT-readiness",
     "checks": "200 status; readiness503 khi DB không sẵn sàng; không lộ lỗi nội bộ",
-    "scenario_ids": [
-      "QA-057"
-    ],
-    "status": "Đạt local 28/09/2026"
+    "scenario_ids": [],
+    "status": "Đã kiểm local Đợt1 + LOGTEST-01; native/remoteCI chưa nghiệm thu"
   }
 ]

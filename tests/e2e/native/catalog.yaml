@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Điện nước"
+    timeout: 15000
+- tapOn: "Điện nước"
+- tapOn: "Dịch vụ điện nước"
+- assertVisible: "Sửa điện dân dụng"
+- tapOn: "Quay lại"
+- assertVisible: "Điện nước"
+- pressKey: Home
+- launchApp
+- assertVisible: "Điện nước"

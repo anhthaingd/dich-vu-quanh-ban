@@ -1,6 +1,6 @@
 # Kế hoạch QA, RTM và UAT
 
-Phiên bản 0.1.1 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
+Phiên bản 0.1.2 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
 
 ## Phân biệt thiết kế và kết quả chạy
 
@@ -121,3 +121,19 @@ Mẫu ghi kết quả: case_id, môi trường, build/commit, dữ liệu fixtur
 | QA-058 | Unit/UI | Đạt local 28/09/2026 |
 | QA-059 | E2E web | Đạt local 28/09/2026; không thay native |
 | QA-060 | E2E native | Bị chặn: chưa có simctl/adb/thiết bị |
+
+
+## LOGTEST-01 · 28/09/2026
+
+Phương án A đã triển khai và kiểm local; chi tiết vận hành/bằng chứng tại [DOC-071](../implementation/logging-testing.md). Native còn BLOCKED; `.github/workflows/quality.yml` đã chuẩn bị, chưa push/chạy remote CI.
+
+| Ca | Phạm vi | Kết quả |
+|---|---|---|
+| QA-061 | Log và correlation | Đạt local 28/09/2026 — DOC-071 |
+| QA-062 | Diagnostic mobile | Đạt local 28/09/2026 — DOC-071 |
+| QA-063 | DB isolation | Đạt local 28/09/2026 — DOC-071 |
+| QA-064 | Log output | Đạt local 28/09/2026 — DOC-071 |
+| QA-065 | Quality gates | Đạt local 28/09/2026 — DOC-071 |
+| QA-066 | Local concurrency | Đạt local 28/09/2026 — DOC-071 |
+
+API dùng Node test/c8; mobile Jest/RNTL; core ≥90% lines/85% branches, phần còn lại ≥80/70, không bỏ source chưa import. JUnit/HTML/JSON/LCOV và Playwright artifact ở coverage/test-results. Các ca QA001–055 ngoài lát này giữ trạng thái cũ.

@@ -146,7 +146,7 @@ Worker chạy lại không gửi một sự kiện nghiệp vụ hai lần. Push
 |Admin|POST /reports/{id}/complete-on-behalf|Fresh admin auth, reason, evidence refs, version; cùng hàm settle|
 |Ví|POST /topups; /payouts; /payouts/{id}/decision|Idempotency + proof + state guards; bank snapshot|
 |Chat / gọi|POST /conversations/direct; /messages; /calls/token|Participant/assignment check; client_message_id; token ngắn hạn|
-|Lỗi / retry|401/403; 409 VERSION_CONFLICT; 422 INVALID; 429; 503|Lỗi có code, correlation_id, retryable; không lộ dữ liệu; mạng lỗi tra key trước retry|
+|Lỗi / retry|401/403; 409 VERSION_CONFLICT; 422 INVALID; 429; 500 INTERNAL; 503 SERVICE_UNAVAILABLE|Lỗi có code, correlation_id, retryable; không lộ dữ liệu; mạng lỗi tra key trước retry|
 
 Idempotency phải lưu trong DB với actor + operation + key + request_hash + result/resource_id. Unique bảo vệ cả request đang cạnh tranh; retry cùng payload trả trạng thái đã commit, khác payload báo conflict. Key vận chuyển không thay ràng buộc nghiệp vụ invoice/bank_ref. Retry deadlock chỉ giới hạn số lần, cùng key, và phải chạy lại toàn transaction.
 

@@ -1,6 +1,6 @@
 # Thiết kế kỹ thuật chi tiết
 
-Phiên bản 0.1.1 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
+Phiên bản 0.1.2 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
 
 ## Đọc nhanh
 
@@ -22,3 +22,8 @@ Nguồn chuẩn nghiệp vụ: SRS v0.14, FR/NFR v0.16, UX v0.24, Q01/Q02/Q03 v�
 - Tiếp theo vẫn cần Design System/đặc tả field, runbook deploy/backup, runbook tài chính, lựa chọn tích hợp và dự toán.
 
 Nguồn triển khai và runbook: [DOC-065](../implementation/dot-1.md), [ADR-001](../implementation/ADR-001-foundation.md). ZIP hiện hành `technical-design-v0.1.1.zip`; `v0.1.zip` là bản lịch sử giữ nguyên.
+
+
+## LOGTEST-01 · 28/09/2026
+
+Phương án A đã triển khai và kiểm local; chi tiết vận hành/bằng chứng tại [DOC-071](../implementation/logging-testing.md). Native còn BLOCKED; `.github/workflows/quality.yml` đã chuẩn bị, chưa push/chạy remote CI.

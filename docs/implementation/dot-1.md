@@ -1,6 +1,6 @@
 # DOC-065 — Đợt 1: nền tảng và danh mục
 
-v1.2 · 28/09/2026 · Đã triển khai và kiểm local theo DOC-064. Còn kiểm native thiết bị/simulator và kích hoạt CI từ xa.
+v1.4 · 28/09/2026 · Đã triển khai và kiểm local theo DOC-064. Còn kiểm native thiết bị/simulator và kích hoạt CI từ xa.
 
 ## Baseline trước thay đổi
 
@@ -103,3 +103,22 @@ Trạng thái Drive và kiểm bảo toàn workbook được ghi trong `Dong bo`
 Chủ dự án yêu cầu push lên `https://github.com/anhthaingd/dich-vu-quanh-ban`. Đã tạo Git riêng tại gốc dự án, origin trỏ repo này, giữ nguyên Git cha. Chuyển symlink nội bộ sang tương đối, bảo toàn đích; bỏ qua tools/work local, `.env`, cache, build, Storybook output và báo cáo inspect tạm. Đã quét file dự kiến commit và nội dung ZIP, không phát hiện mẫu credential; `.env.example` chỉ có giá trị local mẫu.
 
 Đã kiểm repo private và trống, đăng nhập `anhthaingd` qua macOS Keychain, push commit nền tảng `1f070655aad0a0487b8d600e84554daa95b5465d` lên `origin/main` thành công. `main` theo dõi `origin/main`; không force-push. Lệnh sandbox trước đó không đọc được Keychain nên báo token invalid; chạy qua quyền truy cập Keychain đã xác minh đăng nhập hoạt động. CI template chưa được kích hoạt; không deployment.
+
+
+## Khung cấu trúc · STRUCTURE-01 · 28/09/2026
+
+Chủ dự án duyệt log/test phương án A, yêu cầu hoàn thiện khung trước khi tiếp tục chức năng. [DOC-070](project-structure.md) là bản đồ code hiện hành và quy tắc mở rộng.
+
+- Mobile: `index.ts` → `src/app/App.tsx` → `src/features/catalog/{api,models,screens}`. Có màn danh mục thật; các feature khác chỉ giữ chỗ.
+- API: `src/main.ts` → `src/bootstrap.ts` → `src/app.module.ts`; `modules/catalog`, `health`, `database`, `common/http`, `config` tách trách nhiệm. Migration/seed SQL và contract HTTP giữ nguyên.
+- Backend tests ở `services/api/test/unit` và `test/integration`; mobile tests đặt cạnh feature; smoke ở `tests/e2e/web/catalog.smoke.mjs`. Các lệnh npm phía trên vẫn dùng được.
+- Smoke hiện ghi ảnh mới vào `test-results/web/` (Git bỏ qua); `docs/implementation/evidence` là ảnh bàn giao Đợt 1 giữ nguyên, không bị test ghi đè.
+- Build helpers ở `scripts/build`; build API xóa output cũ trước biên dịch, giữ migration/seed trong dist đúng đường dẫn runtime.
+- Web/admin, shared packages, logger, native E2E và các miền chưa code chỉ có `.gitkeep`. Chưa kích hoạt CI, chưa triển khai bộ log/test A hoặc nghiệp vụ mới.
+
+Kiểm chứng sau tái cấu trúc được ghi trong DOC-070 và sổ quản lý. Các số/bằng chứng prototype trong bảng Đợt 1 là lần kiểm trước; đợt cấu trúc không sửa prototype.
+
+
+## LOGTEST-01 — phương án A hiện hành
+
+Đã triển khai logger và bộ kiểm trên khung STRUCTURE-01. Xem [DOC-071](logging-testing.md) cho lệnh chạy, xuất log, coverage/report và bằng chứng âm. Header request ID/lỗi500/503 theo OpenAPI0.1.2; native vẫn BLOCKED, workflow quality đã có tại `.github/workflows/quality.yml` nhưng chưa push/chạy GitHub. Các đoạn nói logger/test mới chưa triển khai ở mốc STRUCTURE-01 là lịch sử, được cập nhật bằng mục này. Lệnh `test:smoke` hiện dùng Playwright Test và ghi report/trace khi fail; không dùng smoke script cũ. Số test/bằng chứng mới ở DOC-071, không cộng thành kết quả của Đợt1 ban đầu.

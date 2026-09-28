@@ -184,7 +184,7 @@
     "auth": "Public",
     "request": null,
     "response": "listCategoriesPage",
-    "rule": "Đợt 1 local: lọc active và toàn bộ tổ tiên; phân trang HMAC cursor, limit20/max100; input sai/lặp/lạ400. parent_id=root|UUID; trả parent_id."
+    "rule": "Đợt 1 local: lọc active và toàn bộ tổ tiên; phân trang HMAC cursor, limit20/max100; input sai/lặp/lạ400. parent_id=root|UUID; trả parent_id. LOGTEST-01: X-Request-Id trả mọi response; X-Client-Request-Id UUID tùy chọn; lỗi nội bộ500, lỗi DB unavailable/timeout503; lỗi không chứa dữ liệu thô."
   },
   {
     "id": "listSkills",
@@ -195,7 +195,7 @@
     "auth": "Public",
     "request": null,
     "response": "listSkillsPage",
-    "rule": "Đợt 1 local: lọc active và toàn bộ tổ tiên; phân trang HMAC cursor, limit20/max100; input sai/lặp/lạ400. category_id gồm cả con; N–N không nhân đôi, chỉ trả category_ids hoạt động."
+    "rule": "Đợt 1 local: lọc active và toàn bộ tổ tiên; phân trang HMAC cursor, limit20/max100; input sai/lặp/lạ400. category_id gồm cả con; N–N không nhân đôi, chỉ trả category_ids hoạt động. LOGTEST-01: X-Request-Id trả mọi response; X-Client-Request-Id UUID tùy chọn; lỗi nội bộ500, lỗi DB unavailable/timeout503; lỗi không chứa dữ liệu thô."
   },
   {
     "id": "searchPartners",
@@ -1284,7 +1284,7 @@
     "auth": "Public",
     "request": "",
     "response": "Health",
-    "rule": "Đợt 1 local; ready kiểm DB/PostGIS/bảng, lỗi503 có cấu trúc."
+    "rule": "Đợt 1 local; ready kiểm DB/PostGIS/bảng, lỗi503 có cấu trúc. LOGTEST-01: X-Request-Id trả mọi response; X-Client-Request-Id UUID tùy chọn; lỗi nội bộ500, lỗi DB unavailable/timeout503; lỗi không chứa dữ liệu thô."
   },
   {
     "id": "readiness",
@@ -1295,6 +1295,6 @@
     "auth": "Public",
     "request": "",
     "response": "Ready",
-    "rule": "Đợt 1 local; ready kiểm DB/PostGIS/bảng, lỗi503 có cấu trúc."
+    "rule": "Đợt 1 local; ready kiểm DB/PostGIS/bảng, lỗi503 có cấu trúc. LOGTEST-01: X-Request-Id trả mọi response; X-Client-Request-Id UUID tùy chọn; lỗi nội bộ500, lỗi DB unavailable/timeout503; lỗi không chứa dữ liệu thô."
   }
 ]

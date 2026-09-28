@@ -1783,7 +1783,7 @@
           ],
           [
             "Lỗi / retry",
-            "401/403; 409 VERSION_CONFLICT; 422 INVALID; 429; 503",
+            "401/403; 409 VERSION_CONFLICT; 422 INVALID; 429; 500 INTERNAL; 503 SERVICE_UNAVAILABLE",
             "Lỗi có code, correlation_id, retryable; không lộ dữ liệu; mạng lỗi tra key trước retry"
           ]
         ]

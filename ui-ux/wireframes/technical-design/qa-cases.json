@@ -717,6 +717,78 @@
     "expected": "Danh mục thật và trạng thái mạng trên native",
     "level": "E2E native",
     "priority": "P0",
-    "status": "Bị chặn: chưa có simctl/adb/thiết bị"
+    "status": "BLOCKED: flow/preflight Maestro đã có; thiếu SDK/thiết bị, Maestro và app binary"
+  },
+  {
+    "id": "QA-061",
+    "group": "Log và correlation",
+    "requirement": "LOGTEST-DESIGN-01",
+    "operation": "listCategories",
+    "setup": "HTTP song song, header/query canary, fault handler",
+    "steps": "Gửi 25 request và hủy một request đang chạy",
+    "expected": "ID riêng; header bằng body/log; đúng một terminal event; không lộ canary; 500 khác503",
+    "level": "Integration",
+    "priority": "P0",
+    "status": "Đạt local 28/09/2026 — DOC-071"
+  },
+  {
+    "id": "QA-062",
+    "group": "Diagnostic mobile",
+    "requirement": "LOGTEST-DESIGN-01",
+    "operation": "listCategories",
+    "setup": "Jest fake timers và transport chậm/sai",
+    "steps": "Timeout/cancel/stale/schema/cursor; xuất hơn200 event",
+    "expected": "Typed errors giữ ID; request cũ không ghi đè; buffer200, record<2KB, không PII",
+    "level": "Unit/component",
+    "priority": "P0",
+    "status": "Đạt local 28/09/2026 — DOC-071"
+  },
+  {
+    "id": "QA-063",
+    "group": "DB isolation",
+    "requirement": "LOGTEST-DESIGN-01",
+    "operation": "listSkills",
+    "setup": "Schema riêng từng test; migration checksum/seed fixture lỗi",
+    "steps": "Rerun, đổi checksum, seed lỗi giữa transaction",
+    "expected": "Không nhiễm ca khác; rollback đầy đủ; giữ dữ liệu chỉnh sửa",
+    "level": "Integration",
+    "priority": "P0",
+    "status": "Đạt local 28/09/2026 — DOC-071"
+  },
+  {
+    "id": "QA-064",
+    "group": "Log output",
+    "requirement": "LOGTEST-DESIGN-01",
+    "operation": "liveness",
+    "setup": "Temp file, pino-roll, diagnostic JSONL",
+    "steps": "Xoay file, flush/close, lỗi ghi, export5MB, filterID/time",
+    "expected": "2 file cũ+active mỗi process; export giới hạn, không overwrite; lỗi không treo",
+    "level": "Unit/tooling",
+    "priority": "P0",
+    "status": "Đạt local 28/09/2026 — DOC-071"
+  },
+  {
+    "id": "QA-065",
+    "group": "Quality gates",
+    "requirement": "LOGTEST-DESIGN-01",
+    "operation": "listCategories",
+    "setup": "Coverage tất cả source và Playwright Test",
+    "steps": "Thêm source chưa import để gate fail; ca Playwright cố ý fail",
+    "expected": "Nonzero exit, source chưa import được tính; JUnit/HTML/trace/video/screenshot có thật",
+    "level": "Tooling/E2E",
+    "priority": "P0",
+    "status": "Đạt local 28/09/2026 — DOC-071"
+  },
+  {
+    "id": "QA-066",
+    "group": "Local concurrency",
+    "requirement": "LOGTEST-DESIGN-01",
+    "operation": "listCategories",
+    "setup": "20 categories,20 skills,21 links;20 workers",
+    "steps": "200 HTTP request local",
+    "expected": "200 ID và completion duy nhất;0 lỗi;pool không còn waiting;không suy ra SLA",
+    "level": "Load local",
+    "priority": "P0",
+    "status": "Đạt local 28/09/2026 — DOC-071"
   }
 ]

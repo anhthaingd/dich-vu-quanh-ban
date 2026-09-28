@@ -1,32 +1,85 @@
 # Dịch vụ quanh bạn
 
-Thư mục dự án chính từ 23/09/2026. React + Storybook đã được chủ dự án chọn cho công việc thiết kế UI; bản hiện tại vẫn là prototype dữ liệu giả.
+Mobile Expo/React Native + API NestJS + PostgreSQL/PostGIS. **Đã chạy được luồng ngành → nhóm → kỹ năng với DB thật.** Những chức năng khác đang là khung giữ chỗ. Website/admin chưa khởi tạo ứng dụng.
 
-| Vị trí | Nội dung |
-|---|---|
-| `ui-ux/prototype` | Mã React + Storybook phục vụ thiết kế, chưa phải ứng dụng production |
-| `ui-ux/research` | Nghiên cứu giao diện, hướng thiết kế, brainstorm banner/voucher |
-| `ui-ux/specs` | Đặc tả và phạm vi UX hiện hành |
-| `ui-ux/wireframes` | Prototype nghiệp vụ và các trang hồ sơ đang phục vụ ở cổng 8765 |
-| `ui-ux/archive` | Thử nghiệm Figma, Penpot và bằng chứng UX lịch sử |
-| `ui-ux/exports` | Gói xuất thiết kế theo phiên bản |
-| `docs/project-control/So-quan-ly-tai-lieu.xlsx` | Sổ quản lý chính cho toàn bộ dự án |
-| `docs/project-docs` | Hồ sơ chung, user flow, screen flow, sơ đồ, kiến trúc |
-| `docs/technical-design` | Thiết kế dữ liệu, API, QA, backlog |
-| `apps/mobile` | App Expo/React Native Đợt 1: danh mục từ API thật |
-| `apps/web` | Dành cho web khách/partner; hiện chưa có mã sản phẩm |
-| `apps/admin` | Dành cho web quản trị; hiện chưa có mã sản phẩm |
-| `services/api` | NestJS: danh mục PostgreSQL/PostGIS, migration/seed/test |
-| `packages` | Dành cho thành phần dùng chung khi có nhu cầu thực tế |
-| `infra` | Dành cho cấu hình môi trường, triển khai và hạ tầng |
-| `tools` | Công cụ tạo tài liệu và bằng chứng lịch sử |
+DOC-054 · Cấu trúc v0.3 · 28/09/2026.
 
-Chạy từ `ui-ux/prototype`: `npm ci`, `npm run dev` (5178), `npm run storybook` (6006).
-Build: `npm run build`, `npm run build-storybook`.
+## Bắt đầu ở đâu
 
-DOC-054 · Cấu trúc v0.1 ngày 23/09/2026. Tại mốc cấu trúc v0.1, thư mục sản phẩm chỉ giữ chỗ. Đợt 1 ngày 28/09 đã khởi tạo mobile/API; xem trạng thái hiện hành bên dưới. Không cần thêm thư mục `frontend`: mobile, web và admin đã là ba ứng dụng giao diện. `services/api` là backend chung. Chỉ tách worker khi có nhu cầu và quyết định kiến trúc tương ứng. Sau này tokens có thể dùng chung qua `packages`, nhưng component web không tự chạy được trên React Native.
+- **Hiểu code và chỗ đặt file:** [Sơ đồ cấu trúc DOC-070](docs/implementation/project-structure.md).
+- **Cài/chạy/test:** [Runbook Đợt 1 DOC-065](docs/implementation/dot-1.md).
+- **Quyết định kỹ thuật:** [ADR-001](docs/implementation/ADR-001-foundation.md).
+- **Log và kiểm thử:** [Runbook phương án A đã triển khai local](docs/implementation/logging-testing.md).
+- **Đặc tả và quyết định nghiệp vụ:** [Sổ quản lý tài liệu](docs/project-control/So-quan-ly-tai-lieu.xlsx), đọc trước khi đổi chức năng.
 
-Không đổi repository hay cấu hình của các dự án khác. `outputs → docs`, `work → tools`, `apps/ui` và những đường dẫn thiết kế cũ trong docs là symlink tương thích. Ở workspace Codex cũ, outputs/work cũng dẫn về đây. Chỉ sửa đường dẫn chính trong bảng trên, không tạo bộ tài liệu thứ hai. Symlink có thể bỏ sau khi các công cụ lịch sử được chuyển hết; không chạy lại builder cũ để ghi đè nguồn hiện hành.
+## Bản đồ repository
+
+```text
+apps/
+  mobile/             Expo, ứng dụng sản phẩm Android/iOS
+  web/                Khung website responsive, triển khai sau
+  admin/              Khung giao diện quản trị, triển khai sau
+services/
+  api/                NestJS, một backend chia module nghiệp vụ
+packages/             Khung contracts, API client, domain, design tokens
+```
+
+```text
+tests/e2e/web/         Smoke xuyên mobile web → API → PostgreSQL
+tests/e2e/native/      Maestro flow/preflight; native còn BLOCKED
+tests/performance/     Kiểm thử tải local danh mục
+scripts/              Build, quality gates, xuất diagnostic
+infra/                Docker Compose, CI template, khung observability
+.github/workflows/    Workflow quality đã có; chưa push/run remote
+docs/                 Đặc tả, kiến trúc, runbook, sổ quản lý
+ui-ux/                Prototype React/Storybook và tài liệu thiết kế
+tools/                Công cụ tài liệu local, không thuộc Git
+```
+
+Mobile đi từ `apps/mobile/index.ts` → `src/app/App.tsx` → `src/features/catalog/`. API đi từ `services/api/src/main.ts` → `bootstrap.ts` → `app.module.ts` → `modules/catalog/`. Các thư mục chỉ có `.gitkeep` **chưa có triển khai**. Danh sách trách nhiệm và quy tắc mở rộng ở DOC-070.
+
+## Chạy local
+
+Dùng Node/npm đã khóa trong `.nvmrc`/`package.json`, Docker đang chạy:
+
+```sh
+npm ci
+cp -n services/api/.env.example services/api/.env
+cp -n apps/mobile/.env.example apps/mobile/.env
+npm run db:up
+npm run db:migrate
+npm run db:seed
+npm run api
+# Terminal khác:
+npm run mobile
+# Hoặc: npm run mobile:web
+```
+
+```sh
+npm run lint
+npm run typecheck
+npm run test:tooling
+npm test
+docker compose -f infra/compose.yaml --profile test up -d --wait db-test
+npm run test:integration
+npm run test:coverage
+npm run build
+npx playwright install chromium
+npm run test:smoke
+```
+
+Playwright ghi HTML/JUnit/JSON và giữ trace/video/screenshot khi fail trong `test-results/web/` (không track Git). Ảnh bàn giao cũ trong docs giữ nguyên. Native binary/thiết bị và CI từ xa chưa được nghiệm thu; bundle build không thay cho chạy native. Không production hoặc tiền thật.
+
+## Thiết kế và nguồn chuẩn
+
+`ui-ux/prototype` là bản thử dữ liệu mô phỏng, có package-lock riêng, không nằm trong npm workspace sản phẩm. Chạy tại đó: `npm ci`, `npm run dev` (5178), `npm run storybook` (6006); build bằng `npm run build` và `npm run build-storybook`. Đặc tả ở `ui-ux/specs`, wireframe ở `ui-ux/wireframes`, nghiên cứu ở `ui-ux/research`, lịch sử ở `ui-ux/archive`, gói xuất ở `ui-ux/exports`.
+
+Nguồn tài liệu chung ở `docs/project-docs`, thiết kế dữ liệu/API/QA ở `docs/technical-design`. `outputs → docs`, `work → tools`, `apps/ui` và các alias trong docs là symlink tương thích; chỉ sửa đường dẫn chính. Không chạy builder cũ để ghi đè chỉnh sửa hiện hành. Git riêng của dự án trỏ `anhthaingd/dich-vu-quanh-ban`; không sửa Git cha. `tools/`, `work`, `.env`, cache, build, log và báo cáo tạm không vào Git.
+
+Banner chiến dịch, quảng cáo partner và voucher ngoài phase đầu theo PROMO-02; point hiện hành vẫn trong phạm vi. Thư mục giữ chỗ không phê duyệt nghiệp vụ pending hoặc kích hoạt tích hợp thật.
+
+<details>
+<summary>Lịch sử thiết kế UI — các mốc và liên kết đã bàn giao</summary>
 
 UI mới đã chọn hướng Dịch vụ khu phố: [Hướng thiết kế v0.2](ui-ux/research/ui-direction-v0.2.md). React đã dựng v0.5 với luồng khách hàng và partner/doanh nghiệp; sơ đồ bản đồ và dữ liệu vẫn minh họa. Sổ quản lý giữ trạng thái phê duyệt riêng với trạng thái cập nhật.
 
@@ -59,21 +112,5 @@ React v0.14, UI-UX-v0.18.zip, registry v1.26. Đã bổ sung quản trị tài k
 Bản hiện hành React v0.15 / UI-UX-v0.19.zip. Đã sửa kiểm trạng thái lúc gửi thuê, mở chat đúng người từ công việc, thông báo đến nhân viên phụ trách và khôi phục giá trị point khi mở hóa đơn từ thông báo. [Ma trận kiểm chứng và phần chưa nghiệm thu](ui-ux/specs/flow-review.md). Không đổi nghiệp vụ đã chốt; 49 tests, 52 stories.
 
 
-## Sản phẩm Đợt 1 · 28/09/2026
 
-Đã có Expo/React Native → NestJS → PostgreSQL/PostGIS local cho danh mục 10 ngành. [Cách cài, chạy, test và kết quả](docs/implementation/dot-1.md) · [ADR kỹ thuật](docs/implementation/ADR-001-foundation.md).
-
-```sh
-npm ci
-cp -n services/api/.env.example services/api/.env
-cp -n apps/mobile/.env.example apps/mobile/.env
-npm run db:up
-npm run db:migrate
-npm run db:seed
-npm run api
-# Terminal khác: npm run mobile hoặc npm run mobile:web
-```
-
-Prototype có lockfile riêng và vẫn dùng để review thiết kế. Chưa thử native simulator/thiết bị, chưa kích hoạt CI từ xa, chưa production/tiền thật. Repository đã được chủ dự án chỉ định: https://github.com/anhthaingd/dich-vu-quanh-ban. Git riêng được khởi tạo tại thư mục dự án; không sửa Git cha. Template CI vẫn ở `infra/ci`, chưa kích hoạt workflow từ xa.
-
-Lưu ý khi clone: `tools/` và symlink `work` là dữ liệu làm việc local, không đưa vào Git. Cache, `.env`, bản build và báo cáo tạm cũng được bỏ qua; `.env.example`, mã sản phẩm, prototype và hồ sơ thiết kế được giữ. Symlink tương thích trong Git dùng đường dẫn tương đối.
+</details>
