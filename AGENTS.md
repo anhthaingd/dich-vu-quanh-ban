@@ -2,7 +2,7 @@
 
 Theo yêu cầu trực tiếp của chủ dự án ngày 22/09/2026:
 
-- Điểm vào quản lý tài liệu là `docs/project-control/So-quan-ly-tai-lieu.xlsx`. Đọc bản Excel mới nhất trước mỗi thay đổi; không ghi đè các chỉnh sửa của người dùng bằng dữ liệu builder cũ. Thiết kế nằm trong `ui-ux`, ứng dụng sản phẩm dành chỗ trong `apps`, backend trong `services/api`. `outputs`/`work` và các đường dẫn thiết kế cũ chỉ là symlink tương thích; xem README dự án để dùng đường dẫn chính.
+- Điểm vào quản lý tài liệu là `docs/project-control/So-quan-ly-tai-lieu.xlsx`. Đọc bản Excel mới nhất trước mỗi thay đổi; không ghi đè các chỉnh sửa của người dùng bằng dữ liệu builder cũ. Thiết kế nằm trong `ui-ux`, ứng dụng sản phẩm dành chỗ trong `apps`, backend trong `services/api`. Đã bỏ symlink `outputs` theo yêu cầu chủ dự án ngày 29/09/2026 (PATH-01); dùng trực tiếp `docs/`, không tạo lại `outputs`. `work` và các đường dẫn thiết kế cũ khác còn là symlink tương thích; xem README dự án để dùng đường dẫn chính.
 - Bản Excel trên Drive có ID `18eWx9ObcWbpRNSIsxKs7YTwBpR-ZPjQq`, nằm trong thư mục dự án `1msYKneD2-9yZMUXU0qlWQjzrCVE9gcO7`. Trước cập nhật kiểm tra bản nào mới hơn; bảo toàn chỉnh sửa của người dùng và cập nhật cùng ID, không tạo các bản sổ quản lý song song.
 - Tra sheet `Anh huong` để lập danh sách tài liệu bị ảnh hưởng; bảng này là điểm bắt đầu, vẫn tìm kiếm chéo nội dung để phát hiện phụ thuộc chưa được ghi.
 - Quyết định mới nhất đã được chủ dự án chốt có ưu tiên cao hơn tài liệu cũ và hành vi prototype. Phân biệt rõ Đã chốt, Đề xuất, Pending và Chưa xác định. Không biến đề xuất thành yêu cầu đã duyệt.

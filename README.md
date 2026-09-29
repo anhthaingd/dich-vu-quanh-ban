@@ -2,7 +2,7 @@
 
 Mobile Expo/React Native + API NestJS + PostgreSQL/PostGIS. **Đã chạy được luồng ngành → nhóm → kỹ năng với DB thật.** Những chức năng khác đang là khung giữ chỗ. Website/admin chưa khởi tạo ứng dụng.
 
-DOC-054 · Cấu trúc v0.3 · 28/09/2026.
+DOC-054 · Cấu trúc v0.4 · 29/09/2026.
 
 ## Bắt đầu ở đâu
 
@@ -74,7 +74,7 @@ Playwright ghi HTML/JUnit/JSON và giữ trace/video/screenshot khi fail trong `
 
 `ui-ux/prototype` là bản thử dữ liệu mô phỏng, có package-lock riêng, không nằm trong npm workspace sản phẩm. Chạy tại đó: `npm ci`, `npm run dev` (5178), `npm run storybook` (6006); build bằng `npm run build` và `npm run build-storybook`. Đặc tả ở `ui-ux/specs`, wireframe ở `ui-ux/wireframes`, nghiên cứu ở `ui-ux/research`, lịch sử ở `ui-ux/archive`, gói xuất ở `ui-ux/exports`.
 
-Nguồn tài liệu chung ở `docs/project-docs`, thiết kế dữ liệu/API/QA ở `docs/technical-design`. `outputs → docs`, `work → tools`, `apps/ui` và các alias trong docs là symlink tương thích; chỉ sửa đường dẫn chính. Không chạy builder cũ để ghi đè chỉnh sửa hiện hành. Git riêng của dự án trỏ `anhthaingd/dich-vu-quanh-ban`; không sửa Git cha. `tools/`, `work`, `.env`, cache, build, log và báo cáo tạm không vào Git.
+Nguồn tài liệu chung ở `docs/project-docs`, thiết kế dữ liệu/API/QA ở `docs/technical-design`. Đã bỏ lối tắt `outputs` theo PATH-01 ngày 29/09/2026; mở tài liệu trực tiếp trong `docs/`. `work → tools`, `apps/ui → ../ui-ux/prototype` và các alias trong docs còn được giữ tương thích; chỉ sửa đường dẫn chính. Không chạy builder cũ để ghi đè chỉnh sửa hiện hành. Git riêng của dự án trỏ `anhthaingd/dich-vu-quanh-ban`; không sửa Git cha. `tools/`, `work`, `.env`, cache, build, log và báo cáo tạm không vào Git.
 
 Banner chiến dịch, quảng cáo partner và voucher ngoài phase đầu theo PROMO-02; point hiện hành vẫn trong phạm vi. Thư mục giữ chỗ không phê duyệt nghiệp vụ pending hoặc kích hoạt tích hợp thật.
 

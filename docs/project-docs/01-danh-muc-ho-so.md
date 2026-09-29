@@ -79,4 +79,4 @@ Nguồn ưu tiên: quyết định mới nhất của chủ dự án → đặc 
 
 Đã có baseline BRD/PRD/FR-NFR/SRS/UX, các luồng và wireframe. Q03 đã chốt: Expo/React Native, React, NestJS, PostgreSQL/PostGIS. Đã soạn thiết kế kỹ thuật v0.1 gồm ERD vật lý/DDL tham chiếu, OpenAPI/realtime, kế hoạch QA/RTM/UAT và backlog; thiết kế ngoài Đợt 1 vẫn chờ review; backend danh mục local đã triển khai 28/09 theo DOC-065, chưa native/remote CI/production. Còn Design System/đặc tả field, runbook CI/CD/backup, runbook Q02 và tích hợp/dự toán. Q04 chưa có ngân sách; không tự chọn gói trả phí.
 
-[Mở bản trực quan](http://127.0.0.1:8765/technical-design.html#overview). Nguồn ở outputs/technical-design; sổ Excel liên kết PLAN-001/002/003/008.
+[Mở bản trực quan](http://127.0.0.1:8765/technical-design.html#overview). Nguồn ở `docs/technical-design` (PATH-01 · 29/09/2026); sổ Excel liên kết PLAN-001/002/003/008.

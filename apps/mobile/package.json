@@ -5,6 +5,11 @@
   "main": "index.ts",
   "scripts": {
     "start": "expo start --localhost",
+    "android": "EXPO_PUBLIC_API_URL=http://10.0.2.2:3100/v1 expo run:android --device",
+    "ios": "EXPO_PUBLIC_API_URL=http://127.0.0.1:3100/v1 expo run:ios --device",
+    "start:android": "EXPO_PUBLIC_API_URL=http://10.0.2.2:3100/v1 expo start --dev-client --localhost --android",
+    "start:ios": "EXPO_PUBLIC_API_URL=http://127.0.0.1:3100/v1 expo start --dev-client --localhost --ios",
+    "native:generate": "expo prebuild --no-install",
     "web": "expo start --web --localhost",
     "typecheck": "tsc --noEmit",
     "test": "jest --runInBand",
@@ -12,8 +17,9 @@
     "test:coverage": "jest --runInBand --coverage && node ../../scripts/test/coverage-gate.mjs src ../../coverage/mobile/coverage-final.json"
   },
   "dependencies": {
-    "expo": "57.0.25",
+    "expo": "57.0.26",
     "expo-crypto": "57.0.3",
+    "expo-dev-client": "57.0.19",
     "expo-status-bar": "57.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -22,6 +28,7 @@
     "react-native-web": "0.21.2"
   },
   "devDependencies": {
+    "@expo/plist": "0.8.1",
     "@testing-library/react-native": "13.3.3",
     "@types/jest": "29.5.14",
     "@types/react": "19.2.18",

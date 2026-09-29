@@ -1,6 +1,6 @@
 # DOC-064 — Prompt bàn giao triển khai cho Codex
 
-Phiên bản 1.3 · 28/09/2026 · Dự án **Dịch vụ quanh bạn**.
+Phiên bản 1.4 · 29/09/2026 · Dự án **Dịch vụ quanh bạn**.
 
 Tài liệu này là hướng dẫn cho phiên triển khai tiếp theo. Việc tạo tài liệu chưa khởi chạy triển khai. Khi chủ dự án yêu cầu Codex làm theo tài liệu này, phạm vi thực hiện là **Đợt 1** bên dưới; không tự mở toàn bộ roadmap.
 
@@ -42,7 +42,7 @@ Quyết định mới nhất của chủ dự án ưu tiên hơn tài liệu cũ
 - Prototype dùng dữ liệu trong bộ nhớ, vai trò/OTP giả, bản đồ và liên lạc mô phỏng. Nó không có backend, xác thực thật hoặc thanh toán thật.
 - `apps/mobile`, `apps/web`, `apps/admin`, `services/api`, `packages` đang dành chỗ; không giả định đã có ứng dụng sản phẩm.
 - Git root quan sát lúc bàn giao là `/Users/j2866/Documents/anhthai`, bao gồm dự án khác. Chạy kiểm tra Git trước khi sửa cấu hình repository. Không stage toàn bộ thư mục cha, không chuyển/xóa `.git`, không tự tạo branch/commit/push. Nếu CI/repository độc lập cần quyết định, chuẩn bị cấu hình trong dự án và hỏi một lần; không tự sửa repository cha.
-- Có symlink tương thích `outputs`, `work`, `apps/ui`; một số nguồn kỹ thuật có bản phục vụ localhost. Dùng đường dẫn chính, kiểm realpath và nguồn trước khi sửa. Không tạo hai nguồn nội dung độc lập hoặc quét đệ quy symlink sang dự án khác.
+- PATH-01 (29/09/2026): đã bỏ `outputs`, dùng `docs/`; còn symlink `work` và `apps/ui` (trỏ trực tiếp `ui-ux/prototype`); một số nguồn kỹ thuật có bản phục vụ localhost. Dùng đường dẫn chính, kiểm realpath và nguồn trước khi sửa. Không tạo hai nguồn nội dung độc lập hoặc quét đệ quy symlink sang dự án khác.
 - Không làm hỏng Storybook, prototype nghiệp vụ, file Excel hoặc tài liệu đang dùng. Không chạy lại builder cũ để ghi đè chỉnh sửa hiện hành.
 
 ### 3. Các hướng đã chốt

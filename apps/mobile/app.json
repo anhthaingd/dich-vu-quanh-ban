@@ -1,1 +1,22 @@
-{"expo":{"name":"Dịch vụ quanh bạn","slug":"dich-vu-quanh-ban","version":"0.1.0","orientation":"portrait","userInterfaceStyle":"light","ios":{"supportsTablet":true},"android":{"package":"vn.dichvuquanhban.app"},"web":{"bundler":"metro"}}}
+{
+  "expo": {
+    "name": "Dịch vụ quanh bạn",
+    "slug": "dich-vu-quanh-ban",
+    "version": "0.1.0",
+    "scheme": "dvqb",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "vn.dichvuquanhban.app"
+    },
+    "android": {
+      "package": "vn.dichvuquanhban.app"
+    },
+    "web": { "bundler": "metro" },
+    "plugins": [
+      ["expo-dev-client", { "launchMode": "most-recent" }],
+      "./plugins/with-debug-http.cjs"
+    ]
+  }
+}

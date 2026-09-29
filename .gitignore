@@ -16,3 +16,7 @@ storybook-static/
 /tools/
 /work
 *.inspect.ndjson
+
+# Expo CNG: app.json and config plugins are the native source of truth.
+/apps/mobile/android/
+/apps/mobile/ios/

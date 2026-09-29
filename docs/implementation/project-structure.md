@@ -1,6 +1,8 @@
 # DOC-070 — Khung cấu trúc dự án
 
-v1.1 · 28/09/2026 · STRUCTURE-01: chủ dự án yêu cầu hoàn thiện khung trước khi tiếp tục chức năng, cho phép thư mục rỗng. LOGTEST-DESIGN-01 phương án A đã duyệt; đã triển khai local sau khung này; xem DOC-071.
+v1.3 · 29/09/2026 · STRUCTURE-01; LOGTEST-01; NATIVE-B-01. Khung và log/test đã triển khai local; cấu hình development build đã bổ sung.
+
+NATIVE-B-01: `apps/mobile/plugins/with-debug-http.cjs` là Expo config plugin tách HTTP Debug/Release; `app.json` giữ app ID/scheme. Expo CNG sinh `apps/mobile/android/` và `ios/`, cả hai được ignore khỏi Git/lint. Thay cấu hình ở nguồn, không sửa native generated. Workspace dùng script `native:generate` (gốc: `mobile:prebuild`) để tránh hook npm `prebuild` tự chạy khi export bundle. `scripts/test/native-config.mjs` kiểm cấu hình đã sinh, không là native E2E. Hai thiết bị ảo đã boot; binary và Maestro còn chờ. Xem [DOC-076](../huong-dan-mobile/04-chay-app.md).
 
 ## Nguyên tắc và nguồn tham khảo
 
@@ -90,7 +92,7 @@ packages/
   design-tokens/src/               [chờ] Màu/khoảng cách/typography thuần
 tests/
   e2e/web/                         Playwright config/fixtures/specs
-  e2e/native/                      Maestro flow; thiếu native runtime
+  e2e/native/                      Maestro flow; chờ binary và kiểm app thực tế
   performance/catalog.mjs          200 request local, concurrency20
 scripts/
   build/clean-api.mjs              Xóa output sinh ra trước khi build
@@ -104,7 +106,7 @@ infra/
 .github/workflows/quality.yml     Quality workflow; chưa push/run remote
 ```
 
-`docs` giữ đặc tả/runbook/sổ quản lý; `ui-ux` giữ prototype/thiết kế. Các alias cũ được giữ tương thích. `test-results/`, `.local/`, `dist/`, `coverage/` là output bỏ qua Git, không phải source.
+`docs` giữ đặc tả/runbook/sổ quản lý; `ui-ux` giữ prototype/thiết kế. PATH-01 (29/09/2026): bỏ alias `outputs`, dùng trực tiếp `docs/`; `apps/ui` trỏ trực tiếp đến `ui-ux/prototype`. Các alias khác còn được giữ tương thích. Các ZIP lịch sử và ghi chép baseline có thể còn tên `outputs`; chúng không phải hướng dẫn đường dẫn hiện hành. `test-results/`, `.local/`, `dist/`, `coverage/` là output bỏ qua Git, không phải source.
 
 ## Trách nhiệm các miền giữ chỗ
 

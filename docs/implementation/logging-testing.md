@@ -1,6 +1,8 @@
 # DOC-071 — Vận hành log và kiểm thử phương án A
 
-v1.0 · 28/09/2026 · LOGTEST-01. Đã triển khai và kiểm local theo DOC-069. Native còn BLOCKED, workflow GitHub chưa push/run. Không production, tiền thật hoặc telemetry ngoài.
+v1.1 · 29/09/2026 · LOGTEST-01; NATIVE-B-01. Đã triển khai và kiểm local theo DOC-069. Native E2E còn chờ binary/Maestro; đợt này không kiểm lại CI từ xa. Không production, tiền thật hoặc telemetry ngoài.
+
+NATIVE-B-01 đã kiểm emulator API36 và iPhone/iOS27 booted, Java17, Xcode27, CocoaPods1.17. Phần B có development client/app ID và cấu hình CNG. Sau `npm run mobile:prebuild`, chạy `npm run test:native-config`: kiểm Debug/Release HTTP, ID/scheme và plist parity trên files đã sinh. Đã thử âm bật HTTP Release và thấy bài kiểm fail. Lint/typecheck,31 mobile tests và export bundle đạt. Chưa tạo APK/.app hoặc chạy native E2E; số test API/web bên dưới thuộc đợt LOGTEST-01, không là kết quả chạy lại hôm nay. [Runbook DOC-076](../huong-dan-mobile/04-chay-app.md).
 
 ## Chạy bộ kiểm
 
@@ -76,7 +78,7 @@ APP_ID=vn.dichvuquanhban.app APP_BINARY=/path/to/app.apk npm run test:native -- 
 # iOS: APP_ID=<bundle-id> APP_BINARY=/path/to/App.app npm run test:native -- ios
 ```
 
-Thiếu điều kiện → exit2, `test-results/native/preflight.json` BLOCKED. Lần kiểm hiện tại thiếu Maestro, SDK/thiết bị và binary. Flow có chọn ngành/nhóm/kỹ năng, back và background/resume; unit kiểm Android back handler, vẫn cần native kiểm thực tế.
+Thiếu điều kiện → exit2, `test-results/native/preflight.json` BLOCKED. Mốc LOGTEST-01 thiếu Maestro, SDK/thiết bị và binary; NATIVE-B-01 đã có SDK/thiết bị, còn Maestro và binary. Flow có chọn ngành/nhóm/kỹ năng, back và background/resume; unit kiểm Android back handler, vẫn cần native kiểm thực tế.
 
 `.github/workflows/quality.yml`: static/mobile, API+PostGIS, webE2E; actions pin SHA, npm/runtime/dependency khóa, artifact upload `always`, retention7 ngày, không deploy. Chưa commit/push đợt này nên **remote CI chưa chạy**. PLAN-004 deploy/backup production chưa hoàn thành. `infra/ci/github-actions.yml` chỉ là template lịch sử, workflow mới là nguồn hiện hành.
 

@@ -1,6 +1,14 @@
 # DOC-065 — Đợt 1: nền tảng và danh mục
 
-v1.4 · 28/09/2026 · Đã triển khai và kiểm local theo DOC-064. Còn kiểm native thiết bị/simulator và kích hoạt CI từ xa.
+v1.6 · 29/09/2026 · Đã triển khai và kiểm local theo DOC-064. Hai máy ảo và cấu hình development build đã kiểm; còn build/cài app và nghiệm thu native/CI từ xa.
+
+## Cập nhật NATIVE-B-01 ngày 29/09/2026
+
+Chủ dự án cài môi trường Android/iOS và giao kiểm thiết bị, triển khai phần B của DOC-076. Đã xác nhận emulator API36 ARM64 và iPhone18 Pro/iOS27 booted, Java17, Xcode27 và CocoaPods1.17. Đã thêm dev-client57.0.19, Expo57.0.26 (bản vá theo kiểm tương thích), app ID `vn.dichvuquanhban.app`, scheme `dvqb`, CNG và plugin HTTP chỉ Debug. Native generated folders được ignore; không thay nghiệp vụ.
+
+Đã kiểm prebuild hai nền tảng, cấu hình Debug/Release, kiểm âm khi Release cho HTTP, dependency check, lint, typecheck, 31 test mobile và export bundle. Chưa build APK/.app, chưa cài app, chưa test API từ app native hoặc Maestro. Lệnh và bằng chứng ở [DOC-076 v1.1](../huong-dan-mobile/04-chay-app.md). Các mốc thiếu SDK/thiết bị bên dưới là lịch sử; không dùng để kết luận hiện trạng máy. Không kiểm lại CI trong đợt này.
+
+> PATH-01 · 29/09/2026: đã bỏ lối tắt `outputs`; tài liệu mở trực tiếp trong `docs/`. `apps/ui` trỏ trực tiếp đến `ui-ux/prototype`. Các đường dẫn trong baseline bên dưới chỉ ghi nhận lịch sử.
 
 ## Baseline trước thay đổi
 
