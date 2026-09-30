@@ -1,6 +1,6 @@
 # Bắt đầu phát triển app Android và iOS
 
-DOC-072 · v1.1 · 29/09/2026 · MOBILE-GUIDE-01; NATIVE-B-01.
+DOC-072 · v1.3 · 30/09/2026 · MOBILE-GUIDE-01; NATIVE-B-01; MCP-01; EXPO-MCP-01.
 
 Bộ hướng dẫn dành cho chủ dự án Dịch vụ quanh bạn. Mục tiêu là cài công cụ trên Mac, chạy luồng danh mục bằng app native, kiểm tra bằng MCP/Maestro, rồi hoàn thiện khung giao diện trước khi mở rộng nghiệp vụ.
 
@@ -13,7 +13,7 @@ Bộ hướng dẫn dành cho chủ dự án Dịch vụ quanh bạn. Mục tiê
 5. Thực hiện [07 — Kế hoạch hoàn thiện khung app](07-ke-hoach-khung-app.md).
 6. Khi gặp lỗi, tra [08 — Xử lý lỗi](08-xu-ly-loi.md).
 
-## Hiện trạng đã kiểm ngày 29/09/2026
+## Hiện trạng đã kiểm ngày 29–30/09/2026
 
 | Hạng mục | Quan sát trên máy/repo | Việc tiếp theo |
 |---|---|---|
@@ -24,6 +24,8 @@ Bộ hướng dẫn dành cho chủ dự án Dịch vụ quanh bạn. Mục tiê
 | Java | Zulu `17.0.20.1` | Đã kiểm |
 | Maestro/CocoaPods | CocoaPods `1.17.0`; chưa thấy Maestro trong PATH | Maestro ở bài06 |
 | App | Expo `57.0.26`, RN `0.86.3`, dev-client `57.0.19`; app ID hai nền tảng và scheme đã cấu hình | Phần B đã làm; chưa tạo binary |
+| Mobile MCP | 1.0.5; đọc UI, ảnh và tap qua MCP đạt trên cả hai máy ngày30/09 | Mở phiên Codex mới để nạp tool; chi tiết bài05/06 |
+| Expo MCP | OAuth và CLI đã đăng nhập; expo-mcp0.2.4; đọc tài liệu/tra thư viện qua MCP PASS | Chỉ allowlist miễn phí; UI app chờ build, xem bài05/06 |
 | Kiểm native | Có script preflight/flow; chưa có binary và chưa nghiệm thu | Không coi web/bundle build là bằng chứng native |
 
 macOS 27 đã xác nhận bằng lệnh, nhưng **chưa xác nhận native build tương thích thành công**. Expo SDK 57 yêu cầu Xcode 26.4+; trên macOS 27 chọn Xcode stable được Apple liệt kê hỗ trợ hệ điều hành này, ví dụ Xcode 27 trong bảng hiện tại. Không tải lại Xcode 16 theo hướng dẫn cũ. [Expo SDK](https://docs.expo.dev/versions/latest/), [Apple Xcode](https://developer.apple.com/xcode/system-requirements).
@@ -56,6 +58,6 @@ macOS 27 đã xác nhận bằng lệnh, nhưng **chưa xác nhận native build
 - [Phạm vi triển khai DOC-064](../handoff/CODEX-IMPLEMENTATION-PROMPT.md).
 - [Sổ quản lý](../project-control/So-quan-ly-tai-lieu.xlsx): DOC-072–080 là các bài; DOC-081 là gói xuất.
 
-Nguồn chính là 9 file Markdown trong thư mục này. Gói hiện hành [huong-dan-mobile-v1.1.zip](huong-dan-mobile-v1.1.zip) chứa đúng các file đó; giải nén vào `docs/huong-dan-mobile/` trong repo để các liên kết sang tài liệu khác hoạt động. Gói v1.0 là lịch sử đã thay thế. Không có bản HTML/localhost riêng trong đợt này.
+Nguồn chính là 9 file Markdown trong thư mục này. Gói hiện hành [huong-dan-mobile-v1.3.zip](huong-dan-mobile-v1.3.zip) chứa đúng các file đó; giải nén vào `docs/huong-dan-mobile/` trong repo để các liên kết sang tài liệu khác hoạt động. Gói v1.0, v1.1 và v1.2 là lịch sử đã thay thế. Không có bản HTML/localhost riêng trong đợt này.
 
 Khi sửa nội dung, tăng phiên bản phù hợp, tái tạo ZIP, cập nhật sổ và Drive cùng ID. Không sửa kết quả test cũ thành kết quả của máy sau nâng cấp.

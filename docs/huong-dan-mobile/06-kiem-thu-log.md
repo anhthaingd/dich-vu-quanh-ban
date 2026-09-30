@@ -1,6 +1,6 @@
 # 06 — Kiểm thử native, đọc log và ghi bằng chứng
 
-DOC-078 · v1.0 · 29/09/2026 · [Mục lục](README.md).
+DOC-078 · v1.2 · 30/09/2026 · MCP-01; EXPO-MCP-01 · [Mục lục](README.md).
 
 **Đầu vào:** app native đã mở được, API/DB hoạt động, biết app ID và binary vừa build. Nguồn log/test hiện hành: [DOC-071](../implementation/logging-testing.md).
 
@@ -98,3 +98,37 @@ DB test dùng cổng 55433; các integration fixture cô lập schema. Không c�
 Lưu báo cáo local trong `test-results/native/` (đã ignore), ghi: ngày giờ; commit; macOS/Xcode hoặc SDK/JDK; device ID/runtime; app ID; binary và thời điểm build; API URL; lệnh; exit code; đường dẫn JUnit/ảnh; ca còn BLOCKED. Android PASS và iOS BLOCKED phải ghi thành hai kết quả riêng.
 
 Chỉ đưa bằng chứng bàn giao chọn lọc vào docs khi đã rà nội dung. [Bài xử lý lỗi](08-xu-ly-loi.md) giúp xác định lỗi thuộc công cụ, app hay backend.
+
+## 9. Biên bản MCP-01 — 30/09/2026
+
+Phạm vi: kiểm kết nối công cụ trên máy ảo, không phải E2E sản phẩm. Code nền tại commit `7336558968e9c0c6d3edcbf3f6db59c9500df815`. MCP `@mobilenext/mobile-mcp@1.0.5`, `mobilecli` 1.0.13; iOS Device Kit 0.0.27. Telemetry MCP đã tắt.
+
+| Thiết bị | Kiểm thực tế | Kết quả |
+|---|---|---|
+| Android16/API36, MCP ID `DVQB_API_36`, adb `emulator-5554` | Mở Settings, đọc UI, chụp ảnh; tap Apps tại `(270,1090)`, xác nhận trang Apps bằng UI và ảnh sau; HOME | PASS |
+| iPhone18 Pro/iOS27.0, UUID `9B485B08-15C4-40BB-9E29-03816068E6AC` | Đọc Home, chụp ảnh; tap thư mục Utilities tại `(154,220)`, xác nhận UI/ảnh có Shortcuts và Passwords; HOME | PASS |
+
+Tool đã gọi: `mobile_list_available_devices`, `mobile_list_apps` (Android), `mobile_launch_app` (Android), `mobile_list_elements_on_screen`, `mobile_take_screenshot`, `mobile_click_on_screen_at_coordinates`, `mobile_press_button`. Tọa độ lấy từ UI lúc kiểm, không phải tọa độ cố định cho lần sau.
+
+Bằng chứng local: `test-results/mcp/2026-09-30/result.json`, UI JSON và ảnh `android-before/after-*`, `ios-before/after-*` trong cùng thư mục, đã ignore khỏi Git. Các lời gọi chạy qua MCP stdio với cấu hình lấy từ `codex mcp get mobile-mcp --json`; không dùng adb/simctl thay cho thao tác MCP rồi ghi PASS.
+
+Còn mở: nạp tool trong phiên Codex IDE mới; build/cài binary dự án; nghiệm thu danh mục/native lỗi/thử lại; Maestro. Ở thời điểm MCP-01 chưa cài Expo MCP; đã tiếp tục bằng EXPO-MCP-01 dưới đây. Không thay kết quả native E2E cũ bằng PASS của kiểm kết nối này.
+
+## 10. Biên bản EXPO-MCP-01 — 30/09/2026
+
+Chủ dự án yêu cầu cài Expo MCP và chỉ dùng tính năng miễn phí. Đã thêm remote server `https://mcp.expo.dev/mcp`, OAuth Codex và Expo CLI thành công, cài `expo-mcp@0.2.4` (devDependency, khóa version). Giữ nguyên cấu hình Mobile MCP và server khác.
+
+Kiểm bằng MCP client của Codex qua app-server, context tạm không chạy lượt sinh AI: `runtimeStatus=connected`, `authStatus=oAuth`. Trong lúc Metro bật MCP, 8 tool nằm trong allowlist được expose: `read_documentation`, `learn`, `add_library`, `open_devtools`, `collect_app_logs`, `automation_tap`, `automation_take_screenshot`, `automation_find_view`. Allowlist có thêm `expo_router_sitemap` nhưng repo chưa dùng Expo Router nên server không công bố tool này.
+
+| Kiểm | Kết quả |
+|---|---|
+| `read_documentation` với URL introduction development builds | PASS, trả đúng nội dung tài liệu |
+| `add_library` với `libraryName=expo-dev-client` | PASS, trả lệnh/hướng dẫn cho đúng mobile workspace; không cài lại thư viện |
+| Expo dependency check, lint, mobile typecheck | PASS |
+| Mobile Jest | 31/31 PASS |
+| Metro bật `EXPO_UNSTABLE_MCP_SERVER=1` | PASS, `http://localhost:8081/status` trả `packager-status:running`; dùng localhost vì máy lắng nghe IPv6 |
+| Screenshot/tap/DevTools của app dự án qua Expo | Chưa kiểm: chưa có binary sản phẩm; tiếp tục bài04 C |
+
+Phép thử HTTP bằng Python bị Cloudflare403 theo client signature; không phải bằng chứng tài khoản cần trả phí. Kiểm bằng client chính thức của Codex sau đó kết nối và gọi hai tool thành công. Không thay user-agent để vượt chặn.
+
+Bằng chứng local đã lọc: `test-results/mcp/expo-2026-09-30/result.json`, `codex-status.json`, `codex-read_documentation.json`, `codex-add_library.json`. Không lưu token/cấu hình tài khoản vào repo. Không chạy công cụ search trả phí, build/workflow cloud, submit hoặc production. Metro kiểm kết nối đã dừng; khi chạy app phải bật lại MCP rồi reconnect.

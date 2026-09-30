@@ -16,7 +16,15 @@
     "web": { "bundler": "metro" },
     "plugins": [
       ["expo-dev-client", { "launchMode": "most-recent" }],
-      "./plugins/with-debug-http.cjs"
+      "./plugins/with-debug-http.cjs",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "enableSceneSupport": true
+          }
+        }
+      ]
     ]
   }
 }

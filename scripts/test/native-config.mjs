@@ -26,9 +26,18 @@ for (const mode of ['Debug', 'Release']) {
   const schemes = info.CFBundleURLTypes.flatMap((type) => type.CFBundleURLSchemes);
   assert.ok(schemes.includes(expo.scheme), `Missing app scheme in ${mode}`);
   assert.ok(schemes.includes(`exp+${expo.slug}`), `Missing dev-client scheme in ${mode}`);
+  const scenes = info.UIApplicationSceneManifest?.UISceneConfigurations?.UIWindowSceneSessionRoleApplication;
+  assert.ok(scenes?.length, `Missing iOS ${mode} scene configuration: iOS 27 cannot launch this build`);
+  assert.ok(scenes.some((scene) => scene.UISceneDelegateClassName === 'EXExpoAppSceneDelegate'),
+    `Missing Expo SDK 57 scene delegate in ${mode}`);
   policies[mode] = { file, info };
 }
 assert.notEqual(policies.Debug.file, policies.Release.file);
+const appDelegate = await read(`ios/${path.dirname(policies.Release.file)}/AppDelegate.swift`);
+assert.match(appDelegate, /class AppDelegate: [^{]*\bExpoReactNativeFactoryProvider\b/,
+  'Scene delegate must be able to access the React Native factory');
+assert.doesNotMatch(appDelegate, /factory\.startReactNative\s*\(/,
+  'React Native startup belongs to the scene delegate, not AppDelegate');
 assert.deepEqual(
   { ...policies.Debug.info, NSAppTransportSecurity: null },
   { ...policies.Release.info, NSAppTransportSecurity: null },
@@ -43,4 +52,4 @@ for (const variant of ['main', 'debug']) {
 }
 const gradle = await read('android/app/build.gradle');
 assert.ok(gradle.includes(`applicationId '${expo.android.package}'`) || gradle.includes(`applicationId "${expo.android.package}"`));
-console.log('PASS: generated iOS Debug/Release ATS, IDs/schemes, plist parity; Android main/debug HTTP policy and app ID.');
+console.log('PASS: generated iOS scene lifecycle, Debug/Release ATS, IDs/schemes, plist parity; Android main/debug HTTP policy and app ID.');
