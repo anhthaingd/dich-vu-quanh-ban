@@ -39,7 +39,7 @@
     "test:unit": "npm test",
     "test:e2e": "npm run build -w services/api && playwright test --config tests/e2e/web/playwright.config.mjs",
     "test:load": "npm run build -w services/api && node tests/performance/catalog.mjs",
-    "test:native": "node scripts/test/native.mjs"
+    "test:native": "npm run build -w services/api && node scripts/test/native.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

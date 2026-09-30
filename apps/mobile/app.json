@@ -8,7 +8,10 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "vn.dichvuquanhban.app"
+      "bundleIdentifier": "vn.dichvuquanhban.app",
+      "infoPlist": {
+        "RCTNewArchEnabled": true
+      }
     },
     "android": {
       "package": "vn.dichvuquanhban.app"

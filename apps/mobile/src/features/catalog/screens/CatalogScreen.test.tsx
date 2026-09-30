@@ -1,7 +1,11 @@
 import { BackHandler } from 'react-native';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
-import { CatalogScreen } from './CatalogScreen';
+import { AppNavigator } from '../../../app/navigation/AppNavigator';
+import { AppProviders } from '../../../app/providers/AppProviders';
 import type { CatalogApi, Category } from '../models/catalog.types';
+function CatalogScreen({ api }: { api: CatalogApi }) {
+  return <AppProviders api={api}><AppNavigator /></AppProviders>;
+}
 const industry: Category = { id: 'industry', code: 'home_utilities', name_vi: 'Điện nước', active: true, parent_id: null };
 const group: Category = { ...industry, id: 'group', name_vi: 'Dịch vụ điện nước', parent_id: 'industry' };
 test('loading → industry → group and skills → back', async () => {
@@ -25,6 +29,22 @@ test('loading → industry → group and skills → back', async () => {
 test('empty is visible', async () => {
   render(<CatalogScreen api={{ categories: jest.fn().mockResolvedValue([]), skills: jest.fn() }} />);
   expect(await screen.findByText('Chưa có dịch vụ đang hoạt động.')).toBeTruthy();
+});
+test('rapid repeated selection opens one route and cancels the blurred screen request', async () => {
+  const api: CatalogApi = {
+    categories: jest.fn(async id => id ? [group] : [industry]),
+    skills: jest.fn().mockResolvedValue([]),
+  };
+  render(<CatalogScreen api={api} />);
+  const button = await screen.findByRole('button', { name: 'Điện nước' });
+  act(() => { fireEvent.press(button); fireEvent.press(button); });
+  expect(await screen.findByRole('button', { name: 'Dịch vụ điện nước' })).toBeVisible();
+  const calls = (api.categories as jest.Mock).mock.calls;
+  expect(calls[0][1].aborted).toBe(true);
+  expect(calls.filter(([id]) => id === industry.id)).toHaveLength(1);
+  fireEvent.press(screen.getByRole('button', { name: 'Quay lại' }));
+  expect(await screen.findByRole('header', { name: 'Bạn cần dịch vụ gì?' })).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Quay lại' })).toBeNull();
 });
 test('error has retry and never substitutes sample data', async () => {
   const api = { categories: jest.fn().mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce([industry]), skills: jest.fn() };

@@ -5,7 +5,9 @@ test('catalog journey, offline/retry and empty state use real API/database', asy
   await page.goto(environment.webUrl);
   await page.getByRole('button', { name: 'Điện nước', exact: true }).click();
   await page.getByRole('button', { name: 'Dịch vụ điện nước', exact: true }).click();
-  await expect(page.getByText('Sửa điện dân dụng', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Dịch vụ điện nước', exact: true })).toBeVisible();
+  // Native stack retains hidden parent screens, which can contain this skill.
+  await expect(page.getByText('Sửa điện dân dụng', { exact: true }).filter({ visible: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
   await context.setOffline(true); await page.getByRole('button', { name: 'Quay lại' }).click();
   await expect(page.getByRole('alert')).toBeVisible(); await context.setOffline(false);

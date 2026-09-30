@@ -22,6 +22,7 @@ for (const mode of ['Debug', 'Release']) {
   assert.equal(entry.buildSettings.PRODUCT_BUNDLE_IDENTIFIER.replaceAll('"', ''), expo.ios.bundleIdentifier);
   const file = entry.buildSettings.INFOPLIST_FILE.replaceAll('"', '');
   const info = plist.parse(await read(`ios/${file}`));
+  assert.equal(info.RCTNewArchEnabled, true, `Missing React Native architecture flag in ${mode}`);
   assert.deepEqual({ ...info.NSAppTransportSecurity }, { NSAllowsArbitraryLoads: mode === 'Debug' });
   const schemes = info.CFBundleURLTypes.flatMap((type) => type.CFBundleURLSchemes);
   assert.ok(schemes.includes(expo.scheme), `Missing app scheme in ${mode}`);
