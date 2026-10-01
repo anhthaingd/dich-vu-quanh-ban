@@ -1,0 +1,90 @@
+appId: vn.dichvuquanhban.app
+---
+- stopApp
+- openLink: ${DEV_URL}
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "Close"
+    optional: true
+- extendedWaitUntil:
+    visible: "Bạn cần dịch vụ gì?"
+    timeout: 60000
+- tapOn: "Tài khoản"
+- tapOn:
+    id: auth-toggle
+- tapOn:
+    id: auth-name
+- inputText: "Nguoi thu native"
+- tapOn:
+    id: auth-email
+- inputText: ${TEST_EMAIL}
+- tapOn:
+    id: auth-password
+- inputText: ${TEST_PASSWORD}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+      - scrollUntilVisible:
+          element:
+            id: auth-submit
+          direction: DOWN
+      - tapOn:
+          id: auth-submit
+- runFlow: dismiss-password-prompt.yaml
+- extendedWaitUntil:
+    visible: "Email chưa xác minh"
+    timeout: 15000
+- takeScreenshot: registered
+- stopApp
+- openLink: ${DEV_URL}
+- extendedWaitUntil:
+    visible: "Bạn cần dịch vụ gì?"
+    timeout: 60000
+- tapOn: "Tài khoản"
+- assertVisible: "Nguoi thu native"
+- assertVisible: "Email chưa xác minh"
+- takeScreenshot: restored
+- tapOn:
+    id: auth-logout
+- tapOn:
+    id: auth-email
+- inputText: ${TEST_EMAIL}
+- tapOn:
+    id: auth-password
+- inputText: "an incorrect password"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+- tapOn:
+    id: auth-submit
+    retryTapIfNoChange: true
+- assertVisible: "Không thể xác thực.*"
+- tapOn:
+    id: auth-password
+- inputText: ${TEST_PASSWORD}
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+- tapOn:
+    id: auth-submit
+    retryTapIfNoChange: true
+- runFlow: dismiss-password-prompt.yaml
+- assertVisible: "Nguoi thu native"
+- tapOn:
+    id: auth-logout
+- assertVisible:
+    id: auth-email
+- takeScreenshot: logged-out

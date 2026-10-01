@@ -1,0 +1,21 @@
+import { test, expect } from './fixtures.mjs';
+test('account journey uses real API, unverified contact and server logout', async ({ page, environment }) => {
+  await page.goto(environment.webUrl);
+  await page.getByRole('button', { name: 'Tài khoản', exact: true }).click();
+  await page.getByRole('button', { name: 'Chưa có tài khoản? Đăng ký' }).click();
+  await page.getByLabel('Tên hiển thị', { exact: true }).fill('Người thử web');
+  await page.getByLabel('Email', { exact: true }).fill('web-auth@example.test');
+  await page.getByLabel('Mật khẩu', { exact: true }).fill('web-test-only-password');
+  await page.getByRole('button', { name: 'Đăng ký', exact: true }).click();
+  await expect(page.getByText('Email chưa xác minh', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Đăng xuất', exact: true }).click();
+  await page.getByRole('button', { name: 'Đã có tài khoản? Đăng nhập' }).click();
+  await page.getByLabel('Mật khẩu', { exact: true }).fill('incorrect-password');
+  await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('Không thể xác thực');
+  await page.getByLabel('Mật khẩu', { exact: true }).fill('web-test-only-password');
+  await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
+  await expect(page.getByText('Người thử web', { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => Object.keys(globalThis.localStorage))).toEqual([]);
+  await page.getByRole('button', { name: 'Đăng xuất', exact: true }).click();
+});

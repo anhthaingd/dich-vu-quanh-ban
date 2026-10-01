@@ -2,7 +2,10 @@ import { randomUUID } from 'expo-crypto';
 import { ApiError, type ApiErrorCode } from './api-error';
 import { diagnostics, type DiagnosticLogger } from '../logging/logger';
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-export async function requestJson(url: string, request: typeof fetch, signal?: AbortSignal, logger: DiagnosticLogger = diagnostics, validate?: (data: unknown) => boolean): Promise<unknown> {
+export type JsonRequestOptions = { headers?: Record<string, string> } & (
+  { method?: 'GET'; body?: never } | { method: 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body?: unknown }
+);
+export async function requestJson(url: string, request: typeof fetch, signal?: AbortSignal, logger: DiagnosticLogger = diagnostics, validate?: (data: unknown) => boolean, options: JsonRequestOptions = {}): Promise<unknown> {
   const clientId = randomUUID();
   const controller = new AbortController();
   const start = Date.now();
@@ -20,12 +23,16 @@ export async function requestJson(url: string, request: typeof fetch, signal?: A
   try {
     if (signal?.aborted) throw new ApiError('CANCELLED', undefined, undefined, clientId);
     return await Promise.race([aborted, (async () => {
-      const response = await request(url, { signal: controller.signal, headers: { 'X-Client-Request-Id': clientId } });
+      const headers = Object.fromEntries(Object.entries(options.headers ?? {}).filter(([key]) => !['x-client-request-id', 'content-type'].includes(key.toLowerCase())));
+      const response = await request(url, { method: options.method ?? 'GET', signal: controller.signal,
+        headers: { ...headers, 'X-Client-Request-Id': clientId, ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }) },
+        ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }),
+      });
       status = response.status;
       const id = response.headers?.get('x-request-id');
       if (id && uuid.test(id)) requestId = id;
       if (!response.ok) {
-        const codes: Record<number, ApiErrorCode> = { 400: 'VALIDATION', 404: 'NOT_FOUND', 500: 'INTERNAL', 503: 'SERVICE_UNAVAILABLE' };
+        const codes: Record<number, ApiErrorCode> = { 400: 'VALIDATION', 401: 'UNAUTHENTICATED', 403: 'FORBIDDEN', 404: 'NOT_FOUND', 429: 'RATE_LIMITED', 500: 'INTERNAL', 503: 'SERVICE_UNAVAILABLE' };
         throw new ApiError(codes[status] ?? 'HTTP', status, requestId, clientId);
       }
       try { const data: unknown = await response.json(); if (validate && !validate(data)) throw new Error('Invalid response'); return data; } catch { throw new ApiError('INVALID_RESPONSE', status, requestId, clientId); }

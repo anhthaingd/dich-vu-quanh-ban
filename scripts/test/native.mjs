@@ -20,7 +20,9 @@ import { requireTestDatabase } from './native-options.mjs';
 // owns only its Metro/API/processes and an isolated schema in dvqb_test.
 const platform = process.argv[2];
 if (!['android', 'ios'].includes(platform)) throw Error('Use android or ios');
-const directory = resolve('test-results/native', platform);
+const flow = process.argv[3] ?? 'catalog';
+if (!['catalog', 'auth'].includes(flow)) throw Error('Use catalog or auth flow');
+const directory = resolve('test-results/native', platform, flow === 'catalog' ? '.' : flow);
 await mkdir(directory, { recursive: true });
 const run = (cmd, args) => spawnSync(cmd, args, { encoding: 'utf8', timeout: 30000, env: { ...process.env, MAESTRO_CLI_NO_ANALYTICS: '1' } });
 const check = (cmd, args) => {
@@ -89,7 +91,7 @@ try {
   await admin.query(`CREATE SCHEMA ${schema}`); created = true;
   await migrate(pool); await seed(pool);
   const active = (await pool.query('SELECT id FROM categories WHERE active=true')).rows.map(row => row.id);
-  app = await createApp({ databaseUrl: url, cursorSecret: randomUUID().repeat(2), port: 0, host: '127.0.0.1' }, pool, new AppLog(apiLog, 'info', 'test'));
+  app = await createApp({ databaseUrl: url, cursorSecret: randomUUID().repeat(2), authSecret: randomUUID().repeat(2), port: 0, host: '127.0.0.1' }, pool, new AppLog(apiLog, 'info', 'test'));
   await app.listen(0, '127.0.0.1');
   const apiPort = app.getHttpServer().address().port;
   if (platform === 'android') {
@@ -113,7 +115,7 @@ try {
   await listen(control);
   metro = spawn(process.execPath, ['../../node_modules/expo/bin/cli', 'start', '--dev-client', '--host', 'lan', '--port', String(metroPort)], {
     cwd: resolve('apps/mobile'), detached: true,
-    env: { ...process.env, CI: '1', EXPO_NO_TELEMETRY: '1', EXPO_NO_DOTENV: '1', EXPO_PUBLIC_API_URL: `http://${host}:${apiPort}/v1` },
+    env: { ...process.env, CI: '1', EXPO_NO_TELEMETRY: '1', EXPO_NO_DOTENV: '1', EXPO_PUBLIC_API_URL: `http://${host}:${apiPort}/v1`, EXPO_PUBLIC_AUTH_STORAGE_NAMESPACE: 'native-test' },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   metro.stdout.pipe(metroLog, { end: false }); metro.stderr.pipe(metroLog, { end: false });
@@ -127,8 +129,9 @@ try {
   const result = await new Promise((done, reject) => {
     maestroProcess = spawn(maestro, ['--device', device, 'test', '-e', `APP_ID=${appId}`, '-e', `DEV_URL=${devLink(metroPort)}`,
       '-e', `TEST_CONTROL_URL=http://127.0.0.1:${control.address().port}/${key}`,
+      '-e', `TEST_EMAIL=native-${randomUUID()}@example.test`, '-e', 'TEST_PASSWORD=native-test-only-password',
       '--format', 'junit', '--output', `${directory}/junit.xml`,
-      '--test-output-dir', directory, 'tests/e2e/native/catalog.yaml'], {
+      '--test-output-dir', directory, `tests/e2e/native/${flow}.yaml`], {
       env: { ...process.env, MAESTRO_CLI_NO_ANALYTICS: '1' }, stdio: 'inherit',
     });
     const timeout = setTimeout(() => { maestroProcess.kill('SIGTERM'); reject(Error('Native test timed out')); }, 480000);
@@ -136,7 +139,7 @@ try {
     maestroProcess.once('close', code => { clearTimeout(timeout); done(code ?? 1); });
   });
   if (aborted || result !== 0) throw Error(`Maestro failed (${result}); inspect ${directory}`);
-  outcome = { status: 'PASS', platform, device, schema, scenarios: ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
+  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
 } catch (error) {
   outcome = { status: 'FAIL', platform, device, reason: error.message };
   console.error(error.message); process.exitCode = 1;
@@ -177,4 +180,4 @@ try {
   }
 }
 await writeFile(`${directory}/result.json`, JSON.stringify({ ...outcome, finishedAt: new Date().toISOString() }, null, 2));
-if (outcome.status === 'PASS') console.log(`PASS native ${platform}: catalog, back/resume, API failure/retry, empty/recovery; test schema removed`);
+if (outcome.status === 'PASS') console.log(`PASS native ${platform} ${flow}: ${outcome.scenarios.join(', ')}; test schema removed`);

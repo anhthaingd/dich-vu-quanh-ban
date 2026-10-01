@@ -18,6 +18,7 @@
     },
     "web": { "bundler": "metro" },
     "plugins": [
+      "expo-secure-store",
       ["expo-dev-client", { "launchMode": "most-recent" }],
       "./plugins/with-debug-http.cjs",
       [

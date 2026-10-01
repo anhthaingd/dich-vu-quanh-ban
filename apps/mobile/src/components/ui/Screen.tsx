@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../../theme/tokens';
 export function Screen({ contentContainerStyle, ...props }: ScrollViewProps) {
   return <SafeAreaView style={styles.safe}>
-    <ScrollView {...props} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.content, contentContainerStyle]} />
+    <ScrollView automaticallyAdjustKeyboardInsets {...props} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.content, contentContainerStyle]} />
   </SafeAreaView>;
 }
 const styles = StyleSheet.create({

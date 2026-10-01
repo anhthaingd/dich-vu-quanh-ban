@@ -34,6 +34,7 @@ export function CatalogScreen({ route, navigation }: Props) {
 
   return <Screen>
     <AppText variant="brand" tone="primary">DỊCH VỤ QUANH BẠN</AppText>
+    {!selectedId && <Button label="Tài khoản" variant="link" onPress={() => navigation.navigate('Account')} />}
     {navigation.canGoBack() && <Button label="← Quay lại" accessibilityLabel="Quay lại" variant="link" onPress={() => navigation.goBack()} />}
     <AppText accessibilityRole="header" variant="title">{route.params?.title ?? 'Bạn cần dịch vụ gì?'}</AppText>
     <AppText tone="muted" style={styles.subtitle}>{selectedId ? 'Khám phá nhóm dịch vụ và kỹ năng phù hợp.' : 'Khám phá các ngành dịch vụ tại Hà Nội.'}</AppText>

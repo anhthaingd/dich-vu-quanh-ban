@@ -17,7 +17,7 @@ async function get(path: string) { const res = await fetch(base + path); return 
 
 test('empty-schema migration, PostGIS, rerun migration/seed and preserve edited data', async () => {
   assert.match((await pool.query('SELECT postgis_version() AS version')).rows[0].version, /^3\./);
-  assert.equal((await pool.query('SELECT count(*) FROM schema_migrations')).rows[0].count, '1');
+  assert.equal((await pool.query('SELECT count(*) FROM schema_migrations')).rows[0].count, '2');
   const count = async () => (await pool.query('SELECT (SELECT count(*) FROM categories) AS c,(SELECT count(*) FROM skills) AS s,(SELECT count(*) FROM skill_categories) AS sc')).rows[0];
   const original = await count();
   assert.deepEqual(original, { c: '20', s: '20', sc: '21' });

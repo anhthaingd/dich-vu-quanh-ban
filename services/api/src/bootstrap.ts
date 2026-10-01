@@ -12,6 +12,6 @@ export async function createApp(settings: Config, database?: Pool, log = new App
   app.use(requestMiddleware(log));
   app.setGlobalPrefix('v1');
   app.useGlobalFilters(new HttpExceptionFilter(log));
-  if (settings.corsOrigin) app.enableCors({ origin: settings.corsOrigin.split(',').map(x => x.trim()), methods: ['GET'], allowedHeaders: ['Content-Type','X-Client-Request-Id'], exposedHeaders: ['X-Request-Id'] });
+  if (settings.corsOrigin) app.enableCors({ origin: settings.corsOrigin.split(',').map(x => x.trim()), methods: ['GET','POST'], allowedHeaders: ['Content-Type','Authorization','X-Client-Request-Id'], exposedHeaders: ['X-Request-Id','Retry-After'] });
   return app;
 }

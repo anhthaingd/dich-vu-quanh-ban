@@ -36,7 +36,7 @@ export const test = base.extend({
       });
       await new Promise(r => server.listen(0, '127.0.0.1', r));
       const webUrl = `http://127.0.0.1:${server.address().port}`;
-      app = await createApp({ databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
+      app = await createApp({ databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), authSecret: 'isolated-web-auth-secret-'.repeat(3), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
       await app.listen(0, '127.0.0.1');
       const apiUrl = await app.getUrl() + '/v1';
       if (!(await fetch(apiUrl + '/ready')).ok) throw Error('API readiness failed');
