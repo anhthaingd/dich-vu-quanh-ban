@@ -71,7 +71,7 @@ test('failed GET after rotation clears unauthorized session; expired logout rota
 });
 test.each(['VALIDATION','RATE_LIMITED','UNAUTHENTICATED'] as const)('login %s presents safe actionable error', async code => {
   const f = authFixture(); await f.manager.restore(); f.api.login.mockRejectedValueOnce(new ApiError(code));
-  await f.manager.login(credentials); expect(f.manager.getSnapshot().error).toBeTruthy(); expect(f.manager.getSnapshot().busy).toBe(false);
+  await f.manager.login(credentials); expect(f.manager.getSnapshot().error).toBe(code); expect(f.manager.getSnapshot().busy).toBe(false);
 });
 test('already invalid logout clears storage; refresh network errors leave account available for retry', async () => {
   const f = authFixture(); await f.manager.login(credentials);

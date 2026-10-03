@@ -4,12 +4,27 @@
 
 Theo yêu cầu trực tiếp mới nhất của chủ dự án ngày 30/09/2026, áp dụng cho toàn repo và các phiên làm việc sau:
 
-- **Chỉ thay đổi code hoặc môi trường phát triển:** không tự cập nhật folder tài liệu, sổ Excel, bản xuất ZIP/HTML hay Drive. Phạm vi này gồm triển khai theo spec hiện có, sửa bug để khớp spec, refactor, cấu hình, dependency, SDK/MCP, log/test, CI và build. Báo cáo thay đổi và kết quả kiểm tra trong phần bàn giao công việc.
+- **Chỉ thay đổi code hoặc môi trường phát triển:** không tự đồng bộ toàn bộ spec, sổ Excel, bản xuất ZIP/HTML hay Drive. Phạm vi này gồm triển khai theo spec hiện có, sửa bug để khớp spec, refactor, cấu hình, dependency, SDK/MCP, log/test, CI và build. Báo cáo/checklist triển khai là ngoại lệ được chủ dự án yêu cầu ngày 01/10/2026, theo mục dưới đây.
 - **Thay đổi spec đã chốt:** mới cập nhật các tài liệu liên quan theo phạm vi ảnh hưởng và đồng bộ sổ quản lý/bản xuất/Drive. Ví dụ: yêu cầu, nghiệp vụ, luồng người dùng, quyền/trạng thái, API contract, mô hình dữ liệu hoặc quyết định thiết kế được dùng làm chuẩn triển khai.
 - Trước khi làm, phân biệt thay đổi cách triển khai với thay đổi spec. Không coi việc thêm/sửa code hay hoàn tất test là một thay đổi spec. Nếu cần thay đổi spec chưa được duyệt, trao đổi với chủ dự án trước; không tự biến phương án triển khai thành yêu cầu đã chốt.
 - Công việc chỉ liên quan code không bắt buộc đọc sổ Excel hoặc kiểm tra Drive. Vẫn đọc spec hiện hành liên quan khi cần để triển khai đúng.
 - Nếu chủ dự án yêu cầu sửa một hướng dẫn hoặc quy tắc cụ thể, thực hiện đúng phạm vi đó; không tự kéo theo đồng bộ toàn bộ hồ sơ khi spec không đổi.
 - Quy tắc ngày 30/09/2026 này ưu tiên hơn các hướng dẫn cũ hoặc ghi nhớ trước đây yêu cầu cập nhật tài liệu sau mọi thay đổi. Giữ nguyên các cập nhật tài liệu đã làm, trừ khi chủ dự án yêu cầu chỉnh lại.
+
+## Kế hoạch, checklist và báo cáo để học code
+
+Theo yêu cầu trực tiếp ngày 01/10/2026 (DELIVERY-01):
+
+- Điểm vào triển khai là [docs/ke-hoach-trien-khai/README.md](docs/ke-hoach-trien-khai/README.md). Trước khi code, đọc checklist, nhiệm vụ đang làm, báo cáo liên quan và spec hiện hành; đối chiếu code thực tế, không dùng trạng thái tài liệu cũ thay bằng chứng.
+- Làm tuần tự theo các lát có ý nghĩa, một lát đang hoạt động tại một thời điểm. Mỗi lát nối dữ liệu → API → app → test, có tiêu chí hoàn thành và phụ thuộc rõ. Không biến toàn bộ plan thành phê duyệt production, tiền thật, provider hoặc chi phí.
+- Sau mỗi chức năng lớn/lát bàn giao, tạo một báo cáo riêng trong `docs/ke-hoach-trien-khai/bao-cao/` theo [mẫu](docs/ke-hoach-trien-khai/bao-cao/MAU-BAO-CAO.md). Bắt buộc có: kết quả/phạm vi, sơ đồ luồng, thứ tự đọc file và hàm thật, input/output, dữ liệu/quyền/trạng thái, lỗi/retry, test và bằng chứng, giới hạn, câu hỏi/bài thử giúp chủ dự án hiểu code.
+- Sơ đồ báo cáo viết trực tiếp trong khối `mermaid` của file `.md`. Kiểm cú pháp và render trước bàn giao; không tạo thêm `.mmd`/PNG/SVG riêng trừ khi chủ dự án yêu cầu xuất ảnh. Khi không hiện sơ đồ, kiểm cú pháp và trình xem hiện có trước khi đề xuất cài thêm công cụ.
+- Báo cáo học code dành cho chủ dự án chưa có nhiều kiến thức phát triển app: bắt đầu bằng thao tác và kết quả người dùng thấy, rồi giải thích từng bước bằng tiếng Việt dễ hiểu. Giải nghĩa thuật ngữ ngay lần đầu dùng; sơ đồ dùng tên vai trò và hành động dễ đọc. Giữ link file/tên hàm thật, nêu mỗi bước nhận gì, làm gì, chuyển gì sang đâu và vì sao. Đưa bảng lệnh, số liệu, chi tiết kỹ thuật sâu vào phần tra cứu cuối bài; giữ nguyên bằng chứng, giới hạn và trạng thái chưa làm. Không chỉ liệt kê thuật ngữ hoặc yêu cầu người đọc tự suy ra từ tên file.
+- Cập nhật checklist và mục lục báo cáo cùng đợt; chỉ đánh dấu phần đã kiểm. Phân biệt code/local, native từng nền tảng, remote CI và UAT của chủ dự án. Một lát email/mật khẩu không đồng nghĩa toàn bộ B01 đã xong.
+- Các báo cáo con dùng mã `Bxx-nn`/`I18N-nn` và được quản lý trong bộ kế hoạch đã đăng ký. Việc cập nhật báo cáo/checklist theo code không tự kéo theo sửa sổ Excel/Drive/ZIP hoặc đồng bộ hồ sơ nghiệp vụ. Khi spec thay đổi, áp dụng quy trình đồng bộ bên dưới; khi chủ dự án yêu cầu xuất/đồng bộ bộ báo cáo thì làm đúng phạm vi đó.
+- Bộ kế hoạch, checklist và báo cáo học code chỉ lưu trong repo, quản lý bằng Git. Chỉ tải lên Drive hoặc xuất gói khi chủ dự án yêu cầu rõ; không coi đây là bước chờ phê duyệt.
+- Giữ kiến trúc feature/module hiện hành; UI không tự gọi DB, state không giữ câu đã dịch, backend quyết định quyền. Dùng hướng dẫn cấu trúc trong bộ kế hoạch; không tự thêm framework, microservice hoặc package rỗng.
+- Nếu một lát đã được giao và đủ điều kiện, tiếp tục phần việc đã được phép mà không hỏi duyệt lại từng bước kỹ thuật. Chỉ hỏi quyết định còn thiếu; ghi rõ phần bị chặn. Commit/push và triển khai theo phạm vi được chủ dự án cho phép.
 
 ## Quy trình đồng bộ khi thay đổi spec
 

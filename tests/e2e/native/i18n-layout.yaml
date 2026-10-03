@@ -1,0 +1,54 @@
+appId: vn.dichvuquanhban.app
+---
+- stopApp
+- openLink: ${DEV_URL}
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "Close"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: nav-account
+    timeout: 60000
+- tapOn:
+    id: nav-account
+- extendedWaitUntil:
+    visible:
+      id: locale-en
+    timeout: 15000
+- tapOn:
+    id: locale-en
+- scrollUntilVisible:
+    element:
+      id: auth-toggle
+    direction: DOWN
+- tapOn:
+    id: auth-toggle
+- scrollUntilVisible:
+    element: "Use 15–128 characters.*"
+    direction: DOWN
+- takeScreenshot: english-large-form
+- scrollUntilVisible:
+    element:
+      id: locale-ja
+    direction: UP
+- tapOn:
+    id: locale-ja
+- takeScreenshot: japanese-large-heading
+- scrollUntilVisible:
+    element: "15〜128文字.*"
+    direction: DOWN
+- takeScreenshot: japanese-large-form
+- scrollUntilVisible:
+    element:
+      id: auth-toggle
+    direction: DOWN
+- assertVisible: "アカウントをお持ちですか？ログイン"
+- scrollUntilVisible:
+    element:
+      id: locale-vi
+    direction: UP
+- tapOn:
+    id: locale-vi

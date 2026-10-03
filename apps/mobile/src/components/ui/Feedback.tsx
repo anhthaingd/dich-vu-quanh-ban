@@ -11,9 +11,9 @@ export function LoadingState({ message }: { message: string }) {
 export function EmptyState({ message }: { message: string }) {
   return <Card><AppText>{message}</AppText></Card>;
 }
-export function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+export function ErrorState({ message, retryLabel, onRetry }: { message: string; retryLabel: string; onRetry: () => void }) {
   return <Card accessibilityLiveRegion="polite">
     <AppText accessibilityRole="alert" tone="error">{message}</AppText>
-    <Button label="Thử lại" onPress={onRetry} />
+    <Button label={retryLabel} onPress={onRetry} />
   </Card>;
 }

@@ -1,6 +1,7 @@
 import { ApiError } from '../../../lib/http/api-error';
 import type { AuthApi, Credentials, Me, Registration, Session, TokenStorage } from '../models/auth.types';
-type Snapshot = { phase: 'loading' | 'anonymous' | 'authenticated' | 'restore-error'; user: Me | null; busy: boolean; error: string | null };
+export type AuthErrorCode = 'UNAUTHENTICATED' | 'RATE_LIMITED' | 'VALIDATION' | 'SESSION_UNAVAILABLE';
+type Snapshot = { phase: 'loading' | 'anonymous' | 'authenticated' | 'restore-error'; user: Me | null; busy: boolean; error: AuthErrorCode | null };
 export class AuthSession {
   private session: Session | null = null;
   private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
@@ -17,10 +18,7 @@ export class AuthSession {
     try { await work(); }
     catch (error) {
       const code = error instanceof ApiError ? error.code : undefined;
-      this.update({ error: code === 'UNAUTHENTICATED' ? 'Không thể xác thực. Kiểm tra thông tin hoặc đăng nhập lại.'
-        : code === 'RATE_LIMITED' ? 'Thao tác quá nhiều lần. Vui lòng chờ một phút rồi thử lại.'
-        : code === 'VALIDATION' ? 'Không thể thực hiện với thông tin này. Kiểm tra lại hoặc đăng nhập.'
-        : 'Không thể kết nối hoặc lưu phiên an toàn. Vui lòng thử lại.' });
+      this.update({ error: code === 'UNAUTHENTICATED' || code === 'RATE_LIMITED' || code === 'VALIDATION' ? code : 'SESSION_UNAVAILABLE' });
     } finally { this.update({ busy: false }); }
   }
   private async accept(session: Session) {

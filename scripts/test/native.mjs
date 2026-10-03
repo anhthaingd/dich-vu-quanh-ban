@@ -21,7 +21,7 @@ import { requireTestDatabase } from './native-options.mjs';
 const platform = process.argv[2];
 if (!['android', 'ios'].includes(platform)) throw Error('Use android or ios');
 const flow = process.argv[3] ?? 'catalog';
-if (!['catalog', 'auth'].includes(flow)) throw Error('Use catalog or auth flow');
+if (!['catalog', 'auth', 'i18n', 'i18n-layout'].includes(flow)) throw Error('Use catalog, auth, i18n or i18n-layout flow');
 const directory = resolve('test-results/native', platform, flow === 'catalog' ? '.' : flow);
 await mkdir(directory, { recursive: true });
 const run = (cmd, args) => spawnSync(cmd, args, { encoding: 'utf8', timeout: 30000, env: { ...process.env, MAESTRO_CLI_NO_ANALYTICS: '1' } });
@@ -80,6 +80,7 @@ const host = '127.0.0.1';
 const reversedPorts = [];
 let app, control, metro, maestroProcess, created = false;
 let outcome;
+let originalTextSize;
 let aborted = false;
 const interrupt = () => { aborted = true; maestroProcess?.kill('SIGTERM'); };
 process.on('SIGINT', interrupt); process.on('SIGTERM', interrupt);
@@ -87,6 +88,13 @@ const listen = (server, port = 0, host = '127.0.0.1') => new Promise((done, reje
 const close = server => new Promise((done, reject) => server.close(error => error ? reject(error) : done()));
 const devLink = port => `exp+dich-vu-quanh-ban://expo-development-client/?url=${encodeURIComponent(`http://${platform === 'ios' ? 'localhost' : host}:${port}`)}`;
 try {
+  if (flow === 'i18n-layout') {
+    originalTextSize = platform === 'android'
+      ? check('adb', ['-s', device, 'shell', 'settings', 'get', 'system', 'font_scale']).trim()
+      : check('xcrun', ['simctl', 'ui', device, 'content_size']).trim();
+    if (platform === 'android') check('adb', ['-s', device, 'shell', 'settings', 'put', 'system', 'font_scale', '1.5']);
+    else check('xcrun', ['simctl', 'ui', device, 'content_size', 'extra-extra-extra-large']);
+  }
   const probe = createServer(); await listen(probe, metroPort, '::'); await close(probe);
   await admin.query(`CREATE SCHEMA ${schema}`); created = true;
   await migrate(pool); await seed(pool);
@@ -139,12 +147,24 @@ try {
     maestroProcess.once('close', code => { clearTimeout(timeout); done(code ?? 1); });
   });
   if (aborted || result !== 0) throw Error(`Maestro failed (${result}); inspect ${directory}`);
-  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
+  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-fallback', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
 } catch (error) {
   outcome = { status: 'FAIL', platform, device, reason: error.message };
   console.error(error.message); process.exitCode = 1;
 } finally {
   try {
+    // Restore font settings even when a layout assertion fails.
+    try {
+      if (originalTextSize !== undefined) {
+        if (platform === 'android') {
+          const action = originalTextSize === 'null' ? ['delete', 'system', 'font_scale'] : ['put', 'system', 'font_scale', originalTextSize];
+          check('adb', ['-s', device, 'shell', 'settings', ...action]);
+        } else check('xcrun', ['simctl', 'ui', device, 'content_size', originalTextSize]);
+      }
+    } catch (error) {
+      outcome = { ...outcome, status: 'FAIL', fontRestoreError: error.message };
+      process.exitCode = 1;
+    }
     // Restore the user's development server only if it is still available.
     const originalPort = platform === 'android' ? 8081 : 8082;
     try {

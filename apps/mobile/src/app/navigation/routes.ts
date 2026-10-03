@@ -1,5 +1,5 @@
 export type RootStackParamList = {
   CatalogHome: undefined;
-  CatalogCategory: { categoryId: string; title: string };
+  CatalogCategory: { categoryId: string; nameVi: string };
   Account: undefined;
 };

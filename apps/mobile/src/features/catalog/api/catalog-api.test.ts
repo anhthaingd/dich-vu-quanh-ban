@@ -3,8 +3,8 @@ test('reads every page without replacing API errors with mock', async () => {
   const request = jest.fn().mockResolvedValueOnce({ ok: true, json: async () => ({ items: [{ id: 'a', code: 'a', name_vi: 'A', active: true, parent_id: null }], next_cursor: 'next' }) }).mockResolvedValueOnce({ ok: true, json: async () => ({ items: [{ id: 'b', code: 'b', name_vi: 'B', active: true, parent_id: null }], next_cursor: null }) });
   expect(await createCatalogApi('http://localhost:3100/v1', request).categories()).toEqual([{ id: 'a', code: 'a', name_vi: 'A', active: true, parent_id: null }, { id: 'b', code: 'b', name_vi: 'B', active: true, parent_id: null }]);
   expect(request.mock.calls[1][0]).toContain('cursor=next');
-  await expect(createCatalogApi(undefined, request).categories()).rejects.toThrow('Chưa cấu hình');
-  await expect(createCatalogApi('http://localhost', jest.fn().mockResolvedValue({ ok: false })).categories()).rejects.toThrow('Không tải');
+  await expect(createCatalogApi(undefined, request).categories()).rejects.toMatchObject({ code: 'CONFIG' });
+  await expect(createCatalogApi('http://localhost', jest.fn().mockResolvedValue({ ok: false })).categories()).rejects.toMatchObject({ code: 'HTTP' });
 });
 test('HTTP error preserves safe server request ID and typed error code', async () => {
   const id = 'd28753c2-a88f-4eb5-9df1-e7c8fdfe604c';

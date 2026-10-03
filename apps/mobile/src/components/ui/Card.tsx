@@ -4,11 +4,11 @@ import { theme } from '../../theme/tokens';
 export function Card({ style, ...props }: ViewProps) {
   return <View {...props} style={[styles.card, style]} />;
 }
-export function ActionCard({ title, onPress }: { title: string; onPress: () => void }) {
+export function ActionCard({ title, actionLabel, onPress }: { title: string; actionLabel: string; onPress: () => void }) {
   return <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress}
     style={({ pressed }) => [styles.card, { opacity: pressed ? 0.75 : 1 }]}>
     <AppText variant="card">{title}</AppText>
-    <AppText variant="caption" tone="primary">Xem dịch vụ →</AppText>
+    <AppText variant="caption" tone="primary">{actionLabel}</AppText>
   </Pressable>;
 }
 const styles = StyleSheet.create({

@@ -1,3 +1,5 @@
+import { useLocale } from '../../../app/providers/LocaleProvider';
+import { LanguageSettings } from '../../accounts/components/LanguageSettings';
 import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -16,6 +18,7 @@ import type { Category, Skill } from '../models/catalog.types';
 type State = { kind: 'loading' } | { kind: 'error' } | { kind: 'ready'; categories: Category[]; skills: Skill[] };
 type Props = NativeStackScreenProps<RootStackParamList, 'CatalogHome' | 'CatalogCategory'>;
 export function CatalogScreen({ route, navigation }: Props) {
+  const { t, locale } = useLocale();
   const api = useCatalogApi();
   const selectedId = route.params?.categoryId;
   const [retry, setRetry] = useState(0);
@@ -34,18 +37,20 @@ export function CatalogScreen({ route, navigation }: Props) {
 
   return <Screen>
     <AppText variant="brand" tone="primary">DỊCH VỤ QUANH BẠN</AppText>
-    {!selectedId && <Button label="Tài khoản" variant="link" onPress={() => navigation.navigate('Account')} />}
-    {navigation.canGoBack() && <Button label="← Quay lại" accessibilityLabel="Quay lại" variant="link" onPress={() => navigation.goBack()} />}
-    <AppText accessibilityRole="header" variant="title">{route.params?.title ?? 'Bạn cần dịch vụ gì?'}</AppText>
-    <AppText tone="muted" style={styles.subtitle}>{selectedId ? 'Khám phá nhóm dịch vụ và kỹ năng phù hợp.' : 'Khám phá các ngành dịch vụ tại Hà Nội.'}</AppText>
-    {state.kind === 'loading' && <LoadingState message="Đang tải danh mục…" />}
-    {state.kind === 'error' && <ErrorState message="Không tải được danh mục. Kiểm tra kết nối và thử lại."
+    {!selectedId && <Button testID="nav-account" label={t('common.account')} variant="link" onPress={() => navigation.navigate('Account')} />}
+    {navigation.canGoBack() && <Button testID="nav-back" label={t('common.backButton')} accessibilityLabel={t('common.back')} variant="link" onPress={() => navigation.goBack()} />}
+    <AppText accessibilityRole="header" variant="title">{route.params?.nameVi ?? t('catalog.title')}</AppText>
+    <AppText tone="muted" style={styles.subtitle}>{t(selectedId ? 'catalog.categorySubtitle' : 'catalog.subtitle')}</AppText>
+    <LanguageSettings />
+    {locale !== 'vi' && <AppText variant="caption" tone="muted">{t('catalog.translationNotice')}</AppText>}
+    {state.kind === 'loading' && <LoadingState message={t('catalog.loading')} />}
+    {state.kind === 'error' && <ErrorState message={t('catalog.error')} retryLabel={t('common.retry')}
       onRetry={() => { diagnostics.emit('request.retry'); setRetry(n => n + 1); }} />}
     {state.kind === 'ready' && <>
-      {state.categories.length === 0 && state.skills.length === 0 && <EmptyState message="Chưa có dịch vụ đang hoạt động." />}
-      {state.categories.map(category => <ActionCard key={category.id} title={category.name_vi}
-        onPress={() => navigation.navigate('CatalogCategory', { categoryId: category.id, title: category.name_vi })} />)}
-      {state.skills.length > 0 && <AppText accessibilityRole="header" variant="section" style={styles.section}>Kỹ năng</AppText>}
+      {state.categories.length === 0 && state.skills.length === 0 && <EmptyState message={t('catalog.empty')} />}
+      {state.categories.map(category => <ActionCard key={category.id} title={category.name_vi} actionLabel={t('catalog.viewServices')}
+        onPress={() => navigation.navigate('CatalogCategory', { categoryId: category.id, nameVi: category.name_vi })} />)}
+      {state.skills.length > 0 && <AppText accessibilityRole="header" variant="section" style={styles.section}>{t('catalog.skills', { count: state.skills.length })}</AppText>}
       {state.skills.map(skill => <View key={skill.id} style={styles.skill}>
         <View style={styles.dot} /><AppText style={styles.skillText}>{skill.name_vi}</AppText>
       </View>)}

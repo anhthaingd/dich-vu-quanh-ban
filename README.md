@@ -1,16 +1,17 @@
 # Dịch vụ quanh bạn
 
-Mobile Expo/React Native + API NestJS + PostgreSQL/PostGIS. **Đã chạy được luồng ngành → nhóm → kỹ năng với DB thật.** Những chức năng khác đang là khung giữ chỗ. Website/admin chưa khởi tạo ứng dụng.
+Mobile Expo/React Native + API NestJS + PostgreSQL/PostGIS. **Đã có danh mục DB thật và lát email/mật khẩu, phiên local.** Các chức năng còn lại xem checklist; website/admin chưa khởi tạo ứng dụng.
 
-DOC-054 · Cấu trúc v0.4 · 29/09/2026.
+DOC-054 · Cấu trúc v0.5 · 01/10/2026 · DELIVERY-01.
 
 ## Bắt đầu ở đâu
 
+- **Làm gì tiếp, đã xong gì và học luồng code:** [Kế hoạch triển khai, checklist và báo cáo từng chức năng](docs/ke-hoach-trien-khai/README.md). Tiến độ hiện hành nằm ở đây; trạng thái trong tài liệu mốc cũ không thay kết quả code mới.
 - **Hiểu code và chỗ đặt file:** [Sơ đồ cấu trúc DOC-070](docs/implementation/project-structure.md).
 - **Cài/chạy/test:** [Runbook Đợt 1 DOC-065](docs/implementation/dot-1.md).
 - **Quyết định kỹ thuật:** [ADR-001](docs/implementation/ADR-001-foundation.md).
 - **Log và kiểm thử:** [Runbook phương án A đã triển khai local](docs/implementation/logging-testing.md).
-- **Đặc tả và quyết định nghiệp vụ:** [Sổ quản lý tài liệu](docs/project-control/So-quan-ly-tai-lieu.xlsx), đọc trước khi đổi chức năng.
+- **Đặc tả và quyết định nghiệp vụ:** [Sổ quản lý tài liệu](docs/project-control/So-quan-ly-tai-lieu.xlsx), đọc trước khi đổi spec/đồng bộ hồ sơ theo AGENTS.md.
 
 ## Bản đồ repository
 
@@ -26,11 +27,11 @@ packages/             Khung contracts, API client, domain, design tokens
 
 ```text
 tests/e2e/web/         Smoke xuyên mobile web → API → PostgreSQL
-tests/e2e/native/      Maestro flow/preflight; native còn BLOCKED
+tests/e2e/native/      Maestro danh mục và auth; đã kiểm Android/iOS Simulator
 tests/performance/     Kiểm thử tải local danh mục
 scripts/              Build, quality gates, xuất diagnostic
 infra/                Docker Compose, CI template, khung observability
-.github/workflows/    Workflow quality đã có; chưa push/run remote
+.github/workflows/    Workflow quality đã chạy đạt tại commit 50d184a
 docs/                 Đặc tả, kiến trúc, runbook, sổ quản lý
 ui-ux/                Prototype React/Storybook và tài liệu thiết kế
 tools/                Công cụ tài liệu local, không thuộc Git
@@ -68,7 +69,7 @@ npx playwright install chromium
 npm run test:smoke
 ```
 
-Playwright ghi HTML/JUnit/JSON và giữ trace/video/screenshot khi fail trong `test-results/web/` (không track Git). Ảnh bàn giao cũ trong docs giữ nguyên. Native binary/thiết bị và CI từ xa chưa được nghiệm thu; bundle build không thay cho chạy native. Không production hoặc tiền thật.
+Playwright ghi HTML/JUnit/JSON và giữ trace/video/screenshot khi fail trong `test-results/web/` (không track Git). Native danh mục/auth đã kiểm trên hai máy ảo, CI đã đạt; xem ngày, commit và giới hạn trong [báo cáo](docs/ke-hoach-trien-khai/README.md). Chưa UAT toàn sản phẩm, production hoặc tiền thật.
 
 ## Thiết kế và nguồn chuẩn
 

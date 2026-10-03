@@ -5,7 +5,7 @@ import { AccountScreen } from '../../features/auth/screens/AccountScreen';
 import { theme } from '../../theme/tokens';
 import type { RootStackParamList } from './routes';
 // Native stack preserves OS back/gesture behavior. Keep IDs and a display
-// title in routes, not API payloads. Add UI-16 tabs with their real features.
+// source name (VI fallback, not a translated UI title) in routes. Add UI-16 tabs with their real features.
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const navigationTheme = { ...DefaultTheme, colors: { ...DefaultTheme.colors,
   primary: theme.colors.primary, background: theme.colors.background,
