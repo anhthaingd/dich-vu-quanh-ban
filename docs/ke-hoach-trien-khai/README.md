@@ -33,6 +33,9 @@ Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng
 - **B01-02 OTP/xác minh: Pending** theo yêu cầu chủ dự án ngày 01/10/2026 vì cần cân nhắc chi phí. Hoãn cả bản local và gửi thật; chỉ mở lại khi chủ dự án yêu cầu. Không còn là lát tự động bắt đầu tiếp theo. I18N-03/04 vẫn cần chốt contract/dữ liệu; B00-05 đã bàn giao lát khung khách ngày 04/10/2026: 83 mobile, 5 web, 3 tooling và shell/auth/layout cả Android/iOS đạt; typecheck/lint/build đạt. Chủ dự án xác nhận bản hiện tại và yêu cầu push ngày 05/10; chưa UAT toàn app; khung các vai trò/nghiệp vụ còn lại vẫn mở.
 - Chưa có nghiệm thu UAT toàn app, tài khoản/partner/công việc/chat/tài chính đầy đủ hoặc phát hành.
 
+- B00-05 đã push ở `c120062` ngày 05/10/2026; [CI 37262885727](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37262885727) đã đạt cả 3 jobs (API/PostGIS, static/mobile, web E2E).
+- Phần tiếp theo đã chuẩn bị: [đề xuất I18N-04](de-xuat/I18N-04-dich-danh-muc.md). Chờ chốt nguồn dịch và cách API trả tên; chưa bắt đầu thay DB/API/app.
+
 ## Nguồn chuẩn cần tra
 
 - [AGENTS.md](../../AGENTS.md): quy tắc làm việc mới nhất, bao gồm báo cáo sau chức năng lớn.
