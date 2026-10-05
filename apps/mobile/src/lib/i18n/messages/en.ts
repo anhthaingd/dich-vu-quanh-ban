@@ -1,5 +1,6 @@
 import type { MessageDictionary } from './vi';
 export const en = {
+  shell: { groups: 'Service groups', findServices: 'Find services', openAccount: 'Open account and language settings', discover: 'SERVICES IN HANOI', categories: 'Choose a service category', accountIntro: 'Manage your sign-in and language.', preferences: 'Display preferences' },
   common: { back: 'Back', backButton: '← Back', retry: 'Try again', account: 'Account', language: 'Language' },
   catalog: {
     viewServices: 'View services →',

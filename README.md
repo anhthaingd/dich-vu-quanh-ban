@@ -56,6 +56,62 @@ npm run mobile
 # Hoặc: npm run mobile:web
 ```
 
+### Chạy Android và iOS cùng lúc trên macOS
+
+Sau khi cài dependency, tạo `.env`, migrate và seed như trên, bật **Android emulator** và **iOS Simulator**. Hai máy ảo dùng chung API/DB, nhưng chạy **hai Metro riêng**. Metro là chương trình gửi code JavaScript tới app; mỗi Metro dùng một cổng và địa chỉ API phù hợp với nền tảng.
+
+Mở **3 tab Terminal trong VS Code**, tất cả ở thư mục gốc repo (nơi có `package.json`). Nếu đã có API hoặc Metro chạy ở tab cũ, dùng lại tab đó hoặc dừng bằng `Ctrl+C` trước khi chạy lệnh thay thế.
+
+**Terminal 1 — DB và API dùng chung:**
+
+```sh
+npm run db:up
+npm run api
+```
+
+Giữ tab này chạy. Nếu API đã chạy ở cổng 3100 thì không mở thêm một API nữa.
+
+**Terminal 2 — Android, Metro cổng 8081:**
+
+```sh
+EXPO_NO_TELEMETRY=1 npm run mobile:start:android -- --port 8081
+```
+
+**Terminal 3 — iOS, Metro cổng 8082:**
+
+```sh
+EXPO_NO_TELEMETRY=1 npm run mobile:start:ios -- --port 8082
+```
+
+Giữ cả ba tab chạy. Khi sửa và lưu code, mỗi app nhận bản cập nhật từ Metro của mình; không cần dừng Android để mở iOS.
+
+| Nền tảng | Cổng Metro | API mà app gọi |
+|---|---|---|
+| Android emulator | `8081` | `http://10.0.2.2:3100/v1` |
+| iOS Simulator | `8082` | `http://127.0.0.1:3100/v1` |
+
+Các địa chỉ API đã được đặt trong [apps/mobile/package.json](apps/mobile/package.json), không cần sửa `.env` mỗi lần đổi nền tảng. `10.0.2.2` là địa chỉ để Android emulator gọi về máy Mac; iOS Simulator dùng `127.0.0.1`. Với cấu hình hiện tại, dùng đúng Metro của từng nền tảng để tránh app nhận sai địa chỉ API.
+
+**Nếu báo `No development build ... is installed`:** máy ảo đó chưa có bản app dùng để phát triển, hoặc bản cũ đã bị xóa. Thay lệnh `mobile:start:*` ở tab tương ứng bằng lệnh build/cài dưới đây, rồi chọn đúng máy ảo khi được hỏi:
+
+```sh
+# Terminal 2 — build/cài Android, đồng thời mở Metro 8081:
+EXPO_NO_TELEMETRY=1 npm run mobile:android -- --port 8081
+```
+
+```sh
+# Terminal 3 — build/cài iOS, đồng thời mở Metro 8082:
+EXPO_NO_TELEMETRY=1 npm run mobile:ios -- --port 8082
+```
+
+Các lệnh build đã mở Metro nên không chạy thêm `mobile:start:*` cùng cổng. Những lần sau dùng lại lệnh `mobile:start:*` ở trên. Chỉ sửa TypeScript/giao diện thường không cần build lại; khi đổi thư viện native, Expo SDK hoặc cấu hình native thì cần build/cài lại.
+
+Nếu app mở nhầm máy ảo, dùng `Shift+A` ở tab Metro Android hoặc `Shift+I` ở tab Metro iOS để chọn thiết bị. Nếu sửa code mà app không đổi, kiểm app đang nối đúng cổng rồi nhấn `r` ở tab Metro tương ứng để tải lại. Nếu chỉ danh mục báo lỗi, kiểm API bằng `curl --fail --show-error http://127.0.0.1:3100/v1/ready`.
+
+Kết thúc buổi: `Ctrl+C` ở từng tab API/Metro, rồi `npm run db:stop` nếu muốn dừng DB và giữ dữ liệu. Hướng dẫn này dành cho máy ảo trên Mac; điện thoại thật cần cấu hình kết nối riêng.
+
+### Kiểm tra code và kiểm thử
+
 ```sh
 npm run lint
 npm run typecheck

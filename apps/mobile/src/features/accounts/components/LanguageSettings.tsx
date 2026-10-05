@@ -10,7 +10,7 @@ export function LanguageSettings() {
     <AppText variant="caption" tone="muted">{t('common.language')}</AppText>
     <View style={styles.options}>
       {locales.map(value => <Button key={value} testID={`locale-${value}`} label={localeNames[value]}
-        variant={value === locale ? 'secondary' : 'link'} accessibilityLanguage={value} accessibilityState={{ selected: value === locale }}
+        variant={value === locale ? 'secondary' : 'link'} accessibilityLanguage={value} accessibilityState={{ selected: value === locale }} aria-pressed={value === locale}
         disabled={!ready || busy} onPress={() => void selectLocale(value)} />)}
     </View>
     {error && <AppText accessibilityRole="alert" tone="error">{t(error === 'READ_FAILED' ? 'errors.localeRead' : 'errors.localeWrite')}</AppText>}

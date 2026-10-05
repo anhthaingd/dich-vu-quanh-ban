@@ -1,0 +1,26 @@
+appId: vn.dichvuquanhban.app
+---
+- runFlow: catalog.yaml
+- takeScreenshot: shell-home-vi
+- tapOn: "Điện nước"
+- tapOn:
+    id: nav-account
+- assertVisible:
+    id: auth-email
+- takeScreenshot: shell-account
+- tapOn:
+    id: nav-back
+- assertVisible: "Dịch vụ điện nước"
+- tapOn:
+    id: nav-catalog
+- assertVisible: "Bạn cần dịch vụ gì?"
+- tapOn:
+    id: locale-en
+- assertVisible: "What service do you need?"
+- takeScreenshot: shell-home-en
+- tapOn:
+    id: locale-ja
+- assertVisible: "どんなサービスをお探しですか？"
+- takeScreenshot: shell-home-ja
+- tapOn:
+    id: locale-vi

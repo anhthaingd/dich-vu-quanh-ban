@@ -1,4 +1,5 @@
 export const vi = {
+  shell: { groups: 'Nhóm dịch vụ', findServices: 'Tìm dịch vụ', openAccount: 'Mở tài khoản và cài đặt ngôn ngữ', discover: 'DỊCH VỤ TẠI HÀ NỘI', categories: 'Chọn ngành dịch vụ', accountIntro: 'Quản lý đăng nhập và ngôn ngữ của bạn.', preferences: 'Tùy chọn hiển thị' },
   common: { back: 'Quay lại', backButton: '← Quay lại', retry: 'Thử lại', account: 'Tài khoản', language: 'Ngôn ngữ' },
   catalog: {
     viewServices: 'Xem dịch vụ →',

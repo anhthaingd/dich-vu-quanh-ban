@@ -1,5 +1,6 @@
 import type { MessageDictionary } from './vi';
 export const ja = {
+  shell: { groups: 'サービスの分類', findServices: 'サービスを探す', openAccount: 'アカウントと言語設定を開く', discover: 'ハノイのサービス', categories: 'サービスの分類を選ぶ', accountIntro: 'ログインと言語を管理できます。', preferences: '表示設定' },
   common: { back: '戻る', backButton: '← 戻る', retry: '再試行', account: 'アカウント', language: '言語' },
   catalog: {
     viewServices: 'サービスを見る →',

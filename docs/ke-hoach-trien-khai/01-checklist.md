@@ -6,7 +6,7 @@ DOC-083 · v1.0 · 01/10/2026 · DELIVERY-01. Baseline code `50d184a`. [Mục l�
 
 - `[x]` = đạt phạm vi kỹ thuật của đúng dòng tại baseline/bằng chứng dẫn kèm; không đồng nghĩa toàn nhóm Bxx đã xong hoặc đã UAT.
 - `[ ]` = chưa hoàn thành; lý do/đầu việc còn thiếu ở cột tiêu chí. Toàn nhóm có thể “một phần”. Không tính phần trăm app từ số ô tick.
-- Chỉ một lát **Đang làm** tại một thời điểm. Hiện: **I18N-01/02 đã đạt kỹ thuật local**. **B01-02 Pending theo yêu cầu chủ dự án ngày 01/10/2026**, do cần cân nhắc chi phí. Tạm hoãn cả triển khai local và tích hợp gửi thật; chưa bắt đầu code OTP. Chỉ mở lại khi chủ dự án yêu cầu. Các phần phụ thuộc xác minh không được bỏ qua điều kiện bảo mật để đi tiếp.
+- Chỉ một lát **Đang làm** tại một thời điểm. Hiện: **I18N-01/02 đã push ở `844e1d2`, CI đạt**. **B00-05 đã bàn giao lát khung khách ngày 04/10/2026**, đạt local/native cho chức năng hiện có; chủ dự án xác nhận và yêu cầu push ngày 05/10; chưa UAT toàn app, chưa đóng khung các vai trò và nghiệp vụ còn lại. **B01-02 Pending theo yêu cầu chủ dự án ngày 01/10/2026**, do cần cân nhắc chi phí. Tạm hoãn cả triển khai local và tích hợp gửi thật; chưa bắt đầu code OTP. Chỉ mở lại khi chủ dự án yêu cầu. Các phần phụ thuộc xác minh không được bỏ qua điều kiện bảo mật để đi tiếp.
 - Hạng mục mới theo kế hoạch chưa có phê duyệt tích hợp trả phí/production. Phần thay contract cần chốt rõ trước khi code.
 - Chưa có dòng nào được gắn “UAT chủ dự án đã nghiệm thu”.
 
@@ -18,6 +18,8 @@ DOC-083 · v1.0 · 01/10/2026 · DELIVERY-01. Baseline code `50d184a`. [Mục l�
 | `50d184a` | [B01-01](bao-cao/B01-01-email-mat-khau.md), [CI](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/36810424485) | 65 test mobile, 30 API, 3 web, 3 tooling; CI 3 jobs đạt |
 | Working tree 01/10 | [I18N-01/02](bao-cao/I18N-01-nen-da-ngon-ngu.md); 81 test mobile, 3 web hồi quy + 1 web i18n; native i18n/layout/auth hai nền tảng | Đạt kỹ thuật I18N-01/02, chưa commit/push, chưa CI mới/UAT |
 | Native cuối 30/09 UTC–01/10 JST | `test-results/native/{android,ios}/{result.json,auth/result.json}`; báo cáo B00/B01 | Danh mục + auth đạt trên DVQB_API_36 và iPhone 18 Pro/iOS 27; không phải thiết bị thật |
+| `844e1d2` · 04/10 JST | [CI 37132800077](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37132800077); kiểm trước push: 81 mobile, 4 web, 3 tooling, typecheck/lint/build đạt | Đã push i18n và bộ báo cáo; CI 3 jobs đạt. Không phải bằng chứng cho phần B00-05 viết sau commit này |
+| Local sau `844e1d2` · 04/10 JST | [B00-05](bao-cao/B00-05-khung-giao-dien.md): 83 mobile, 5 web, 3 tooling; shell/auth/layout Android và iOS đạt; typecheck/lint/build đạt | Khung khách cho chức năng hiện có đã kiểm. Chủ dự án xác nhận và yêu cầu push ngày 05/10; chưa UAT toàn app; B00-05 còn khung các vai trò và nghiệp vụ khác |
 
 Artifact local không track Git. Nếu không còn artifact, chạy lại theo báo cáo; không đổi ngày kiểm cũ thành ngày hiện tại.
 
@@ -31,7 +33,7 @@ Nguồn: [spec](../technical-design/04-backlog.md), [backlog](../technical-desig
 | [x] | B00-02 | Theme, UI chung và native stack | Button/Input/Card/Feedback; Back, blur/cancel và resume được kiểm; xem [báo cáo](bao-cao/B00-01-nen-tang-danh-muc.md) |
 | [x] | B00-03 | Log/test phương án A và CI | Correlation, lọc dữ liệu nhạy cảm, unit/integration/web, coverage gate; CI 50d184a đạt; xem [báo cáo](bao-cao/B00-01-nen-tang-danh-muc.md) |
 | [x] | B00-04 | Development build + E2E danh mục Android/iOS | Binary có SecureStore; danh mục và auth chạy trên hai máy ảo; xem [báo cáo](bao-cao/B00-01-nen-tang-danh-muc.md) |
-| [ ] | B00-05 | Shell sản phẩm đúng UI-16, routing và các điểm vào thật | Avatar mở tài khoản; tabs chỉ nối tính năng có thật; không tạo màn nghiệp vụ giả |
+| [ ] | B00-05 | Shell sản phẩm đúng UI-16, routing và các điểm vào thật | **Một phần: khung khách hiện có đạt local/native** — header/avatar, danh mục, tài khoản, Tìm dịch vụ. [Báo cáo](bao-cao/B00-05-khung-giao-dien.md). Khung partner/DN và điểm vào nghiệp vụ khác nối theo chức năng thật; chưa đóng toàn dòng |
 | [ ] | B00-06 | Admin workspace tối thiểu khi bắt đầu có tác vụ vận hành | Manifest/build/test/auth/quyền thật; không suy ra từ folder apps/admin |
 
 ## I18N — Nền đa ngôn ngữ — làm tiếp trước mở rộng UI
@@ -40,8 +42,8 @@ Nguồn: [spec](../../ui-ux/specs/ux-scope-current.md), [backlog](../technical-d
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [x] | I18N-01 | Message keys và trạng thái lỗi độc lập ngôn ngữ | i18n-js, typed keys/params, đủ khóa VI/EN/JA, fallback/số nhiều; lỗi auth là mã. [Báo cáo I18N-01/02](bao-cao/I18N-01-nen-da-ngon-ngu.md), working tree 01/10 |
-| [x] | I18N-02 | VI/EN/JA cho các màn đã có + chọn/lưu locale local | Giữ form/route/session, lưu local; i18n/auth và cỡ chữ lớn đạt Android/iOS; web 3 hồi quy + 1 i18n đạt. [Báo cáo](bao-cao/I18N-01-nen-da-ngon-ngu.md). Chưa UAT/CI mới |
+| [x] | I18N-01 | Message keys và trạng thái lỗi độc lập ngôn ngữ | i18n-js, typed keys/params, đủ khóa VI/EN/JA, fallback/số nhiều; lỗi auth là mã. [Báo cáo I18N-01/02](bao-cao/I18N-01-nen-da-ngon-ngu.md), kiểm local 01/10, đã push `844e1d2` |
+| [x] | I18N-02 | VI/EN/JA cho các màn đã có + chọn/lưu locale local | Giữ form/route/session, lưu local; i18n/auth và cỡ chữ lớn đạt Android/iOS; web 3 hồi quy + 1 i18n đạt. [Báo cáo](bao-cao/I18N-01-nen-da-ngon-ngu.md). CI `844e1d2` đạt; chưa UAT |
 | [ ] | I18N-03 | Locale tài khoản và đồng bộ đa thiết bị | Cần chốt ưu tiên locale local/tài khoản; mở rộng enum Me/ProfileEdit theo quyết định |
 | [ ] | I18N-04 | Bản dịch danh mục/kỹ năng và tìm kiếm theo ngôn ngữ | Chốt nguồn bản dịch và fallback; categories.translations chưa được trả ra API; skills chưa có translations |
 

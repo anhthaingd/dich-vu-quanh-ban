@@ -1,10 +1,12 @@
+import { AuthProvider } from '../../../app/providers/AuthProvider';
+import { authFixture } from '../../../../test/helpers/auth';
 import { BackHandler } from 'react-native';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import { AppNavigator } from '../../../app/navigation/AppNavigator';
 import { AppProviders } from '../../../app/providers/AppProviders';
 import type { CatalogApi, Category } from '../models/catalog.types';
 function CatalogScreen({ api }: { api: CatalogApi }) {
-  return <AppProviders api={api}><AppNavigator /></AppProviders>;
+  return <AppProviders api={api}><AuthProvider manager={authFixture().manager}><AppNavigator /></AuthProvider></AppProviders>;
 }
 const industry: Category = { id: 'industry', code: 'home_utilities', name_vi: 'Điện nước', active: true, parent_id: null };
 const group: Category = { ...industry, id: 'group', name_vi: 'Dịch vụ điện nước', parent_id: 'industry' };

@@ -6,11 +6,12 @@ export function Card({ style, ...props }: ViewProps) {
 }
 export function ActionCard({ title, actionLabel, onPress }: { title: string; actionLabel: string; onPress: () => void }) {
   return <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress}
-    style={({ pressed }) => [styles.card, { opacity: pressed ? 0.75 : 1 }]}>
+    style={({ pressed }) => [styles.card, styles.action, { opacity: pressed ? 0.75 : 1 }]}>
     <AppText variant="card">{title}</AppText>
     <AppText variant="caption" tone="primary">{actionLabel}</AppText>
   </Pressable>;
 }
 const styles = StyleSheet.create({
+  action: { flex: 1, justifyContent: 'space-between', minHeight: 136, borderTopWidth: 3, borderTopColor: theme.colors.primary },
   card: { backgroundColor: theme.colors.surface, borderRadius: theme.radius.panel, borderWidth: 1, borderColor: theme.colors.border, padding: theme.spacing.panel, gap: theme.spacing.md },
 });

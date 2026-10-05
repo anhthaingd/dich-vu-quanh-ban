@@ -11,15 +11,52 @@ appId: vn.dichvuquanhban.app
 - extendedWaitUntil:
     visible: "Bạn cần dịch vụ gì?"
     timeout: 60000
-- tapOn: "Tài khoản"
+- tapOn:
+    id: nav-account
+- scrollUntilVisible:
+    element:
+      id: auth-toggle
+    direction: DOWN
 - tapOn:
     id: auth-toggle
+- scrollUntilVisible:
+    element:
+      id: auth-name
+    direction: UP
 - tapOn:
     id: auth-name
 - inputText: "Nguoi thu native"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: auth-email
+    direction: DOWN
 - tapOn:
     id: auth-email
 - inputText: ${TEST_EMAIL}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: auth-password
+    direction: DOWN
 - tapOn:
     id: auth-password
 - inputText: ${TEST_PASSWORD}
@@ -49,40 +86,90 @@ appId: vn.dichvuquanhban.app
 - extendedWaitUntil:
     visible: "Bạn cần dịch vụ gì?"
     timeout: 60000
-- tapOn: "Tài khoản"
+- tapOn:
+    id: nav-account
 - assertVisible: "Nguoi thu native"
 - assertVisible: "Email chưa xác minh"
 - takeScreenshot: restored
+- scrollUntilVisible:
+    element:
+      id: auth-logout
+    direction: DOWN
 - tapOn:
     id: auth-logout
+- scrollUntilVisible:
+    element:
+      id: auth-email
+    direction: DOWN
 - tapOn:
     id: auth-email
 - inputText: ${TEST_EMAIL}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: auth-password
+    direction: DOWN
 - tapOn:
     id: auth-password
 - inputText: "an incorrect password"
 - runFlow:
     when:
-      platform: Android
+      platform: iOS
     commands:
-      - hideKeyboard
-- tapOn:
-    id: auth-submit
-    retryTapIfNoChange: true
-- assertVisible: "Không thể xác thực.*"
-- tapOn:
-    id: auth-password
-- inputText: ${TEST_PASSWORD}
+      - pressKey: Enter
 - runFlow:
     when:
       platform: Android
     commands:
       - hideKeyboard
+      - scrollUntilVisible:
+          element:
+            id: auth-submit
+          direction: DOWN
+      - tapOn:
+          id: auth-submit
+- scrollUntilVisible:
+    element: "Không thể xác thực.*"
+    direction: UP
+- assertVisible: "Không thể xác thực.*"
+- scrollUntilVisible:
+    element:
+      id: auth-password
+    direction: DOWN
 - tapOn:
-    id: auth-submit
-    retryTapIfNoChange: true
+    id: auth-password
+- inputText: ${TEST_PASSWORD}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+      - scrollUntilVisible:
+          element:
+            id: auth-submit
+          direction: DOWN
+      - tapOn:
+          id: auth-submit
 - runFlow: dismiss-password-prompt.yaml
 - assertVisible: "Nguoi thu native"
+- scrollUntilVisible:
+    element:
+      id: auth-logout
+    direction: DOWN
 - tapOn:
     id: auth-logout
 - assertVisible:

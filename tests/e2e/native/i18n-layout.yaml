@@ -12,6 +12,7 @@ appId: vn.dichvuquanhban.app
     visible:
       id: nav-account
     timeout: 60000
+- takeScreenshot: catalog-large-text
 - tapOn:
     id: nav-account
 - extendedWaitUntil:
