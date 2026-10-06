@@ -1,5 +1,5 @@
 export interface Me {
-  id: string; display_name: string; phone_verified: boolean; email_verified: boolean;
+  id: string; version: number; display_name: string; phone_verified: boolean; email_verified: boolean;
   locale: 'vi'; partner_ids: string[]; admin_permissions: string[]; status: string;
 }
 export interface Session { access_token: string; refresh_token: string; expires_at: string; user: Me }

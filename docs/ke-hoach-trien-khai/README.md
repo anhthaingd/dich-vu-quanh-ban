@@ -24,6 +24,7 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 | Danh mục đa ngôn ngữ + dữ liệu mở rộng | [I18N-04](bao-cao/I18N-04-danh-muc-da-ngon-ngu.md) | Đọc VI/EN/JA; bộ dữ liệu ban đầu đã thay bằng B02-01 bên dưới; tìm kiếm còn mở |
 | Rà soát trùng nhóm/kỹ năng | [B02-01 — rà soát](bao-cao/B02-01-ra-soat-danh-muc.md) | Phân tích bộ cũ 50 nhóm/140 kỹ năng; dữ liệu đã được thay theo yêu cầu clear ở báo cáo kế tiếp |
 | Thay bộ danh mục local | [B02-01 — dữ liệu mới](bao-cao/B02-01-thay-du-lieu-danh-muc.md) | Đã thay DB: 10 ngành, 39 nhóm, 128 kỹ năng; một nhóm mỗi kỹ năng; giữ nguyên auth |
+| Sửa tên hiển thị | [B01-04](bao-cao/B01-04-ho-so-ten-hien-thi.md) | API/DB/app, version, retry an toàn và VI/EN/JA; B01-04 vẫn một phần |
 | Tài khoản email/mật khẩu | [B01-01](bao-cao/B01-01-email-mat-khau.md) | Đăng ký/đăng nhập, refresh/logout local; không đóng toàn bộ B01 |
 
 Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng này và liên kết dòng checklist. Không sửa báo cáo cũ để biến kết quả của commit cũ thành bằng chứng cho commit mới. Nếu sửa báo cáo, giữ ngày/commit và ghi phần đính chính.
@@ -31,7 +32,7 @@ Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng
 ## Hiện trạng và công việc kế tiếp
 
 - **Mốc 06/10/2026:** đã push I18N-04/B02-01 tại `1c80f67`; [CI 37398471842](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37398471842) đạt cả ba jobs (API/PostGIS, static/mobile, web E2E). Chủ dự án đã xác nhận bộ danh mục 10 ngành/39 nhóm/128 kỹ năng. Các mốc chưa push/CI dưới đây là lịch sử ngày 05/10.
-- Lát tiếp theo: **B01-04 sửa tên hiển thị**. Đã rà contract/code và có [phương án bổ sung version vào Me](de-xuat/B01-04-ho-so-ten-hien-thi.md), đang chờ duyệt trước khi đổi contract; chưa implement. OTP vẫn Pending.
+- **B01-04 sửa tên hiển thị:** đã duyệt `Me.version` và implement ngày 06/10; [báo cáo học code](bao-cao/B01-04-ho-so-ten-hien-thi.md). API/app/web và native Android/iOS đạt local; chưa commit/push/CI/UAT mới. Hồ sơ/phiên/địa chỉ còn một phần. OTP vẫn Pending.
 
 - Đã có danh mục DB thật và lát email/mật khẩu local, UI dùng chung, native navigation, log/test.
 - CI của `50d184a` đã đạt: [Quality 36810424485](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/36810424485). Native được kiểm riêng trên máy phát triển, không chạy trong CI Ubuntu này.

@@ -1,5 +1,14 @@
 import type { MessageDictionary } from './vi';
 export const en = {
+  profile: {
+    title: 'Edit display name', loading: 'Loading profile…', current: 'Saved name: %{name}',
+    hint: 'Use 1–100 characters.', save: 'Save name', saved: 'Display name saved.',
+    reload: 'Reload profile', signedOut: 'Your session has ended. Log in again to edit your profile.',
+    conflict: 'The profile changed or the request no longer matches. Reload to review the latest name before saving. Your draft is kept.',
+    validation: 'Enter a name of 1–100 characters, not just spaces.',
+    error: 'Unable to finish. Check your connection and try again.', busy: 'Checking your session. Please try again shortly.',
+    pending: 'The save result is not confirmed. Try again with the same name to check the result.',
+  },
   shell: { groups: 'Service groups', findServices: 'Find services', openAccount: 'Open account and language settings', discover: 'SERVICES IN HANOI', categories: 'Choose a service category', accountIntro: 'Manage your sign-in and language.', preferences: 'Display preferences' },
   common: { back: 'Back', backButton: '← Back', retry: 'Try again', account: 'Account', language: 'Language' },
   catalog: {

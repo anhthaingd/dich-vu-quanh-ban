@@ -826,5 +826,29 @@
     "level": "API DB + mobile + native",
     "priority": "P1",
     "status": "Đạt local 05/10/2026 — I18N-04; 34 API, 86 mobile, 5 web, i18n/layout Android+iOS; chưa CI/UAT"
+  },
+  {
+    "id": "QA-070",
+    "group": "Hồ sơ tài khoản",
+    "requirement": "B01-04; F01",
+    "operation": "getMe, editMe, register, login, refresh",
+    "setup": "Hai phiên của một tài khoản, một tài khoản khác, DB test thật",
+    "steps": "Kiểm schema Me.version; hai sửa cùng phiên bản; replay cùng key; đổi payload; thu hồi phiên sau bước kiểm đầu; chèn lỗi trước commit",
+    "expected": "Version tăng đúng một lần; 409 khi xung đột; key tách theo actor; không giả quyền/verified; rollback tên và key cùng nhau; không log tên/token.",
+    "level": "Contract + API/DB integration",
+    "priority": "P0",
+    "status": "Kết quả tại báo cáo B01-04 trong repo; không tự suy ra CI/UAT"
+  },
+  {
+    "id": "QA-071",
+    "group": "Hồ sơ tài khoản",
+    "requirement": "B01-04; F01",
+    "operation": "getMe, editMe",
+    "setup": "App VI/EN/JA, phản hồi PATCH bị mất sau commit",
+    "steps": "Sửa tên; đổi tiếng; gây version conflict; tải lại giữ draft; retry cùng key/payload; mở lại native",
+    "expected": "Không báo lưu giả; giữ draft và key khi chưa rõ kết quả; tên cập nhật header/tài khoản; phiên thu hồi ẩn form; tên đã lưu còn sau mở lại.",
+    "level": "Mobile component + web + Android/iOS",
+    "priority": "P1",
+    "status": "Kết quả tại báo cáo B01-04 trong repo; không tự suy ra CI/UAT"
   }
 ]

@@ -2,10 +2,10 @@ import { requestJson } from '../../../lib/http/request';
 import { ApiError } from '../../../lib/http/api-error';
 import type { AuthApi, Me, Session } from '../models/auth.types';
 const uuid = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i;
-function isMe(value: unknown): value is Me {
+export function isMe(value: unknown): value is Me {
   if (!value || typeof value !== 'object') return false;
   const m = value as Me;
-  return typeof m.id === 'string' && uuid.test(m.id) && typeof m.display_name === 'string'
+  return Number.isSafeInteger(m.version) && m.version >= 1 && typeof m.id === 'string' && uuid.test(m.id) && typeof m.display_name === 'string'
     && typeof m.email_verified === 'boolean' && typeof m.phone_verified === 'boolean' && m.locale === 'vi' && m.status === 'active'
     && Array.isArray(m.partner_ids) && m.partner_ids.every(x => typeof x === 'string' && uuid.test(x))
     && Array.isArray(m.admin_permissions) && m.admin_permissions.every(x => typeof x === 'string');

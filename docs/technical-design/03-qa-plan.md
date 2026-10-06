@@ -1,5 +1,7 @@
 # Kế hoạch QA, RTM và UAT
 
+> **B01-04 · 06/10/2026 · v0.1.4:** Bổ sung QA-070/071 cho `Me.version` và sửa tên: schema Session/Me, phiên bị thu hồi khi chờ khóa, chống ghi đè, retry sau mất phản hồi, rollback, bảo toàn bản nháp VI/EN/JA, lưu tên qua mở lại native. Các ca dưới đây là tiêu chí kiểm; kết quả thực tế và giới hạn ghi trong báo cáo B01-04 ở repo.
+
 > **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** Bổ sung QA-067…069 và RTM cho danh mục đa ngôn ngữ: đầy đủ cây/seed bảo toàn dữ liệu, locale/fallback/cursor, đổi ngôn ngữ khi request chậm, chữ dài và retry native. Bằng chứng mới nằm trong báo cáo I18N-04 thuộc bộ kế hoạch repo; các ca lịch sử vẫn giữ ngày cũ.
 
 
@@ -140,3 +142,8 @@ Phương án A đã triển khai và kiểm local; chi tiết vận hành/bằng
 | QA-066 | Local concurrency | Đạt local 28/09/2026 — DOC-071 |
 
 API dùng Node test/c8; mobile Jest/RNTL; core ≥90% lines/85% branches, phần còn lại ≥80/70, không bỏ source chưa import. JUnit/HTML/JSON/LCOV và Playwright artifact ở coverage/test-results. Các ca QA001–055 ngoài lát này giữ trạng thái cũ.
+
+## Tiêu chí bổ sung B01-04
+
+- **QA-070** — Kiểm schema Me.version; hai sửa cùng phiên bản; replay cùng key; đổi payload; thu hồi phiên sau bước kiểm đầu; chèn lỗi trước commit. Kỳ vọng: Version tăng đúng một lần; 409 khi xung đột; key tách theo actor; không giả quyền/verified; rollback tên và key cùng nhau; không log tên/token.
+- **QA-071** — Sửa tên; đổi tiếng; gây version conflict; tải lại giữ draft; retry cùng key/payload; mở lại native. Kỳ vọng: Không báo lưu giả; giữ draft và key khi chưa rõ kết quả; tên cập nhật header/tài khoản; phiên thu hồi ẩn form; tên đã lưu còn sau mở lại.

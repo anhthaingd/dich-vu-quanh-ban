@@ -1,4 +1,13 @@
 export const vi = {
+  profile: {
+    title: 'Sửa tên hiển thị', loading: 'Đang tải hồ sơ…', current: 'Tên đang lưu: %{name}',
+    hint: 'Tên từ 1–100 ký tự.', save: 'Lưu tên', saved: 'Đã lưu tên hiển thị.',
+    reload: 'Tải lại hồ sơ', signedOut: 'Phiên đã kết thúc. Hãy đăng nhập lại để sửa hồ sơ.',
+    conflict: 'Hồ sơ đã thay đổi hoặc yêu cầu không còn khớp. Tải lại để xem tên mới nhất trước khi lưu. Tên bạn đang nhập được giữ lại.',
+    validation: 'Nhập tên từ 1–100 ký tự, không chỉ có khoảng trắng.',
+    error: 'Chưa thể hoàn tất. Kiểm tra kết nối và thử lại.', busy: 'Đang kiểm tra phiên. Vui lòng thử lại sau một lát.',
+    pending: 'Chưa xác nhận được kết quả lưu. Bấm thử lại với cùng tên để kiểm tra kết quả.',
+  },
   shell: { groups: 'Nhóm dịch vụ', findServices: 'Tìm dịch vụ', openAccount: 'Mở tài khoản và cài đặt ngôn ngữ', discover: 'DỊCH VỤ TẠI HÀ NỘI', categories: 'Chọn ngành dịch vụ', accountIntro: 'Quản lý đăng nhập và ngôn ngữ của bạn.', preferences: 'Tùy chọn hiển thị' },
   common: { back: 'Quay lại', backButton: '← Quay lại', retry: 'Thử lại', account: 'Tài khoản', language: 'Ngôn ngữ' },
   catalog: {

@@ -3,7 +3,9 @@
     "operation_id": "register",
     "contract_case": "CT-register",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-070"
+    ],
     "status": "Chưa chạy"
   },
   {
@@ -11,7 +13,8 @@
     "contract_case": "CT-login",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-002"
+      "QA-002",
+      "QA-070"
     ],
     "status": "Chưa chạy"
   },
@@ -59,7 +62,9 @@
     "contract_case": "CT-getMe",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-054"
+      "QA-054",
+      "QA-070",
+      "QA-071"
     ],
     "status": "Chưa chạy"
   },
@@ -67,7 +72,10 @@
     "operation_id": "editMe",
     "contract_case": "CT-editMe",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-070",
+      "QA-071"
+    ],
     "status": "Chưa chạy"
   },
   {

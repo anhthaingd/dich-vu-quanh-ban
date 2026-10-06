@@ -1,6 +1,6 @@
 # B01-04 — Lát hồ sơ: sửa tên hiển thị
 
-06/10/2026 · DELIVERY-01 · **Đề xuất phần bổ sung contract, chưa duyệt/chưa implement.** Nối sau danh mục `1c80f67`. OTP vẫn Pending. Tài liệu chỉ lưu trong repo.
+06/10/2026 · DELIVERY-01 · **Đã được chủ dự án duyệt bằng “ok hãy implement” sau phần giải thích version.** Nối sau danh mục `1c80f67`. OTP vẫn Pending. Tài liệu chỉ lưu trong repo. Kết quả thực tế xem [báo cáo bàn giao](../bao-cao/B01-04-ho-so-ten-hien-thi.md).
 
 ## Thao tác muốn bàn giao
 
@@ -17,7 +17,7 @@
 
 `version` là số tăng sau mỗi lần sửa. Ví dụ hai thiết bị cùng đọc phiên bản 3: thiết bị thứ nhất lưu thành 4; thiết bị thứ hai gửi phiên bản 3 sẽ được báo dữ liệu đã đổi, tránh ghi đè nhầm.
 
-## Bổ sung cần duyệt
+## Bổ sung đã duyệt ngày 06/10/2026
 
 **Thêm `version: integer, minimum: 1` vào các trường bắt buộc của `Me`.** Áp dụng nhất quán cho `GET /me`, kết quả `PATCH /me` và `Session.user` từ đăng ký/đăng nhập/refresh vì cùng tham chiếu schema Me. Không đổi đường dẫn hoặc tạo API mới.
 
@@ -35,7 +35,7 @@ App gửi `PATCH /me` với `Idempotency-Key` là UUID và body:
 
 Thành công trả `Me` với `display_name = "Anh An"`, `version = 4`. Ví dụ trên chỉ trích các trường liên quan; response thật vẫn có đủ các trường Me hiện hành.
 
-## Phần triển khai theo spec đã có sau khi duyệt
+## Phần triển khai theo spec đã có
 
 1. API kiểm phiên đang hoạt động và chỉ sửa chính tài khoản đó; không nhận user ID từ client. Tên được trim, không rỗng và dùng giới hạn 100 ký tự như đăng ký hiện tại.
 2. Khóa bản ghi user trong giao dịch, kiểm `expected_version`, cập nhật tên và tăng version. Phiên bị thu hồi/tài khoản bị khóa phải bị từ chối; không chỉ dựa vào nút trên app.
@@ -59,6 +59,6 @@ Thành công trả `Me` với `display_name = "Anh An"`, `version = 4`. Ví dụ
 
 `AuthSession` hiện giữ token riêng và tuần tự hóa đăng nhập/refresh/logout. Phần sửa hồ sơ cần đi qua cơ chế xác thực đó, cập nhật tên trong snapshot cho header, không đưa access token vào React state hay tạo đường refresh cạnh tranh thứ hai. Tên bản nháp nằm ở feature hồ sơ; phản hồi cũ sau logout/đổi tài khoản không được cập nhật user mới.
 
-## Vì sao cần chốt phần bổ sung này?
+## Vì sao đã trao đổi phần bổ sung này trước khi code?
 
 [AGENTS.md](../../../AGENTS.md) yêu cầu: “Nếu cần thay đổi spec chưa được duyệt, trao đổi với chủ dự án trước; không tự biến phương án triển khai thành yêu cầu đã chốt.” Thêm trường bắt buộc vào schema Me là thay đổi API contract. Việc đã duyệt làm tiếp không được dùng để âm thầm bỏ kiểm version hoặc mở rộng contract mà không nêu rõ. Sau khi duyệt, thực hiện và đồng bộ đúng phạm vi tác động; không hỏi lại các bước kỹ thuật ở trên.

@@ -1,5 +1,7 @@
 # Thiết kế kỹ thuật chi tiết
 
+> **B01-04 · 06/10/2026 · v0.1.4:** `Me.version` bắt buộc đã được chủ dự án duyệt, dùng cho lát sửa tên với kiểm phiên bản và gửi lặp an toàn. Nguồn API, QA, viewer và gói hiện hành cập nhật cùng đợt. DB đã có `users.version`; bảng idempotency theo mô hình đã thiết kế. Không đổi nghiệp vụ xác minh, quyền, ngôn ngữ tài khoản hoặc các phần Pending. Các ghi chú cũ bên dưới là mốc lịch sử; tiến độ code xem bộ kế hoạch triển khai trong repo.
+
 > **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** API/data/QA danh mục cập nhật I18N-04 theo quyết định 05/10/2026, phiên bản bổ sung v0.1.3. Các phần ngoài danh mục giữ nguyên trạng thái thiết kế. Gói hiện hành `technical-design-v0.1.1.zip` giữ tên/Drive ID vì được đăng ký như gói cập nhật tại chỗ; phiên bản nội dung xem nguồn, không suy từ tên ZIP.
 
 

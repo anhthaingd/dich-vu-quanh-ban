@@ -6,7 +6,7 @@ import { AuthController } from './auth.controller.js';
 export class AuthModule {
   static register(secret: string): DynamicModule {
     if (secret.length < 32) throw new Error('AUTH_SECRET must have at least 32 characters');
-    return { module: AuthModule, controllers: [AuthController], providers: [
+    return { module: AuthModule, exports: [AuthService], controllers: [AuthController], providers: [
       { provide: AuthService, inject: [Pool], useFactory: (pool: Pool) => new AuthService(pool, secret) },
     ] };
   }

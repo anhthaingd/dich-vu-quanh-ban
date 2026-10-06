@@ -1,3 +1,4 @@
+import type { AccountsApi, ProfileEdit } from '../../accounts/api/accounts-api';
 import { ApiError } from '../../../lib/http/api-error';
 import type { AuthApi, Credentials, Me, Registration, Session, TokenStorage } from '../models/auth.types';
 export type AuthErrorCode = 'UNAUTHENTICATED' | 'RATE_LIMITED' | 'VALIDATION' | 'SESSION_UNAVAILABLE';
@@ -6,7 +7,7 @@ export class AuthSession {
   private session: Session | null = null;
   private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
   private readonly listeners = new Set<() => void>();
-  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage) {}
+  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi) {}
   getSnapshot = () => this.snapshot;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   private update(values: Partial<Snapshot>) { this.snapshot = { ...this.snapshot, ...values }; this.listeners.forEach(fn => fn()); }
@@ -70,6 +71,40 @@ export class AuthSession {
       }
     });
   };
+  // Profile mutations use the same lock and refresh path as login/logout.
+  // The caller retains the mutation key; retry after 401 uses that exact key.
+  private async profileOperation(owner: string, work: (token: string) => Promise<Me>): Promise<Me> {
+    if (this.snapshot.busy) throw new ApiError('BUSY');
+    if (!this.session || this.snapshot.user?.id !== owner) throw new ApiError('UNAUTHENTICATED');
+    this.update({ busy: true, error: null });
+    try {
+      if (Date.parse(this.session.expires_at) <= Date.now()) await this.rotate();
+      let user: Me;
+      try { user = await work(this.session!.access_token); }
+      catch (error) {
+        if (!(error instanceof ApiError) || error.code !== 'UNAUTHENTICATED') throw error;
+        await this.rotate();
+        try { user = await work(this.session!.access_token); }
+        catch (retryError) {
+          if (retryError instanceof ApiError && retryError.code === 'UNAUTHENTICATED') await this.forget();
+          throw retryError;
+        }
+      }
+      if (user.id !== owner || this.snapshot.user?.id !== owner) throw new ApiError('INVALID_RESPONSE');
+      // A replay can return an older committed snapshot. Never regress a newer
+      // profile already read by foreground verification.
+      if (user.version >= this.snapshot.user.version) {
+        this.session = { ...this.session!, user };
+        this.update({ user });
+      }
+      return user;
+    } finally { this.update({ busy: false }); }
+  }
+  loadProfile = (owner: string) => this.profileOperation(owner, token => this.api.me(token));
+  editProfile = (owner: string, input: ProfileEdit, key: string) => this.profileOperation(owner, token => {
+    if (!this.accounts) throw new ApiError('CONFIG');
+    return this.accounts.edit(token, input, key);
+  });
   logout = () => this.run(async () => {
     if (!this.session) return;
     try {

@@ -7,7 +7,7 @@ import { uuid } from '../../logging/sanitize.js';
 
 const digest = (token: string) => createHash('sha256').update(token).digest('hex');
 const issuer = 'dvqb-api', audience = 'dvqb-mobile';
-type User = { id: string; display_name: string; status: string; locale: 'vi' };
+type User = { id: string; display_name: string; status: string; locale: 'vi'; version: number };
 export class AuthService {
   private readonly key: Uint8Array;
   constructor(private readonly pool: Pool, secret: string) { this.key = new TextEncoder().encode(secret); }
@@ -34,7 +34,7 @@ export class AuthService {
     const hash = await hashPassword(password);
     try {
       return await this.transaction(async db => {
-        const { rows: [user] } = await db.query<User>('INSERT INTO users(display_name) VALUES($1) RETURNING id,display_name,status,locale', [name]);
+        const { rows: [user] } = await db.query<User>('INSERT INTO users(display_name) VALUES($1) RETURNING id,display_name,status,locale,version', [name]);
         await db.query("INSERT INTO identities(user_id,provider,subject,password_hash) VALUES($1,'email',$2,$3)", [user.id,email,hash]);
         return this.issue(db, user);
       });
@@ -48,7 +48,7 @@ export class AuthService {
     const valid = await verifyPassword(password, identity?.password_hash ?? null);
     if (!identity || !valid) throw new UnauthorizedException();
     return this.transaction(async db => {
-      const { rows: [user] } = await db.query<User>('SELECT id,display_name,status,locale FROM users WHERE id=$1 FOR UPDATE', [identity.user_id]);
+      const { rows: [user] } = await db.query<User>('SELECT id,display_name,status,locale,version FROM users WHERE id=$1 FOR UPDATE', [identity.user_id]);
       if (!user || user.status !== 'active') throw new UnauthorizedException();
       return this.issue(db, user);
     });
@@ -61,7 +61,7 @@ export class AuthService {
       // All rotations for this user serialize, then reread the session. A
       // replay of the old token revokes its entire family, including a racing
       // rotation. Commit that revocation before returning 401.
-      const { rows: [user] } = await db.query<User>('SELECT id,display_name,status,locale FROM users WHERE id=$1 FOR UPDATE', [owner.user_id]);
+      const { rows: [user] } = await db.query<User>('SELECT id,display_name,status,locale,version FROM users WHERE id=$1 FOR UPDATE', [owner.user_id]);
       const { rows: [session] } = await db.query('SELECT * FROM sessions WHERE refresh_hash=$1', [hash]);
       if (session.revoked_at || session.expires_at <= new Date() || user.status !== 'active') {
         await db.query('UPDATE sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE family_id=$1', [session.family_id]);
@@ -73,15 +73,15 @@ export class AuthService {
     if (!result) throw new UnauthorizedException();
     return result;
   }
-  async authenticate(header: string | undefined) {
+  async authenticate(header: string | undefined, db: Pool | PoolClient = this.pool) {
     if (!header?.startsWith('Bearer ') || header.length > 4096) throw new UnauthorizedException();
     let claims;
     try {
       claims = (await jwtVerify(header.slice(7), this.key, { algorithms: ['HS256'], issuer, audience, requiredClaims: ['sub','sid','exp','iat'] })).payload;
     } catch { throw new UnauthorizedException(); }
     if (typeof claims.sid !== 'string' || !uuid.test(claims.sid) || !claims.sub || !uuid.test(claims.sub)) throw new UnauthorizedException();
-    const { rows: [user] } = await this.pool.query<User>(`SELECT u.id,u.display_name,u.status,u.locale FROM users u JOIN sessions s ON s.user_id=u.id
-      WHERE s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>now() AND u.status='active'`, [claims.sid,claims.sub]);
+    const { rows: [user] } = await db.query<User>(`SELECT u.id,u.display_name,u.status,u.locale,u.version FROM users u JOIN sessions s ON s.user_id=u.id
+      WHERE s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND u.status='active'`, [claims.sid,claims.sub]);
     if (!user) throw new UnauthorizedException();
     return { user: this.me(user), sessionId: claims.sid };
   }

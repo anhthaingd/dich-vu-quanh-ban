@@ -47,6 +47,7 @@ export function AccountScreen({ navigation }: NativeStackScreenProps<RootStackPa
     {state.phase === 'authenticated' && <Card>
       <AppText variant="section">{state.user!.display_name}</AppText>
       <AppText>{t(state.user!.email_verified ? 'auth.verified' : 'auth.unverified')}</AppText>
+      <Button testID="profile-open" label={t('profile.title')} disabled={state.busy} onPress={() => navigation.navigate('Profile')} />
       <Button testID="auth-logout" label={t('auth.logout')} loading={state.busy} onPress={() => void manager.logout()} />
     </Card>}
     {state.phase === 'anonymous' && <Card>

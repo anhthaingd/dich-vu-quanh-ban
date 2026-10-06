@@ -85,7 +85,7 @@
     "auth": "Chính mình",
     "request": null,
     "response": "Me",
-    "rule": ""
+    "rule": "Me.version bắt buộc >=1; dùng làm expected_version khi sửa hồ sơ."
   },
   {
     "id": "editMe",
@@ -96,7 +96,7 @@
     "auth": "Chính mình",
     "request": "ProfileEdit",
     "response": "Me",
-    "rule": ""
+    "rule": "B01-04: kiểm phiên hiện hành, expected_version và Idempotency-Key. Cùng key/payload replay kết quả đã lưu; payload khác 409 IDEMPOTENCY_MISMATCH; version cũ 409 VERSION_CONFLICT. Me trả version mới; locale vẫn vi."
   },
   {
     "id": "listSessions",

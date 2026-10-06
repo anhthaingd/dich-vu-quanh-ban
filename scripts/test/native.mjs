@@ -11,6 +11,7 @@ import { createApp } from '../../services/api/dist/src/bootstrap.js';
 import { AppLog } from '../../services/api/dist/src/logging/logger.js';
 import { migrate } from '../../services/api/dist/src/database/migrate.js';
 import { seed } from '../../services/api/dist/src/database/seed.js';
+import { AuthService } from '../../services/api/dist/src/modules/auth/auth.service.js';
 import { CatalogService } from '../../services/api/dist/src/modules/catalog/catalog.service.js';
 import { requireTestDatabase } from './native-options.mjs';
 /* global AbortSignal */
@@ -21,7 +22,7 @@ import { requireTestDatabase } from './native-options.mjs';
 const platform = process.argv[2];
 if (!['android', 'ios'].includes(platform)) throw Error('Use android or ios');
 const flow = process.argv[3] ?? 'catalog';
-if (!['catalog', 'auth', 'i18n', 'i18n-layout', 'shell'].includes(flow)) throw Error('Use catalog, auth, i18n, i18n-layout or shell flow');
+if (!['catalog', 'auth', 'i18n', 'i18n-layout', 'shell', 'profile'].includes(flow)) throw Error('Use catalog, auth, i18n, i18n-layout shell or profile flow');
 const directory = resolve('test-results/native', platform, flow === 'catalog' ? '.' : flow);
 await mkdir(directory, { recursive: true });
 const run = (cmd, args) => spawnSync(cmd, args, { encoding: 'utf8', timeout: 30000, env: { ...process.env, MAESTRO_CLI_NO_ANALYTICS: '1' } });
@@ -81,6 +82,7 @@ const reversedPorts = [];
 let app, control, metro, maestroProcess, created = false;
 let outcome;
 let originalTextSize;
+let originalHandwriting;
 let aborted = false;
 const interrupt = () => { aborted = true; maestroProcess?.kill('SIGTERM'); };
 process.on('SIGINT', interrupt); process.on('SIGTERM', interrupt);
@@ -88,6 +90,11 @@ const listen = (server, port = 0, host = '127.0.0.1') => new Promise((done, reje
 const close = server => new Promise((done, reject) => server.close(error => error ? reject(error) : done()));
 const devLink = port => `exp+dich-vu-quanh-ban://expo-development-client/?url=${encodeURIComponent(`http://${platform === 'ios' ? 'localhost' : host}:${port}`)}`;
 try {
+  if (platform === 'android' && flow === 'profile') {
+    // Gboard's stylus tutorial can intercept Maestro typing in name fields.
+    originalHandwriting = check('adb', ['-s', device, 'shell', 'settings', 'get', 'secure', 'stylus_handwriting_enabled']).trim();
+    check('adb', ['-s', device, 'shell', 'settings', 'put', 'secure', 'stylus_handwriting_enabled', '0']);
+  }
   if (flow === 'i18n-layout') {
     originalTextSize = platform === 'android'
       ? check('adb', ['-s', device, 'shell', 'settings', 'get', 'system', 'font_scale']).trim()
@@ -111,6 +118,8 @@ try {
   const service = app.get(CatalogService);
   const original = service.list.bind(service);
   const key = randomUUID();
+  const testEmail = `native-${randomUUID()}@example.test`;
+  if (flow === 'profile') await app.get(AuthService).register(testEmail, 'native-test-only-password', 'Native profile');
   control = createServer(async (req, res) => {
     try {
       const mode = req.url?.slice(`/${key}/`.length);
@@ -137,7 +146,7 @@ try {
   const result = await new Promise((done, reject) => {
     maestroProcess = spawn(maestro, ['--device', device, 'test', '-e', `APP_ID=${appId}`, '-e', `DEV_URL=${devLink(metroPort)}`,
       '-e', `TEST_CONTROL_URL=http://127.0.0.1:${control.address().port}/${key}`,
-      '-e', `TEST_EMAIL=native-${randomUUID()}@example.test`, '-e', 'TEST_PASSWORD=native-test-only-password',
+      '-e', `TEST_EMAIL=${testEmail}`, '-e', 'TEST_PASSWORD=native-test-only-password',
       '--format', 'junit', '--output', `${directory}/junit.xml`,
       '--test-output-dir', directory, `tests/e2e/native/${flow}.yaml`], {
       env: { ...process.env, MAESTRO_CLI_NO_ANALYTICS: '1' }, stdio: 'inherit',
@@ -147,7 +156,7 @@ try {
     maestroProcess.once('close', code => { clearTimeout(timeout); done(code ?? 1); });
   });
   if (aborted || result !== 0) throw Error(`Maestro failed (${result}); inspect ${directory}`);
-  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'shell' ? ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery', 'account-return-to-category', 'catalog-root', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
+  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery', 'account-return-to-category', 'catalog-root', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
 } catch (error) {
   outcome = { status: 'FAIL', platform, device, reason: error.message };
   console.error(error.message); process.exitCode = 1;
@@ -155,6 +164,9 @@ try {
   try {
     // Restore font settings even when a layout assertion fails.
     try {
+      if (originalHandwriting !== undefined) {
+        check('adb', ['-s', device, 'shell', 'settings', ...(originalHandwriting === 'null' ? ['delete', 'secure', 'stylus_handwriting_enabled'] : ['put', 'secure', 'stylus_handwriting_enabled', originalHandwriting])]);
+      }
       if (originalTextSize !== undefined) {
         if (platform === 'android') {
           const action = originalTextSize === 'null' ? ['delete', 'system', 'font_scale'] : ['put', 'system', 'font_scale', originalTextSize];

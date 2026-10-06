@@ -1,5 +1,7 @@
 # Hợp đồng API và realtime
 
+> **B01-04 · 06/10/2026 · v0.1.4:** Chủ dự án duyệt bổ sung `Me.version` bắt buộc, integer ≥ 1. Áp dụng cho GET/PATCH `/me` và `Session.user` từ register/login/refresh. `PATCH /me` dùng `expected_version` và UUID `Idempotency-Key` theo thiết kế hiện có. Sai phiên bản trả 409 `VERSION_CONFLICT`; cùng actor/operation/key nhưng payload khác trả 409 `IDEMPOTENCY_MISMATCH`. Cùng key/payload trả kết quả đã lưu, không tăng version lần hai. Kiểm phiên/quyền lại trước trả kết quả, kể cả replay. Lát hiện tại chỉ sửa tên: trim, 1–100 ký tự theo giới hạn đăng ký, không ký tự điều khiển. Locale tài khoản vẫn `vi`; không mở I18N-03/OTP. Bảng idempotency dùng thiết kế PLAN-001 hiện hành, chưa đặt retention mới. Bằng chứng triển khai nằm trong báo cáo B01-04 ở repo, không suy ra production/UAT.
+
 > **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** I18N-04 (05/10/2026): locale=vi|en|ja, mặc định vi; trả name và name_locale, giữ name_vi. Thiếu tên dịch/giá trị không phải chuỗi hoặc chỉ khoảng trắng thì dùng name_vi, name_locale=vi. Cursor gắn endpoint/bộ lọc/locale; locale sai/lặp trả 400. Không trả object translations ra public.
 
 

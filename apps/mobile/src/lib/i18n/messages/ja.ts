@@ -1,5 +1,14 @@
 import type { MessageDictionary } from './vi';
 export const ja = {
+  profile: {
+    title: '表示名を変更', loading: 'プロフィールを読み込み中…', current: '保存済みの名前：%{name}',
+    hint: '1〜100文字で入力してください。', save: '名前を保存', saved: '表示名を保存しました。',
+    reload: 'プロフィールを再読み込み', signedOut: 'セッションが終了しました。再度ログインしてプロフィールを編集してください。',
+    conflict: 'プロフィールが変更されたか、リクエストが一致しません。再読み込みして最新の名前を確認してから保存してください。入力中の名前は保持されます。',
+    validation: '空白だけでなく、1〜100文字の名前を入力してください。',
+    error: '完了できませんでした。接続を確認して再試行してください。', busy: 'セッションを確認中です。しばらくしてから再試行してください。',
+    pending: '保存結果を確認できていません。同じ名前で再試行して結果を確認してください。',
+  },
   shell: { groups: 'サービスの分類', findServices: 'サービスを探す', openAccount: 'アカウントと言語設定を開く', discover: 'ハノイのサービス', categories: 'サービスの分類を選ぶ', accountIntro: 'ログインと言語を管理できます。', preferences: '表示設定' },
   common: { back: '戻る', backButton: '← 戻る', retry: '再試行', account: 'アカウント', language: '言語' },
   catalog: {
