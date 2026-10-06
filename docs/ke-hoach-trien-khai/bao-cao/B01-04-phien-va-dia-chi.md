@@ -1,6 +1,6 @@
 # B01-04 — Quản lý phiên đăng nhập và sổ địa chỉ
 
-06/10/2026 · DELIVERY-01 · Quyết định B01-04A đã duyệt cả gói. Code mới sau `312972b`, chưa commit/push/CI mới, chưa UAT của chủ dự án. [Checklist](../01-checklist.md) · [Báo cáo sửa tên](B01-04-ho-so-ten-hien-thi.md).
+06/10/2026 · DELIVERY-01 · Quyết định B01-04A đã duyệt cả gói. Mốc bàn giao local sau `312972b`; đã push `4a98dc0`, [CI 37424414095](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37424414095) đạt 3 jobs ngày 06/10. Chưa UAT của chủ dự án. Các ghi chú chưa push/CI ở phần bằng chứng dưới là trạng thái lúc kiểm trước push. [Checklist](../01-checklist.md) · [Báo cáo sửa tên](B01-04-ho-so-ten-hien-thi.md).
 
 ## Bạn dùng được gì?
 
@@ -113,3 +113,5 @@ Lỗi phát hiện trong quá trình kiểm đã sửa: tên trường tọa đ�
 Spec B01-04A: nguồn API/data/QA v0.1.5, mirror/viewer/ZIP; UX/prototype gỡ mặc định; FR/SRS/UX Drive bổ sung đúng phần, giữ lịch sử. Các file raw trên Drive cập nhật cùng ID và tải lại so bytes; registry ghi phạm vi/N/A và bằng chứng. Không tải báo cáo/checklist lên Drive.
 
 </details>
+
+Cập nhật sau bàn giao: nút thu hồi tất cả phiên khác và quay lại sau login được triển khai ở [đợt B01-04/07 bổ sung](B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md), không dùng test/CI cũ làm bằng chứng cho code mới.

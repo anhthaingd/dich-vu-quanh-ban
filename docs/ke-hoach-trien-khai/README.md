@@ -25,7 +25,8 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 | Rà soát trùng nhóm/kỹ năng | [B02-01 — rà soát](bao-cao/B02-01-ra-soat-danh-muc.md) | Phân tích bộ cũ 50 nhóm/140 kỹ năng; dữ liệu đã được thay theo yêu cầu clear ở báo cáo kế tiếp |
 | Thay bộ danh mục local | [B02-01 — dữ liệu mới](bao-cao/B02-01-thay-du-lieu-danh-muc.md) | Đã thay DB: 10 ngành, 39 nhóm, 128 kỹ năng; một nhóm mỗi kỹ năng; giữ nguyên auth |
 | Sửa tên hiển thị | [B01-04](bao-cao/B01-04-ho-so-ten-hien-thi.md) | API/DB/app, version, retry an toàn và VI/EN/JA; B01-04 vẫn một phần |
-| Phiên đăng nhập và sổ địa chỉ | [B01-04 — gói tài khoản](bao-cao/B01-04-phien-va-dia-chi.md) | Danh sách/thu hồi từng phiên; thêm/sửa/gỡ/mặc định địa chỉ; đạt local Android/iOS, chưa push/CI/UAT |
+| Phiên đăng nhập và sổ địa chỉ | [B01-04 — gói tài khoản](bao-cao/B01-04-phien-va-dia-chi.md) | Danh sách/thu hồi từng phiên; thêm/sửa/gỡ/mặc định địa chỉ; đạt local Android/iOS, đã push `4a98dc0` và CI đạt; chưa UAT |
+| Thu hồi nhiều phiên và quay lại sau login | [B01-04/07 — bổ sung](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) | Dùng API hiện có, thử lại phần chưa xác nhận, quay lại ba màn tài khoản; đạt 124 mobile, 8 web và native Android/iOS; phần bổ sung chưa push/CI/UAT |
 | Tài khoản email/mật khẩu | [B01-01](bao-cao/B01-01-email-mat-khau.md) | Đăng ký/đăng nhập, refresh/logout local; không đóng toàn bộ B01 |
 
 Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng này và liên kết dòng checklist. Không sửa báo cáo cũ để biến kết quả của commit cũ thành bằng chứng cho commit mới. Nếu sửa báo cáo, giữ ngày/commit và ghi phần đính chính.
@@ -47,7 +48,9 @@ Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng
 
 ## Đợt gộp B01-04 — 06/10/2026
 
-Phần sửa tên đã push `312972b`; [CI 37402534136](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37402534136) đạt 3 jobs. Sau đó đã làm gói **phiên đăng nhập + sổ địa chỉ**: [báo cáo và thứ tự đọc code](bao-cao/B01-04-phien-va-dia-chi.md). 50 API, 106 mobile, web và Android/iOS đạt local. Gói mới chưa commit/push/CI/UAT; B01-04 còn một phần theo báo cáo, OTP Pending.
+Phần sửa tên đã push `312972b`; [CI 37402534136](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37402534136) đạt 3 jobs. Sau đó đã làm gói **phiên đăng nhập + sổ địa chỉ**: [báo cáo và thứ tự đọc code](bao-cao/B01-04-phien-va-dia-chi.md). 50 API, 106 mobile, web và Android/iOS đạt local. Gói đã push `4a98dc0`; [CI 37424414095](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37424414095) đạt cả 3 jobs. B01-04 còn một phần, chưa UAT, OTP Pending.
+
+Đợt bổ sung tiếp theo: [thu hồi tất cả phiên khác và quay lại sau đăng nhập](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md). B02 đăng ký partner cần tài khoản đã xác minh nên còn phụ thuộc quyết định mở lại xác minh; không tự vượt điều kiện này.
 
 Theo yêu cầu mới, một đợt có nhiều chức năng liên quan đủ điều kiện; không dừng sau từng thao tác nhỏ. Giữ checklist từng phần và một báo cáo chung cho đợt.
 

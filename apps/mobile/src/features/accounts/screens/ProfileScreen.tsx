@@ -19,7 +19,7 @@ export function ProfileScreen({ navigation }: NativeStackScreenProps<RootStackPa
   return <ProductShell keyboardDismissMode="on-drag" onBack={() => navigation.goBack()}>
     <AppText variant="title" accessibilityRole="header">{t('profile.title')}</AppText>
     {state.phase === 'authenticated' && state.user ? <ProfileForm key={state.user.id} owner={state.user.id} />
-      : <Card><AppText>{t('profile.signedOut')}</AppText><Button label={t('auth.login')} onPress={() => navigation.replace('Account')} /></Card>}
+      : <Card><AppText>{t('profile.signedOut')}</AppText><Button label={t('auth.login')} onPress={() => navigation.replace('Account', { returnTo: 'Profile' })} /></Card>}
   </ProductShell>;
 }
 function ProfileForm({ owner }: { owner: string }) {

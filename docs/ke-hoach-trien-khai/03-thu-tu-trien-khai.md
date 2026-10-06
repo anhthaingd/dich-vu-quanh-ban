@@ -6,7 +6,7 @@ Các đường dẫn ghi “dự kiến” chưa có code. Dùng spec/API/QA li�
 
 ## Điều chỉnh cách giao đợt — 06/10/2026
 
-Chủ dự án yêu cầu gom chức năng thay vì bàn giao từng thao tác nhỏ. Đợt đang làm: **B01-04 phiên đăng nhập + sổ địa chỉ**, nối DB/API/app, VI/EN/JA và kiểm thử chung. Đã duyệt bổ sung thời gian/phiên hiện tại, thu hồi cả lần đăng nhập, địa chỉ mặc định và version. Nhập tọa độ thủ công; chưa tích hợp bản đồ/GPS trả phí.
+Chủ dự án yêu cầu gom chức năng thay vì bàn giao từng thao tác nhỏ. Đợt vừa push: **B01-04 phiên đăng nhập + sổ địa chỉ**, commit `4a98dc0`, CI đạt. Đợt bổ sung: **thu hồi các phiên khác + trở lại màn tài khoản sau login**, theo [báo cáo](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md). Gói trước nối DB/API/app, VI/EN/JA và kiểm thử chung. Đã duyệt bổ sung thời gian/phiên hiện tại, thu hồi cả lần đăng nhập, địa chỉ mặc định và version. Nhập tọa độ thủ công; chưa tích hợp bản đồ/GPS trả phí.
 
 Các đợt sau gom theo kết quả sử dụng: B02 hồ sơ + kỹ năng + vùng + trạng thái nhận việc (upload/xác minh chỉ khi đủ quyết định); B03 tìm/lọc + yêu cầu + xử lý yêu cầu (cần nguồn cung và xác minh); B05 hội thoại + lịch sử + đọc/nhận tin. Các phần phụ thuộc OTP/provider vẫn Pending, không giả quyền để đi nhanh. Mỗi đợt có báo cáo chung và checklist từng chức năng, không cần hỏi duyệt lại từng file hoặc từng nút.
 

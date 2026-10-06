@@ -185,16 +185,14 @@ appId: vn.dichvuquanhban.app
     id: sessions-open
 - scrollUntilVisible:
     element:
-      id: session-revoke-other
+      id: sessions-revoke-others
     direction: DOWN
 - tapOn:
-    id: session-revoke-other
-- scrollUntilVisible:
-    element:
-      id: session-confirm
-    direction: UP
+    id: sessions-revoke-others
 - tapOn:
-    id: session-confirm
+    id: sessions-confirm-others
+- assertVisible:
+    id: sessions-batch-done
 - scrollUntilVisible:
     element:
       id: session-revoke-current
@@ -205,7 +203,43 @@ appId: vn.dichvuquanhban.app
     element:
       id: session-confirm
     direction: UP
+    centerElement: true
 - tapOn:
     id: session-confirm
 - assertVisible: Đăng nhập
 - takeScreenshot: sessions-revoked
+
+- tapOn:
+    id: account-continue-login
+- scrollUntilVisible:
+    element:
+      id: auth-email
+    direction: DOWN
+- tapOn:
+    id: auth-email
+- inputText: ${TEST_EMAIL}
+- pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: auth-password
+    direction: DOWN
+- tapOn:
+    id: auth-password
+- inputText: ${TEST_PASSWORD}
+- pressKey: Enter
+- runFlow: dismiss-password-prompt.yaml
+- scrollUntilVisible:
+    element:
+      id: sessions-revoke-others
+    direction: DOWN
+- tapOn:
+    id: sessions-revoke-others
+- assertVisible: Không có phiên khác đang hoạt động.
+- scrollUntilVisible:
+    element:
+      id: session-revoke-current
+    direction: DOWN
+    centerElement: true
+- assertVisible:
+    id: session-revoke-current
+- takeScreenshot: sessions-login-return

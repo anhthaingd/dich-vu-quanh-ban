@@ -28,3 +28,18 @@ test('session confirmation shows current login and revocation removes authentica
   fireEvent.press(screen.getByTestId('account-reload'));fireEvent.press(await screen.findByTestId('session-revoke-current'));expect(await screen.findByText('Đây là phiên hiện tại. Thu hồi sẽ đăng xuất bạn khỏi app này.')).toBeVisible();
   f.accounts.revokeSession.mockResolvedValue({id:'family',version:1,state:'revoked'});fireEvent.press(screen.getByTestId('session-confirm'));await screen.findByRole('button',{name:'Đăng nhập'});expect(screen.queryByTestId('session-revoke-current')).toBeNull();expect(f.storage.clear).toHaveBeenCalled();
 });
+
+test('bulk confirmation can cancel, retries partial failure and keeps current login',async()=>{
+  const f=await mount('sessions');
+  const current={id:'current',version:1,state:'active' as const,is_current:true,created_at:'2026-10-06T00:00:00Z',last_seen_at:null};
+  const a={...current,id:'a',is_current:false},b={...a,id:'b'};
+  f.accounts.sessions.mockResolvedValue({items:[current,a,b],next_cursor:null});
+  fireEvent.press(screen.getByTestId('account-reload'));await screen.findByTestId('session-revoke-current');
+  fireEvent.press(screen.getByTestId('sessions-revoke-others'));await screen.findByTestId('sessions-confirm-others');
+  fireEvent.press(screen.getByTestId('sessions-cancel-others'));expect(f.accounts.revokeSession).not.toHaveBeenCalled();
+  f.accounts.revokeSession.mockResolvedValueOnce({id:'a',version:1,state:'revoked'}).mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValue({id:'b',version:1,state:'revoked'});
+  fireEvent.press(screen.getByTestId('sessions-revoke-others'));fireEvent.press(await screen.findByTestId('sessions-confirm-others'));
+  fireEvent.press(await screen.findByTestId('sessions-batch-retry'));
+  await screen.findByTestId('sessions-batch-done');expect(f.accounts.revokeSession.mock.calls.map(x=>x[1])).toEqual(['a','b','b']);
+  expect(f.manager.getSnapshot().phase).toBe('authenticated');expect(f.storage.clear).not.toHaveBeenCalled();
+});

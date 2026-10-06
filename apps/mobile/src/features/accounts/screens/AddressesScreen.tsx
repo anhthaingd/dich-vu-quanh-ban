@@ -16,7 +16,7 @@ type Draft = { id: string | null; version?: number; label: string; text: string;
 const draftOf = (a?: SavedAddress): Draft => ({ id: a?.id ?? null, version: a?.version, label: a?.label ?? '', text: a?.address.text ?? '', lat: a ? String(a.address.point.latitude) : '', lng: a ? String(a.address.point.longitude) : '', is_default: a?.is_default ?? false });
 const inputOf = (d: Draft): AddressInput => ({ label: d.label.trim(), address: { text: d.text.trim(), point: { latitude: Number(d.lat), longitude: Number(d.lng) } }, is_default: d.is_default, ...(d.id ? { expected_version: d.version } : {}) });
 export function AddressesScreen({ navigation }: NativeStackScreenProps<RootStackParamList,'Addresses'>) {
-  return <AccountPage title="addresses.title" back={() => navigation.goBack()} login={() => navigation.replace('Account')}>
+  return <AccountPage title="addresses.title" back={() => navigation.goBack()} login={() => navigation.replace('Account', { returnTo: 'Addresses' })}>
     {owner => <Addresses key={owner} owner={owner} />}
   </AccountPage>;
 }

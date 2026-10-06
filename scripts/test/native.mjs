@@ -120,6 +120,10 @@ try {
   const key = randomUUID();
   const testEmail = `native-${randomUUID()}@example.test`;
   if (['profile','accounts'].includes(flow)) await app.get(AuthService).register(testEmail, 'native-test-only-password', 'Native profile');
+  if (flow === 'accounts') {
+    await app.get(AuthService).login(testEmail, 'native-test-only-password');
+    await app.get(AuthService).login(testEmail, 'native-test-only-password');
+  }
   control = createServer(async (req, res) => {
     try {
       const mode = req.url?.slice(`/${key}/`.length);
@@ -156,7 +160,7 @@ try {
     maestroProcess.once('close', code => { clearTimeout(timeout); done(code ?? 1); });
   });
   if (aborted || result !== 0) throw Error(`Maestro failed (${result}); inspect ${directory}`);
-  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'accounts' ? ['address-create-edit-default-archive', 'locale-draft-retention', 'address-cold-start', 'revoke-other-and-current-session'] : flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery', 'account-return-to-category', 'catalog-root', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
+  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'accounts' ? ['address-create-edit-default-archive', 'locale-draft-retention', 'address-cold-start', 'revoke-all-other-and-current-sessions', 'return-after-login'] : flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery', 'account-return-to-category', 'catalog-root', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
 } catch (error) {
   outcome = { status: 'FAIL', platform, device, reason: error.message };
   console.error(error.message); process.exitCode = 1;

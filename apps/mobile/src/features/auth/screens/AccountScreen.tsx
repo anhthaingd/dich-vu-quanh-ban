@@ -2,11 +2,12 @@ import { useLocale } from '../../../app/providers/LocaleProvider';
 import { LanguageSettings } from '../../accounts/components/LanguageSettings';
 import type { AuthErrorCode } from '../state/auth-session';
 import type { MessageKey } from '../../../lib/i18n';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Keyboard, Platform, StyleSheet, View } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAuth } from '../../../app/providers/AuthProvider';
+import { accountDestination } from '../../../app/navigation/routes';
 import type { RootStackParamList } from '../../../app/navigation/routes';
 import { ProductShell } from '../../../app/layout/ProductShell';
 import { theme } from '../../../theme/tokens';
@@ -19,9 +20,14 @@ import { LoadingState } from '../../../components/ui/Feedback';
 const errorMessages: Record<AuthErrorCode, MessageKey & `errors.${string}`> = {
   UNAUTHENTICATED: 'errors.authentication', RATE_LIMITED: 'errors.rateLimited', VALIDATION: 'errors.validation', SESSION_UNAVAILABLE: 'errors.session',
 };
-export function AccountScreen({ navigation }: NativeStackScreenProps<RootStackParamList, 'Account'>) {
+export function AccountScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'Account'>) {
   const { t } = useLocale();
   const { manager, state } = useAuth();
+  const focused = useIsFocused();
+  const destination = accountDestination(route.params?.returnTo);
+  useEffect(() => {
+    if (focused && destination && state.phase === 'authenticated' && !state.busy) navigation.replace(destination);
+  }, [focused, destination, state.phase, state.busy, navigation]);
   const [register, setRegister] = useState(false);
   const [email, setEmail] = useState(''), [password, setPassword] = useState(''), [name, setName] = useState('');
   useFocusEffect(useCallback(() => {
