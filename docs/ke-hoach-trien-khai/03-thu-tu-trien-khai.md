@@ -4,38 +4,35 @@ DOC-085 · v1.0 · 01/10/2026 · DELIVERY-01. [Checklist](01-checklist.md) · [Q
 
 Các đường dẫn ghi “dự kiến” chưa có code. Dùng spec/API/QA liên kết trong checklist cho từng nhóm; không dựng lại thiết kế từ đầu hoặc chuyển toàn bộ prototype sang app trong một lần. Mỗi lát có luồng chạy thật và báo cáo riêng trước khi chuyển lát tiếp theo.
 
-## Điều chỉnh cách giao đợt — 06/10/2026
+## Thứ tự ưu tiên hiện hành — 06/10/2026
 
-Chủ dự án yêu cầu gom chức năng thay vì bàn giao từng thao tác nhỏ. Đợt vừa push: **B01-04 phiên đăng nhập + sổ địa chỉ**, commit `4a98dc0`, CI đạt. Đợt bổ sung: **thu hồi các phiên khác + trở lại màn tài khoản sau login**, theo [báo cáo](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md). Gói trước nối DB/API/app, VI/EN/JA và kiểm thử chung. Đã duyệt bổ sung thời gian/phiên hiện tại, thu hồi cả lần đăng nhập, địa chỉ mặc định và version. Nhập tọa độ thủ công; chưa tích hợp bản đồ/GPS trả phí.
+**Thay thứ tự tuần tự B00 → B01 → B02 trước đây bằng các gói dưới đây.** Mã Bxx là nhóm chức năng để tra cứu, không phải thứ tự phải làm hết từng nhóm. Phần nền và tài khoản đã đủ để chuyển trọng tâm sang nghiệp vụ; không làm thêm tiện ích tài khoản vì chức năng chính đang cần quyết định.
 
-Các đợt sau gom theo kết quả sử dụng: B02 hồ sơ + kỹ năng + vùng + trạng thái nhận việc (upload/xác minh chỉ khi đủ quyết định); B03 tìm/lọc + yêu cầu + xử lý yêu cầu (cần nguồn cung và xác minh); B05 hội thoại + lịch sử + đọc/nhận tin. Các phần phụ thuộc OTP/provider vẫn Pending, không giả quyền để đi nhanh. Mỗi đợt có báo cáo chung và checklist từng chức năng, không cần hỏi duyệt lại từng file hoặc từng nút.
+Code tài khoản mới nhất đã push `a823d0e` (gói trước `4a98dc0`). [Báo cáo](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) giữ bằng chứng local/native riêng. Đợt đang hoạt động chuyển sang **P0-1: người cung cấp và tìm dịch vụ**. Chưa được ghi gói này đã implement; hiện đang chốt các khoảng trống cụ thể trong [đề xuất P0-1](de-xuat/P0-01-nguon-cung-va-tim-dich-vu.md).
 
-## Thứ tự và các phụ thuộc cần tránh hiểu nhầm
+| Thứ tự | Gói bàn giao và lý do ưu tiên | Nối các mục checklist | Điều kiện bàn giao / phụ thuộc |
+|---|---|---|---|
+| **P0-1 — làm trước** | **Có người cung cấp, khách tìm và xem hồ sơ thật.** Đây là đầu vào của mọi yêu cầu thuê. Gom tạo/sửa hồ sơ, kỹ năng, giá tham khảo, vùng/cửa hàng, công bố và bật/tắt nhận việc; phía khách chọn kỹ năng/vị trí, lọc và xem hồ sơ. | B02-03/04 + phần cần thiết của B01-05, B02-02, B03-01; không yêu cầu hoàn tất cả B01 | Hai tài khoản đi hết luồng trên DB thật; không rò dữ liệu riêng; bật/tắt hoặc đổi vùng tác động kết quả; lưu/thử lại/version đúng. Cần chốt xác minh trong môi trường kiểm thử và phần API còn thiếu. Tạo nền ví cùng hồ sơ theo contract, chưa mở giao dịch tiền. Upload cần cho tiêu chí hồ sơ thì làm trong gói, không dựng toàn hệ thống asset trước. |
+| **P0-2 — ngay sau P0-1** | **Khách gửi yêu cầu, người cung cấp nhận và hai bên theo dõi việc.** Gom làm ngay/hẹn trước, danh sách/chi tiết, nhận/từ chối/rút/đổi lịch/dừng và chat tối thiểu trước/sau thuê. | B03-02/03/04 + B05-01; B04-02 khi dùng nhân viên | Hai tài khoản thực hiện được; kiểm điện thoại đã xác minh, tự thuê, trạng thái và vùng ngay lúc gửi; retry không tạo trùng; chat giữ quyền. Làm ngay có ETA, không thêm bước bắt đầu. OTP thật chưa mở thì chỉ được nghiệm thu trong phạm vi test đã duyệt. |
+| **P0-3 — hoàn thành vòng sử dụng** | **Ghi kết quả, hóa đơn và hoàn tất việc bằng tiền test.** Gom ảnh kết quả, công/vật tư, sửa/xác nhận hóa đơn, point/giữ phí/quyết toán và hai dấu thanh toán. | B02-02 cho ảnh + B06-01/02/03 + B07-01/02/03 | Luồng từ P0-2 đi tới hoàn tất; số tiền theo spec, ledger cân bằng, không nhân đôi khi retry; admin không giả xác nhận nhận tiền. Chưa nối tiền thật, chưa gọi ngân hàng. Q02 chưa chốt vẫn chặn tiền thật. |
+| **P1-1** | Đội ngũ cửa hàng/doanh nghiệp đầy đủ: mời, quyền, phân công/đổi người; không để gói quản trị nhân viên chặn luồng thợ/chủ tự thực hiện. | B04-01/02 | Nhiều người dùng, đúng quyền từng việc; người rời không truy cập việc mới; phòng chat riêng không lộ. Phần phân công bắt buộc của luồng đã chọn được kéo vào P0-2. |
+| **P1-2** | Hoàn thiện hỗ trợ cho luồng chính: thông báo/inbox/lịch, tìm trên bản đồ/GPS, đánh giá, xét xác minh và xử lý báo cáo/admin. | Phần còn lại B03-01, B05-02/03, B02-05, B09, B10-01 | Provider/ngân sách riêng nếu có. Admin tối thiểu bắt buộc cho quyền, xác minh hoặc vận hành được làm cùng gói P0 có phụ thuộc, không chờ đến đây mới bảo vệ dữ liệu. |
+| **P2** | Hoàn thiện tiện ích tài khoản, đồng bộ locale tài khoản, gọi trong app, ngân hàng sandbox và vận hành mở rộng. | Phần còn lại B01, I18N-03, B08, B10-02, B11-01/03 | Nâng lên P0/P1 chỉ khi là điều kiện bắt buộc để hoàn thành gói đang chạy. Không coi ưu tiên thấp là loại khỏi phase hoặc khỏi điều kiện ra mắt. |
+| **Cổng nghiệm thu** | UAT toàn hành trình, bảo mật, phục hồi dữ liệu, vận hành và phê duyệt phát hành. | B11-02, G-MONEY | Kiểm cả các phần P1/P2 bắt buộc trước ra mắt. Đạt local/test không có nghĩa được production hoặc tiền thật. |
 
-```mermaid
-flowchart TD
-  BASE[Nền đã có + auth email local] --> L1[I18N-01/02]
-  L1 --> AUTH[B01 xác minh + quyền + tài khoản]
-  AUTH --> PARTNER[B02 upload + nguồn cung]
-  PARTNER --> SEARCH[B03 tìm + yêu cầu]
-  SEARCH --> ORG[B04 doanh nghiệp]
-  ORG --> CHAT[B05 chat + lịch + thông báo]
-  CHAT --> INV[B06 hóa đơn]
-  INV --> MONEY[B07 ví/point test]
-  MONEY --> BANK[B08 ngân hàng sandbox]
-  BANK --> ADMIN[B09 hỗ trợ/admin]
-  ADMIN --> REVIEW[B10 đánh giá + gọi]
-  REVIEW --> UAT[B11 UAT/vận hành]
-  UAT --> GATE[G-MONEY: chỉ khi được duyệt riêng]
-```
+### Cách thực hiện từ trên xuống
 
-Đây là thứ tự làm việc mặc định, tuần tự để dễ review, không phải mọi nhóm đều độc lập hoặc xong là đóng vĩnh viễn:
+1. Chọn gói P0 đầu tiên chưa hoàn tất. Đọc code + spec + checklist và liệt kê quyết định thực sự còn thiếu. Không dựng lại thiết kế đã có.
+2. Gom quyết định thiếu trong một đề xuất cụ thể. Chỉ sửa spec sau khi duyệt; không xem “làm chức năng chính” là mở lại OTP, duyệt chi phí hoặc bỏ điều kiện quyền.
+3. Triển khai phần đủ căn cứ trong gói: dữ liệu và quyền → API → màn hình theo thiết kế → test nhiều tài khoản/lỗi/retry. Giữ VI/EN/JA và chất lượng UI ngay trong gói, không tạo giao diện giả rồi đánh dấu xong.
+4. Kiểm DB thật, app, Android và iOS; báo cáo học code theo thao tác người dùng. Ghi rõ phần chưa có dữ liệu thật, chưa chạy native/CI hoặc chưa UAT.
+5. Chỉ chuyển gói khi tiêu chí trong phạm vi đã duyệt đạt. Nếu bị chặn, tiếp tục phần độc lập của cùng gói; không tự đi làm chức năng phụ để lấp thời gian.
 
-- B01 có thể bàn giao quyền/xác minh đủ cho B02, nhưng khôi phục/xóa thủ công cần admin và kiểm nghĩa vụ các miền về sau. Giữ B01-06 chưa xong đến khi nối đầy đủ.
-- B02 cần màn admin tối thiểu để xét xác minh/CRUD danh mục; tạo phần admin này cùng B02, không chờ B11 mới có quyền thật. B11 hoàn thiện vận hành toàn hệ thống.
-- B03 cần chat trước thuê theo spec; phần tìm/yêu cầu chạy được trước, nhưng B03-04 chỉ đóng sau tích hợp B05. Không thêm nút chat giả để đánh dấu xong.
-- B06 có thể lưu/gửi/xác nhận hóa đơn trước; hoàn tất thanh toán cần B07. B10 đánh giá cần đủ hai dấu thanh toán, không chỉ hóa đơn được duyệt.
-- I18N-03/04 theo sát phần nền UI nhưng cần chốt thay đổi contract/nguồn bản dịch. Chưa được ghi app “đa ngôn ngữ đầy đủ” khi mới dịch nhãn.
+**OTP giữ Pending** theo yêu cầu ngày 01/10. Việc cho dùng dữ liệu xác minh kiểm thử ở P0-1 đang là đề xuất, chưa được duyệt; không cập nhật tài khoản thật hoặc gắn huy hiệu partner đã xác minh. Mẫu thử không thay bằng chứng gửi SMS/email thật.
+
+### Những mục chi tiết bên dưới dùng để tra cứu
+
+Các phần 1–12 dưới đây giữ hướng dẫn kỹ thuật cho từng nhóm. **Số mục không còn là thứ tự triển khai.** Ưu tiên và phụ thuộc giữa các gói lấy từ bảng trên. Ví dụ chat tối thiểu đi cùng yêu cầu thuê; ảnh kết quả và nền ví đi cùng nghiệp vụ cần chúng; không chờ hoàn tất cả B04 mới bắt đầu B05.
 
 ## 1. I18N-01 và I18N-02 — làm trước màn mới
 
@@ -66,7 +63,7 @@ flowchart TD
 4. B01-07: giữ hành động đang chờ khi vào login; recheck quyền/đối tượng khi quay lại. Không tự gửi lại yêu cầu thuê/tiền chỉ vì login thành công.
 5. B01-06: tạo yêu cầu khôi phục/xóa và kiểm nghĩa vụ theo spec; hoàn thiện quyết định admin ở B09/B11, test lại khi có jobs/ledger.
 
-**Vị trí:** `features/auth`, `features/accounts` (dự kiến), `modules/auth`, `modules/accounts`, `common/guards`, `integrations` và migration mới. **Đạt để đi B02:** đường xác minh cần thiết + quyền/ownership được kiểm; phần khôi phục/xóa toàn hệ thống vẫn mở nếu chưa đủ. Mỗi lát có báo cáo riêng, không cộng toàn B01 thành “xong”.
+**Vị trí:** `features/auth`, `features/accounts` (dự kiến), `modules/auth`, `modules/accounts`, `common/guards`, `integrations` và migration mới. **Điều kiện cho thao tác B02 phụ thuộc xác minh:** đường xác minh cần thiết + quyền/ownership được kiểm; phần khôi phục/xóa toàn hệ thống vẫn mở nếu chưa đủ. Mỗi lát có báo cáo riêng, không cộng toàn B01 thành “xong”.
 
 ## 3. B02 — upload, hồ sơ và quản trị nguồn cung
 

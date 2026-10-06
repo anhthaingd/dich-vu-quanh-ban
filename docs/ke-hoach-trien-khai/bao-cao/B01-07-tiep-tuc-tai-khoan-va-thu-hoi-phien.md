@@ -1,6 +1,6 @@
 # B01-04/07 — Thu hồi các phiên khác và trở lại màn đang dùng
 
-06/10/2026 · DELIVERY-01 · Phần bổ sung sau `4a98dc0`, chưa commit/push/CI riêng, chưa UAT. [Checklist](../01-checklist.md) · [Gói phiên/địa chỉ trước](B01-04-phien-va-dia-chi.md).
+06/10/2026 · DELIVERY-01 · Phần bổ sung sau `4a98dc0`, đã push `a823d0e` ngày 06/10/2026, [CI 37428334396](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37428334396) đạt cả 3 jobs, chưa UAT. [Checklist](../01-checklist.md) · [Gói phiên/địa chỉ trước](B01-04-phien-va-dia-chi.md).
 
 ## Bạn dùng được gì?
 
@@ -99,6 +99,8 @@ Sơ đồ trên là nhánh thành công. Nếu phản hồi cho phiên thứ hai
 Artifact local ở `coverage/`, `test-results/`; không track Git và có thể bị lượt chạy sau ghi đè. Log `/private/tmp/dvqb-session-*.log`. Chạy lại bằng `npm run test:coverage -w apps/mobile`, `npm run test:e2e`, `DEVICE_ID=<máy> npm run test:native -- <android|ios> accounts`. Các runner build chung API: chạy lần lượt, không khởi động nhiều lệnh có bước xóa/build cùng thư mục `dist`.
 
 Trong quá trình kiểm: đã sửa bộ chọn web để chọn form đang hiển thị; tránh chạy đồng thời các lệnh xóa/build API chung; sửa fixture thiếu tham số `api` được TypeScript phát hiện; flow native đóng bàn phím trước đổi ô, đưa nút xác nhận ra khỏi vùng header che, xử lý hộp thoại lưu mật khẩu iOS và cuộn tới mục cần kiểm. Driver XCTest iOS có một lượt không mở được vì cổng bị chiếm, đã đọc xcresult để phân biệt với lỗi ứng dụng.
+
+Cập nhật 06/10/2026 sau bàn giao: phần bổ sung đã push `a823d0e`; [CI 37428334396](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37428334396) đạt cả 3 jobs. Đây là kết quả GitHub cho code trong báo cáo; chưa UAT.
 
 Commit trước `4a98dc0` đã push và [CI 37424414095](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37424414095) đạt cả ba jobs. Đây là bằng chứng của gói phiên/địa chỉ trước, không phải CI cho phần bổ sung sau đó.
 

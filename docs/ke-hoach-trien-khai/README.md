@@ -1,8 +1,14 @@
 # Kế hoạch triển khai và học code
 
-DOC-082 · v1.0 · 01/10/2026 · DELIVERY-01. Mốc lập kế hoạch: `50d184a`; tiến độ hiện hành xem đợt B01-04 ngày 06/10 bên dưới.
+DOC-082 · v1.0 · 01/10/2026 · DELIVERY-01. Mốc lập kế hoạch: `50d184a`; ưu tiên hiện hành: P0-1 nguồn cung và tìm dịch vụ, ngày 06/10/2026.
 
 Đây là điểm vào công việc cho các phiên Codex tiếp theo. Kế hoạch phân rã thiết kế sẵn có thành các lát triển khai có thể kiểm chứng; không thay SRS, hợp đồng API hoặc quyết định nghiệp vụ. Những nhiệm vụ chưa làm là kế hoạch, không phải phê duyệt nhà cung cấp, chi phí hay production.
+
+## Ưu tiên hiện tại: chức năng chính
+
+Theo yêu cầu mới nhất ngày 06/10/2026, chuyển sang **nguồn cung và tìm dịch vụ → gửi/nhận việc và chat → hóa đơn/hoàn tất với tiền test**. Không làm hết mọi tiện ích B01 trước B02. [Bảng ưu tiên và tiêu chí từng gói](03-thu-tu-trien-khai.md) là thứ tự thực hiện cho các phiên tiếp theo.
+
+Phần tài khoản đã push `a823d0e`. **P0-1 đang chuẩn bị, chưa có code partner/search.** [Đề xuất để duyệt một lần cho cả gói](de-xuat/P0-01-nguon-cung-va-tim-dich-vu.md) giải thích dữ liệu quản lý hồ sơ/công bố còn thiếu trong API và cách kiểm miễn phí trong DB test khi OTP Pending. Chưa tự thay spec hoặc trạng thái xác minh.
 
 ## Mở theo thứ tự
 
@@ -26,7 +32,7 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 | Thay bộ danh mục local | [B02-01 — dữ liệu mới](bao-cao/B02-01-thay-du-lieu-danh-muc.md) | Đã thay DB: 10 ngành, 39 nhóm, 128 kỹ năng; một nhóm mỗi kỹ năng; giữ nguyên auth |
 | Sửa tên hiển thị | [B01-04](bao-cao/B01-04-ho-so-ten-hien-thi.md) | API/DB/app, version, retry an toàn và VI/EN/JA; B01-04 vẫn một phần |
 | Phiên đăng nhập và sổ địa chỉ | [B01-04 — gói tài khoản](bao-cao/B01-04-phien-va-dia-chi.md) | Danh sách/thu hồi từng phiên; thêm/sửa/gỡ/mặc định địa chỉ; đạt local Android/iOS, đã push `4a98dc0` và CI đạt; chưa UAT |
-| Thu hồi nhiều phiên và quay lại sau login | [B01-04/07 — bổ sung](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) | Dùng API hiện có, thử lại phần chưa xác nhận, quay lại ba màn tài khoản; đạt 124 mobile, 8 web và native Android/iOS; phần bổ sung chưa push/CI/UAT |
+| Thu hồi nhiều phiên và quay lại sau login | [B01-04/07 — bổ sung](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) | Dùng API hiện có, thử lại phần chưa xác nhận, quay lại ba màn tài khoản; đạt 124 mobile, 8 web và native Android/iOS; đã push `a823d0e`; [CI 37428334396](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37428334396) đạt cả 3 jobs, chưa UAT |
 | Tài khoản email/mật khẩu | [B01-01](bao-cao/B01-01-email-mat-khau.md) | Đăng ký/đăng nhập, refresh/logout local; không đóng toàn bộ B01 |
 
 Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng này và liên kết dòng checklist. Không sửa báo cáo cũ để biến kết quả của commit cũ thành bằng chứng cho commit mới. Nếu sửa báo cáo, giữ ngày/commit và ghi phần đính chính.
@@ -50,7 +56,7 @@ Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng
 
 Phần sửa tên đã push `312972b`; [CI 37402534136](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37402534136) đạt 3 jobs. Sau đó đã làm gói **phiên đăng nhập + sổ địa chỉ**: [báo cáo và thứ tự đọc code](bao-cao/B01-04-phien-va-dia-chi.md). 50 API, 106 mobile, web và Android/iOS đạt local. Gói đã push `4a98dc0`; [CI 37424414095](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37424414095) đạt cả 3 jobs. B01-04 còn một phần, chưa UAT, OTP Pending.
 
-Đợt bổ sung tiếp theo: [thu hồi tất cả phiên khác và quay lại sau đăng nhập](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md). B02 đăng ký partner cần tài khoản đã xác minh nên còn phụ thuộc quyết định mở lại xác minh; không tự vượt điều kiện này.
+Đợt bổ sung đã push `a823d0e`: [thu hồi tất cả phiên khác và quay lại sau đăng nhập](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md). B02 đăng ký partner cần tài khoản đã xác minh nên còn phụ thuộc quyết định mở lại xác minh; không tự vượt điều kiện này.
 
 Theo yêu cầu mới, một đợt có nhiều chức năng liên quan đủ điều kiện; không dừng sau từng thao tác nhỏ. Giữ checklist từng phần và một báo cáo chung cho đợt.
 
