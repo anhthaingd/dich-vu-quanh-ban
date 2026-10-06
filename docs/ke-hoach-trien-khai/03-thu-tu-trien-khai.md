@@ -44,7 +44,9 @@ flowchart TD
 
 **Đạt:** các màn đã triển khai dùng message keys và lựa chọn locale hoạt động; nguồn dữ liệu chưa dịch được ghi rõ. Báo cáo `I18N-01-nen-da-ngon-ngu.md` giải thích state → key → dictionary → UI và lưu locale.
 
-**I18N-03/04:** trước code, chốt ưu tiên locale thiết bị/lựa chọn local/tài khoản, nội dung dịch của taxonomy và tìm kiếm. Đối chiếu `Me`/`ProfileEdit` enum đang chỉ `vi`, `categories.translations` đang chưa được trả API, `skills` chưa có trường bản dịch. Phần này tác động spec/API/data nên đồng bộ đúng phạm vi sau quyết định; không tự nới enum rồi coi backend hoàn tất.
+**I18N-04** được chủ dự án duyệt 05/10/2026, gồm mở rộng dữ liệu thật; xem [báo cáo](bao-cao/I18N-04-danh-muc-da-ngon-ngu.md). API đọc danh mục đã có locale/name/name_locale và DB có bản dịch cả categories/skills. Tìm kiếm đa ngôn ngữ còn ở B03.
+
+**I18N-03:** trước code, chốt ưu tiên locale thiết bị/lựa chọn local/tài khoản. Đối chiếu `Me`/`ProfileEdit` enum đang chỉ `vi`. Phần này tác động spec/API/data nên đồng bộ đúng phạm vi sau quyết định; không tự nới enum rồi coi backend hoàn tất.
 
 ## 2. B01 — hoàn thiện tài khoản theo các lát
 

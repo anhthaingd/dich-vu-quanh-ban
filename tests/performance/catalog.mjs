@@ -27,7 +27,7 @@ try {
   }));
   const elapsedMs = performance.now()-start; durations.sort((a,b)=>a-b);
   assert.equal(ids.size,200); const completed = records.filter(x=>x.event==='http.completed'); assert.equal(completed.length,200); assert.equal(new Set(completed.map(x=>x.request_id)).size,200); assert.equal(pool.waitingCount,0);
-  const result = { status:'PASS', dataset:'20 categories, 20 skills, 21 links', requests:200, concurrency:20, errors:0, elapsedMs, p95Ms:durations[189], terminalLogs:completed.length, uniqueIds:ids.size, scope:'local only; not a production SLA' };
+  const result = { status:'PASS', dataset:'49 categories, 128 skills, 128 links', requests:200, concurrency:20, errors:0, elapsedMs, p95Ms:durations[189], terminalLogs:completed.length, uniqueIds:ids.size, scope:'local only; not a production SLA' };
   await mkdir('test-results/performance',{recursive:true}); await writeFile('test-results/performance/catalog.json',JSON.stringify(result,null,2)); console.log(result);
 } finally {
   try { await app?.close(); } finally { await pool.end(); try { if(created) await admin.query(`DROP SCHEMA ${schema} CASCADE`); } finally { await admin.end(); } }

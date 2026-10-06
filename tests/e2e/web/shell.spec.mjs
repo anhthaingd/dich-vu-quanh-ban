@@ -18,7 +18,7 @@ test('product header stays reachable, account returns to category and only real 
     await expect(page.getByRole('button', { name: language, exact: true })).toHaveAttribute('aria-pressed', 'true');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({ path: testInfo.outputPath(`shell-${width}.png`) });
-    await page.getByRole('button', { name: 'Vệ sinh', exact: true }).scrollIntoViewIfNeeded();
+    await page.getByRole('button', { name: language === 'Tiếng Việt' ? 'Vệ sinh' : language === '日本語' ? '清掃' : 'Cleaning', exact: true }).scrollIntoViewIfNeeded();
     const box = await page.getByTestId('nav-account').boundingBox();
     expect(box.y).toBeGreaterThanOrEqual(0);
     expect(box.y + box.height).toBeLessThan(844);

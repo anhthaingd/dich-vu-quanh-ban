@@ -3,7 +3,7 @@ export const events = {
   'framework.message': 'debug', 'framework.error': 'error',
   'http.completed': 'info', 'http.aborted': 'info', 'http.exception': 'error',
   'db.completed': 'debug', 'db.slow': 'warn', 'db.unavailable': 'error',
-  'db.migration.completed': 'info', 'db.seed.completed': 'info', 'db.operation_failed': 'error',
+  'db.migration.completed': 'info', 'db.seed.completed': 'info', 'db.catalog.replaced': 'info', 'db.operation_failed': 'error',
 } as const;
 export type Event = keyof typeof events;
 export type Level = 'debug' | 'info' | 'warn' | 'error' | 'fatal';

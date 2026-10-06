@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Dịch vụ quanh bạn — API thiết kế",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local."
   },
   "servers": [
@@ -2075,6 +2075,21 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "vi",
+                "en",
+                "ja"
+              ],
+              "default": "vi"
+            },
+            "description": "Ngôn ngữ tên; cursor chỉ dùng cùng endpoint, bộ lọc và locale. Tham số lặp bị từ chối."
           }
         ],
         "responses": {
@@ -2322,6 +2337,21 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "vi",
+                "en",
+                "ja"
+              ],
+              "default": "vi"
+            },
+            "description": "Ngôn ngữ tên; cursor chỉ dùng cùng endpoint, bộ lọc và locale. Tham số lặp bị từ chối."
           }
         ],
         "responses": {
@@ -16398,6 +16428,20 @@
                 "type": "null"
               }
             ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Tên theo locale yêu cầu; fallback name_vi nếu thiếu/không hợp lệ."
+          },
+          "name_locale": {
+            "type": "string",
+            "enum": [
+              "vi",
+              "en",
+              "ja"
+            ],
+            "description": "Ngôn ngữ thực tế của name."
           }
         },
         "required": [
@@ -16405,7 +16449,9 @@
           "code",
           "name_vi",
           "active",
-          "parent_id"
+          "parent_id",
+          "name",
+          "name_locale"
         ]
       },
       "Skill": {
@@ -16436,6 +16482,20 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Tên theo locale yêu cầu; fallback name_vi nếu thiếu/không hợp lệ."
+          },
+          "name_locale": {
+            "type": "string",
+            "enum": [
+              "vi",
+              "en",
+              "ja"
+            ],
+            "description": "Ngôn ngữ thực tế của name."
           }
         },
         "required": [
@@ -16444,7 +16504,9 @@
           "name_vi",
           "schema_version",
           "form_schema",
-          "category_ids"
+          "category_ids",
+          "name",
+          "name_locale"
         ]
       },
       "PartnerCard": {

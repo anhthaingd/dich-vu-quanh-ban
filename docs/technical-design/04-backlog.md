@@ -1,5 +1,8 @@
 # Backlog và Definition of Done
 
+> **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** B02 danh mục đọc nối I18N-04: nạp 10 ngành/50 nhóm/140 kỹ năng, bản dịch VI/EN/JA, locale và fallback. Không đóng CRUD quản trị, tìm kiếm B03 hoặc locale tài khoản I18N-03. OTP B01-02 vẫn Pending theo chủ dự án.
+
+
 Phiên bản 0.1.2 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
 
 ## Trình tự triển khai

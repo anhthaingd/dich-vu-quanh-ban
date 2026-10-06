@@ -1,5 +1,8 @@
 # Kế hoạch QA, RTM và UAT
 
+> **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** Bổ sung QA-067…069 và RTM cho danh mục đa ngôn ngữ: đầy đủ cây/seed bảo toàn dữ liệu, locale/fallback/cursor, đổi ngôn ngữ khi request chậm, chữ dài và retry native. Bằng chứng mới nằm trong báo cáo I18N-04 thuộc bộ kế hoạch repo; các ca lịch sử vẫn giữ ngày cũ.
+
+
 Phiên bản 0.1.2 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
 
 ## Phân biệt thiết kế và kết quả chạy

@@ -1,248 +1,1895 @@
 {
-  "source": "DOC-002 PRD v0.3 sections 6-7; FR-CAT-001/002. Local/test fixture, not a production catalog release. Group labels are a technical browsing subdivision.",
+  "source": "Catalog replacement authorized 2026-10-05 after B02-01 audit. One canonical group per seeded skill; no generic legacy groups or overlapping service packages. Development/test only. See catalog-sources.json.",
   "categories": [
     {
       "code": "home_utilities",
       "name_vi": "Điện nước",
-      "parent_code": null
-    },
-    {
-      "code": "home_utilities_services",
-      "name_vi": "Dịch vụ điện nước",
-      "parent_code": "home_utilities"
+      "parent_code": null,
+      "translations": {
+        "en": "Electrical & plumbing",
+        "ja": "電気・水道"
+      }
     },
     {
       "code": "hvac_appliances",
       "name_vi": "Điện lạnh / gia dụng",
-      "parent_code": null
-    },
-    {
-      "code": "hvac_appliances_services",
-      "name_vi": "Dịch vụ điện lạnh / gia dụng",
-      "parent_code": "hvac_appliances"
+      "parent_code": null,
+      "translations": {
+        "en": "Cooling & home appliances",
+        "ja": "空調・家電"
+      }
     },
     {
       "code": "cleaning",
       "name_vi": "Vệ sinh",
-      "parent_code": null
-    },
-    {
-      "code": "cleaning_services",
-      "name_vi": "Dịch vụ vệ sinh",
-      "parent_code": "cleaning"
+      "parent_code": null,
+      "translations": {
+        "en": "Cleaning",
+        "ja": "清掃"
+      }
     },
     {
       "code": "digital_repair",
       "name_vi": "Điện thoại / máy tính",
-      "parent_code": null
-    },
-    {
-      "code": "digital_repair_services",
-      "name_vi": "Dịch vụ điện thoại / máy tính",
-      "parent_code": "digital_repair"
+      "parent_code": null,
+      "translations": {
+        "en": "Phones & computers",
+        "ja": "スマートフォン・パソコン"
+      }
     },
     {
       "code": "vehicle_care",
       "name_vi": "Xe máy / ô tô",
-      "parent_code": null
-    },
-    {
-      "code": "vehicle_care_services",
-      "name_vi": "Dịch vụ xe máy / ô tô",
-      "parent_code": "vehicle_care"
+      "parent_code": null,
+      "translations": {
+        "en": "Motorcycles & cars",
+        "ja": "バイク・自動車"
+      }
     },
     {
       "code": "pet_care",
       "name_vi": "Thú cưng",
-      "parent_code": null
-    },
-    {
-      "code": "pet_care_services",
-      "name_vi": "Dịch vụ thú cưng",
-      "parent_code": "pet_care"
+      "parent_code": null,
+      "translations": {
+        "en": "Pet care",
+        "ja": "ペットケア"
+      }
     },
     {
       "code": "beauty",
       "name_vi": "Làm đẹp không y tế",
-      "parent_code": null
-    },
-    {
-      "code": "beauty_services",
-      "name_vi": "Dịch vụ làm đẹp không y tế",
-      "parent_code": "beauty"
+      "parent_code": null,
+      "translations": {
+        "en": "Beauty (non-medical)",
+        "ja": "美容（医療行為を除く）"
+      }
     },
     {
       "code": "moving",
       "name_vi": "Chuyển nhà / bốc xếp",
-      "parent_code": null
-    },
-    {
-      "code": "moving_services",
-      "name_vi": "Dịch vụ chuyển nhà / bốc xếp",
-      "parent_code": "moving"
+      "parent_code": null,
+      "translations": {
+        "en": "Moving & loading",
+        "ja": "引越し・荷物運搬"
+      }
     },
     {
       "code": "laundry",
       "name_vi": "Giặt / chăm sóc đồ",
-      "parent_code": null
-    },
-    {
-      "code": "laundry_services",
-      "name_vi": "Dịch vụ giặt / chăm sóc đồ",
-      "parent_code": "laundry"
+      "parent_code": null,
+      "translations": {
+        "en": "Laundry & item care",
+        "ja": "洗濯・衣類のお手入れ"
+      }
     },
     {
       "code": "installation_it",
       "name_vi": "Lắp đặt thiết bị",
-      "parent_code": null
+      "parent_code": null,
+      "translations": {
+        "en": "Device installation",
+        "ja": "機器設置"
+      }
     },
     {
-      "code": "installation_it_services",
-      "name_vi": "Dịch vụ lắp đặt thiết bị",
-      "parent_code": "installation_it"
+      "code": "home_utilities_electrical",
+      "name_vi": "Điện dân dụng",
+      "parent_code": "home_utilities",
+      "translations": {
+        "en": "Home electrical work",
+        "ja": "家庭の電気工事"
+      },
+      "scope_vi": "Hệ thống điện trong nhà; không gồm sửa bên trong thiết bị, bơm nước hay lắp/cấu hình camera."
+    },
+    {
+      "code": "home_utilities_plumbing",
+      "name_vi": "Cấp nước và thiết bị vệ sinh",
+      "parent_code": "home_utilities",
+      "translations": {
+        "en": "Plumbing & bathroom fittings",
+        "ja": "給水・水回り設備"
+      },
+      "scope_vi": "Đường cấp nước và phụ kiện; sửa bồn cầu không bao gồm thông tắc. Máy bơm và máy lọc nước ở nhóm riêng."
+    },
+    {
+      "code": "home_utilities_drainage",
+      "name_vi": "Thông tắc đường thoát",
+      "parent_code": "home_utilities",
+      "translations": {
+        "en": "Drain unblocking",
+        "ja": "排水詰まりの解消"
+      },
+      "scope_vi": "Tách điểm tắc tại chậu, bồn cầu và đường thoát chung; không sửa van cấp hay rò đường cấp."
+    },
+    {
+      "code": "home_utilities_water_pumps",
+      "name_vi": "Máy bơm nước",
+      "parent_code": "home_utilities",
+      "translations": {
+        "en": "Water pumps",
+        "ja": "給水ポンプ"
+      },
+      "scope_vi": "Lắp/sửa bơm và phao điều khiển bồn nước; không nhận lại ở nhóm Điện dân dụng."
+    },
+    {
+      "code": "hvac_appliances_air_conditioning",
+      "name_vi": "Điều hòa gia dụng",
+      "parent_code": "hvac_appliances",
+      "translations": {
+        "en": "Home air conditioning",
+        "ja": "家庭用エアコン"
+      },
+      "scope_vi": "Điều hòa nhà/công trình; không gồm điều hòa ô tô. Tháo và lắp là hai công việc riêng."
+    },
+    {
+      "code": "hvac_appliances_refrigeration",
+      "name_vi": "Tủ lạnh / tủ đông",
+      "parent_code": "hvac_appliances",
+      "translations": {
+        "en": "Fridges & freezers",
+        "ja": "冷蔵庫・冷凍庫"
+      },
+      "scope_vi": "Tủ lạnh và tủ đông; tách hệ làm lạnh, điều khiển và gioăng. Không giữ mục sửa tổng quát cạnh các phần này."
+    },
+    {
+      "code": "hvac_appliances_laundry_appliances",
+      "name_vi": "Máy giặt / máy sấy",
+      "parent_code": "hvac_appliances",
+      "translations": {
+        "en": "Washers & dryers",
+        "ja": "洗濯機・乾燥機"
+      },
+      "scope_vi": "Công việc trên thiết bị; không gồm giặt quần áo. Sửa máy không bao gồm vệ sinh hoặc lắp mới."
+    },
+    {
+      "code": "hvac_appliances_kitchen_appliances",
+      "name_vi": "Thiết bị bếp / nước nóng",
+      "parent_code": "hvac_appliances",
+      "translations": {
+        "en": "Kitchen appliances & water heaters",
+        "ja": "キッチン家電・給湯器"
+      },
+      "scope_vi": "Sửa bên trong các thiết bị bếp/bình nước nóng; không sửa đường điện/cấp nước ngoài thiết bị, không máy lọc nước."
+    },
+    {
+      "code": "cleaning_surfaces",
+      "name_vi": "Làm sạch bề mặt",
+      "parent_code": "cleaning",
+      "translations": {
+        "en": "Surface cleaning",
+        "ja": "室内表面の清掃"
+      },
+      "scope_vi": "Sàn ở mọi phòng; mặt bếp/tủ bếp không gồm sàn hay thiết bị; thiết bị phòng tắm không gồm sàn/kính; kính gồm cả gương. Không vệ sinh bên trong thiết bị hoặc đồ bọc. Nhà/văn phòng và theo giờ là bối cảnh, không tạo kỹ năng mới."
+    },
+    {
+      "code": "cleaning_upholstery_cleaning",
+      "name_vi": "Sofa / ghế / nệm / thảm",
+      "parent_code": "cleaning",
+      "translations": {
+        "en": "Sofas, chairs, mattresses & carpets",
+        "ja": "ソファ・椅子・マットレス・カーペット"
+      },
+      "scope_vi": "Làm sạch đồ bọc; ghế rời ở nhà hay văn phòng dùng chung một kỹ năng. Sofa không gộp với ghế rời; nệm khác chăn/ga/ruột gối."
+    },
+    {
+      "code": "digital_repair_phone_hardware",
+      "name_vi": "Linh kiện điện thoại",
+      "parent_code": "digital_repair",
+      "translations": {
+        "en": "Phone hardware",
+        "ja": "スマートフォン部品"
+      },
+      "scope_vi": "Màn hình/pin/cổng sạc điện thoại; không máy tính bảng hoặc laptop."
+    },
+    {
+      "code": "digital_repair_laptop_hardware",
+      "name_vi": "Linh kiện laptop",
+      "parent_code": "digital_repair",
+      "translations": {
+        "en": "Laptop hardware",
+        "ja": "ノートパソコン部品"
+      },
+      "scope_vi": "Màn hình/pin/bàn phím/cổng sạc laptop; không RAM/SSD, vệ sinh hoặc chẩn đoán mạch ở các nhóm riêng."
+    },
+    {
+      "code": "digital_repair_computer_maintenance",
+      "name_vi": "Vệ sinh / nâng cấp máy tính",
+      "parent_code": "digital_repair",
+      "translations": {
+        "en": "Computer cleaning & upgrades",
+        "ja": "パソコンの清掃・アップグレード"
+      },
+      "scope_vi": "Vệ sinh, RAM, SSD cho laptop/máy bàn. Không lặp kỹ năng này trong nhóm linh kiện laptop."
+    },
+    {
+      "code": "digital_repair_tablet_repair",
+      "name_vi": "Linh kiện máy tính bảng",
+      "parent_code": "digital_repair",
+      "translations": {
+        "en": "Tablet hardware",
+        "ja": "タブレット部品"
+      },
+      "scope_vi": "Chỉ máy tính bảng; không điện thoại/laptop."
+    },
+    {
+      "code": "digital_repair_diagnostics_boards",
+      "name_vi": "Chẩn đoán / sửa bo mạch",
+      "parent_code": "digital_repair",
+      "translations": {
+        "en": "Diagnostics & circuit boards",
+        "ja": "故障診断・基板修理"
+      },
+      "scope_vi": "Chẩn đoán chưa gồm sửa; sửa bo mạch không gồm thay cụm màn hình/pin/cổng/bàn phím hoặc nâng cấp RAM/SSD."
+    },
+    {
+      "code": "vehicle_care_motorcycle_maintenance",
+      "name_vi": "Bảo dưỡng cơ khí xe máy",
+      "parent_code": "vehicle_care",
+      "translations": {
+        "en": "Motorcycle mechanical servicing",
+        "ja": "バイクの機械系整備"
+      },
+      "scope_vi": "Dầu/phanh/xích xe máy; không lốp/ắc quy hoặc vệ sinh xe."
+    },
+    {
+      "code": "vehicle_care_car_maintenance",
+      "name_vi": "Bảo dưỡng cơ khí ô tô",
+      "parent_code": "vehicle_care",
+      "translations": {
+        "en": "Car mechanical servicing",
+        "ja": "自動車の機械系整備"
+      },
+      "scope_vi": "Dầu/phanh/lọc động cơ ô tô; không lọc cabin, vệ sinh điều hòa, lốp hoặc ắc quy."
+    },
+    {
+      "code": "vehicle_care_tyres_batteries",
+      "name_vi": "Lốp / ắc quy",
+      "parent_code": "vehicle_care",
+      "translations": {
+        "en": "Tyres & batteries",
+        "ja": "タイヤ・バッテリー"
+      },
+      "scope_vi": "Vị trí duy nhất của thay lốp/ắc quy; tách xe máy và ô tô."
+    },
+    {
+      "code": "vehicle_care_vehicle_detailing",
+      "name_vi": "Vệ sinh / chăm sóc xe",
+      "parent_code": "vehicle_care",
+      "translations": {
+        "en": "Vehicle cleaning & detailing",
+        "ja": "車両清掃・カーケア"
+      },
+      "scope_vi": "Rửa bề ngoài, làm sạch nội thất/điều hòa, đánh bóng. Không bảo dưỡng cơ khí; không điều hòa gia dụng."
+    },
+    {
+      "code": "pet_care_pet_bathing",
+      "name_vi": "Tắm / vệ sinh thú cưng",
+      "parent_code": "pet_care",
+      "translations": {
+        "en": "Pet bathing & hygiene",
+        "ja": "ペットのシャンプー・お手入れ"
+      },
+      "scope_vi": "Tắm, móng, vệ sinh tai ngoài; không cắt/chải lông hoặc điều trị thú y."
+    },
+    {
+      "code": "pet_care_pet_coat",
+      "name_vi": "Chăm sóc lông",
+      "parent_code": "pet_care",
+      "translations": {
+        "en": "Coat care",
+        "ja": "被毛のお手入れ"
+      },
+      "scope_vi": "Cắt/chải/gỡ rối; không tắm. Không thêm gói grooming tổng hợp thành kỹ năng thứ hai."
+    },
+    {
+      "code": "pet_care_pet_boarding",
+      "name_vi": "Trông giữ thú cưng",
+      "parent_code": "pet_care",
+      "translations": {
+        "en": "Pet boarding & daycare",
+        "ja": "ペットの預かり"
+      },
+      "scope_vi": "Tách chó/mèo và ban ngày/qua đêm, không đưa đón."
+    },
+    {
+      "code": "pet_care_pet_transport",
+      "name_vi": "Vận chuyển thú cưng",
+      "parent_code": "pet_care",
+      "translations": {
+        "en": "Pet transport",
+        "ja": "ペットの送迎"
+      },
+      "scope_vi": "Một năng lực vận chuyển; điểm đến, chiều đi/về, spa/lưu trú không nhân bản kỹ năng."
+    },
+    {
+      "code": "beauty_hair_care",
+      "name_vi": "Cắt / gội / tạo kiểu tóc",
+      "parent_code": "beauty",
+      "translations": {
+        "en": "Haircuts, washing & styling",
+        "ja": "カット・シャンプー・ヘアセット"
+      },
+      "scope_vi": "Tạo kiểu tạm thời; không uốn/duỗi/nhuộm hóa chất. Sấy khô sau gội khác tạo kiểu."
+    },
+    {
+      "code": "beauty_nail_services",
+      "name_vi": "Chăm sóc / trang trí móng",
+      "parent_code": "beauty",
+      "translations": {
+        "en": "Nail care & decoration",
+        "ja": "ネイルケア・装飾"
+      },
+      "scope_vi": "Chăm sóc nền móng không gồm sơn/đắp/tháo. Tay/chân là đối tượng của chăm sóc; sơn không chia lại theo tay/chân."
+    },
+    {
+      "code": "beauty_makeup",
+      "name_vi": "Trang điểm",
+      "parent_code": "beauty",
+      "translations": {
+        "en": "Makeup",
+        "ja": "メイク"
+      },
+      "scope_vi": "Trang điểm khuôn mặt là một kỹ năng; dịp cô dâu/dự tiệc/chụp ảnh là yêu cầu cần làm rõ, không tạo nhóm hoặc mã chồng nhau."
+    },
+    {
+      "code": "beauty_hair_treatments",
+      "name_vi": "Uốn / duỗi / nhuộm tóc",
+      "parent_code": "beauty",
+      "translations": {
+        "en": "Hair treatments & colouring",
+        "ja": "パーマ・ストレート・カラー"
+      },
+      "scope_vi": "Xử lý tóc bằng hóa chất; không tạo kiểu tạm thời."
+    },
+    {
+      "code": "moving_packing",
+      "name_vi": "Đóng gói đồ",
+      "parent_code": "moving",
+      "translations": {
+        "en": "Item packing",
+        "ja": "荷物の梱包"
+      },
+      "scope_vi": "Đồ dễ vỡ; hồ sơ/sách; đồ dùng còn lại (không gồm hai loại trước). Đóng gói không gồm tháo, bốc xếp hay vận chuyển; địa điểm nhà/văn phòng không tạo kỹ năng mới."
+    },
+    {
+      "code": "moving_furniture_assembly",
+      "name_vi": "Tháo / lắp nội thất",
+      "parent_code": "moving",
+      "translations": {
+        "en": "Furniture disassembly & assembly",
+        "ja": "家具の分解・組立"
+      },
+      "scope_vi": "Thao tác tháo/lắp đồ nội thất; không lắp thiết bị điện nước và không vận chuyển."
+    },
+    {
+      "code": "moving_loading",
+      "name_vi": "Bốc xếp đồ",
+      "parent_code": "moving",
+      "translations": {
+        "en": "Item loading & unloading",
+        "ja": "荷物の積み下ろし"
+      },
+      "scope_vi": "Đưa đồ lên/xuống xe; không bao gồm phương tiện và chuyến vận chuyển. Không chia theo nhà/văn phòng."
+    },
+    {
+      "code": "moving_transport",
+      "name_vi": "Vận chuyển đồ",
+      "parent_code": "moving",
+      "translations": {
+        "en": "Item transport",
+        "ja": "荷物の運搬"
+      },
+      "scope_vi": "Di chuyển bằng phương tiện; bốc xếp là kỹ năng riêng. Nội thất không gồm thiết bị; thùng đồ không gồm hai loại trên."
+    },
+    {
+      "code": "laundry_garment_laundry",
+      "name_vi": "Giặt / ủi quần áo",
+      "parent_code": "laundry",
+      "translations": {
+        "en": "Garment washing & ironing",
+        "ja": "衣類の洗濯・アイロン"
+      },
+      "scope_vi": "Quần áo; giặt nước và giặt khô là phương pháp riêng, ủi riêng. Không gồm giày, túi, chăn/ga/gối."
+    },
+    {
+      "code": "laundry_bedding_laundry",
+      "name_vi": "Giặt chăn / ga / gối",
+      "parent_code": "laundry",
+      "translations": {
+        "en": "Bedding laundry",
+        "ja": "寝具の洗濯"
+      },
+      "scope_vi": "Chăn, ga/vỏ gối, ruột gối tháo rời; không nệm hoặc đồ bọc nội thất."
+    },
+    {
+      "code": "laundry_household_items",
+      "name_vi": "Giặt rèm / khăn / thú bông",
+      "parent_code": "laundry",
+      "translations": {
+        "en": "Curtains, towels & soft toys",
+        "ja": "カーテン・タオル・ぬいぐるみ"
+      },
+      "scope_vi": "Chỉ các vật được nêu; không đồ giường, quần áo, thảm, sofa hay ghế."
+    },
+    {
+      "code": "laundry_shoe_bag_care",
+      "name_vi": "Vệ sinh giày / túi",
+      "parent_code": "laundry",
+      "translations": {
+        "en": "Shoe & bag cleaning",
+        "ja": "靴・バッグのクリーニング"
+      },
+      "scope_vi": "Giày chỉ một kỹ năng; chất liệu da/vải hoặc kiểu thể thao không tạo đường chọn thứ hai. Đánh bóng là thao tác riêng."
+    },
+    {
+      "code": "installation_it_camera_systems",
+      "name_vi": "Camera giám sát",
+      "parent_code": "installation_it",
+      "translations": {
+        "en": "Security cameras",
+        "ja": "防犯カメラ"
+      },
+      "scope_vi": "Vị trí duy nhất cho camera; lắp phần cứng, cấu hình và khắc phục kết nối phân biệt theo thao tác; không giữ gói di chuyển bao trùm tháo/lắp."
+    },
+    {
+      "code": "installation_it_network_installation",
+      "name_vi": "Mạng / Wi-Fi",
+      "parent_code": "installation_it",
+      "translations": {
+        "en": "Networks & Wi-Fi",
+        "ja": "ネットワーク・Wi-Fi"
+      },
+      "scope_vi": "Đi dây là phần vật lý; cấu hình router đơn không gồm hệ thống mesh. Không lặp kỹ năng mạng ở sửa máy tính."
+    },
+    {
+      "code": "installation_it_tv_audio_installation",
+      "name_vi": "Tivi / âm thanh",
+      "parent_code": "installation_it",
+      "translations": {
+        "en": "TVs & audio",
+        "ja": "テレビ・音響機器"
+      },
+      "scope_vi": "Treo tivi là phần lắp vật lý; cấu hình smart TV riêng; loa không nằm nhóm điện gia dụng."
+    },
+    {
+      "code": "installation_it_water_filter_installation",
+      "name_vi": "Máy lọc nước",
+      "parent_code": "installation_it",
+      "translations": {
+        "en": "Water filters",
+        "ja": "浄水器"
+      },
+      "scope_vi": "Vị trí duy nhất của máy lọc nước; vệ sinh vỏ/bình không gồm thay lõi hoặc lắp máy."
     }
   ],
   "skills": [
     {
-      "code": "electrical_repair",
-      "name_vi": "Sửa điện dân dụng",
+      "code": "socket_replacement",
+      "name_vi": "Thay ổ cắm / công tắc",
       "category_codes": [
-        "home_utilities_services"
-      ]
+        "home_utilities_electrical"
+      ],
+      "translations": {
+        "en": "Socket & switch replacement",
+        "ja": "コンセント・スイッチ交換"
+      }
     },
     {
-      "code": "plumbing_repair",
-      "name_vi": "Sửa vòi nước / đường ống",
+      "code": "light_installation",
+      "name_vi": "Lắp đèn chiếu sáng",
       "category_codes": [
-        "home_utilities_services"
-      ]
+        "home_utilities_electrical"
+      ],
+      "translations": {
+        "en": "Light installation",
+        "ja": "照明の取り付け"
+      }
+    },
+    {
+      "code": "breaker_replacement",
+      "name_vi": "Thay aptomat",
+      "category_codes": [
+        "home_utilities_electrical"
+      ],
+      "translations": {
+        "en": "Circuit breaker replacement",
+        "ja": "ブレーカー交換"
+      }
+    },
+    {
+      "code": "electrical_fault_tracing",
+      "name_vi": "Dò lỗi mạch điện trong nhà",
+      "category_codes": [
+        "home_utilities_electrical"
+      ],
+      "translations": {
+        "en": "Home electrical fault tracing",
+        "ja": "屋内電気回路の故障診断"
+      }
+    },
+    {
+      "code": "electrical_wire_replacement",
+      "name_vi": "Thay dây điện trong nhà",
+      "category_codes": [
+        "home_utilities_electrical"
+      ],
+      "translations": {
+        "en": "Indoor electrical wiring replacement",
+        "ja": "屋内電気配線の交換"
+      }
+    },
+    {
+      "code": "water_leak_repair",
+      "name_vi": "Sửa rò rỉ nước",
+      "category_codes": [
+        "home_utilities_plumbing"
+      ],
+      "translations": {
+        "en": "Water leak repair",
+        "ja": "水漏れ修理"
+      }
+    },
+    {
+      "code": "tap_installation",
+      "name_vi": "Lắp vòi nước",
+      "category_codes": [
+        "home_utilities_plumbing"
+      ],
+      "translations": {
+        "en": "Tap installation",
+        "ja": "蛇口取り付け"
+      }
+    },
+    {
+      "code": "tap_repair",
+      "name_vi": "Sửa vòi nước",
+      "category_codes": [
+        "home_utilities_plumbing"
+      ],
+      "translations": {
+        "en": "Tap repair",
+        "ja": "蛇口の修理"
+      }
+    },
+    {
+      "code": "toilet_fittings_repair",
+      "name_vi": "Sửa bộ xả / van cấp bồn cầu",
+      "category_codes": [
+        "home_utilities_plumbing"
+      ],
+      "translations": {
+        "en": "Toilet flush and inlet valve repair",
+        "ja": "トイレの洗浄・給水弁修理"
+      }
+    },
+    {
+      "code": "sink_unblocking",
+      "name_vi": "Thông tắc chậu rửa",
+      "category_codes": [
+        "home_utilities_drainage"
+      ],
+      "translations": {
+        "en": "Sink unblocking",
+        "ja": "シンクの詰まり除去"
+      }
+    },
+    {
+      "code": "toilet_unblocking",
+      "name_vi": "Thông tắc bồn cầu",
+      "category_codes": [
+        "home_utilities_drainage"
+      ],
+      "translations": {
+        "en": "Toilet unblocking",
+        "ja": "トイレの詰まり除去"
+      }
+    },
+    {
+      "code": "main_drain_unblocking",
+      "name_vi": "Thông tắc đường thoát chung",
+      "category_codes": [
+        "home_utilities_drainage"
+      ],
+      "translations": {
+        "en": "Main drain unblocking",
+        "ja": "共用排水管の詰まり解消"
+      }
+    },
+    {
+      "code": "pump_installation",
+      "name_vi": "Lắp máy bơm nước",
+      "category_codes": [
+        "home_utilities_water_pumps"
+      ],
+      "translations": {
+        "en": "Water pump installation",
+        "ja": "給水ポンプ設置"
+      }
+    },
+    {
+      "code": "pump_repair",
+      "name_vi": "Sửa máy bơm nước",
+      "category_codes": [
+        "home_utilities_water_pumps"
+      ],
+      "translations": {
+        "en": "Water pump repair",
+        "ja": "給水ポンプ修理"
+      }
+    },
+    {
+      "code": "float_switch_replacement",
+      "name_vi": "Thay phao điện bồn nước",
+      "category_codes": [
+        "home_utilities_water_pumps"
+      ],
+      "translations": {
+        "en": "Tank float switch replacement",
+        "ja": "貯水槽フロートスイッチ交換"
+      }
     },
     {
       "code": "aircon_cleaning",
       "name_vi": "Vệ sinh điều hòa",
       "category_codes": [
-        "hvac_appliances_services"
-      ]
+        "hvac_appliances_air_conditioning"
+      ],
+      "translations": {
+        "en": "Air conditioner cleaning",
+        "ja": "エアコンクリーニング"
+      }
+    },
+    {
+      "code": "aircon_repair",
+      "name_vi": "Sửa điều hòa",
+      "category_codes": [
+        "hvac_appliances_air_conditioning"
+      ],
+      "translations": {
+        "en": "Air conditioner repair",
+        "ja": "エアコン修理"
+      }
+    },
+    {
+      "code": "aircon_installation",
+      "name_vi": "Lắp điều hòa",
+      "category_codes": [
+        "hvac_appliances_air_conditioning"
+      ],
+      "translations": {
+        "en": "Air conditioner installation",
+        "ja": "エアコン設置"
+      }
+    },
+    {
+      "code": "aircon_removal",
+      "name_vi": "Tháo điều hòa",
+      "category_codes": [
+        "hvac_appliances_air_conditioning"
+      ],
+      "translations": {
+        "en": "Air conditioner removal",
+        "ja": "エアコンの取り外し"
+      }
+    },
+    {
+      "code": "fridge_cooling_repair",
+      "name_vi": "Sửa hệ làm lạnh tủ lạnh / tủ đông",
+      "category_codes": [
+        "hvac_appliances_refrigeration"
+      ],
+      "translations": {
+        "en": "Fridge and freezer cooling system repair",
+        "ja": "冷蔵庫・冷凍庫の冷却系修理"
+      }
+    },
+    {
+      "code": "fridge_controls_repair",
+      "name_vi": "Sửa điều khiển tủ lạnh / tủ đông",
+      "category_codes": [
+        "hvac_appliances_refrigeration"
+      ],
+      "translations": {
+        "en": "Fridge and freezer control repair",
+        "ja": "冷蔵庫・冷凍庫の制御系修理"
+      }
+    },
+    {
+      "code": "fridge_freezer_seal_replacement",
+      "name_vi": "Thay gioăng tủ lạnh / tủ đông",
+      "category_codes": [
+        "hvac_appliances_refrigeration"
+      ],
+      "translations": {
+        "en": "Fridge and freezer door seal replacement",
+        "ja": "冷蔵庫・冷凍庫のドアパッキン交換"
+      }
     },
     {
       "code": "washing_machine_repair",
       "name_vi": "Sửa máy giặt",
       "category_codes": [
-        "hvac_appliances_services"
-      ]
+        "hvac_appliances_laundry_appliances"
+      ],
+      "translations": {
+        "en": "Washing machine repair",
+        "ja": "洗濯機修理"
+      }
     },
     {
-      "code": "house_cleaning",
-      "name_vi": "Dọn nhà",
+      "code": "washer_cleaning",
+      "name_vi": "Vệ sinh máy giặt",
       "category_codes": [
-        "cleaning_services"
-      ]
+        "hvac_appliances_laundry_appliances"
+      ],
+      "translations": {
+        "en": "Washing machine cleaning",
+        "ja": "洗濯機クリーニング"
+      }
+    },
+    {
+      "code": "dryer_repair",
+      "name_vi": "Sửa máy sấy quần áo",
+      "category_codes": [
+        "hvac_appliances_laundry_appliances"
+      ],
+      "translations": {
+        "en": "Tumble dryer repair",
+        "ja": "衣類乾燥機修理"
+      }
+    },
+    {
+      "code": "washer_installation",
+      "name_vi": "Lắp máy giặt",
+      "category_codes": [
+        "hvac_appliances_laundry_appliances"
+      ],
+      "translations": {
+        "en": "Washing machine installation",
+        "ja": "洗濯機設置"
+      }
+    },
+    {
+      "code": "dryer_cleaning",
+      "name_vi": "Vệ sinh máy sấy quần áo",
+      "category_codes": [
+        "hvac_appliances_laundry_appliances"
+      ],
+      "translations": {
+        "en": "Clothes dryer cleaning",
+        "ja": "衣類乾燥機の清掃"
+      }
+    },
+    {
+      "code": "induction_stove_repair",
+      "name_vi": "Sửa bếp từ",
+      "category_codes": [
+        "hvac_appliances_kitchen_appliances"
+      ],
+      "translations": {
+        "en": "Induction hob repair",
+        "ja": "IHコンロ修理"
+      }
+    },
+    {
+      "code": "microwave_repair",
+      "name_vi": "Sửa lò vi sóng",
+      "category_codes": [
+        "hvac_appliances_kitchen_appliances"
+      ],
+      "translations": {
+        "en": "Microwave repair",
+        "ja": "電子レンジ修理"
+      }
+    },
+    {
+      "code": "water_heater_repair",
+      "name_vi": "Sửa bình nóng lạnh",
+      "category_codes": [
+        "hvac_appliances_kitchen_appliances"
+      ],
+      "translations": {
+        "en": "Water heater repair",
+        "ja": "電気温水器修理"
+      }
+    },
+    {
+      "code": "floor_cleaning",
+      "name_vi": "Làm sạch sàn nhà",
+      "category_codes": [
+        "cleaning_surfaces"
+      ],
+      "translations": {
+        "en": "Floor cleaning",
+        "ja": "床の清掃"
+      }
+    },
+    {
+      "code": "kitchen_worktop_cleaning",
+      "name_vi": "Vệ sinh mặt bếp / tủ bếp",
+      "category_codes": [
+        "cleaning_surfaces"
+      ],
+      "translations": {
+        "en": "Kitchen worktop & cabinet cleaning",
+        "ja": "キッチン天板・収納の清掃"
+      }
+    },
+    {
+      "code": "bathroom_fixture_cleaning",
+      "name_vi": "Vệ sinh thiết bị phòng tắm",
+      "category_codes": [
+        "cleaning_surfaces"
+      ],
+      "translations": {
+        "en": "Bathroom fixture cleaning",
+        "ja": "浴室・トイレ設備の清掃"
+      }
+    },
+    {
+      "code": "window_cleaning",
+      "name_vi": "Lau kính trong nhà",
+      "category_codes": [
+        "cleaning_surfaces"
+      ],
+      "translations": {
+        "en": "Indoor window cleaning",
+        "ja": "室内窓ガラス清掃"
+      }
     },
     {
       "code": "sofa_cleaning",
       "name_vi": "Vệ sinh sofa",
       "category_codes": [
-        "cleaning_services"
-      ]
+        "cleaning_upholstery_cleaning"
+      ],
+      "translations": {
+        "en": "Sofa cleaning",
+        "ja": "ソファクリーニング"
+      }
     },
     {
-      "code": "computer_repair",
-      "name_vi": "Sửa máy tính",
+      "code": "chair_cleaning",
+      "name_vi": "Vệ sinh ghế rời",
       "category_codes": [
-        "digital_repair_services"
-      ]
+        "cleaning_upholstery_cleaning"
+      ],
+      "translations": {
+        "en": "Chair cleaning",
+        "ja": "椅子のクリーニング"
+      }
     },
     {
-      "code": "phone_repair",
-      "name_vi": "Sửa điện thoại",
+      "code": "mattress_cleaning",
+      "name_vi": "Vệ sinh nệm",
       "category_codes": [
-        "digital_repair_services"
-      ]
+        "cleaning_upholstery_cleaning"
+      ],
+      "translations": {
+        "en": "Mattress cleaning",
+        "ja": "マットレスクリーニング"
+      }
     },
     {
-      "code": "vehicle_maintenance",
-      "name_vi": "Bảo dưỡng xe",
+      "code": "carpet_cleaning",
+      "name_vi": "Vệ sinh thảm",
       "category_codes": [
-        "vehicle_care_services"
-      ]
+        "cleaning_upholstery_cleaning"
+      ],
+      "translations": {
+        "en": "Carpet cleaning",
+        "ja": "カーペットクリーニング"
+      }
     },
     {
-      "code": "vehicle_wash",
-      "name_vi": "Rửa xe",
+      "code": "phone_screen_replacement",
+      "name_vi": "Thay màn hình điện thoại",
       "category_codes": [
-        "vehicle_care_services"
-      ]
+        "digital_repair_phone_hardware"
+      ],
+      "translations": {
+        "en": "Phone screen replacement",
+        "ja": "スマートフォン画面交換"
+      }
     },
     {
-      "code": "pet_grooming",
-      "name_vi": "Grooming thú cưng",
+      "code": "phone_battery_replacement",
+      "name_vi": "Thay pin điện thoại",
       "category_codes": [
-        "pet_care_services"
-      ]
+        "digital_repair_phone_hardware"
+      ],
+      "translations": {
+        "en": "Phone battery replacement",
+        "ja": "スマートフォン電池交換"
+      }
     },
     {
-      "code": "pet_hygiene",
-      "name_vi": "Vệ sinh móng / tai thú cưng",
+      "code": "phone_port_repair",
+      "name_vi": "Sửa cổng sạc điện thoại",
       "category_codes": [
-        "pet_care_services"
-      ]
+        "digital_repair_phone_hardware"
+      ],
+      "translations": {
+        "en": "Phone charging port repair",
+        "ja": "スマートフォン充電端子修理"
+      }
     },
     {
-      "code": "nail_care",
-      "name_vi": "Làm nail",
+      "code": "laptop_keyboard_replacement",
+      "name_vi": "Thay bàn phím laptop",
       "category_codes": [
-        "beauty_services"
-      ]
+        "digital_repair_laptop_hardware"
+      ],
+      "translations": {
+        "en": "Laptop keyboard replacement",
+        "ja": "ノートパソコンのキーボード交換"
+      }
     },
     {
-      "code": "makeup",
-      "name_vi": "Trang điểm",
+      "code": "laptop_battery_replacement",
+      "name_vi": "Thay pin laptop",
       "category_codes": [
-        "beauty_services"
-      ]
+        "digital_repair_laptop_hardware"
+      ],
+      "translations": {
+        "en": "Laptop battery replacement",
+        "ja": "ノートパソコンのバッテリー交換"
+      }
     },
     {
-      "code": "moving_packing",
-      "name_vi": "Đóng gói chuyển nhà",
+      "code": "laptop_screen_replacement",
+      "name_vi": "Thay màn hình laptop",
       "category_codes": [
-        "moving_services"
-      ]
+        "digital_repair_laptop_hardware"
+      ],
+      "translations": {
+        "en": "Laptop screen replacement",
+        "ja": "ノートパソコンの画面交換"
+      }
     },
     {
-      "code": "moving_loading",
-      "name_vi": "Bốc xếp",
+      "code": "laptop_port_repair",
+      "name_vi": "Sửa cổng sạc laptop",
       "category_codes": [
-        "moving_services"
-      ]
+        "digital_repair_laptop_hardware"
+      ],
+      "translations": {
+        "en": "Laptop charging port repair",
+        "ja": "ノートパソコン充電端子の修理"
+      }
     },
     {
-      "code": "clothes_laundry",
-      "name_vi": "Giặt quần áo",
+      "code": "computer_cleaning",
+      "name_vi": "Vệ sinh máy tính",
       "category_codes": [
-        "laundry_services"
-      ]
+        "digital_repair_computer_maintenance"
+      ],
+      "translations": {
+        "en": "Computer cleaning",
+        "ja": "パソコン内部清掃"
+      }
     },
     {
-      "code": "shoe_care",
-      "name_vi": "Chăm sóc giày",
+      "code": "ram_upgrade",
+      "name_vi": "Nâng cấp RAM",
       "category_codes": [
-        "laundry_services"
-      ]
+        "digital_repair_computer_maintenance"
+      ],
+      "translations": {
+        "en": "RAM upgrade",
+        "ja": "メモリ増設"
+      }
     },
     {
-      "code": "camera_installation",
-      "name_vi": "Lắp camera",
+      "code": "ssd_upgrade",
+      "name_vi": "Nâng cấp ổ SSD",
       "category_codes": [
-        "installation_it_services",
-        "home_utilities_services"
-      ]
+        "digital_repair_computer_maintenance"
+      ],
+      "translations": {
+        "en": "SSD upgrade",
+        "ja": "SSD換装"
+      }
     },
     {
-      "code": "wifi_setup",
-      "name_vi": "Cài mạng Wi-Fi",
+      "code": "tablet_screen_replacement",
+      "name_vi": "Thay màn hình máy tính bảng",
       "category_codes": [
-        "installation_it_services"
-      ]
+        "digital_repair_tablet_repair"
+      ],
+      "translations": {
+        "en": "Tablet screen replacement",
+        "ja": "タブレット画面交換"
+      }
+    },
+    {
+      "code": "tablet_battery_replacement",
+      "name_vi": "Thay pin máy tính bảng",
+      "category_codes": [
+        "digital_repair_tablet_repair"
+      ],
+      "translations": {
+        "en": "Tablet battery replacement",
+        "ja": "タブレット電池交換"
+      }
+    },
+    {
+      "code": "tablet_port_repair",
+      "name_vi": "Sửa cổng sạc máy tính bảng",
+      "category_codes": [
+        "digital_repair_tablet_repair"
+      ],
+      "translations": {
+        "en": "Tablet charging port repair",
+        "ja": "タブレット充電端子修理"
+      }
+    },
+    {
+      "code": "phone_diagnostics",
+      "name_vi": "Chẩn đoán lỗi điện thoại",
+      "category_codes": [
+        "digital_repair_diagnostics_boards"
+      ],
+      "translations": {
+        "en": "Phone fault diagnosis",
+        "ja": "スマートフォンの故障診断"
+      }
+    },
+    {
+      "code": "computer_diagnostics",
+      "name_vi": "Chẩn đoán lỗi máy tính",
+      "category_codes": [
+        "digital_repair_diagnostics_boards"
+      ],
+      "translations": {
+        "en": "Computer fault diagnosis",
+        "ja": "パソコンの故障診断"
+      }
+    },
+    {
+      "code": "phone_board_repair",
+      "name_vi": "Sửa bo mạch điện thoại",
+      "category_codes": [
+        "digital_repair_diagnostics_boards"
+      ],
+      "translations": {
+        "en": "Phone circuit board repair",
+        "ja": "スマートフォン基板修理"
+      }
+    },
+    {
+      "code": "computer_board_repair",
+      "name_vi": "Sửa bo mạch máy tính",
+      "category_codes": [
+        "digital_repair_diagnostics_boards"
+      ],
+      "translations": {
+        "en": "Computer circuit board repair",
+        "ja": "パソコン基板修理"
+      }
+    },
+    {
+      "code": "motorcycle_oil_change",
+      "name_vi": "Thay dầu xe máy",
+      "category_codes": [
+        "vehicle_care_motorcycle_maintenance"
+      ],
+      "translations": {
+        "en": "Motorcycle oil change",
+        "ja": "バイクのオイル交換"
+      }
+    },
+    {
+      "code": "motorcycle_brake_service",
+      "name_vi": "Bảo dưỡng phanh xe máy",
+      "category_codes": [
+        "vehicle_care_motorcycle_maintenance"
+      ],
+      "translations": {
+        "en": "Motorcycle brake service",
+        "ja": "バイクのブレーキ整備"
+      }
+    },
+    {
+      "code": "motorcycle_chain_service",
+      "name_vi": "Bảo dưỡng xích xe máy",
+      "category_codes": [
+        "vehicle_care_motorcycle_maintenance"
+      ],
+      "translations": {
+        "en": "Motorcycle chain service",
+        "ja": "バイクのチェーン整備"
+      }
+    },
+    {
+      "code": "car_oil_change",
+      "name_vi": "Thay dầu ô tô",
+      "category_codes": [
+        "vehicle_care_car_maintenance"
+      ],
+      "translations": {
+        "en": "Car oil change",
+        "ja": "自動車のオイル交換"
+      }
+    },
+    {
+      "code": "car_engine_air_filter_replacement",
+      "name_vi": "Thay lọc gió động cơ ô tô",
+      "category_codes": [
+        "vehicle_care_car_maintenance"
+      ],
+      "translations": {
+        "en": "Car engine air filter replacement",
+        "ja": "自動車エンジンエアフィルター交換"
+      }
+    },
+    {
+      "code": "car_brake_service",
+      "name_vi": "Bảo dưỡng phanh ô tô",
+      "category_codes": [
+        "vehicle_care_car_maintenance"
+      ],
+      "translations": {
+        "en": "Car brake service",
+        "ja": "自動車のブレーキ整備"
+      }
+    },
+    {
+      "code": "motorcycle_tyre_replacement",
+      "name_vi": "Thay lốp xe máy",
+      "category_codes": [
+        "vehicle_care_tyres_batteries"
+      ],
+      "translations": {
+        "en": "Motorcycle tyre replacement",
+        "ja": "バイクのタイヤ交換"
+      }
+    },
+    {
+      "code": "car_tyre_replacement",
+      "name_vi": "Thay lốp ô tô",
+      "category_codes": [
+        "vehicle_care_tyres_batteries"
+      ],
+      "translations": {
+        "en": "Car tyre replacement",
+        "ja": "自動車のタイヤ交換"
+      }
+    },
+    {
+      "code": "motorcycle_battery_replacement",
+      "name_vi": "Thay ắc quy xe máy",
+      "category_codes": [
+        "vehicle_care_tyres_batteries"
+      ],
+      "translations": {
+        "en": "Motorcycle battery replacement",
+        "ja": "バイクのバッテリー交換"
+      }
+    },
+    {
+      "code": "car_battery_replacement",
+      "name_vi": "Thay ắc quy ô tô",
+      "category_codes": [
+        "vehicle_care_tyres_batteries"
+      ],
+      "translations": {
+        "en": "Car battery replacement",
+        "ja": "自動車のバッテリー交換"
+      }
+    },
+    {
+      "code": "motorcycle_wash",
+      "name_vi": "Rửa xe máy",
+      "category_codes": [
+        "vehicle_care_vehicle_detailing"
+      ],
+      "translations": {
+        "en": "Motorcycle washing",
+        "ja": "バイク洗車"
+      }
+    },
+    {
+      "code": "car_exterior_wash",
+      "name_vi": "Rửa ngoại thất ô tô",
+      "category_codes": [
+        "vehicle_care_vehicle_detailing"
+      ],
+      "translations": {
+        "en": "Car exterior washing",
+        "ja": "自動車外装の洗車"
+      }
+    },
+    {
+      "code": "car_interior_cleaning",
+      "name_vi": "Vệ sinh nội thất ô tô",
+      "category_codes": [
+        "vehicle_care_vehicle_detailing"
+      ],
+      "translations": {
+        "en": "Car interior cleaning",
+        "ja": "車内清掃"
+      }
+    },
+    {
+      "code": "car_polishing",
+      "name_vi": "Đánh bóng ô tô",
+      "category_codes": [
+        "vehicle_care_vehicle_detailing"
+      ],
+      "translations": {
+        "en": "Car polishing",
+        "ja": "車体の研磨"
+      }
+    },
+    {
+      "code": "car_aircon_cleaning",
+      "name_vi": "Vệ sinh điều hòa ô tô",
+      "category_codes": [
+        "vehicle_care_vehicle_detailing"
+      ],
+      "translations": {
+        "en": "Car air conditioner cleaning",
+        "ja": "カーエアコンクリーニング"
+      }
+    },
+    {
+      "code": "dog_bathing",
+      "name_vi": "Tắm chó",
+      "category_codes": [
+        "pet_care_pet_bathing"
+      ],
+      "translations": {
+        "en": "Dog bathing",
+        "ja": "犬のシャンプー"
+      }
+    },
+    {
+      "code": "cat_bathing",
+      "name_vi": "Tắm mèo",
+      "category_codes": [
+        "pet_care_pet_bathing"
+      ],
+      "translations": {
+        "en": "Cat bathing",
+        "ja": "猫のシャンプー"
+      }
+    },
+    {
+      "code": "pet_nail_trimming",
+      "name_vi": "Cắt móng thú cưng",
+      "category_codes": [
+        "pet_care_pet_bathing"
+      ],
+      "translations": {
+        "en": "Pet nail trimming",
+        "ja": "ペットの爪切り"
+      }
+    },
+    {
+      "code": "pet_outer_ear_cleaning",
+      "name_vi": "Vệ sinh tai ngoài thú cưng",
+      "category_codes": [
+        "pet_care_pet_bathing"
+      ],
+      "translations": {
+        "en": "Pet outer ear cleaning",
+        "ja": "ペットの外耳のお手入れ"
+      }
+    },
+    {
+      "code": "dog_haircut",
+      "name_vi": "Cắt tỉa lông chó",
+      "category_codes": [
+        "pet_care_pet_coat"
+      ],
+      "translations": {
+        "en": "Dog haircut",
+        "ja": "犬のトリミング"
+      }
+    },
+    {
+      "code": "cat_haircut",
+      "name_vi": "Cắt tỉa lông mèo",
+      "category_codes": [
+        "pet_care_pet_coat"
+      ],
+      "translations": {
+        "en": "Cat haircut",
+        "ja": "猫のトリミング"
+      }
+    },
+    {
+      "code": "pet_brushing",
+      "name_vi": "Chải / gỡ rối lông",
+      "category_codes": [
+        "pet_care_pet_coat"
+      ],
+      "translations": {
+        "en": "Brushing & detangling",
+        "ja": "ブラッシング・毛玉取り"
+      }
+    },
+    {
+      "code": "dog_boarding",
+      "name_vi": "Trông giữ chó qua đêm",
+      "category_codes": [
+        "pet_care_pet_boarding"
+      ],
+      "translations": {
+        "en": "Overnight dog boarding",
+        "ja": "犬の宿泊預かり"
+      }
+    },
+    {
+      "code": "cat_boarding",
+      "name_vi": "Trông giữ mèo qua đêm",
+      "category_codes": [
+        "pet_care_pet_boarding"
+      ],
+      "translations": {
+        "en": "Overnight cat boarding",
+        "ja": "猫の宿泊預かり"
+      }
+    },
+    {
+      "code": "dog_daycare",
+      "name_vi": "Trông giữ chó ban ngày",
+      "category_codes": [
+        "pet_care_pet_boarding"
+      ],
+      "translations": {
+        "en": "Dog daycare",
+        "ja": "犬の日帰り預かり"
+      }
+    },
+    {
+      "code": "cat_daycare",
+      "name_vi": "Trông giữ mèo ban ngày",
+      "category_codes": [
+        "pet_care_pet_boarding"
+      ],
+      "translations": {
+        "en": "Cat daycare",
+        "ja": "猫の日帰り預かり"
+      }
+    },
+    {
+      "code": "pet_transport",
+      "name_vi": "Vận chuyển thú cưng",
+      "category_codes": [
+        "pet_care_pet_transport"
+      ],
+      "translations": {
+        "en": "Pet transport",
+        "ja": "ペットの送迎"
+      }
+    },
+    {
+      "code": "haircut",
+      "name_vi": "Cắt tóc",
+      "category_codes": [
+        "beauty_hair_care"
+      ],
+      "translations": {
+        "en": "Haircut",
+        "ja": "ヘアカット"
+      }
+    },
+    {
+      "code": "hair_wash_dry",
+      "name_vi": "Gội / sấy khô tóc",
+      "category_codes": [
+        "beauty_hair_care"
+      ],
+      "translations": {
+        "en": "Hair washing & drying",
+        "ja": "シャンプー・乾燥"
+      }
+    },
+    {
+      "code": "temporary_hair_styling",
+      "name_vi": "Tạo kiểu tóc tạm thời",
+      "category_codes": [
+        "beauty_hair_care"
+      ],
+      "translations": {
+        "en": "Temporary hair styling",
+        "ja": "一時的なヘアセット"
+      }
+    },
+    {
+      "code": "hand_nail_care",
+      "name_vi": "Chăm sóc nền móng tay",
+      "category_codes": [
+        "beauty_nail_services"
+      ],
+      "translations": {
+        "en": "Hand nail preparation & care",
+        "ja": "手の爪の下処理・ケア"
+      }
+    },
+    {
+      "code": "foot_nail_care",
+      "name_vi": "Chăm sóc nền móng chân",
+      "category_codes": [
+        "beauty_nail_services"
+      ],
+      "translations": {
+        "en": "Foot nail preparation & care",
+        "ja": "足の爪の下処理・ケア"
+      }
+    },
+    {
+      "code": "nail_polish",
+      "name_vi": "Sơn móng",
+      "category_codes": [
+        "beauty_nail_services"
+      ],
+      "translations": {
+        "en": "Nail polish application",
+        "ja": "ネイルカラー"
+      }
+    },
+    {
+      "code": "nail_extensions",
+      "name_vi": "Đắp / nối móng",
+      "category_codes": [
+        "beauty_nail_services"
+      ],
+      "translations": {
+        "en": "Nail extensions",
+        "ja": "ネイルエクステンション"
+      }
+    },
+    {
+      "code": "nail_product_removal",
+      "name_vi": "Tháo sơn / móng đắp",
+      "category_codes": [
+        "beauty_nail_services"
+      ],
+      "translations": {
+        "en": "Nail coating & extension removal",
+        "ja": "ネイルカラー・エクステンション除去"
+      }
+    },
+    {
+      "code": "face_makeup",
+      "name_vi": "Trang điểm khuôn mặt",
+      "category_codes": [
+        "beauty_makeup"
+      ],
+      "translations": {
+        "en": "Face makeup",
+        "ja": "フェイスメイク"
+      }
+    },
+    {
+      "code": "hair_colouring",
+      "name_vi": "Nhuộm tóc",
+      "category_codes": [
+        "beauty_hair_treatments"
+      ],
+      "translations": {
+        "en": "Hair colouring",
+        "ja": "ヘアカラー"
+      }
+    },
+    {
+      "code": "hair_perming",
+      "name_vi": "Uốn tóc",
+      "category_codes": [
+        "beauty_hair_treatments"
+      ],
+      "translations": {
+        "en": "Hair perming",
+        "ja": "パーマ"
+      }
+    },
+    {
+      "code": "hair_straightening",
+      "name_vi": "Duỗi tóc",
+      "category_codes": [
+        "beauty_hair_treatments"
+      ],
+      "translations": {
+        "en": "Hair straightening",
+        "ja": "ストレートパーマ"
+      }
+    },
+    {
+      "code": "fragile_packing",
+      "name_vi": "Đóng gói đồ dễ vỡ",
+      "category_codes": [
+        "moving_packing"
+      ],
+      "translations": {
+        "en": "Fragile item packing",
+        "ja": "割れ物の梱包"
+      }
+    },
+    {
+      "code": "document_packing",
+      "name_vi": "Đóng gói hồ sơ / sách",
+      "category_codes": [
+        "moving_packing"
+      ],
+      "translations": {
+        "en": "Document & book packing",
+        "ja": "書類・書籍の梱包"
+      }
+    },
+    {
+      "code": "household_item_packing",
+      "name_vi": "Đóng gói đồ dùng không dễ vỡ",
+      "category_codes": [
+        "moving_packing"
+      ],
+      "translations": {
+        "en": "Non-fragile household item packing",
+        "ja": "壊れにくい日用品の梱包"
+      }
+    },
+    {
+      "code": "furniture_disassembly",
+      "name_vi": "Tháo đồ nội thất khi chuyển",
+      "category_codes": [
+        "moving_furniture_assembly"
+      ],
+      "translations": {
+        "en": "Furniture disassembly for moving",
+        "ja": "引越し時の家具分解"
+      }
+    },
+    {
+      "code": "furniture_reassembly",
+      "name_vi": "Lắp lại nội thất sau chuyển",
+      "category_codes": [
+        "moving_furniture_assembly"
+      ],
+      "translations": {
+        "en": "Furniture reassembly after moving",
+        "ja": "引越し後の家具組立"
+      }
+    },
+    {
+      "code": "item_loading",
+      "name_vi": "Bốc xếp đồ lên / xuống xe",
+      "category_codes": [
+        "moving_loading"
+      ],
+      "translations": {
+        "en": "Item loading & unloading",
+        "ja": "荷物の車両への積み下ろし"
+      }
+    },
+    {
+      "code": "furniture_transport",
+      "name_vi": "Vận chuyển đồ nội thất",
+      "category_codes": [
+        "moving_transport"
+      ],
+      "translations": {
+        "en": "Furniture transport",
+        "ja": "家具の運搬"
+      }
+    },
+    {
+      "code": "equipment_transport",
+      "name_vi": "Vận chuyển thiết bị điện / điện tử",
+      "category_codes": [
+        "moving_transport"
+      ],
+      "translations": {
+        "en": "Electrical & electronic equipment transport",
+        "ja": "電気・電子機器の運搬"
+      }
+    },
+    {
+      "code": "boxed_item_transport",
+      "name_vi": "Vận chuyển thùng đồ dùng",
+      "category_codes": [
+        "moving_transport"
+      ],
+      "translations": {
+        "en": "Boxed belongings transport",
+        "ja": "箱詰め荷物の運搬"
+      }
+    },
+    {
+      "code": "garment_wet_washing",
+      "name_vi": "Giặt nước quần áo",
+      "category_codes": [
+        "laundry_garment_laundry"
+      ],
+      "translations": {
+        "en": "Garment wet washing",
+        "ja": "衣類の水洗い"
+      }
+    },
+    {
+      "code": "dry_cleaning",
+      "name_vi": "Giặt khô quần áo",
+      "category_codes": [
+        "laundry_garment_laundry"
+      ],
+      "translations": {
+        "en": "Garment dry cleaning",
+        "ja": "衣類のドライクリーニング"
+      }
+    },
+    {
+      "code": "clothes_ironing",
+      "name_vi": "Ủi quần áo",
+      "category_codes": [
+        "laundry_garment_laundry"
+      ],
+      "translations": {
+        "en": "Clothes ironing",
+        "ja": "衣類のアイロンがけ"
+      }
+    },
+    {
+      "code": "blanket_laundry",
+      "name_vi": "Giặt chăn",
+      "category_codes": [
+        "laundry_bedding_laundry"
+      ],
+      "translations": {
+        "en": "Blanket washing",
+        "ja": "毛布の洗濯"
+      }
+    },
+    {
+      "code": "bed_linen_pillowcase_laundry",
+      "name_vi": "Giặt ga giường / vỏ gối",
+      "category_codes": [
+        "laundry_bedding_laundry"
+      ],
+      "translations": {
+        "en": "Bed sheet & pillowcase washing",
+        "ja": "シーツ・枕カバーの洗濯"
+      }
+    },
+    {
+      "code": "pillow_laundry",
+      "name_vi": "Giặt ruột gối",
+      "category_codes": [
+        "laundry_bedding_laundry"
+      ],
+      "translations": {
+        "en": "Pillow washing",
+        "ja": "枕の洗濯"
+      }
+    },
+    {
+      "code": "curtain_laundry",
+      "name_vi": "Giặt rèm cửa",
+      "category_codes": [
+        "laundry_household_items"
+      ],
+      "translations": {
+        "en": "Curtain washing",
+        "ja": "カーテンの洗濯"
+      }
+    },
+    {
+      "code": "towel_laundry",
+      "name_vi": "Giặt khăn",
+      "category_codes": [
+        "laundry_household_items"
+      ],
+      "translations": {
+        "en": "Towel washing",
+        "ja": "タオルの洗濯"
+      }
+    },
+    {
+      "code": "stuffed_toy_cleaning",
+      "name_vi": "Giặt thú nhồi bông",
+      "category_codes": [
+        "laundry_household_items"
+      ],
+      "translations": {
+        "en": "Soft toy cleaning",
+        "ja": "ぬいぐるみクリーニング"
+      }
+    },
+    {
+      "code": "shoe_cleaning",
+      "name_vi": "Vệ sinh giày",
+      "category_codes": [
+        "laundry_shoe_bag_care"
+      ],
+      "translations": {
+        "en": "Shoe cleaning",
+        "ja": "靴のクリーニング"
+      }
+    },
+    {
+      "code": "bag_cleaning",
+      "name_vi": "Vệ sinh túi xách",
+      "category_codes": [
+        "laundry_shoe_bag_care"
+      ],
+      "translations": {
+        "en": "Bag cleaning",
+        "ja": "バッグクリーニング"
+      }
+    },
+    {
+      "code": "leather_shoe_polishing",
+      "name_vi": "Đánh bóng giày da",
+      "category_codes": [
+        "laundry_shoe_bag_care"
+      ],
+      "translations": {
+        "en": "Leather shoe polishing",
+        "ja": "革靴磨き"
+      }
+    },
+    {
+      "code": "camera_mounting",
+      "name_vi": "Lắp phần cứng camera",
+      "category_codes": [
+        "installation_it_camera_systems"
+      ],
+      "translations": {
+        "en": "Camera hardware installation",
+        "ja": "カメラ本体の設置"
+      }
+    },
+    {
+      "code": "camera_configuration",
+      "name_vi": "Cấu hình camera",
+      "category_codes": [
+        "installation_it_camera_systems"
+      ],
+      "translations": {
+        "en": "Camera configuration",
+        "ja": "カメラ設定"
+      }
+    },
+    {
+      "code": "camera_repair",
+      "name_vi": "Sửa kết nối camera",
+      "category_codes": [
+        "installation_it_camera_systems"
+      ],
+      "translations": {
+        "en": "Camera connection repair",
+        "ja": "カメラ接続の修復"
+      }
+    },
+    {
+      "code": "camera_removal",
+      "name_vi": "Tháo camera",
+      "category_codes": [
+        "installation_it_camera_systems"
+      ],
+      "translations": {
+        "en": "Camera removal",
+        "ja": "カメラの取り外し"
+      }
+    },
+    {
+      "code": "mesh_wifi_setup",
+      "name_vi": "Cài đặt Wi-Fi mesh",
+      "category_codes": [
+        "installation_it_network_installation"
+      ],
+      "translations": {
+        "en": "Mesh Wi-Fi setup",
+        "ja": "メッシュWi-Fi設定"
+      }
+    },
+    {
+      "code": "network_cabling",
+      "name_vi": "Đi dây mạng nội bộ",
+      "category_codes": [
+        "installation_it_network_installation"
+      ],
+      "translations": {
+        "en": "Local network cabling",
+        "ja": "LAN配線"
+      }
+    },
+    {
+      "code": "single_router_setup",
+      "name_vi": "Cài đặt router đơn",
+      "category_codes": [
+        "installation_it_network_installation"
+      ],
+      "translations": {
+        "en": "Single-router setup",
+        "ja": "単体ルーター設定"
+      }
+    },
+    {
+      "code": "tv_wall_mounting",
+      "name_vi": "Treo tivi lên tường",
+      "category_codes": [
+        "installation_it_tv_audio_installation"
+      ],
+      "translations": {
+        "en": "TV wall mounting",
+        "ja": "テレビの壁掛け設置"
+      }
+    },
+    {
+      "code": "smart_tv_setup",
+      "name_vi": "Cài đặt smart tivi",
+      "category_codes": [
+        "installation_it_tv_audio_installation"
+      ],
+      "translations": {
+        "en": "Smart TV setup",
+        "ja": "スマートテレビ設定"
+      }
+    },
+    {
+      "code": "speaker_setup",
+      "name_vi": "Lắp đặt loa gia đình",
+      "category_codes": [
+        "installation_it_tv_audio_installation"
+      ],
+      "translations": {
+        "en": "Home speaker setup",
+        "ja": "家庭用スピーカー設置"
+      }
+    },
+    {
+      "code": "water_filter_installation",
+      "name_vi": "Lắp máy lọc nước",
+      "category_codes": [
+        "installation_it_water_filter_installation"
+      ],
+      "translations": {
+        "en": "Water filter installation",
+        "ja": "浄水器設置"
+      }
+    },
+    {
+      "code": "water_filter_cartridge",
+      "name_vi": "Thay lõi lọc nước",
+      "category_codes": [
+        "installation_it_water_filter_installation"
+      ],
+      "translations": {
+        "en": "Water filter cartridge replacement",
+        "ja": "浄水カートリッジ交換"
+      }
+    },
+    {
+      "code": "water_filter_cleaning",
+      "name_vi": "Vệ sinh vỏ / bình máy lọc nước",
+      "category_codes": [
+        "installation_it_water_filter_installation"
+      ],
+      "translations": {
+        "en": "Water filter housing & tank cleaning",
+        "ja": "浄水器本体・タンクの清掃"
+      }
     }
   ]
 }

@@ -744,4 +744,6 @@ CREATE TABLE recovery_requests (
  created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE UNIQUE INDEX identities_one_contact ON identities(user_id,provider) WHERE provider IN ('phone','email');
+-- I18N-04, approved 2026-10-05. Runtime history is migrations/003_catalog_translations.sql.
+ALTER TABLE skills ADD COLUMN translations jsonb NOT NULL DEFAULT '{}' CHECK (jsonb_typeof(translations) = 'object');
 COMMIT;

@@ -16,8 +16,8 @@ appId: vn.dichvuquanhban.app
     direction: DOWN
     centerElement: true
 - tapOn: "Điện nước"
-- tapOn: "Dịch vụ điện nước"
-- assertVisible: "Sửa điện dân dụng"
+- tapOn: "Điện dân dụng"
+- assertVisible: "Thay ổ cắm / công tắc"
 - takeScreenshot: skills
 - runFlow:
     when:
@@ -32,12 +32,12 @@ appId: vn.dichvuquanhban.app
           start: "1%, 50%"
           end: "90%, 50%"
           duration: 500
-- assertVisible: "Dịch vụ điện nước"
+- assertVisible: "Điện dân dụng"
 - pressKey: Home
 - launchApp:
     stopApp: false
-- assertVisible: "Dịch vụ điện nước"
-- tapOn: "Dịch vụ điện nước"
+- assertVisible: "Điện dân dụng"
+- tapOn: "Điện dân dụng"
 - runScript:
     file: set-mode.js
     env:
@@ -50,7 +50,7 @@ appId: vn.dichvuquanhban.app
     env:
       MODE: ok
 - tapOn: "Thử lại"
-- assertVisible: "Dịch vụ điện nước"
+- assertVisible: "Điện dân dụng"
 - runScript:
     file: set-mode.js
     env:

@@ -4,7 +4,7 @@ import { Cursor, parseQuery } from '../../src/modules/catalog/catalog.query.js';
 import { config } from '../../src/config/environment.js';
 const id = 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa';
 test('valid pagination and filters; malformed/repeated/unknown input rejected', () => {
-  assert.deepEqual(parseQuery({}, 'categories'), { limit: 20, cursor: undefined, filter: undefined });
+  assert.deepEqual(parseQuery({}, 'categories'), { limit: 20, cursor: undefined, filter: undefined, locale: 'vi' });
   assert.equal(parseQuery({ parent_id: 'root', limit: '100' }, 'categories').filter, 'root');
   assert.equal(parseQuery({ category_id: id }, 'skills').filter, id);
   for (const query of [{ limit: '0' }, { limit: '101' }, { limit: '2.5' }, { limit: '' }, { limit: ['1','2'] }, { cursor: '' }, { category_id: 'invalid' }, { active: 'false' }]) assert.throws(() => parseQuery(query, 'skills'));

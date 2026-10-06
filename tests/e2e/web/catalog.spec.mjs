@@ -4,15 +4,15 @@ test('catalog journey, offline/retry and empty state use real API/database', asy
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto(environment.webUrl);
   await page.getByRole('button', { name: 'Điện nước', exact: true }).click();
-  await page.getByRole('button', { name: 'Dịch vụ điện nước', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Dịch vụ điện nước', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Điện dân dụng', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Điện dân dụng', exact: true })).toBeVisible();
   // Native stack retains hidden parent screens, which can contain this skill.
-  await expect(page.getByText('Sửa điện dân dụng', { exact: true }).filter({ visible: true })).toBeVisible();
+  await expect(page.getByText('Thay ổ cắm / công tắc', { exact: true }).filter({ visible: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
   await context.setOffline(true); await page.getByRole('button', { name: 'Quay lại' }).click();
   await expect(page.getByRole('alert')).toBeVisible(); await context.setOffline(false);
   await page.getByRole('button', { name: 'Thử lại' }).click();
-  await expect(page.getByRole('button', { name: 'Dịch vụ điện nước', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Điện dân dụng', exact: true })).toBeVisible();
   await environment.pool.query('UPDATE categories SET active=false'); await page.reload();
   await expect(page.getByText('Chưa có dịch vụ đang hoạt động.')).toBeVisible(); expect(errors).toEqual([]);
 });

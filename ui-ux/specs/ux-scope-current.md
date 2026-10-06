@@ -1,5 +1,8 @@
 # Phạm vi hiện hành v0.24 — 22/09/2026
 
+> **I18N-04 · 05/10/2026 — sản phẩm thật:** Chủ dự án duyệt tên ngành/nhóm/kỹ năng VI/EN/JA từ DB, API trả tên theo lựa chọn local. Đổi tiếng giữ ID/trang và tải lại cả tiêu đề. Chỉ hiện thông báo fallback khi có mục thiếu bản dịch. Bộ phân loại giữ 10 ngành, mở rộng 50 nhóm/140 kỹ năng. Nội dung prototype và bằng chứng cũ bên dưới là lịch sử, không phải số liệu DB hiện hành. Tìm kiếm đa ngôn ngữ và đồng bộ locale tài khoản chưa thuộc lát này.
+
+
 Chỉ mở đánh giá hai chiều khi khách báo đã thanh toán, thợ xác nhận nhận tiền và hóa đơn đã quyết toán thành công. Admin hoàn tất thay không phải xác nhận của thợ.
 
 Toàn point hoặc 0đ vẫn cần hai dấu xác nhận, không phát sinh thêm tiền. Khách có thể báo đã thanh toán sau khi thợ đã nhận tiền.

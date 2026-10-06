@@ -6,7 +6,7 @@ DOC-083 · v1.0 · 01/10/2026 · DELIVERY-01. Baseline code `50d184a`. [Mục l�
 
 - `[x]` = đạt phạm vi kỹ thuật của đúng dòng tại baseline/bằng chứng dẫn kèm; không đồng nghĩa toàn nhóm Bxx đã xong hoặc đã UAT.
 - `[ ]` = chưa hoàn thành; lý do/đầu việc còn thiếu ở cột tiêu chí. Toàn nhóm có thể “một phần”. Không tính phần trăm app từ số ô tick.
-- Chỉ một lát **Đang làm** tại một thời điểm. Hiện: **I18N-01/02 đã push ở `844e1d2`, CI đạt**. **B00-05 đã bàn giao lát khung khách ngày 04/10/2026**, đạt local/native cho chức năng hiện có; chủ dự án xác nhận và yêu cầu push ngày 05/10; chưa UAT toàn app, chưa đóng khung các vai trò và nghiệp vụ còn lại. **B01-02 Pending theo yêu cầu chủ dự án ngày 01/10/2026**, do cần cân nhắc chi phí. Tạm hoãn cả triển khai local và tích hợp gửi thật; chưa bắt đầu code OTP. Chỉ mở lại khi chủ dự án yêu cầu. Các phần phụ thuộc xác minh không được bỏ qua điều kiện bảo mật để đi tiếp.
+- Chỉ một lát **Đang làm** tại một thời điểm. Hiện: **I18N-04/B02-01 đã thay bộ danh mục local ngày 05/10 theo yêu cầu clear: 10 ngành/39 nhóm/128 kỹ năng; chưa CI/UAT, tìm kiếm còn mở**. **I18N-01/02 đã push ở `844e1d2`, CI đạt**. **B00-05 đã bàn giao lát khung khách ngày 04/10/2026**, đạt local/native cho chức năng hiện có; chủ dự án xác nhận và yêu cầu push ngày 05/10; chưa UAT toàn app, chưa đóng khung các vai trò và nghiệp vụ còn lại. **B01-02 Pending theo yêu cầu chủ dự án ngày 01/10/2026**, do cần cân nhắc chi phí. Tạm hoãn cả triển khai local và tích hợp gửi thật; chưa bắt đầu code OTP. Chỉ mở lại khi chủ dự án yêu cầu. Các phần phụ thuộc xác minh không được bỏ qua điều kiện bảo mật để đi tiếp.
 - Hạng mục mới theo kế hoạch chưa có phê duyệt tích hợp trả phí/production. Phần thay contract cần chốt rõ trước khi code.
 - Chưa có dòng nào được gắn “UAT chủ dự án đã nghiệm thu”.
 
@@ -21,9 +21,11 @@ DOC-083 · v1.0 · 01/10/2026 · DELIVERY-01. Baseline code `50d184a`. [Mục l�
 | `844e1d2` · 04/10 JST | [CI 37132800077](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37132800077); kiểm trước push: 81 mobile, 4 web, 3 tooling, typecheck/lint/build đạt | Đã push i18n và bộ báo cáo; CI 3 jobs đạt. Không phải bằng chứng cho phần B00-05 viết sau commit này |
 | Local sau `844e1d2` · 04/10 JST | [B00-05](bao-cao/B00-05-khung-giao-dien.md): 83 mobile, 5 web, 3 tooling; shell/auth/layout Android và iOS đạt; typecheck/lint/build đạt | Khung khách cho chức năng hiện có đã kiểm. Chủ dự án xác nhận và yêu cầu push ngày 05/10; chưa UAT toàn app; B00-05 còn khung các vai trò và nghiệp vụ khác |
 
-Đã push B00-05 ở `c120062` ngày 05/10; [CI 37262885727](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37262885727) đã đạt cả 3 jobs (API/PostGIS, static/mobile, web E2E). I18N-04 đang có [đề xuất cụ thể](de-xuat/I18N-04-dich-danh-muc.md), chờ quyết định; chưa triển khai.
+Đã push B00-05 ở `c120062` ngày 05/10; [CI 37262885727](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37262885727) đã đạt cả 3 jobs (API/PostGIS, static/mobile, web E2E). I18N-04 được duyệt ngày 05/10 và đã triển khai lát đọc danh mục đa ngôn ngữ, mở rộng DB; xem [báo cáo](bao-cao/I18N-04-danh-muc-da-ngon-ngu.md). Chưa push/CI/UAT.
 
 Artifact local không track Git. Nếu không còn artifact, chạy lại theo báo cáo; không đổi ngày kiểm cũ thành ngày hiện tại.
+
+> Rà soát 05/10 phát hiện chồng chéo trong bộ cũ. Chủ dự án đã yêu cầu clear và nạp lại; [bộ mới](bao-cao/B02-01-thay-du-lieu-danh-muc.md) có **10 ngành/39 nhóm/128 kỹ năng**, một nhóm chính cho mỗi kỹ năng. Đã thay DB local và kiểm giữ nguyên tài khoản/phiên; kiểm kỹ thuật không thay nghiệm thu nội dung/UAT.
 
 ## B00 — Nền tảng — đã có phần chạy thật, chưa đóng toàn phạm vi
 
@@ -47,7 +49,7 @@ Nguồn: [spec](../../ui-ux/specs/ux-scope-current.md), [backlog](../technical-d
 | [x] | I18N-01 | Message keys và trạng thái lỗi độc lập ngôn ngữ | i18n-js, typed keys/params, đủ khóa VI/EN/JA, fallback/số nhiều; lỗi auth là mã. [Báo cáo I18N-01/02](bao-cao/I18N-01-nen-da-ngon-ngu.md), kiểm local 01/10, đã push `844e1d2` |
 | [x] | I18N-02 | VI/EN/JA cho các màn đã có + chọn/lưu locale local | Giữ form/route/session, lưu local; i18n/auth và cỡ chữ lớn đạt Android/iOS; web 3 hồi quy + 1 i18n đạt. [Báo cáo](bao-cao/I18N-01-nen-da-ngon-ngu.md). CI `844e1d2` đạt; chưa UAT |
 | [ ] | I18N-03 | Locale tài khoản và đồng bộ đa thiết bị | Cần chốt ưu tiên locale local/tài khoản; mở rộng enum Me/ProfileEdit theo quyết định |
-| [ ] | I18N-04 | Bản dịch danh mục/kỹ năng và tìm kiếm theo ngôn ngữ | Chốt nguồn bản dịch và fallback; categories.translations chưa được trả ra API; skills chưa có translations |
+| [ ] | I18N-04 | Bản dịch danh mục/kỹ năng và tìm kiếm theo ngôn ngữ | **Một phần:** lát đọc tên VI/EN/JA, fallback, cursor theo locale; 10 ngành/39 nhóm/128 kỹ năng sau thay dữ liệu đã kiểm kỹ thuật local. [Báo cáo](bao-cao/I18N-04-danh-muc-da-ngon-ngu.md). **Phân loại còn chồng chéo, chưa sửa**: [rà soát toàn bộ](bao-cao/B02-01-ra-soat-danh-muc.md). Tìm kiếm theo ngôn ngữ B03 chưa làm, chưa CI/UAT. |
 
 ## B01 — Tài khoản — chỉ lát email/mật khẩu local hoàn thành
 
@@ -69,7 +71,7 @@ Nguồn: [spec](../../ui-ux/specs/partner-journey.md), [backlog](../technical-de
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [x] | B02-01 | Đọc ngành → nhóm → kỹ năng | API DB thật, lọc toàn cây active, cursor ký, UI tải/rỗng/lỗi/retry; chưa CRUD quản trị; xem [báo cáo](bao-cao/B00-01-nen-tang-danh-muc.md) |
+| [x] | B02-01 | Đọc ngành → nhóm → kỹ năng | Đạt lát đọc kỹ thuật: API DB thật, lọc toàn cây active, cursor ký, UI tải/rỗng/lỗi/retry; chưa CRUD quản trị; xem [báo cáo](bao-cao/B00-01-nen-tang-danh-muc.md). [Thay bộ dữ liệu theo yêu cầu 05/10](bao-cao/B02-01-thay-du-lieu-danh-muc.md): 39 nhóm/128 kỹ năng, đã kiểm local; chưa UAT nội dung |
 | [ ] | B02-02 | Upload/asset làm nền cho ảnh và giấy tờ | createUpload/completeUpload/getAsset; ownership, trạng thái ready, private/public, dung lượng/loại file |
 | [ ] | B02-03 | Đăng ký/hồ sơ partner đa loại, kỹ năng, vùng, địa điểm | Thợ/cửa hàng/doanh nghiệp; nháp và công bố; dữ liệu nhạy cảm không ra public |
 | [ ] | B02-04 | Bật/tắt nhận việc và đình chỉ | Recheck lúc gửi thuê; việc cũ vẫn theo quyền hiện hành |

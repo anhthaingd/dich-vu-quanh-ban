@@ -1,5 +1,8 @@
 # Hợp đồng API và realtime
 
+> **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** I18N-04 (05/10/2026): locale=vi|en|ja, mặc định vi; trả name và name_locale, giữ name_vi. Thiếu tên dịch/giá trị không phải chuỗi hoặc chỉ khoảng trắng thì dùng name_vi, name_locale=vi. Cursor gắn endpoint/bộ lọc/locale; locale sai/lặp trả 400. Không trả object translations ra public.
+
+
 Phiên bản 0.1.2 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
 
 ## Contract đã triển khai local

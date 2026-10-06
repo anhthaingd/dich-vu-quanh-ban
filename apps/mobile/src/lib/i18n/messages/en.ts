@@ -8,7 +8,7 @@ export const en = {
     categorySubtitle: 'Explore service groups and skills.', loading: 'Loading services…',
     empty: 'No active services yet.', error: 'Unable to load services. Check your connection and try again.',
     skills: { one: '%{count} skill', other: '%{count} skills' },
-    translationNotice: 'Industry, group and skill names are currently available in Vietnamese only.',
+    translationNotice: 'Some names are not translated yet; Vietnamese is shown instead.',
   },
   auth: {
     restoring: 'Restoring your session…', verified: 'Email verified', unverified: 'Email not verified',

@@ -10,7 +10,7 @@ appId: vn.dichvuquanhban.app
 - takeScreenshot: shell-account
 - tapOn:
     id: nav-back
-- assertVisible: "Dịch vụ điện nước"
+- assertVisible: "Điện dân dụng"
 - tapOn:
     id: nav-catalog
 - assertVisible: "Bạn cần dịch vụ gì?"

@@ -8,7 +8,7 @@ export const ja = {
     categorySubtitle: 'サービスの分類とスキルを探しましょう。', loading: 'サービスを読み込み中…',
     empty: '利用可能なサービスはまだありません。', error: 'サービスを読み込めません。接続を確認して再試行してください。',
     skills: { one: '%{count}件のスキル', other: '%{count}件のスキル' },
-    translationNotice: '業種・分類・スキルの名称は現在ベトナム語のみです。',
+    translationNotice: '未翻訳の項目はベトナム語で表示しています。',
   },
   auth: {
     restoring: 'セッションを復元中…', verified: 'メールアドレスは確認済みです', unverified: 'メールアドレスは未確認です',

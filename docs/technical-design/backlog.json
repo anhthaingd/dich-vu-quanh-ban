@@ -80,7 +80,8 @@
     "scope": [
       "10 ngành và kỹ năng dùng chung nhiều ngành",
       "Hồ sơ, ảnh, địa chỉ và vùng phục vụ",
-      "Bật/tắt nhận việc; admin xác minh và quản lý danh mục"
+      "Bật/tắt nhận việc; admin xác minh và quản lý danh mục",
+      "I18N-04: đọc danh mục VI/EN/JA, 10 ngành/50 nhóm/140 kỹ năng; CRUD và tìm kiếm đa ngôn ngữ bàn giao riêng."
     ],
     "acceptance": [
       "Thợ/cửa hàng/doanh nghiệp đăng ký được",
@@ -92,7 +93,10 @@
       "QA-008",
       "QA-009",
       "QA-012",
-      "QA-049"
+      "QA-049",
+      "QA-067",
+      "QA-068",
+      "QA-069"
     ],
     "docs": [
       "DOC-004",

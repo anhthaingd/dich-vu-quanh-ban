@@ -790,5 +790,41 @@
     "level": "Load local",
     "priority": "P0",
     "status": "Đạt local 28/09/2026 — DOC-071"
+  },
+  {
+    "id": "QA-067",
+    "group": "Danh mục đa ngôn ngữ",
+    "requirement": "I18N-04; FR-CAT-001/002",
+    "operation": "listCategories, listSkills",
+    "setup": "Danh mục đã nạp đủ VI/EN/JA; có mục thiếu bản dịch",
+    "steps": "Đổi VI/EN/JA ở ngành và nhóm, gọi API không locale/sai/lặp locale; thử tên dịch rỗng/sai kiểu",
+    "expected": "Tên và tiêu đề đúng ID/ngôn ngữ; fallback vi có thông báo; không dịch nội dung người dùng; input sai 400.",
+    "level": "API DB + mobile + native",
+    "priority": "P1",
+    "status": "Đạt local 05/10/2026 — I18N-04; 34 API, 86 mobile, 5 web, i18n/layout Android+iOS; chưa CI/UAT"
+  },
+  {
+    "id": "QA-068",
+    "group": "Danh mục đa ngôn ngữ",
+    "requirement": "I18N-04; FR-CAT-001/002",
+    "operation": "listCategories, listSkills",
+    "setup": "60 categories, 140 skills, 141 mapping; DB test trống và DB đã sửa thủ công",
+    "steps": "Migrate/seed hai lần; sửa tên/active/bản dịch; phân trang 140 skills, trộn cursor locale; tắt tổ tiên",
+    "expected": "Không nhân đôi/ghi đè; bổ sung khóa còn thiếu; cursor khác locale 400; active ancestry vẫn được giữ.",
+    "level": "API DB + mobile + native",
+    "priority": "P1",
+    "status": "Đạt local 05/10/2026 — I18N-04; 34 API, 86 mobile, 5 web, i18n/layout Android+iOS; chưa CI/UAT"
+  },
+  {
+    "id": "QA-069",
+    "group": "Danh mục đa ngôn ngữ",
+    "requirement": "I18N-04; FR-CAT-001/002",
+    "operation": "listCategories, listSkills",
+    "setup": "App mở nhóm, mạng phản hồi chậm và cỡ chữ lớn",
+    "steps": "Đổi EN→JA liên tiếp, quay lại khi đang tải, lỗi/Thử lại; kiểm Android/iOS",
+    "expected": "Hủy/bỏ phản hồi cũ; giữ ID; không chớp dữ liệu sai ngôn ngữ; tiêu đề đúng; đọc được chữ dài.",
+    "level": "API DB + mobile + native",
+    "priority": "P1",
+    "status": "Đạt local 05/10/2026 — I18N-04; 34 API, 86 mobile, 5 web, i18n/layout Android+iOS; chưa CI/UAT"
   }
 ]

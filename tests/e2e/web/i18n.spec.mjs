@@ -23,11 +23,11 @@ test('language changes keep form/session/category, translate errors and persist 
   await page.getByRole('button', { name: 'English', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('Unable to authenticate');
   await page.getByRole('button', { name: 'Back', exact: true }).click();
-  await page.getByRole('button', { name: 'Điện nước', exact: true }).click();
+  await page.getByRole('button', { name: 'Electrical & plumbing', exact: true }).click();
   await page.getByRole('button', { name: '日本語', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Điện nước', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Dịch vụ điện nước', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Dịch vụ điện nước', exact: true }).getByText('サービスを見る →', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '電気・水道', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: '家庭の電気工事', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: '家庭の電気工事', exact: true }).getByText('サービスを見る →', { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('heading', { name: 'どんなサービスをお探しですか？' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');

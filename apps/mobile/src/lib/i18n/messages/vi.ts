@@ -7,7 +7,7 @@ export const vi = {
     categorySubtitle: 'Khám phá nhóm dịch vụ và kỹ năng phù hợp.', loading: 'Đang tải danh mục…',
     empty: 'Chưa có dịch vụ đang hoạt động.', error: 'Không tải được danh mục. Kiểm tra kết nối và thử lại.',
     skills: { one: '%{count} kỹ năng', other: '%{count} kỹ năng' },
-    translationNotice: 'Tên ngành, nhóm và kỹ năng hiện chỉ có tiếng Việt.',
+    translationNotice: 'Một số mục chưa có bản dịch; tên tiếng Việt được hiển thị thay thế.',
   },
   auth: {
     restoring: 'Đang khôi phục phiên…', verified: 'Email đã xác minh', unverified: 'Email chưa xác minh',

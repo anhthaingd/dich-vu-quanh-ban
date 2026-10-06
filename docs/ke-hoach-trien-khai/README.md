@@ -21,6 +21,9 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 | Nền tảng + danh mục | [B00-01](bao-cao/B00-01-nen-tang-danh-muc.md) | App/API/DB, UI chung, navigation, log/test; không đóng toàn bộ B00 |
 | Nền đa ngôn ngữ + lựa chọn local | [I18N-01/02](bao-cao/I18N-01-nen-da-ngon-ngu.md) | VI/EN/JA cho các màn hiện có, mã lỗi, lưu locale; chưa dịch dữ liệu DB hoặc đồng bộ tài khoản |
 | Khung giao diện cho chức năng hiện có | [B00-05](bao-cao/B00-05-khung-giao-dien.md) | Đạt local/native: avatar/header, danh mục, tài khoản; B00-05 còn khung các vai trò/nghiệp vụ khác |
+| Danh mục đa ngôn ngữ + dữ liệu mở rộng | [I18N-04](bao-cao/I18N-04-danh-muc-da-ngon-ngu.md) | Đọc VI/EN/JA; bộ dữ liệu ban đầu đã thay bằng B02-01 bên dưới; tìm kiếm còn mở |
+| Rà soát trùng nhóm/kỹ năng | [B02-01 — rà soát](bao-cao/B02-01-ra-soat-danh-muc.md) | Phân tích bộ cũ 50 nhóm/140 kỹ năng; dữ liệu đã được thay theo yêu cầu clear ở báo cáo kế tiếp |
+| Thay bộ danh mục local | [B02-01 — dữ liệu mới](bao-cao/B02-01-thay-du-lieu-danh-muc.md) | Đã thay DB: 10 ngành, 39 nhóm, 128 kỹ năng; một nhóm mỗi kỹ năng; giữ nguyên auth |
 | Tài khoản email/mật khẩu | [B01-01](bao-cao/B01-01-email-mat-khau.md) | Đăng ký/đăng nhập, refresh/logout local; không đóng toàn bộ B01 |
 
 Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng này và liên kết dòng checklist. Không sửa báo cáo cũ để biến kết quả của commit cũ thành bằng chứng cho commit mới. Nếu sửa báo cáo, giữ ngày/commit và ghi phần đính chính.
@@ -30,11 +33,12 @@ Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng
 - Đã có danh mục DB thật và lát email/mật khẩu local, UI dùng chung, native navigation, log/test.
 - CI của `50d184a` đã đạt: [Quality 36810424485](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/36810424485). Native được kiểm riêng trên máy phát triển, không chạy trong CI Ubuntu này.
 - I18N-01/02 đã đạt kỹ thuật local: 81 test mobile; 3 web hồi quy + 1 web i18n; native i18n/layout/auth đạt Android và iOS. Đã push ở `844e1d2`; [CI 37132800077](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37132800077) đạt cả 3 jobs. Chưa UAT. `AuthSession` giữ mã lỗi, UI dịch theo locale local; API `locale` vẫn chỉ nhận `vi`.
-- **B01-02 OTP/xác minh: Pending** theo yêu cầu chủ dự án ngày 01/10/2026 vì cần cân nhắc chi phí. Hoãn cả bản local và gửi thật; chỉ mở lại khi chủ dự án yêu cầu. Không còn là lát tự động bắt đầu tiếp theo. I18N-03/04 vẫn cần chốt contract/dữ liệu; B00-05 đã bàn giao lát khung khách ngày 04/10/2026: 83 mobile, 5 web, 3 tooling và shell/auth/layout cả Android/iOS đạt; typecheck/lint/build đạt. Chủ dự án xác nhận bản hiện tại và yêu cầu push ngày 05/10; chưa UAT toàn app; khung các vai trò/nghiệp vụ còn lại vẫn mở.
+- **B01-02 OTP/xác minh: Pending** theo yêu cầu chủ dự án ngày 01/10/2026 vì cần cân nhắc chi phí. Hoãn cả bản local và gửi thật; chỉ mở lại khi chủ dự án yêu cầu. Không còn là lát tự động bắt đầu tiếp theo. I18N-03 vẫn cần chốt; I18N-04 được duyệt ngày 05/10; B00-05 đã bàn giao lát khung khách ngày 04/10/2026: 83 mobile, 5 web, 3 tooling và shell/auth/layout cả Android/iOS đạt; typecheck/lint/build đạt. Chủ dự án xác nhận bản hiện tại và yêu cầu push ngày 05/10; chưa UAT toàn app; khung các vai trò/nghiệp vụ còn lại vẫn mở.
 - Chưa có nghiệm thu UAT toàn app, tài khoản/partner/công việc/chat/tài chính đầy đủ hoặc phát hành.
 
 - B00-05 đã push ở `c120062` ngày 05/10/2026; [CI 37262885727](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37262885727) đã đạt cả 3 jobs (API/PostGIS, static/mobile, web E2E).
-- Phần tiếp theo đã chuẩn bị: [đề xuất I18N-04](de-xuat/I18N-04-dich-danh-muc.md). Chờ chốt nguồn dịch và cách API trả tên; chưa bắt đầu thay DB/API/app.
+- I18N-04 đã được duyệt ngày 05/10, gồm mở rộng danh mục thật: xem [báo cáo](bao-cao/I18N-04-danh-muc-da-ngon-ngu.md). Đã kiểm local, chưa push/CI/UAT; tìm kiếm đa ngôn ngữ thuộc B03 còn mở.
+- Rà soát bổ sung ngày 05/10 theo phản hồi chủ dự án: dữ liệu mở rộng còn nhóm chung chồng nhóm chuyên biệt và kỹ năng giao nhau về nghĩa. [Báo cáo rà đủ 140 kỹ năng](bao-cao/B02-01-ra-soat-danh-muc.md) phân biệt lỗi phân loại với lặp giữa màn ngành/nhóm. Sau đó chủ dự án yêu cầu clear và nạp bộ mới: đã thực hiện [thay dữ liệu local](bao-cao/B02-01-thay-du-lieu-danh-muc.md), kiểm DB/API/app; chưa CI/UAT.
 
 ## Nguồn chuẩn cần tra
 

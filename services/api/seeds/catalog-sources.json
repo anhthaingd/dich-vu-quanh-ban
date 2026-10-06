@@ -1,0 +1,100 @@
+{
+  "reviewed_on": "2026-10-05",
+  "decision": "I18N-04",
+  "scope": "10 ngành đã chốt; 39 nhóm theo chuyên môn/đối tượng; 128 kỹ năng, mỗi kỹ năng một nhóm chính. Thay bộ 50 nhóm/140 kỹ năng theo yêu cầu chủ dự án 05/10/2026. Danh mục phát triển, không khẳng định bao phủ mọi nghề.",
+  "method": "Đối chiếu danh mục công khai của đơn vị cung cấp; Codex biên soạn tên ngắn và chia nhóm theo phạm vi sản phẩm. Đây là tổng hợp định tính, không phải xếp hạng độ phổ biến hay đo nhu cầu tại Hà Nội. Không sao chép giá, mô tả quảng cáo, khách hàng hoặc hồ sơ người cung cấp.",
+  "translations": "Codex biên soạn EN/JA ban đầu; cần chủ dự án review nội dung trước phát hành. Không dùng dịch vụ dịch trả phí.",
+  "compatibility": "Chủ dự án cho phép xóa và nạp lại riêng danh mục local. Chạy db:replace-catalog một cách tường minh; seed thường không xóa dữ liệu. Không thay mô hình N–N hoặc xóa tài khoản/phiên. Bản mới bỏ nhóm chung và kỹ năng tổng quát/gói trùng; DB cũ chưa thay không tự được làm sạch bằng seed.",
+  "excluded": [
+    "Y tế, thẩm mỹ xâm lấn, khám chữa bệnh thú y",
+    "Banner, quảng cáo, voucher (PROMO-02)",
+    "Provider giả, giá giả, thống kê đơn hàng giả"
+  ],
+  "sources": [
+    {
+      "id": "1fix",
+      "title": "1Fix – điện nước và điện lạnh",
+      "url": "https://1fix.vn/tho-dien-nuoc",
+      "industry_codes": [
+        "home_utilities",
+        "hvac_appliances"
+      ]
+    },
+    {
+      "id": "btaskee",
+      "title": "bTaskee – dịch vụ gia đình",
+      "url": "https://www.btaskee.com/vi-VN/app/",
+      "industry_codes": [
+        "cleaning",
+        "laundry",
+        "hvac_appliances"
+      ]
+    },
+    {
+      "id": "dtv",
+      "title": "Điện Thoại Vui – sửa thiết bị",
+      "url": "https://dienthoaivui.com.vn/",
+      "industry_codes": [
+        "digital_repair"
+      ]
+    },
+    {
+      "id": "honda",
+      "title": "Honda Việt Nam – bảo dưỡng xe máy",
+      "url": "https://www.honda.com.vn/xe-may/dich-vu-sau-ban-hang/bao-duong-dinh-ky",
+      "industry_codes": [
+        "vehicle_care"
+      ]
+    },
+    {
+      "id": "petmart",
+      "title": "Pet Mart – chăm sóc, lưu trú và đưa đón",
+      "url": "https://www.petmart.vn/",
+      "industry_codes": [
+        "pet_care"
+      ]
+    },
+    {
+      "id": "30shine",
+      "title": "30Shine – dịch vụ tóc",
+      "url": "https://30shine.com/",
+      "industry_codes": [
+        "beauty"
+      ]
+    },
+    {
+      "id": "360dep",
+      "title": "360đẹp – nail và trang điểm",
+      "url": "https://www.360dep.vn/",
+      "industry_codes": [
+        "beauty"
+      ]
+    },
+    {
+      "id": "kienvang",
+      "title": "Kiến Vàng – chuyển nhà và văn phòng",
+      "url": "https://chuyennhatrongoikienvang.vn/",
+      "industry_codes": [
+        "moving"
+      ]
+    },
+    {
+      "id": "fpt",
+      "title": "FPT – lắp đặt camera",
+      "url": "https://fpt.vn/tin-tuc/lap-dat-camera-tron-bo-10150.html",
+      "industry_codes": [
+        "installation_it"
+      ]
+    },
+    {
+      "id": "dmx",
+      "title": "Điện máy Xanh – vệ sinh thiết bị và thay lõi lọc",
+      "url": "https://www.dienmayxanh.com/",
+      "industry_codes": [
+        "hvac_appliances",
+        "installation_it"
+      ]
+    }
+  ],
+  "classification": "Mỗi nhóm có scope_vi trong nguồn seed để review ranh giới. Không tạo kỹ năng theo địa điểm, chiều đi/về hay gói bao trùm. Test kiểm mã/tên/bản dịch/liên kết, còn chồng chéo nghĩa cần review nội dung."
+}

@@ -596,7 +596,7 @@
         "translations",
         "jsonb",
         "NOT NULL DEFAULT '{}' CHECK (jsonb_typeof(translations) = 'object')",
-        "Chưa triển khai bản dịch"
+        "Tên EN/JA do dự án biên soạn; thiếu/không hợp lệ dùng name_vi. Seed chỉ thêm khóa còn thiếu, giữ giá trị thủ công."
       ],
       [
         "created_at",
@@ -607,7 +607,7 @@
     ],
     "checks": "CHECK (parent_id IS DISTINCT FROM id); trigger check_category_tree chặn chu kỳ; API lọc toàn bộ tổ tiên active.",
     "indexes": "categories_parent(parent_id); categories_page(created_at,id)",
-    "implementation": "Đợt 1 local: services/api/migrations/001_catalog.sql; DOC-065, ADR-001."
+    "implementation": "Đợt 1 local: services/api/migrations/001_catalog.sql; DOC-065, ADR-001. I18N-04: migration 003_catalog_translations.sql, seed 10 ngành/50 nhóm/140 kỹ năng; tên VI/EN/JA, không thay ID/mapping cũ."
   },
   {
     "name": "skills",
@@ -651,6 +651,12 @@
         "Snapshot trên việc"
       ],
       [
+        "translations",
+        "jsonb",
+        "NOT NULL DEFAULT '{}' CHECK (jsonb_typeof(translations) = 'object')",
+        "Tên EN/JA do dự án biên soạn; thiếu/không hợp lệ dùng name_vi. Seed chỉ thêm khóa còn thiếu, giữ giá trị thủ công."
+      ],
+      [
         "created_at",
         "timestamptz",
         "NOT NULL DEFAULT now()",
@@ -659,7 +665,7 @@
     ],
     "checks": "",
     "indexes": "skills_page(created_at,id)",
-    "implementation": "Đợt 1 local: services/api/migrations/001_catalog.sql; DOC-065, ADR-001."
+    "implementation": "Đợt 1 local: services/api/migrations/001_catalog.sql; DOC-065, ADR-001. I18N-04: migration 003_catalog_translations.sql, seed 10 ngành/50 nhóm/140 kỹ năng; tên VI/EN/JA, không thay ID/mapping cũ."
   },
   {
     "name": "partner_skills",

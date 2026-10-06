@@ -5,7 +5,7 @@ import { AuthProvider } from '../../../app/providers/AuthProvider';
 import { LocaleState } from '../../../lib/i18n/locale-state';
 import { ApiError } from '../../../lib/http/api-error';
 import { authFixture, credentials, session } from '../../../../test/helpers/auth';
-const industry = { id: 'industry', code: 'home', name_vi: 'Điện nước', active: true, parent_id: null };
+const industry = { id: 'industry', code: 'home', name_vi: 'Điện nước', name: 'Điện nước', name_locale: 'vi' as const, active: true, parent_id: null };
 function mount(f = authFixture(), store = { read: jest.fn().mockResolvedValue(null), write: jest.fn().mockResolvedValue(undefined) }) {
   const locale = new LocaleState(store);
   const api = { categories: jest.fn(async (id?: string) => id ? [] : [industry]), skills: jest.fn(async () => []) };
@@ -39,7 +39,7 @@ test('VI → JA → EN retains form, translates a visible error without another 
   expect(f.manager.getSnapshot().user).toEqual(session.user);
   expect(f.api.logout).not.toHaveBeenCalled();
 });
-test('locale changes retain category route, DB names and pending requests; retry translates immediately', async () => {
+test('locale changes retain category route, refetch DB names and translate retry', async () => {
   const { locale, api } = mount();
   fireEvent.press(await screen.findByRole('button', { name: 'Điện nước' }));
   await screen.findByText('Chưa có dịch vụ đang hoạt động.');
@@ -47,10 +47,11 @@ test('locale changes retain category route, DB names and pending requests; retry
   await act(async () => locale.select('en'));
   expect(screen.getByRole('header', { name: 'Điện nước' })).toBeVisible();
   expect(screen.getByText('No active services yet.')).toBeVisible();
-  expect(api.categories).toHaveBeenCalledTimes(calls);
+  expect(api.categories).toHaveBeenCalledTimes(calls + 2);
   api.categories.mockRejectedValueOnce(new Error('network'));
   fireEvent.press(screen.getByTestId('nav-back'));
   await screen.findByRole('alert');
+  api.categories.mockRejectedValueOnce(new Error('still offline'));
   await act(async () => locale.select('ja'));
   expect(screen.getByRole('alert')).toHaveTextContent(/サービスを読み込めません/);
   fireEvent.press(screen.getByRole('button', { name: '再試行' }));

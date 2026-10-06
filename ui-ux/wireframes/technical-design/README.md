@@ -1,5 +1,8 @@
 # Thiết kế kỹ thuật chi tiết
 
+> **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** API/data/QA danh mục cập nhật I18N-04 theo quyết định 05/10/2026, phiên bản bổ sung v0.1.3. Các phần ngoài danh mục giữ nguyên trạng thái thiết kế. Gói hiện hành `technical-design-v0.1.1.zip` giữ tên/Drive ID vì được đăng ký như gói cập nhật tại chỗ; phiên bản nội dung xem nguồn, không suy từ tên ZIP.
+
+
 Phiên bản 0.1.2 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
 
 ## Đọc nhanh

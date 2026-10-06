@@ -1,5 +1,8 @@
 # Thiết kế dữ liệu và migration
 
+> **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** Giữ 10 ngành đã chốt; bộ dữ liệu thực tế trong `services/api/seeds/catalog.json` có 50 nhóm (10 nhóm chung giữ tương thích + 40 nhóm chuyên biệt), 140 kỹ năng và 141 liên kết. Nguồn nghiên cứu ở `catalog-sources.json`; đây là phân loại dịch vụ, không phải provider/giá mẫu. Categories và skills lưu translations EN/JA. Migration mới 003 chỉ thêm skills.translations, không sửa checksum lịch sử. Seed giữ ID/code/name_vi/active/form và các khóa bản dịch đã có; chỉ chèn bản ghi, mapping và khóa dịch còn thiếu. Không reset DB.
+
+
 Phiên bản 0.1.1 · 28/09/2026 · Đợt 1 triển khai local danh mục Expo/NestJS/PostgreSQL/PostGIS. Chi tiết và bằng chứng tại DOC-065; phần ngoài danh mục vẫn là thiết kế, chưa production/tiền thật.
 
 ## Phần đã triển khai Đợt 1
@@ -315,7 +318,7 @@ Nhóm ngành có mã ổn định, ẩn thay vì xóa đã dùng.
 | name_vi | text | NOT NULL CHECK (length(trim(name_vi)) > 0) | Tên hiển thị |
 | parent_id | uuid | REFERENCES categories(id) ON DELETE RESTRICT | Cây không được có chu kỳ |
 | active | boolean | NOT NULL DEFAULT true | Ẩn khỏi lựa chọn mới |
-| translations | jsonb | NOT NULL DEFAULT '{}' CHECK (jsonb_typeof(translations) = 'object') | Chưa triển khai bản dịch |
+| translations | jsonb | NOT NULL DEFAULT '{}' CHECK (jsonb_typeof(translations) = 'object') | Tên EN/JA; fallback name_vi; seed bảo toàn giá trị đã sửa |
 | created_at | timestamptz | NOT NULL DEFAULT now() | UTC |
 
 Ràng buộc bảng: `CHECK (parent_id IS DISTINCT FROM id); trigger check_category_tree chặn chu kỳ; API lọc toàn bộ tổ tiên active.`
@@ -336,6 +339,7 @@ Dịch vụ là kỹ năng partner lựa chọn.
 | active | boolean | NOT NULL DEFAULT true | Giữ tham chiếu lịch sử |
 | form_schema | jsonb | NOT NULL DEFAULT '{}' CHECK (jsonb_typeof(form_schema) = 'object') | JSON Schema phần mở rộng ngành |
 | schema_version | integer | NOT NULL DEFAULT 1 CHECK (schema_version > 0) | Snapshot trên việc |
+| translations | jsonb | NOT NULL DEFAULT '{}' CHECK object | Tên EN/JA; fallback name_vi; giữ bản dịch thủ công |
 | created_at | timestamptz | NOT NULL DEFAULT now() | UTC |
 
 Ràng buộc bảng: ``

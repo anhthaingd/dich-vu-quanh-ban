@@ -3,7 +3,7 @@ import { AppNavigator } from '../navigation/AppNavigator';
 import { AppProviders } from '../providers/AppProviders';
 import { AuthProvider } from '../providers/AuthProvider';
 import { authFixture, credentials } from '../../../test/helpers/auth';
-const category = { id: 'industry', code: 'home_utilities', name_vi: 'Điện nước', active: true, parent_id: null };
+const category = { id: 'industry', code: 'home_utilities', name_vi: 'Điện nước', name: 'Điện nước', name_locale: 'vi' as const, active: true, parent_id: null };
 function mount() {
   const auth = authFixture();
   const api = { categories: jest.fn(async (id?: string) => id ? [] : [category]), skills: jest.fn(async () => []) };

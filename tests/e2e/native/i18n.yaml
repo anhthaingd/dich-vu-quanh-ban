@@ -20,27 +20,30 @@ appId: vn.dichvuquanhban.app
     visible:
       id: auth-email
     timeout: 15000
-- tapOn:
-    id: auth-email
-- inputText: ${TEST_EMAIL}
-- tapOn:
-    id: auth-password
-- inputText: "wrong-test-password"
 - scrollUntilVisible:
     element:
-      id: locale-ja
+      id: locale-en
     direction: UP
-- tapOn:
-    id: locale-ja
-- assertVisible: "アカウント"
 - tapOn:
     id: locale-en
 - scrollUntilVisible:
     element:
-      id: auth-submit
+      id: auth-email
     direction: DOWN
 - tapOn:
-    id: auth-submit
+    id: auth-email
+- inputText: ${TEST_EMAIL}
+# Enter blurs the input without Android Back accidentally leaving the screen.
+- pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: auth-password
+    direction: DOWN
+- tapOn:
+    id: auth-password
+- inputText: "wrong-test-password"
+# The password input submits through onSubmitEditing on both platforms.
+- pressKey: Enter
 - extendedWaitUntil:
     visible: "Unable to authenticate.*"
     timeout: 15000
@@ -55,19 +58,26 @@ appId: vn.dichvuquanhban.app
 - tapOn:
     id: nav-back
 - scrollUntilVisible:
-    element: "Điện nước"
+    element: "電気・水道"
     direction: DOWN
-- tapOn: "Điện nước"
-- assertVisible: "Dịch vụ điện nước"
+- tapOn: "電気・水道"
+- assertVisible: "家庭の電気工事"
 - scrollUntilVisible:
     element:
       id: locale-en
     direction: UP
 - tapOn:
     id: locale-en
-- assertVisible: "Điện nước"
-- assertVisible: "[0-9]+ skills"
-- takeScreenshot: catalog-fallback
+- extendedWaitUntil:
+    visible: "Electrical & plumbing"
+    timeout: 15000
+- assertVisible: "Home electrical work"
+- tapOn: "Home electrical work"
+- scrollUntilVisible:
+    element: "Socket & switch replacement"
+    direction: DOWN
+- assertVisible: "Socket & switch replacement"
+- takeScreenshot: catalog-localized
 - runScript:
     file: set-mode.js
     env:
@@ -95,9 +105,9 @@ appId: vn.dichvuquanhban.app
     visible: "どんなサービスをお探しですか？"
     timeout: 60000
 - scrollUntilVisible:
-    element: "Điện nước"
+    element: "電気・水道"
     direction: DOWN
-- assertVisible: "Điện nước"
+- assertVisible: "電気・水道"
 - takeScreenshot: restored-japanese
 - scrollUntilVisible:
     element:

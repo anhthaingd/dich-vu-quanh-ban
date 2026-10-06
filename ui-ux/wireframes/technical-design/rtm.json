@@ -124,22 +124,28 @@
   {
     "operation_id": "listCategories",
     "contract_case": "CT-listCategories",
-    "checks": "Public read; schema/error/input/cursor/filter active ancestors; evidence DOC-065",
+    "checks": "Public read; schema/error/input/cursor/filter active ancestors; evidence DOC-065; I18N-04 (05/10/2026): locale=vi|en|ja, mặc định vi; trả name và name_locale, giữ name_vi. Thiếu tên dịch/giá trị không phải chuỗi hoặc chỉ khoảng trắng thì dùng name_vi, name_locale=vi. Cursor gắn endpoint/bộ lọc/locale; locale sai/lặp trả 400. Không trả object translations ra public.",
     "scenario_ids": [
       "QA-056",
       "QA-061",
       "QA-062",
       "QA-065",
-      "QA-066"
+      "QA-066",
+      "QA-067",
+      "QA-068",
+      "QA-069"
     ],
     "status": "Đã kiểm local Đợt1 + LOGTEST-01; native/remoteCI chưa nghiệm thu"
   },
   {
     "operation_id": "listSkills",
     "contract_case": "CT-listSkills",
-    "checks": "Public read; schema/error/input/cursor/filter active ancestors; evidence DOC-065",
+    "checks": "Public read; schema/error/input/cursor/filter active ancestors; evidence DOC-065; I18N-04 (05/10/2026): locale=vi|en|ja, mặc định vi; trả name và name_locale, giữ name_vi. Thiếu tên dịch/giá trị không phải chuỗi hoặc chỉ khoảng trắng thì dùng name_vi, name_locale=vi. Cursor gắn endpoint/bộ lọc/locale; locale sai/lặp trả 400. Không trả object translations ra public.",
     "scenario_ids": [
-      "QA-063"
+      "QA-063",
+      "QA-067",
+      "QA-068",
+      "QA-069"
     ],
     "status": "Đã kiểm local Đợt1 + LOGTEST-01; native/remoteCI chưa nghiệm thu"
   },
