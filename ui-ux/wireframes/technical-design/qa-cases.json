@@ -850,5 +850,29 @@
     "level": "Mobile component + web + Android/iOS",
     "priority": "P1",
     "status": "Kết quả tại báo cáo B01-04 trong repo; không tự suy ra CI/UAT"
+  },
+  {
+    "id": "QA-072",
+    "group": "Tài khoản",
+    "requirement": "B01-04A",
+    "operation": "listSessions/revokeSession",
+    "setup": "Hai tài khoản; nhiều lần đăng nhập và rotation",
+    "steps": "List/phân trang, thu hồi phiên khác/hiện tại, race refresh/revoke, retry và truy cập chéo",
+    "expected": "Một mục mỗi family, đúng phiên hiện tại, không lộ token/IP; thu hồi chặn mọi token cùng family, actor khác 404; mất phiên ẩn dữ liệu riêng.",
+    "level": "Integration/E2E",
+    "priority": "P0",
+    "status": "Tiêu chí; bằng chứng thực thi xem báo cáo repo"
+  },
+  {
+    "id": "QA-073",
+    "group": "Tài khoản",
+    "requirement": "B01-04A",
+    "operation": "listAddresses/addAddress/editAddress/archiveAddress",
+    "setup": "Hai tài khoản, hai địa chỉ và thiết bị cùng sửa",
+    "steps": "CRUD/mặc định, pagination, conflict, mất phản hồi, rollback, đổi ngôn ngữ, khởi động lại",
+    "expected": "Tối đa một mặc định; gỡ mặc định không chọn thay; không trùng khi retry; 409 sửa cũ; rollback tên/default/key; không lộ địa chỉ; draft giữ khi đổi tiếng.",
+    "level": "Integration/E2E",
+    "priority": "P0",
+    "status": "Tiêu chí; bằng chứng thực thi xem báo cáo repo"
   }
 ]

@@ -34,7 +34,7 @@ test('saved address defaults are unique; edits and deletion preserve job snapsho
  let list=seedAddresses();const job={address:list[0].detail};
  list=addressAction(list,'save',{id:2,label:'Office',detail:'Address 2',area:'Ba Đình',default:true});
  assert.equal(list.filter(a=>a.default).length,1);assert.equal(list.find(a=>a.default).id,2);
- list=addressAction(list,'delete',{id:2});assert.equal(list[0].default,true);
+ list=addressAction(list,'delete',{id:2});assert.equal(list[0].default,false);
  list=addressAction(list,'save',{...list[0],detail:'New'});assert.notEqual(job.address,list[0].detail);
  assert.throws(()=>addressAction(list,'save',{id:3,label:' ',detail:' ',default:false}));
 });

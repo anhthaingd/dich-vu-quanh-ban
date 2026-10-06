@@ -1,5 +1,12 @@
 export const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-export const routes = ['/v1/categories', '/v1/skills', '/v1/health', '/v1/ready', '/v1/auth/register', '/v1/auth/login', '/v1/auth/refresh', '/v1/auth/logout', '/v1/me', 'unmatched'];
+export const routes = ['/v1/categories', '/v1/skills', '/v1/health', '/v1/ready', '/v1/auth/register', '/v1/auth/login', '/v1/auth/refresh', '/v1/auth/logout', '/v1/me', '/v1/me/sessions', '/v1/me/sessions/:id/revoke', '/v1/me/addresses', '/v1/me/addresses/:id', '/v1/me/addresses/:id/archive', 'unmatched'];
+export function safeRoute(path: string): string {
+  if (routes.includes(path)) return path;
+  const match = path.match(/^\/v1\/me\/(sessions|addresses)\/([^/]+)(\/(revoke|archive))?$/);
+  if (!match || !uuid.test(match[2])) return 'unmatched';
+  const route = `/v1/me/${match[1]}/:id${match[3] ?? ''}`;
+  return routes.includes(route) ? route : 'unmatched';
+}
 const codes = new Set(['ECONNREFUSED','ECONNRESET','ETIMEDOUT','ENOTFOUND','EPIPE','53300','53400','57P01','57P02','57P03','57014','08000','08003','08006','VALIDATION','NOT_FOUND','INTERNAL','SERVICE_UNAVAILABLE']);
 export function errorCode(value: unknown): string | undefined {
   return typeof value === 'string' && codes.has(value) ? value : undefined;

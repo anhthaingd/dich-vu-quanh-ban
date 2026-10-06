@@ -60,13 +60,13 @@ export function accountAction(a,event,data={}){
 }
 export const seedAddresses=()=>[{id:1,label:'Nhà riêng',detail:'12 Trần Thái Tông, Cầu Giấy, Hà Nội',area:'Cầu Giấy',default:true}];
 export function addressAction(list,event,data){
- if(event==='delete'){const next=list.filter(a=>a.id!==data.id);return next.length&&!next.some(a=>a.default)?next.map((a,i)=>({...a,default:i===0})):next;}
+ if(event==='delete')return list.filter(a=>a.id!==data.id);
  if(event==='default')return list.map(a=>({...a,default:a.id===data.id}));
  if(event==='save'){
   if(!data.label.trim()||!data.detail.trim())throw Error('Nhập tên gợi nhớ và địa chỉ chi tiết.');
   const value={...data,label:data.label.trim(),detail:data.detail.trim(),default:data.default||list.length===0};
   const next=list.some(a=>a.id===value.id)?list.map(a=>a.id===value.id?value:a):[...list,value];
-  return value.default?next.map(a=>({...a,default:a.id===value.id})):next.some(a=>a.default)?next:next.map((a,i)=>({...a,default:i===0}));
+  return value.default?next.map(a=>({...a,default:a.id===value.id})):next;
  }
  return list;
 }

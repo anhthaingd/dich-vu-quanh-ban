@@ -1,5 +1,7 @@
 # Thiết kế dữ liệu và migration
 
+> **B01-04A · 06/10/2026 · v0.1.5: chủ dự án duyệt gộp quản lý phiên và sổ địa chỉ. Một mục phiên đại diện một lần đăng nhập (id = family_id ổn định qua refresh), có created_at, last_seen_at, is_current; state active/expired/revoked; không trả IP, token/hash. Thu hồi chặn toàn bộ family và kiểm lại quyền trong transaction. Địa chỉ thêm is_default/version; địa chỉ đầu tiên khi sổ đang rỗng tự mặc định. Chọn mặc định mới bỏ mặc định cũ và tăng version bản cũ. Gỡ mặc định để chưa có mặc định, không tự chọn mục khác. PUT yêu cầu expected_version. Mọi mutation giữ Idempotency-Key khi retry, kiểm chủ sở hữu; archive giữ dữ liệu lịch sử, không đổi snapshot công việc. Nhập địa chỉ/tọa độ thủ công, chưa chọn GPS/map provider. OTP Pending; không production/chi phí.**
+
 > **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** Giữ 10 ngành đã chốt; bộ dữ liệu thực tế trong `services/api/seeds/catalog.json` có 50 nhóm (10 nhóm chung giữ tương thích + 40 nhóm chuyên biệt), 140 kỹ năng và 141 liên kết. Nguồn nghiên cứu ở `catalog-sources.json`; đây là phân loại dịch vụ, không phải provider/giá mẫu. Categories và skills lưu translations EN/JA. Migration mới 003 chỉ thêm skills.translations, không sửa checksum lịch sử. Seed giữ ID/code/name_vi/active/form và các khóa bản dịch đã có; chỉ chèn bản ghi, mapping và khóa dịch còn thiếu. Không reset DB.
 
 
@@ -203,15 +205,17 @@ Chỉ mục: `PK/UNIQUE tự tạo index; bổ sung theo kế hoạch truy vấn
 |---|---|---|---|
 | id | uuid | PRIMARY KEY DEFAULT gen_random_uuid() | Khóa ổn định |
 | user_id | uuid | NOT NULL REFERENCES users(id) | Chỉ chủ sở hữu |
-| label | text | NOT NULL | Tên gợi nhớ |
-| address_text | text | NOT NULL | Địa chỉ |
+| label | text | NOT NULL; trim không rỗng | Tên gợi nhớ |
+| address_text | text | NOT NULL; trim không rỗng | Địa chỉ |
 | point | geography(Point,4326) | NOT NULL | Tọa độ |
+| is_default | boolean | NOT NULL DEFAULT false | Tối đa một mặc định đang hoạt động mỗi user |
+| version | integer | NOT NULL DEFAULT 1 CHECK(version>0) | Tăng khi sửa/gỡ hoặc mất mặc định |
 | archived_at | timestamptz |  | Không làm đổi snapshot việc |
 | created_at | timestamptz | NOT NULL DEFAULT now() | UTC |
 
-Ràng buộc bảng: `Khóa/FK theo trường; guard theo service`
+Ràng buộc bảng: `CHECK (archived_at IS NULL OR NOT is_default)`
 
-Chỉ mục: `PK/UNIQUE tự tạo index; bổ sung theo kế hoạch truy vấn`
+Chỉ mục: `UNIQUE(user_id) WHERE is_default AND archived_at IS NULL`; index `(user_id,created_at,id) WHERE archived_at IS NULL`
 
 ### partners · Nguồn cung
 

@@ -72,11 +72,11 @@ Quy tắc:
 7. UI dùng message key; state giữ mã lỗi và tham số, không giữ câu đã dịch. Log dùng mã sự kiện ổn định, không dịch theo UI và không ghi password/token/PII.
 8. Ghi rõ file “đã có” và “dự kiến” trong mỗi báo cáo. Không coi một folder hoặc prototype là chức năng hoàn thành.
 
-## Chu trình cho từng lát công việc
+## Chu trình cho từng đợt công việc
 
 | Bước | Kết quả phải có trước khi đi tiếp |
 |---|---|
-| 1. Chọn lát | Một mã checklist; liệt kê thao tác người dùng và phần không thuộc lát |
+| 1. Gom đợt | Một nhóm chức năng liên quan đủ điều kiện; liệt kê các mã checklist, thao tác người dùng và phụ thuộc. Theo yêu cầu 06/10/2026, không dừng sau từng nút hoặc từng trường |
 | 2. Đọc nguồn | FR/QA hoặc operationId, spec màn/luồng, quyền, trạng thái; quyết định nào pending phải được ghi rõ |
 | 3. Đối chiếu hiện trạng | Git diff, file đang có, tests, DB/migration; không dùng thống kê cũ như kết quả mới |
 | 4. Khóa interface | Input/output, mã lỗi, quyền, hành vi retry; chỉ hỏi phần thay đổi spec/chưa chốt |

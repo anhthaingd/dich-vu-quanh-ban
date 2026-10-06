@@ -48,6 +48,8 @@ export function AccountScreen({ navigation }: NativeStackScreenProps<RootStackPa
       <AppText variant="section">{state.user!.display_name}</AppText>
       <AppText>{t(state.user!.email_verified ? 'auth.verified' : 'auth.unverified')}</AppText>
       <Button testID="profile-open" label={t('profile.title')} disabled={state.busy} onPress={() => navigation.navigate('Profile')} />
+      <Button testID="sessions-open" label={t('sessions.title')} disabled={state.busy} onPress={() => navigation.navigate('Sessions')} />
+      <Button testID="addresses-open" label={t('addresses.title')} disabled={state.busy} onPress={() => navigation.navigate('Addresses')} />
       <Button testID="auth-logout" label={t('auth.logout')} loading={state.busy} onPress={() => void manager.logout()} />
     </Card>}
     {state.phase === 'anonymous' && <Card>

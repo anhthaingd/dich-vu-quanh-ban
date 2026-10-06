@@ -15,6 +15,6 @@ export function authFixture(saved: string | null = null) {
   const storage: jest.Mocked<TokenStorage> = {
     read: jest.fn(async () => saved), write: jest.fn(async token => { saved = token; }), clear: jest.fn(async () => { saved = null; }),
   };
-  const accounts: jest.Mocked<AccountsApi> = { edit: jest.fn().mockImplementation(async (_token, input) => ({ ...session.user, display_name: input.display_name, version: input.expected_version + 1 })) };
+  const accounts: jest.Mocked<AccountsApi> = { addresses: jest.fn().mockResolvedValue({ items: [], next_cursor: null }), sessions: jest.fn().mockResolvedValue({ items: [], next_cursor: null }), saveAddress: jest.fn(), archiveAddress: jest.fn(), revokeSession: jest.fn(), edit: jest.fn().mockImplementation(async (_token, input) => ({ ...session.user, display_name: input.display_name, version: input.expected_version + 1 })) };
   return { api, accounts, storage, manager: new AuthSession(api, storage, accounts) };
 }

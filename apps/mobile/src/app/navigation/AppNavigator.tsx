@@ -1,6 +1,8 @@
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CatalogScreen } from '../../features/catalog/screens/CatalogScreen';
+import { SessionsScreen } from '../../features/accounts/screens/SessionsScreen';
+import { AddressesScreen } from '../../features/accounts/screens/AddressesScreen';
 import { ProfileScreen } from '../../features/accounts/screens/ProfileScreen';
 import { AccountScreen } from '../../features/auth/screens/AccountScreen';
 import { theme } from '../../theme/tokens';
@@ -18,6 +20,8 @@ export function AppNavigator() {
       <Stack.Screen name="CatalogCategory" component={CatalogScreen} getId={({ params }) => params.categoryId} />
       <Stack.Screen name="Account" component={AccountScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Sessions" component={SessionsScreen} />
+      <Stack.Screen name="Addresses" component={AddressesScreen} />
     </Stack.Navigator>
   </NavigationContainer>;
 }

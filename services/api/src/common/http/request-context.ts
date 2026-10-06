@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { AppLog, requestContext } from '../../logging/logger.js';
-import { routes, uuid } from '../../logging/sanitize.js';
+import { safeRoute, uuid } from '../../logging/sanitize.js';
 export function requestMiddleware(log: AppLog) {
   return (req: IncomingMessage, res: ServerResponse, next: () => void) => {
     const supplied = req.headers['x-client-request-id'];
@@ -9,7 +9,7 @@ export function requestMiddleware(log: AppLog) {
     res.setHeader('X-Request-Id', context.request_id);
     const start = performance.now();
     const path = (req.url ?? '').split('?')[0];
-    const route = routes.includes(path) ? path : 'unmatched';
+    const route = safeRoute(path);
     let ended = false;
     const end = (aborted: boolean) => {
       if (ended) return;

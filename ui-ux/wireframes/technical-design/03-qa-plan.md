@@ -1,5 +1,7 @@
 # Kế hoạch QA, RTM và UAT
 
+> **B01-04A · 06/10/2026 · v0.1.5: chủ dự án duyệt gộp quản lý phiên và sổ địa chỉ. Một mục phiên đại diện một lần đăng nhập (id = family_id ổn định qua refresh), có created_at, last_seen_at, is_current; state active/expired/revoked; không trả IP, token/hash. Thu hồi chặn toàn bộ family và kiểm lại quyền trong transaction. Địa chỉ thêm is_default/version; địa chỉ đầu tiên khi sổ đang rỗng tự mặc định. Chọn mặc định mới bỏ mặc định cũ và tăng version bản cũ. Gỡ mặc định để chưa có mặc định, không tự chọn mục khác. PUT yêu cầu expected_version. Mọi mutation giữ Idempotency-Key khi retry, kiểm chủ sở hữu; archive giữ dữ liệu lịch sử, không đổi snapshot công việc. Nhập địa chỉ/tọa độ thủ công, chưa chọn GPS/map provider. OTP Pending; không production/chi phí.**
+
 > **B01-04 · 06/10/2026 · v0.1.4:** Bổ sung QA-070/071 cho `Me.version` và sửa tên: schema Session/Me, phiên bị thu hồi khi chờ khóa, chống ghi đè, retry sau mất phản hồi, rollback, bảo toàn bản nháp VI/EN/JA, lưu tên qua mở lại native. Các ca dưới đây là tiêu chí kiểm; kết quả thực tế và giới hạn ghi trong báo cáo B01-04 ở repo.
 
 > **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** Bổ sung QA-067…069 và RTM cho danh mục đa ngôn ngữ: đầy đủ cây/seed bảo toàn dữ liệu, locale/fallback/cursor, đổi ngôn ngữ khi request chậm, chữ dài và retry native. Bằng chứng mới nằm trong báo cáo I18N-04 thuộc bộ kế hoạch repo; các ca lịch sử vẫn giữ ngày cũ.
@@ -147,3 +149,8 @@ API dùng Node test/c8; mobile Jest/RNTL; core ≥90% lines/85% branches, phần
 
 - **QA-070** — Kiểm schema Me.version; hai sửa cùng phiên bản; replay cùng key; đổi payload; thu hồi phiên sau bước kiểm đầu; chèn lỗi trước commit. Kỳ vọng: Version tăng đúng một lần; 409 khi xung đột; key tách theo actor; không giả quyền/verified; rollback tên và key cùng nhau; không log tên/token.
 - **QA-071** — Sửa tên; đổi tiếng; gây version conflict; tải lại giữ draft; retry cùng key/payload; mở lại native. Kỳ vọng: Không báo lưu giả; giữ draft và key khi chưa rõ kết quả; tên cập nhật header/tài khoản; phiên thu hồi ẩn form; tên đã lưu còn sau mở lại.
+
+## B01-04A — phiên và địa chỉ
+
+- **QA-072** — List/phân trang, thu hồi phiên khác/hiện tại, race refresh/revoke, retry và truy cập chéo. Kỳ vọng: Một mục mỗi family, đúng phiên hiện tại, không lộ token/IP; thu hồi chặn mọi token cùng family, actor khác 404; mất phiên ẩn dữ liệu riêng.
+- **QA-073** — CRUD/mặc định, pagination, conflict, mất phản hồi, rollback, đổi ngôn ngữ, khởi động lại. Kỳ vọng: Tối đa một mặc định; gỡ mặc định không chọn thay; không trùng khi retry; 409 sửa cũ; rollback tên/default/key; không lộ địa chỉ; draft giữ khi đổi tiếng.

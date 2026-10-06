@@ -1,4 +1,5 @@
 import type { AccountsApi, ProfileEdit } from '../../accounts/api/accounts-api';
+import type { AddressInput } from '../../accounts/models';
 import { ApiError } from '../../../lib/http/api-error';
 import type { AuthApi, Credentials, Me, Registration, Session, TokenStorage } from '../models/auth.types';
 export type AuthErrorCode = 'UNAUTHENTICATED' | 'RATE_LIMITED' | 'VALIDATION' | 'SESSION_UNAVAILABLE';
@@ -73,33 +74,45 @@ export class AuthSession {
   };
   // Profile mutations use the same lock and refresh path as login/logout.
   // The caller retains the mutation key; retry after 401 uses that exact key.
-  private async profileOperation(owner: string, work: (token: string) => Promise<Me>): Promise<Me> {
+  private async accountOperation<T>(owner: string, work: (token: string) => Promise<T>): Promise<T> {
     if (this.snapshot.busy) throw new ApiError('BUSY');
     if (!this.session || this.snapshot.user?.id !== owner) throw new ApiError('UNAUTHENTICATED');
     this.update({ busy: true, error: null });
     try {
       if (Date.parse(this.session.expires_at) <= Date.now()) await this.rotate();
-      let user: Me;
-      try { user = await work(this.session!.access_token); }
+      let result: T;
+      try { result = await work(this.session!.access_token); }
       catch (error) {
         if (!(error instanceof ApiError) || error.code !== 'UNAUTHENTICATED') throw error;
         await this.rotate();
-        try { user = await work(this.session!.access_token); }
+        try { result = await work(this.session!.access_token); }
         catch (retryError) {
           if (retryError instanceof ApiError && retryError.code === 'UNAUTHENTICATED') await this.forget();
           throw retryError;
         }
       }
-      if (user.id !== owner || this.snapshot.user?.id !== owner) throw new ApiError('INVALID_RESPONSE');
-      // A replay can return an older committed snapshot. Never regress a newer
-      // profile already read by foreground verification.
-      if (user.version >= this.snapshot.user.version) {
-        this.session = { ...this.session!, user };
-        this.update({ user });
-      }
-      return user;
+      if (this.snapshot.user?.id !== owner) throw new ApiError('UNAUTHENTICATED');
+      return result;
     } finally { this.update({ busy: false }); }
   }
+  private async profileOperation(owner: string, work: (token: string) => Promise<Me>): Promise<Me> {
+    const user = await this.accountOperation(owner, work);
+    if (user.id !== owner || this.snapshot.user?.id !== owner) throw new ApiError('INVALID_RESPONSE');
+    if (user.version >= this.snapshot.user.version) {
+      this.session = { ...this.session!, user }; this.update({ user });
+    }
+    return user;
+  }
+  private accountApi() { if (!this.accounts) throw new ApiError('CONFIG'); return this.accounts; }
+  listAddresses = (owner: string, cursor?: string) => this.accountOperation(owner, token => this.accountApi().addresses(token,cursor));
+  saveAddress = (owner: string, id: string | null, input: AddressInput, key: string) => this.accountOperation(owner, token => this.accountApi().saveAddress(token,id,input,key));
+  archiveAddress = (owner: string, id: string, key: string) => this.accountOperation(owner, token => this.accountApi().archiveAddress(token,id,key));
+  listSessions = (owner: string, cursor?: string) => this.accountOperation(owner, token => this.accountApi().sessions(token,cursor));
+  revokeSession = async (owner: string, id: string, isCurrent: boolean, key: string) => {
+    const result = await this.accountOperation(owner, token => this.accountApi().revokeSession(token,id,key));
+    if (isCurrent) await this.forget();
+    return result;
+  };
   loadProfile = (owner: string) => this.profileOperation(owner, token => this.api.me(token));
   editProfile = (owner: string, input: ProfileEdit, key: string) => this.profileOperation(owner, token => {
     if (!this.accounts) throw new ApiError('CONFIG');

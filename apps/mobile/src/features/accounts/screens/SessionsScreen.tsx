@@ -1,0 +1,44 @@
+import { useEffect, useState, useSyncExternalStore } from 'react';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../../app/navigation/routes';
+import { useAuth } from '../../../app/providers/AuthProvider';
+import { useLocale } from '../../../app/providers/LocaleProvider';
+import { AppText } from '../../../components/ui/AppText';
+import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
+import { AccountPage } from '../components/AccountPage';
+import { CollectionStatus } from '../components/CollectionStatus';
+import { AccountCollection } from '../state/account-collection';
+import type { LoginSession } from '../models';
+export function SessionsScreen({ navigation }: NativeStackScreenProps<RootStackParamList,'Sessions'>) {
+  return <AccountPage title="sessions.title" back={() => navigation.goBack()} login={() => navigation.replace('Account')}>
+    {owner => <Sessions key={owner} owner={owner} />}
+  </AccountPage>;
+}
+function Sessions({ owner }: { owner: string }) {
+  const { manager, state: auth } = useAuth(); const { t, locale } = useLocale();
+  const [collection] = useState(() => new AccountCollection<LoginSession>(cursor => manager.listSessions(owner,cursor)));
+  const state = useSyncExternalStore(collection.subscribe,collection.getSnapshot,collection.getSnapshot);
+  const [confirm, setConfirm] = useState<LoginSession | null>(null);
+  useEffect(() => { void collection.load(); }, [collection]);
+  const disabled = state.busy || state.pending || auth.busy;
+  const date = (x: string | null) => x ? new Date(x).toLocaleString(locale === 'vi' ? 'vi-VN' : locale === 'ja' ? 'ja-JP' : 'en-US') : t('sessions.unknown');
+  return <>
+    <AppText tone="muted">{t('sessions.intro')}</AppText>
+    <CollectionStatus state={state} retry={() => void collection.perform().then(ok => { if(ok) setConfirm(null); })} reload={() => void collection.load()} />
+    {confirm && <Card>
+      <AppText>{t(confirm.is_current ? 'sessions.confirmCurrent' : 'sessions.confirm')}</AppText>
+      <Button testID="session-confirm" label={t('sessions.revoke')} disabled={disabled} onPress={() => void collection.perform(key => manager.revokeSession(owner,confirm.id,confirm.is_current,key)).then(ok => { if(ok) setConfirm(null); })} />
+      <Button label={t('accountTools.cancel')} variant="secondary" disabled={disabled} onPress={() => setConfirm(null)} />
+    </Card>}
+    {state.loaded && !state.items.length && <AppText>{t('sessions.empty')}</AppText>}
+    {state.items.map(item => <Card key={item.id} testID={`session-${item.id}`}>
+      <AppText variant="card">{t(item.is_current ? 'sessions.current' : 'sessions.other')}</AppText>
+      <AppText>{t('sessions.created', { date: date(item.created_at) })}</AppText>
+      <AppText>{t('sessions.seen', { date: date(item.last_seen_at) })}</AppText>
+      <AppText>{t(item.state === 'active' ? 'sessions.active' : item.state === 'revoked' ? 'sessions.revoked' : 'sessions.expired')}</AppText>
+      {item.state === 'active' && <Button testID={item.is_current ? 'session-revoke-current' : 'session-revoke-other'} label={t('sessions.revoke')} variant="secondary" disabled={disabled} onPress={() => setConfirm(item)} />}
+    </Card>)}
+    {state.next && <Button label={t('accountTools.more')} disabled={disabled} onPress={() => void collection.load(true)} />}
+  </>;
+}

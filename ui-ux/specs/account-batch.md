@@ -1,5 +1,7 @@
 # Đợt 1 — Tài khoản, địa chỉ, đăng ký partner · React v0.9
 
+> **B01-04A · 06/10/2026 — quy tắc hiện hành đã duyệt:** Địa chỉ đầu tiên trong sổ đang rỗng là mặc định; chọn mục mới bỏ mặc định cũ. Gỡ mặc định để chưa có mặc định, không tự chọn địa chỉ khác (thay hành vi tự chọn trong prototype trước đây). Sửa dùng version và giữ bản nháp khi xung đột; gỡ không đổi địa chỉ đã chụp trên việc cũ. Phiên đăng nhập hiển thị thời điểm tạo/hoạt động và đánh dấu hiện tại; thu hồi cả lần đăng nhập kể cả các token refresh, không lộ IP/token. App hiện dùng nhập tọa độ thủ công theo phạm vi đã duyệt; GPS/map, nối tìm/thuê và OTP chưa triển khai trong đợt này. Contract v0.1.5 tại `docs/technical-design`; bằng chứng app tại báo cáo B01-04A trong repo. Các số liệu prototype bên dưới là lịch sử.
+
 DOC-058 · 23/09/2026 · UI-12. Chủ dự án đồng ý làm gộp đợt 1. Đây là thiết kế tương tác React/Storybook, không phải hệ thống xác thực hay xét duyệt production.
 
 ## Xem và thử

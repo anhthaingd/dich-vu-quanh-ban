@@ -6,13 +6,15 @@ DOC-083 · v1.0 · 01/10/2026 · DELIVERY-01. Baseline code `50d184a`. [Mục l�
 
 - `[x]` = đạt phạm vi kỹ thuật của đúng dòng tại baseline/bằng chứng dẫn kèm; không đồng nghĩa toàn nhóm Bxx đã xong hoặc đã UAT.
 - `[ ]` = chưa hoàn thành; lý do/đầu việc còn thiếu ở cột tiêu chí. Toàn nhóm có thể “một phần”. Không tính phần trăm app từ số ô tick.
-- Chỉ một lát **Đang làm** tại một thời điểm. Hiện: **B01-04 sửa tên hiển thị** đã kiểm đạt local/native, chờ chủ dự án kiểm; Me.version được duyệt ngày 06/10. Danh mục đã push và CI đạt (mốc bên dưới). **B01-02 OTP Pending**, gồm cả local và gửi thật; không bỏ điều kiện xác minh ở nghiệp vụ phụ thuộc.
+- Chỉ một đợt đang hoạt động tại một thời điểm; từ 06/10 gom chức năng liên quan đủ điều kiện, không dừng sau từng thao tác nhỏ. Hiện: **B01-04 phiên đăng nhập và sổ địa chỉ** đã kiểm đạt local/native, chờ chủ dự án kiểm; cả gói contract được duyệt ngày 06/10. Sửa tên đã push `312972b` và CI đạt. Danh mục đã push và CI đạt (mốc bên dưới). **B01-02 OTP Pending**, gồm cả local và gửi thật; không bỏ điều kiện xác minh ở nghiệp vụ phụ thuộc.
 - Hạng mục mới theo kế hoạch chưa có phê duyệt tích hợp trả phí/production. Phần thay contract cần chốt rõ trước khi code.
 - Chưa có dòng nào được gắn “UAT chủ dự án đã nghiệm thu”.
 
 ## Bằng chứng hiện hành
 
-**Mốc mới nhất 06/10/2026:** đã push danh mục `1c80f67`; [CI 37398471842](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37398471842) đạt cả ba jobs. Chủ dự án xác nhận danh mục 10 ngành/39 nhóm/128 kỹ năng; chưa UAT toàn app. Các ghi chú chưa push/CI của ngày 05/10 bên dưới là lịch sử. Lát đang bàn giao: [B01-04 sửa tên hiển thị](bao-cao/B01-04-ho-so-ten-hien-thi.md), đã implement sau duyệt `Me.version`; 44 API/98 mobile đạt, 5 web hồi quy và 1 web profile đạt qua hai lượt chạy, profile Android/iOS PASS; typecheck/lint/build và 3 tooling đạt. Chưa commit/push/CI/UAT mới; OTP vẫn Pending.
+**Đợt gộp mới 06/10/2026:** sửa tên đã push `312972b`, [CI](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37402534136) đạt 3 jobs. [Phiên và địa chỉ](bao-cao/B01-04-phien-va-dia-chi.md) đã implement và kiểm local: 50 API, 106 mobile, 7 web (hành trình mới kiểm lại sau sửa tọa độ), accounts Android/iOS PASS; typecheck/lint/build, tooling đạt. Gói mới chưa commit/push/CI/UAT. Các mốc bên dưới là lịch sử.
+
+**Mốc trước đợt gộp 06/10/2026:** đã push danh mục `1c80f67`; [CI 37398471842](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37398471842) đạt cả ba jobs. Chủ dự án xác nhận danh mục 10 ngành/39 nhóm/128 kỹ năng; chưa UAT toàn app. Các ghi chú chưa push/CI của ngày 05/10 bên dưới là lịch sử. Lát đang bàn giao: [B01-04 sửa tên hiển thị](bao-cao/B01-04-ho-so-ten-hien-thi.md), đã implement sau duyệt `Me.version`; 44 API/98 mobile đạt, 5 web hồi quy và 1 web profile đạt qua hai lượt chạy, profile Android/iOS PASS; typecheck/lint/build và 3 tooling đạt. Chưa commit/push/CI/UAT mới; OTP vẫn Pending.
 
 | Mốc | Bằng chứng | Kết luận được phép dùng |
 |---|---|---|
@@ -53,7 +55,7 @@ Nguồn: [spec](../../ui-ux/specs/ux-scope-current.md), [backlog](../technical-d
 | [ ] | I18N-03 | Locale tài khoản và đồng bộ đa thiết bị | Cần chốt ưu tiên locale local/tài khoản; mở rộng enum Me/ProfileEdit theo quyết định |
 | [ ] | I18N-04 | Bản dịch danh mục/kỹ năng và tìm kiếm theo ngôn ngữ | **Một phần:** lát đọc tên VI/EN/JA, fallback, cursor theo locale; 10 ngành/39 nhóm/128 kỹ năng sau thay dữ liệu đã kiểm kỹ thuật local. [Báo cáo](bao-cao/I18N-04-danh-muc-da-ngon-ngu.md). Phân loại đã thay bằng bộ mới theo [báo cáo](bao-cao/B02-01-thay-du-lieu-danh-muc.md); CI `1c80f67` đạt. Tìm kiếm theo ngôn ngữ B03 chưa làm, chưa UAT toàn app. |
 
-## B01 — Tài khoản — chỉ lát email/mật khẩu local hoàn thành
+## B01 — Tài khoản — đã có email/mật khẩu, sửa tên, phiên và địa chỉ; toàn nhóm còn một phần
 
 Nguồn: [spec](../../ui-ux/specs/account-batch.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F01/F08; QA-001…006.
 
@@ -62,7 +64,7 @@ Nguồn: [spec](../../ui-ux/specs/account-batch.md), [backlog](../technical-desi
 | [x] | B01-01 | Email/mật khẩu + phiên local | Đăng ký/login, SecureStore, access 15 phút, phiên tối đa 30 ngày, rotation/replay/logout; email chưa xác minh; xem [báo cáo](bao-cao/B01-01-email-mat-khau.md) |
 | [ ] | B01-02 | OTP điện thoại và xác minh email | **Pending — chủ dự án yêu cầu hoãn ngày 01/10/2026 vì cân nhắc chi phí**, gồm cả local; chỉ mở lại khi được yêu cầu. Provider/chính sách mã chưa duyệt; không cấp verified từ client |
 | [ ] | B01-03 | Quên/đổi mật khẩu, liên kết/đổi định danh | Chứng minh kênh mới; giữ kênh cũ đến commit; revoke phiên theo spec |
-| [ ] | B01-04 | Hồ sơ tài khoản, quản lý phiên và địa chỉ | get/editMe, list/revokeSessions; địa chỉ mặc định; snapshot việc cũ bất biến. **Một phần:** đã implement lát sửa tên có version/idempotency; [báo cáo](bao-cao/B01-04-ho-so-ten-hien-thi.md). Quản lý phiên/địa chỉ chưa làm; chưa CI/UAT mới |
+| [ ] | B01-04 | Hồ sơ tài khoản, quản lý phiên và địa chỉ | get/editMe, list/revokeSessions; địa chỉ mặc định; snapshot việc cũ bất biến. **Một phần:** đã implement lát sửa tên có version/idempotency; [báo cáo](bao-cao/B01-04-ho-so-ten-hien-thi.md). Đã có list/thu hồi từng phiên và địa chỉ thêm/sửa/gỡ/mặc định, [báo cáo gói](bao-cao/B01-04-phien-va-dia-chi.md). Còn thu hồi tất cả phiên khác, nối địa chỉ tìm/thuê và kiểm snapshot jobs; gói mới chưa push/CI/UAT |
 | [ ] | B01-05 | Guard và quyền nền, fresh auth/MFA admin | Đổi UI vai không cấp quyền; từ chối cross-user/tenant; phương thức MFA cần chọn |
 | [ ] | B01-06 | Khôi phục thủ công và yêu cầu xóa tài khoản | Kiểm nghĩa vụ server, không xóa lịch sử tài chính; đóng toàn luồng sau màn admin B09/B11 |
 | [ ] | B01-07 | Tiếp tục hành động sau đăng nhập và deep link có quyền | Giữ intent chat/thuê; recheck đối tượng/quyền trước tiếp tục, không tự gửi mutation |

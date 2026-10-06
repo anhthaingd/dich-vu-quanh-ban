@@ -19,6 +19,9 @@ export const en = {
     skills: { one: '%{count} skill', other: '%{count} skills' },
     translationNotice: 'Some names are not translated yet; Vietnamese is shown instead.',
   },
+  accountTools: {"loading": "Loading…", "reload": "Reload list", "more": "Show more", "cancel": "Cancel", "saved": "Changes saved.", "error": "Could not complete this action. Check your connection and retry.", "conflict": "This data changed on another device. Reload before saving again; your draft is kept.", "invalid": "Check the name, address and valid coordinates."},
+  sessions: {"title": "Login sessions", "intro": "Each entry represents one login. Revoking it signs out that login on its device.", "current": "Current session", "other": "Another login", "created": "Signed in: %{date}", "seen": "Last active: %{date}", "unknown": "Not available", "active": "Active", "expired": "Expired", "revoked": "Revoked", "revoke": "Revoke session", "confirm": "Revoke this login? That device will need to sign in again.", "confirmCurrent": "This is your current session. Revoking it signs you out of this app.", "empty": "No login sessions."},
+  addresses: {"title": "Saved addresses", "intro": "Save private addresses for reuse. Your first address becomes the default.", "add": "Add address", "edit": "Edit address", "label": "Label", "text": "Address", "coordinates": "Enter coordinates manually using a decimal point. Map selection is not available yet.", "lat": "Latitude (−90 to 90)", "lng": "Longitude (−180 to 180)", "default": "Default address", "makeDefault": "Set as default", "save": "Save address", "archive": "Remove address", "confirmArchive": "Remove “%{label}” from your address book? You can choose another default later.", "empty": "You have no saved addresses."},
   auth: {
     restoring: 'Restoring your session…', verified: 'Email verified', unverified: 'Email not verified',
     logout: 'Log out', createAccount: 'Create an account', login: 'Log in', register: 'Sign up',

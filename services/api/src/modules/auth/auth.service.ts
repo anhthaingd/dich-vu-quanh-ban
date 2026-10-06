@@ -80,8 +80,8 @@ export class AuthService {
       claims = (await jwtVerify(header.slice(7), this.key, { algorithms: ['HS256'], issuer, audience, requiredClaims: ['sub','sid','exp','iat'] })).payload;
     } catch { throw new UnauthorizedException(); }
     if (typeof claims.sid !== 'string' || !uuid.test(claims.sid) || !claims.sub || !uuid.test(claims.sub)) throw new UnauthorizedException();
-    const { rows: [user] } = await db.query<User>(`SELECT u.id,u.display_name,u.status,u.locale,u.version FROM users u JOIN sessions s ON s.user_id=u.id
-      WHERE s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND u.status='active'`, [claims.sid,claims.sub]);
+    const { rows: [user] } = await db.query<User>(`UPDATE sessions s SET last_seen_at=clock_timestamp() FROM users u
+      WHERE s.user_id=u.id AND s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND u.status='active' RETURNING u.id,u.display_name,u.status,u.locale,u.version`, [claims.sid,claims.sub]);
     if (!user) throw new UnauthorizedException();
     return { user: this.me(user), sessionId: claims.sid };
   }

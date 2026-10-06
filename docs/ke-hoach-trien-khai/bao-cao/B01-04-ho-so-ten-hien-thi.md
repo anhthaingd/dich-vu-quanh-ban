@@ -1,5 +1,7 @@
 # B01-04 — Bấm Lưu tên thì app và máy chủ làm gì?
 
+> Cập nhật 06/10: phần sửa tên đã push ở `312972b`, [CI 37402534136](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37402534136) đạt 3 jobs. Mốc chưa push bên dưới là lịch sử khi viết báo cáo. Phần tiếp theo đã có [báo cáo phiên và địa chỉ](B01-04-phien-va-dia-chi.md).
+
 06/10/2026 · DELIVERY-01 · Lát sửa tên trên code sau `8a64f94`, chưa commit/push và chưa có CI mới/UAT. Đây là một phần B01-04, không phải toàn bộ hồ sơ/phiên/địa chỉ. [Checklist](../01-checklist.md) · [Phương án đã duyệt](../de-xuat/B01-04-ho-so-ten-hien-thi.md).
 
 ## Bạn đã dùng được gì?

@@ -14,7 +14,7 @@ export class AppModule {
     return {
       module: AppModule,
       imports: [LoggingModule.register(log), DatabaseModule.register(settings, database, log), CatalogModule.register(settings.cursorSecret), HealthModule,
-        ...(settings.authSecret ? [AccountsModule.register(settings.authSecret)] : [])],
+        ...(settings.authSecret ? [AccountsModule.register(settings.authSecret, settings.cursorSecret)] : [])],
     };
   }
 }

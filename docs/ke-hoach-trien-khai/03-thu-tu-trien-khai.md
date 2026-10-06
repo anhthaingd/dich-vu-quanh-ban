@@ -4,6 +4,12 @@ DOC-085 · v1.0 · 01/10/2026 · DELIVERY-01. [Checklist](01-checklist.md) · [Q
 
 Các đường dẫn ghi “dự kiến” chưa có code. Dùng spec/API/QA liên kết trong checklist cho từng nhóm; không dựng lại thiết kế từ đầu hoặc chuyển toàn bộ prototype sang app trong một lần. Mỗi lát có luồng chạy thật và báo cáo riêng trước khi chuyển lát tiếp theo.
 
+## Điều chỉnh cách giao đợt — 06/10/2026
+
+Chủ dự án yêu cầu gom chức năng thay vì bàn giao từng thao tác nhỏ. Đợt đang làm: **B01-04 phiên đăng nhập + sổ địa chỉ**, nối DB/API/app, VI/EN/JA và kiểm thử chung. Đã duyệt bổ sung thời gian/phiên hiện tại, thu hồi cả lần đăng nhập, địa chỉ mặc định và version. Nhập tọa độ thủ công; chưa tích hợp bản đồ/GPS trả phí.
+
+Các đợt sau gom theo kết quả sử dụng: B02 hồ sơ + kỹ năng + vùng + trạng thái nhận việc (upload/xác minh chỉ khi đủ quyết định); B03 tìm/lọc + yêu cầu + xử lý yêu cầu (cần nguồn cung và xác minh); B05 hội thoại + lịch sử + đọc/nhận tin. Các phần phụ thuộc OTP/provider vẫn Pending, không giả quyền để đi nhanh. Mỗi đợt có báo cáo chung và checklist từng chức năng, không cần hỏi duyệt lại từng file hoặc từng nút.
+
 ## Thứ tự và các phụ thuộc cần tránh hiểu nhầm
 
 ```mermaid

@@ -1,0 +1,211 @@
+appId: vn.dichvuquanhban.app
+---
+- stopApp
+- openLink: ${DEV_URL}
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "Close"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: nav-account
+    timeout: 60000
+- tapOn:
+    id: locale-vi
+- tapOn:
+    id: nav-account
+- scrollUntilVisible:
+    element:
+      id: auth-email
+    direction: DOWN
+- tapOn:
+    id: auth-email
+- inputText: ${TEST_EMAIL}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: auth-password
+    direction: DOWN
+- tapOn:
+    id: auth-password
+- inputText: ${TEST_PASSWORD}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Enter
+- runFlow: dismiss-password-prompt.yaml
+- extendedWaitUntil:
+    visible: "Email chưa xác minh"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: addresses-open
+    direction: DOWN
+- tapOn:
+    id: addresses-open
+- tapOn:
+    id: address-add
+- scrollUntilVisible:
+    element:
+      id: address-label
+    direction: DOWN
+- tapOn:
+    id: address-label
+- inputText: Home native
+- pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: address-text
+    direction: DOWN
+- tapOn:
+    id: address-text
+- inputText: Native test street
+- pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: address-lat
+    direction: DOWN
+- tapOn:
+    id: address-lat
+- inputText: '10.77'
+- pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: address-lng
+    direction: DOWN
+- tapOn:
+    id: address-lng
+- inputText: '106.7'
+- pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: locale-en
+    direction: UP
+- tapOn:
+    id: locale-en
+- tapOn:
+    id: locale-ja
+- tapOn:
+    id: locale-vi
+- scrollUntilVisible:
+    element:
+      id: address-text
+    direction: DOWN
+- assertVisible: Native test street
+- scrollUntilVisible:
+    element:
+      id: address-save
+    direction: DOWN
+- tapOn:
+    id: address-save
+- scrollUntilVisible:
+    element:
+      id: address-default-badge
+    direction: DOWN
+- assertVisible: Home native
+- takeScreenshot: address-saved
+- stopApp
+- openLink: ${DEV_URL}
+- extendedWaitUntil:
+    visible:
+      id: nav-account
+    timeout: 60000
+- tapOn:
+    id: nav-account
+- scrollUntilVisible:
+    element:
+      id: addresses-open
+    direction: DOWN
+- tapOn:
+    id: addresses-open
+- scrollUntilVisible:
+    element:
+      id: address-edit
+    direction: DOWN
+- tapOn:
+    id: address-edit
+- scrollUntilVisible:
+    element:
+      id: address-label
+    direction: UP
+- tapOn:
+    id: address-label
+- eraseText
+- inputText: Home edited
+- pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: address-save
+    direction: DOWN
+- tapOn:
+    id: address-save
+- scrollUntilVisible:
+    element:
+      id: address-archive
+    direction: DOWN
+- assertVisible: Home edited
+- tapOn:
+    id: address-archive
+- scrollUntilVisible:
+    element:
+      id: address-confirm-archive
+    direction: UP
+- tapOn:
+    id: address-confirm-archive
+- assertVisible:
+    id: addresses-empty
+- scrollUntilVisible:
+    element:
+      id: nav-back
+    direction: UP
+- tapOn:
+    id: nav-back
+- scrollUntilVisible:
+    element:
+      id: sessions-open
+    direction: DOWN
+- tapOn:
+    id: sessions-open
+- scrollUntilVisible:
+    element:
+      id: session-revoke-other
+    direction: DOWN
+- tapOn:
+    id: session-revoke-other
+- scrollUntilVisible:
+    element:
+      id: session-confirm
+    direction: UP
+- tapOn:
+    id: session-confirm
+- scrollUntilVisible:
+    element:
+      id: session-revoke-current
+    direction: DOWN
+- tapOn:
+    id: session-revoke-current
+- scrollUntilVisible:
+    element:
+      id: session-confirm
+    direction: UP
+- tapOn:
+    id: session-confirm
+- assertVisible: Đăng nhập
+- takeScreenshot: sessions-revoked

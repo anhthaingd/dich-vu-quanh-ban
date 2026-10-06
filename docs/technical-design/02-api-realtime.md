@@ -1,5 +1,7 @@
 # Hợp đồng API và realtime
 
+> **B01-04A · 06/10/2026 · v0.1.5: chủ dự án duyệt gộp quản lý phiên và sổ địa chỉ. Một mục phiên đại diện một lần đăng nhập (id = family_id ổn định qua refresh), có created_at, last_seen_at, is_current; state active/expired/revoked; không trả IP, token/hash. Thu hồi chặn toàn bộ family và kiểm lại quyền trong transaction. Địa chỉ thêm is_default/version; địa chỉ đầu tiên khi sổ đang rỗng tự mặc định. Chọn mặc định mới bỏ mặc định cũ và tăng version bản cũ. Gỡ mặc định để chưa có mặc định, không tự chọn mục khác. PUT yêu cầu expected_version. Mọi mutation giữ Idempotency-Key khi retry, kiểm chủ sở hữu; archive giữ dữ liệu lịch sử, không đổi snapshot công việc. Nhập địa chỉ/tọa độ thủ công, chưa chọn GPS/map provider. OTP Pending; không production/chi phí.**
+
 > **B01-04 · 06/10/2026 · v0.1.4:** Chủ dự án duyệt bổ sung `Me.version` bắt buộc, integer ≥ 1. Áp dụng cho GET/PATCH `/me` và `Session.user` từ register/login/refresh. `PATCH /me` dùng `expected_version` và UUID `Idempotency-Key` theo thiết kế hiện có. Sai phiên bản trả 409 `VERSION_CONFLICT`; cùng actor/operation/key nhưng payload khác trả 409 `IDEMPOTENCY_MISMATCH`. Cùng key/payload trả kết quả đã lưu, không tăng version lần hai. Kiểm phiên/quyền lại trước trả kết quả, kể cả replay. Lát hiện tại chỉ sửa tên: trim, 1–100 ký tự theo giới hạn đăng ký, không ký tự điều khiển. Locale tài khoản vẫn `vi`; không mở I18N-03/OTP. Bảng idempotency dùng thiết kế PLAN-001 hiện hành, chưa đặt retention mới. Bằng chứng triển khai nằm trong báo cáo B01-04 ở repo, không suy ra production/UAT.
 
 > **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** I18N-04 (05/10/2026): locale=vi|en|ja, mặc định vi; trả name và name_locale, giữ name_vi. Thiếu tên dịch/giá trị không phải chuỗi hoặc chỉ khoảng trắng thì dùng name_vi, name_locale=vi. Cursor gắn endpoint/bộ lọc/locale; locale sai/lặp trả 400. Không trả object translations ra public.
@@ -98,7 +100,7 @@ OpenAPI JSON đi kèm có schema request/response, quyền, parameters và lỗi
 | requestDeletion | POST /me/deletion-request | Chính mình, fresh auth | ReasonInput → Ack |
 | listAddresses | GET /me/addresses | Chính mình | Không body → listAddressesPage |
 | addAddress | POST /me/addresses | Chính mình | SavedAddressInput → SavedAddress |
-| editAddress | PUT /me/addresses/{id} | Chính mình | SavedAddressInput → SavedAddress |
+| editAddress | PUT /me/addresses/{id} | Chính mình | SavedAddressEdit → SavedAddress |
 | archiveAddress | POST /me/addresses/{id}/archive | Chính mình | Không body → Ack |
 | listCategories | GET /categories | Public | Không body → listCategoriesPage |
 | listSkills | GET /skills | Public | Không body → listSkillsPage |

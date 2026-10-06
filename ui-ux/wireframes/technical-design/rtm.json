@@ -82,14 +82,18 @@
     "operation_id": "listSessions",
     "contract_case": "CT-listSessions",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-072"
+    ],
     "status": "Chưa chạy"
   },
   {
     "operation_id": "revokeSession",
     "contract_case": "CT-revokeSession",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-072"
+    ],
     "status": "Chưa chạy"
   },
   {
@@ -105,28 +109,36 @@
     "operation_id": "listAddresses",
     "contract_case": "CT-listAddresses",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-073"
+    ],
     "status": "Chưa chạy"
   },
   {
     "operation_id": "addAddress",
     "contract_case": "CT-addAddress",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-073"
+    ],
     "status": "Chưa chạy"
   },
   {
     "operation_id": "editAddress",
     "contract_case": "CT-editAddress",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-073"
+    ],
     "status": "Chưa chạy"
   },
   {
     "operation_id": "archiveAddress",
     "contract_case": "CT-archiveAddress",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-073"
+    ],
     "status": "Chưa chạy"
   },
   {

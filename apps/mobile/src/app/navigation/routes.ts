@@ -3,4 +3,6 @@ export type RootStackParamList = {
   CatalogCategory: { categoryId: string; parentId: string | null };
   Account: undefined;
   Profile: undefined;
+  Sessions: undefined;
+  Addresses: undefined;
 };

@@ -1,5 +1,7 @@
 # Phạm vi hiện hành v0.24 — 22/09/2026
 
+> **B01-04A · 06/10/2026 — quy tắc hiện hành đã duyệt:** Địa chỉ đầu tiên trong sổ đang rỗng là mặc định; chọn mục mới bỏ mặc định cũ. Gỡ mặc định để chưa có mặc định, không tự chọn địa chỉ khác (thay hành vi tự chọn trong prototype trước đây). Sửa dùng version và giữ bản nháp khi xung đột; gỡ không đổi địa chỉ đã chụp trên việc cũ. Phiên đăng nhập hiển thị thời điểm tạo/hoạt động và đánh dấu hiện tại; thu hồi cả lần đăng nhập kể cả các token refresh, không lộ IP/token. App hiện dùng nhập tọa độ thủ công theo phạm vi đã duyệt; GPS/map, nối tìm/thuê và OTP chưa triển khai trong đợt này. Contract v0.1.5 tại `docs/technical-design`; bằng chứng app tại báo cáo B01-04A trong repo. Các số liệu prototype bên dưới là lịch sử.
+
 > **I18N-04 · 05/10/2026 — sản phẩm thật:** Chủ dự án duyệt tên ngành/nhóm/kỹ năng VI/EN/JA từ DB, API trả tên theo lựa chọn local. Đổi tiếng giữ ID/trang và tải lại cả tiêu đề. Chỉ hiện thông báo fallback khi có mục thiếu bản dịch. Bộ phân loại giữ 10 ngành, mở rộng 50 nhóm/140 kỹ năng. Nội dung prototype và bằng chứng cũ bên dưới là lịch sử, không phải số liệu DB hiện hành. Tìm kiếm đa ngôn ngữ và đồng bộ locale tài khoản chưa thuộc lát này.
 
 

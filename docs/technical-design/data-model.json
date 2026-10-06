@@ -247,13 +247,13 @@
       [
         "label",
         "text",
-        "NOT NULL",
+        "NOT NULL CHECK (length(trim(label)) > 0)",
         "Tên gợi nhớ"
       ],
       [
         "address_text",
         "text",
-        "NOT NULL",
+        "NOT NULL CHECK (length(trim(address_text)) > 0)",
         "Địa chỉ"
       ],
       [
@@ -261,6 +261,18 @@
         "geography(Point,4326)",
         "NOT NULL",
         "Tọa độ"
+      ],
+      [
+        "is_default",
+        "boolean",
+        "NOT NULL DEFAULT false",
+        "Tối đa một mặc định đang hoạt động mỗi user"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1 CHECK(version>0)",
+        "Tăng khi sửa/gỡ hoặc mất mặc định"
       ],
       [
         "archived_at",
@@ -275,8 +287,8 @@
         "UTC"
       ]
     ],
-    "checks": "",
-    "indexes": ""
+    "checks": "CHECK (archived_at IS NULL OR NOT is_default)",
+    "indexes": "CREATE UNIQUE INDEX saved_addresses_one_default ON saved_addresses(user_id) WHERE is_default AND archived_at IS NULL; CREATE INDEX saved_addresses_owner_page ON saved_addresses(user_id,created_at,id) WHERE archived_at IS NULL;"
   },
   {
     "name": "partners",

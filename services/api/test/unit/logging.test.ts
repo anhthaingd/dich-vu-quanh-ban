@@ -1,3 +1,4 @@
+import { safeRoute } from '../../src/logging/sanitize.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -47,4 +48,13 @@ test('driver error classification and safe operation timing', async () => {
   await assert.rejects(databaseOperation(logs.log, 'catalog.skills', async () => { throw new TypeError('CANARY'); }), TypeError);
   await assert.rejects(databaseOperation(logs.log, 'catalog.skills', async () => { throw null; }));
   assert.ok(!logs.text().includes('CANARY'));
+});
+
+test('account route logging keeps templates only and rejects arbitrary private paths', () => {
+  const id='00000000-0000-4000-8000-000000000001';
+  assert.equal(safeRoute('/v1/me/addresses'),'/v1/me/addresses');
+  assert.equal(safeRoute(`/v1/me/addresses/${id}`),'/v1/me/addresses/:id');
+  assert.equal(safeRoute(`/v1/me/addresses/${id}/archive`),'/v1/me/addresses/:id/archive');
+  assert.equal(safeRoute(`/v1/me/sessions/${id}/revoke`),'/v1/me/sessions/:id/revoke');
+  for(const path of ['/v1/me/addresses/PRIVATE_CANARY',`/v1/me/sessions/${id}/archive`,'/private']) assert.equal(safeRoute(path),'unmatched');
 });
