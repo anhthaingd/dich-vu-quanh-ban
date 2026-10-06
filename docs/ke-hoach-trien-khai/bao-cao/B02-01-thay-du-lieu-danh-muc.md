@@ -1,5 +1,7 @@
 # B02-01 — Thay bộ danh mục và bỏ các lựa chọn trùng
 
+> **Bàn giao 06/10/2026:** đã push code danh mục tại `1c80f67`; [CI 37398471842](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37398471842) đạt ba jobs (API/PostGIS, static/mobile, web E2E). Chủ dự án đã xác nhận phạm vi danh mục, không phải UAT toàn app. Các mốc chưa push/CI bên dưới giữ làm lịch sử ngày 05/10.
+
 05/10/2026 · DELIVERY-01, nối B02-01/I18N-04 · Theo yêu cầu trực tiếp “clear hết data về phần này và thêm các data mới”. Code đang sửa trên nền `7ded50c`, chưa commit/push; chưa CI/UAT cho thay đổi này.
 
 > **Xác nhận 06/10/2026:** chủ dự án đã xem bộ danh mục mới, xác nhận ổn và yêu cầu push. Kiểm lại trước push: 39 test API, typecheck/lint đạt; bằng chứng mobile/web/native ngày 05/10 giữ theo bảng bên dưới. Đây là xác nhận phạm vi danh mục, không phải UAT toàn app.

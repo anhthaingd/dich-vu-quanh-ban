@@ -30,6 +30,9 @@ Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng
 
 ## Hiện trạng và công việc kế tiếp
 
+- **Mốc 06/10/2026:** đã push I18N-04/B02-01 tại `1c80f67`; [CI 37398471842](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37398471842) đạt cả ba jobs (API/PostGIS, static/mobile, web E2E). Chủ dự án đã xác nhận bộ danh mục 10 ngành/39 nhóm/128 kỹ năng. Các mốc chưa push/CI dưới đây là lịch sử ngày 05/10.
+- Lát tiếp theo: **B01-04 sửa tên hiển thị**. Đã rà contract/code và có [phương án bổ sung version vào Me](de-xuat/B01-04-ho-so-ten-hien-thi.md), đang chờ duyệt trước khi đổi contract; chưa implement. OTP vẫn Pending.
+
 - Đã có danh mục DB thật và lát email/mật khẩu local, UI dùng chung, native navigation, log/test.
 - CI của `50d184a` đã đạt: [Quality 36810424485](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/36810424485). Native được kiểm riêng trên máy phát triển, không chạy trong CI Ubuntu này.
 - I18N-01/02 đã đạt kỹ thuật local: 81 test mobile; 3 web hồi quy + 1 web i18n; native i18n/layout/auth đạt Android và iOS. Đã push ở `844e1d2`; [CI 37132800077](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37132800077) đạt cả 3 jobs. Chưa UAT. `AuthSession` giữ mã lỗi, UI dịch theo locale local; API `locale` vẫn chỉ nhận `vi`.

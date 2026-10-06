@@ -1,5 +1,7 @@
 # I18N-04 — Đọc danh mục bằng Việt, Anh và Nhật
 
+> **Bàn giao 06/10/2026:** đã push code tại `1c80f67`; [CI 37398471842](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37398471842) đạt ba jobs. Chủ dự án xác nhận bộ danh mục đã thay ở B02-01; tìm kiếm đa ngôn ngữ/UAT toàn app còn mở. Các mốc chưa push/CI bên dưới giữ làm lịch sử ngày 05/10.
+
 > **Cập nhật sau yêu cầu clear ngày 05/10:** bộ 50 nhóm/140 kỹ năng được phân tích bên dưới đã được xóa khỏi DB local và thay bằng [39 nhóm/128 kỹ năng](B02-01-thay-du-lieu-danh-muc.md). Nội dung bên dưới giữ làm bằng chứng đợt trước; các dòng “chưa sửa DB” và phương án giữ dữ liệu cũ là trạng thái tại thời điểm đó, đã được yêu cầu clear mới thay thế.
 
 05/10/2026 · Theo quyết định I18N-04 được chủ dự án duyệt cùng ngày. Code local sau `7ded50c`; chưa commit/push, chưa có CI cho thay đổi này, chưa UAT. [Checklist](../01-checklist.md).

@@ -12,6 +12,8 @@ DOC-083 · v1.0 · 01/10/2026 · DELIVERY-01. Baseline code `50d184a`. [Mục l�
 
 ## Bằng chứng hiện hành
 
+**Mốc mới nhất 06/10/2026:** đã push danh mục `1c80f67`; [CI 37398471842](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37398471842) đạt cả ba jobs. Chủ dự án xác nhận danh mục 10 ngành/39 nhóm/128 kỹ năng; chưa UAT toàn app. Các ghi chú chưa push/CI của ngày 05/10 bên dưới là lịch sử. Lát đang chuẩn bị tiếp theo: [B01-04 sửa tên hiển thị](de-xuat/B01-04-ho-so-ten-hien-thi.md), chờ duyệt bổ sung `Me.version`, chưa implement; OTP vẫn Pending.
+
 | Mốc | Bằng chứng | Kết luận được phép dùng |
 |---|---|---|
 | `41579b5` | [B00-01](bao-cao/B00-01-nen-tang-danh-muc.md), [CI](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/36729018889) | UI chung/native navigation và nền danh mục |
@@ -60,7 +62,7 @@ Nguồn: [spec](../../ui-ux/specs/account-batch.md), [backlog](../technical-desi
 | [x] | B01-01 | Email/mật khẩu + phiên local | Đăng ký/login, SecureStore, access 15 phút, phiên tối đa 30 ngày, rotation/replay/logout; email chưa xác minh; xem [báo cáo](bao-cao/B01-01-email-mat-khau.md) |
 | [ ] | B01-02 | OTP điện thoại và xác minh email | **Pending — chủ dự án yêu cầu hoãn ngày 01/10/2026 vì cân nhắc chi phí**, gồm cả local; chỉ mở lại khi được yêu cầu. Provider/chính sách mã chưa duyệt; không cấp verified từ client |
 | [ ] | B01-03 | Quên/đổi mật khẩu, liên kết/đổi định danh | Chứng minh kênh mới; giữ kênh cũ đến commit; revoke phiên theo spec |
-| [ ] | B01-04 | Hồ sơ tài khoản, quản lý phiên và địa chỉ | get/editMe, list/revokeSessions; địa chỉ mặc định; snapshot việc cũ bất biến |
+| [ ] | B01-04 | Hồ sơ tài khoản, quản lý phiên và địa chỉ | get/editMe, list/revokeSessions; địa chỉ mặc định; snapshot việc cũ bất biến. Lát sửa tên: [phương án](de-xuat/B01-04-ho-so-ten-hien-thi.md), chờ duyệt trường Me.version trước code |
 | [ ] | B01-05 | Guard và quyền nền, fresh auth/MFA admin | Đổi UI vai không cấp quyền; từ chối cross-user/tenant; phương thức MFA cần chọn |
 | [ ] | B01-06 | Khôi phục thủ công và yêu cầu xóa tài khoản | Kiểm nghĩa vụ server, không xóa lịch sử tài chính; đóng toàn luồng sau màn admin B09/B11 |
 | [ ] | B01-07 | Tiếp tục hành động sau đăng nhập và deep link có quyền | Giữ intent chat/thuê; recheck đối tượng/quyền trước tiếp tục, không tự gửi mutation |
