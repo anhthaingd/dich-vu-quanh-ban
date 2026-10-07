@@ -5,7 +5,7 @@ import { mapStyle } from '../../location/components/map-model';
 import { resultBounds, type ResultsMapProps } from './results-map-model';
 export function ResultsMap({center,pins,selected,onSelect,onError,centerLabel}:ResultsMapProps) {
   const camera=useRef<CameraRef>(null),style=mapStyle();
-  const fit=()=>camera.current?.fitBounds(resultBounds(center,pins),{padding:{top:40,bottom:40,left:40,right:40},duration:0});
+  const fit=()=>{ camera.current?.fitBounds(resultBounds(center,pins),{padding:{top:40,bottom:40,left:40,right:40},duration:0}); };
   useEffect(()=>{if(!style)onError();},[style,onError]);
   useEffect(fit,[center,pins]);
   if(!style)return null;
