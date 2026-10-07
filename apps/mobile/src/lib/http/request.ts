@@ -38,7 +38,7 @@ export async function requestJson(url: string, request: typeof fetch, signal?: A
           try {
             const body: unknown = await response.json();
             const conflict = body && typeof body === 'object' && 'code' in body ? body.code : null;
-            if (conflict === 'VERSION_CONFLICT' || conflict === 'IDEMPOTENCY_MISMATCH') code = conflict;
+            if (conflict === 'STATE_CONFLICT' || conflict === 'VERSION_CONFLICT' || conflict === 'IDEMPOTENCY_MISMATCH') code = conflict;
           } catch { /* Unknown error bodies stay generic and never enter logs. */ }
         }
         const retry = Number(response.headers?.get('retry-after'));

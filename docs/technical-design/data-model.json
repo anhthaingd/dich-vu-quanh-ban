@@ -1088,6 +1088,24 @@
         "timestamptz",
         "NOT NULL DEFAULT now()",
         "UTC"
+      ],
+      [
+        "eta",
+        "timestamptz",
+        "",
+        "P0-2: ETA ban đầu khi nhận làm ngay; hẹn trước null"
+      ],
+      [
+        "stop_has_agreed_charges",
+        "boolean",
+        "",
+        "P0-2: còn chi phí khi dừng; tiếp tục hóa đơn"
+      ],
+      [
+        "stop_reason",
+        "text",
+        "",
+        "P0-2: lý do dừng/rút/từ chối"
       ]
     ],
     "checks": "CHECK(state IN ('requested','accepted','awaiting_settlement','completed','declined','withdrawn','stopped')), CHECK(service_mode IN ('at_shop','at_customer','custom')), CHECK(time_mode IN ('now','scheduled')), CHECK(time_mode<>'scheduled' OR scheduled_at IS NOT NULL), UNIQUE(id,partner_id)",

@@ -1,5 +1,10 @@
 # Checklist chức năng và bằng chứng
 
+**Sửa thiếu sót tìm dịch vụ · 07/10:** bổ sung chọn ngành → nhóm → kỹ năng ngay trên màn tìm, xóa kết quả cũ khi đổi bộ lọc. Đây là sửa khớp spec; xem [B03-05](bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md). Chủ dự án đã yêu cầu commit/push MAP-03 + P0-2 và bản sửa này.
+
+**Đợt mới 07/10 — MAP-03 + P0-2:** đã bỏ nhập tọa độ thủ công; đã nối yêu cầu/nhận việc và chat văn bản qua API trong phạm vi DEMO local/test đã duyệt. Xem [B03-03](bao-cao/B03-03-bo-nhap-toa-do.md) và [B03-04](bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md). Web hai tài khoản và native Android/iOS đạt phạm vi ghi trong báo cáo; code chưa commit/push, chưa remote CI/UAT. OTP và WebSocket Pending. Bước nghiệp vụ kế tiếp là P0-3 với tiền test.
+
+
 
 **Cập nhật 07/10:** MAP-01 đã push `4dc7600`, [CI đạt cả 3 job](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37577265358). **MAP-02 đã push `a6d4735` và bản sửa camera `8fdc9d4`; [CI MAP-02](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37584532165) đạt cả 3 job** theo quyết định chỉ ghim địa điểm công khai; người chưa có điểm công khai vẫn hiện danh sách. [Báo cáo B03-02](bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md) ghi kiểm thử/ảnh và trạng thái push riêng. Thứ tự P0-1 → MAP-01 → MAP-02 → P0-2 → P0-3. Các mốc chưa tích hợp bản đồ phía dưới là lịch sử, không thay trạng thái này.
 DOC-083 · v1.0 · 01/10/2026 · DELIVERY-01. Baseline code `50d184a`. [Mục lục](README.md).
@@ -104,6 +109,8 @@ Nguồn: [spec](../../ui-ux/specs/partner-journey.md), [backlog](../technical-de
 | [ ] | B02-03 | Đăng ký/hồ sơ partner đa loại, kỹ năng, vùng, địa điểm | **Một phần đạt P0-1**: thợ/cửa hàng/doanh nghiệp, kỹ năng/giá/vùng tròn/địa điểm, nháp/công bố và DTO riêng. [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md). Ảnh/upload/xét xác minh còn mở |
 | [ ] | B02-04 | Bật/tắt nhận việc và đình chỉ | **Một phần đạt P0-1**: bật/tắt nhận việc, loại khỏi tìm kiếm, lọc đình chỉ. Recheck lúc gửi thuê ở P0-2; admin đình chỉ còn mở |
 | [ ] | B02-05 | Gửi/xét xác minh và quản trị danh mục tối thiểu | Admin thật có quyền/audit; cần bổ sung/đạt/không đạt; không có nút partner tự duyệt |
+
+- [x] **B03 bổ sung 07/10:** chọn/đổi ngành, nhóm, kỹ năng ngay trên màn tìm và xóa kết quả cũ theo bộ lọc; [B03-05](bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md), kiểm component và web API/DB.
 
 ## B03 — Tìm và thuê — đã có tìm danh sách P0-1, MAP-01 đã triển khai thử local
 
@@ -226,3 +233,13 @@ Ghi mã lát, trạng thái, commit, kết quả kiểm, báo cáo và phần th
 - [x] Android kiểm lại đạt nhập địa chỉ → tìm → ghim → mở hồ sơ, sau gián đoạn emulator; có ảnh hồ sơ.
 - [x] Commit/push `a6d4735`, sửa camera `8fdc9d4`; [CI MAP-02](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37584532165) đạt static/mobile/build, API/PostGIS và web E2E. Báo cáo/ảnh cập nhật riêng, không thay code đã kiểm.
 - [ ] Thiết bị thật, UAT; chưa billing/production.
+
+## P0-2 — kiểm phần local ngày 07/10/2026
+
+- [x] B03-02: ba mode, làm ngay/hẹn trước, nhiều kỹ năng; phone/self-hire/schema/vùng; retry không trùng — API/DB và web hai tài khoản.
+- [x] B03-03/04: list/detail, nhận ETA, từ chối/rút/đổi lịch/dừng; version race và lịch sử — API/web; native nhận ETA.
+- [x] B04-02 phần phân công: một người hiệu lực, đổi người mất quyền việc cũ, giữ phòng riêng — API/DB. Chưa nghiệm thu toàn bộ quản trị nhân viên.
+- [x] B05-01 phần HTTP: mở trước thuê, gửi/đọc/sequence/cursor/read, retry và quyền phòng riêng — API/web; đọc/gửi native Android/iOS.
+- [ ] WebSocket/push/nhắc lịch, file/gọi; OTP thật; native toàn bộ ma trận phân công/lỗi; thiết bị thật, remote CI và UAT của đợt này.
+
+Không đánh dấu toàn bộ B05 hoàn tất vì mới có phạm vi HTTP đã duyệt. Báo cáo [B03-04](bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md) ghi test và giới hạn.

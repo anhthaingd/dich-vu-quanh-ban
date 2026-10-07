@@ -107,6 +107,8 @@ export const isProfile = (x: unknown): x is PartnerProfile =>
       Array.isArray(s.category_ids) &&
       s.category_ids.every(uuid)
   ) &&
+  Array.isArray(x.public_locations) && x.public_locations.every(l=>record(l)&&uuid(l.id)&&address(l.address)) &&
+  Array.isArray(x.service_modes) && x.service_modes.every(s=>record(s)&&uuid(s.skill_id)&&Array.isArray(s.modes)&&s.modes.every(m=>['at_shop','at_customer','custom'].includes(String(m)))) &&
   Array.isArray(x.public_addresses) &&
   x.public_addresses.every(address) &&
   typeof x.can_hire === 'boolean' &&

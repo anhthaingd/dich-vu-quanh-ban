@@ -1,3 +1,7 @@
+import type { JobsApi } from '../../jobs/api/jobs-api';
+import type { JobCreate,JobAction,JobChange } from '../../jobs/models';
+import type { ChatApi } from '../../chat/api/chat-api';
+import type { MessageInput } from '../../chat/models';
 import type { PartnersApi } from '../../partners/api/partners-api';
 import type { PartnerCreate, PartnerEdit } from '../../partners/models';
 import type { Locale } from '../../../lib/i18n';
@@ -11,7 +15,7 @@ export class AuthSession {
   private session: Session | null = null;
   private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
   private readonly listeners = new Set<() => void>();
-  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi) {}
+  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi) {}
   getSnapshot = () => this.snapshot;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   private update(values: Partial<Snapshot>) { this.snapshot = { ...this.snapshot, ...values }; this.listeners.forEach(fn => fn()); }
@@ -106,6 +110,18 @@ export class AuthSession {
     }
     return user;
   }
+  private jobsApi(){if(!this.jobs)throw new ApiError('CONFIG');return this.jobs;}
+  private chatApi(){if(!this.chat)throw new ApiError('CONFIG');return this.chat;}
+  createJob=(owner:string,input:JobCreate,key:string)=>this.accountOperation(owner,t=>this.jobsApi().create(t,input,key));
+  getJob=(owner:string,id:string)=>this.accountOperation(owner,t=>this.jobsApi().get(t,id));
+  listJobs=(owner:string,partner?:string,cursor?:string)=>this.accountOperation(owner,t=>this.jobsApi().list(t,partner,cursor));
+  changeJob=(owner:string,id:string,action:JobAction,input:JobChange,key:string)=>this.accountOperation(owner,t=>this.jobsApi().change(t,id,action,input,key));
+  jobMembers=(owner:string,partner:string,cursor?:string)=>this.accountOperation(owner,t=>this.jobsApi().members(t,partner,cursor));
+  openConversation=(owner:string,input:{partner_id?:string;peer_user_id?:string},key:string)=>this.accountOperation(owner,t=>this.chatApi().open(t,input,key));
+  listConversations=(owner:string,cursor?:string)=>this.accountOperation(owner,t=>this.chatApi().list(t,cursor));
+  listMessages=(owner:string,id:string,after?:number,cursor?:string)=>this.accountOperation(owner,t=>this.chatApi().messages(t,id,after,cursor));
+  sendMessage=(owner:string,id:string,input:MessageInput,key:string)=>this.accountOperation(owner,t=>this.chatApi().send(t,id,input,key));
+  readConversation=(owner:string,id:string,last:number,key:string)=>this.accountOperation(owner,t=>this.chatApi().read(t,id,last,key));
   private partnerApi() { if (!this.partners) throw new ApiError('CONFIG'); return this.partners; }
   createPartner = (owner:string,input:PartnerCreate,key:string) => this.accountOperation(owner,token=>this.partnerApi().create(token,input,key));
   loadPartner = (owner:string,id:string) => this.accountOperation(owner,token=>this.partnerApi().management(token,id));

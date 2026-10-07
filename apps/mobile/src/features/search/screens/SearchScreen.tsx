@@ -11,8 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../app/navigation/routes';
 import {
-  usePartnersApi,
-  useCatalogApi
+  usePartnersApi
 } from '../../../app/providers/AppProviders';
 import { useAuth } from '../../../app/providers/AuthProvider';
 import { useLocale } from '../../../app/providers/LocaleProvider';
@@ -31,6 +30,7 @@ import {
   Options
 } from '../../partners/components/PartnerFields';
 import { PartnerSearch } from '../state/partner-search';
+import { ServiceFilter, type ServiceSelection } from '../components/ServiceFilter';
 import { SearchResultsMap } from '../components/SearchResultsMap';
 import type { Mode, Point } from '../../partners/models';
 import type { SavedAddress } from '../../accounts/models';
@@ -40,8 +40,7 @@ export function SearchScreen({
   route
 }: NativeStackScreenProps<RootStackParamList, 'Search'>) {
   const api = usePartnersApi(),
-    catalog = useCatalogApi(),
-    { t, locale } = useLocale(),
+    { t } = useLocale(),
     { state: auth } = useAuth();
   const search = useMemo(() => new PartnerSearch(api), [api]);
   const state = useSyncExternalStore(
@@ -57,24 +56,13 @@ export function SearchScreen({
     [mode, setMode] = useState<Mode>('at_customer'),
     [anyMode, setAnyMode] = useState(true),
     [verified, setVerified] = useState(false),
-    [invalid, setInvalid] = useState(false),
-    [skillName, setSkillName] = useState('');
+    [invalid, setInvalid] = useState(false);
+  const [service, setService] = useState<ServiceSelection>(route.params);
   useFocusEffect(useCallback(() => () => search.cancel(), [search]));
   useEffect(() => {
-    const c = new AbortController();
-    if (route.params.categoryId)
-      catalog
-        .skills(route.params.categoryId, c.signal, locale)
-        .then((skills) => {
-          if (!c.signal.aborted)
-            setSkillName(
-              skills.find((s) => s.id === route.params.skillId)?.name ?? ''
-            );
-        })
-        .catch(() => {});
-    return () => c.abort();
-  }, [catalog, route.params.categoryId, route.params.skillId, locale]);
-  useEffect(() => { search.reset(); }, [search, lat, lng]);
+    setService({categoryId:route.params.categoryId,skillId:route.params.skillId});
+  }, [route.params.categoryId, route.params.skillId]);
+  useEffect(() => { search.reset(); }, [search, lat, lng, service.categoryId, service.skillId, radius, mode, anyMode, verified]);
   useEffect(() => { setLat(''); setLng(''); setPlaceText(''); }, [auth.user?.id]);
   const choose = (p: Point) => {
     setPlaceText('');
@@ -102,8 +90,8 @@ export function SearchScreen({
       latitude,
       longitude,
       radius_m,
-      skill_id: route.params.skillId,
-      category_id: route.params.categoryId,
+      skill_id: service.skillId,
+      category_id: service.categoryId,
       service_mode: anyMode ? undefined : mode,
       verified
     });
@@ -118,9 +106,9 @@ export function SearchScreen({
       <AppText variant="title" accessibilityRole="header">
         {t('search.title')}
       </AppText>
-      {!!skillName && <AppText variant="section">{skillName}</AppText>}
       <AppText tone="muted">{t('search.intro')}</AppText>
       <Card>
+        <ServiceFilter value={service} onChange={setService} />
         <LocationField
           text={placeText}
           onChange={v => { choose(v.point); setPlaceText(v.text); }}
@@ -128,7 +116,6 @@ export function SearchScreen({
           prefix="search"
           lat={lat}
           lng={lng}
-          changeCoordinate={(key, v) => { setPlaceText(''); if (key === 'lat') setLat(v); else setLng(v); }}
         />
         <Input
           testID="search-radius"

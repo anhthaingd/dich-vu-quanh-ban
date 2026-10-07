@@ -1,6 +1,5 @@
 import { View, StyleSheet } from 'react-native';
 import { Button } from '../../../components/ui/Button';
-import { Input } from '../../../components/ui/Input';
 import { useLocale } from '../../../app/providers/LocaleProvider';
 import { theme } from '../../../theme/tokens';
 type Option =
@@ -58,43 +57,6 @@ export function Options<T extends Option>({
         </View>
       ))}
     </View>
-  );
-}
-export function Coordinates({
-  lat,
-  lng,
-  change,
-  disabled = false,
-  prefix
-}: {
-  lat: string;
-  lng: string;
-  change: (key: 'lat' | 'lng', v: string) => void;
-  disabled?: boolean;
-  prefix: string;
-}) {
-  const { t } = useLocale();
-  return (
-    <>
-      <Input
-        testID={`${prefix}-lat`}
-        label={t('addresses.lat')}
-        value={lat}
-        onChangeText={(v) => change('lat', v)}
-        editable={!disabled}
-        autoCapitalize="none"
-        keyboardType="numbers-and-punctuation"
-      />
-      <Input
-        testID={`${prefix}-lng`}
-        label={t('addresses.lng')}
-        value={lng}
-        onChangeText={(v) => change('lng', v)}
-        editable={!disabled}
-        autoCapitalize="none"
-        keyboardType="numbers-and-punctuation"
-      />
-    </>
   );
 }
 export const coordinateNumber = (v: string) => (v.trim() ? Number(v) : NaN);

@@ -1,5 +1,9 @@
+import {sessionReady} from '../../jobs/state/session-ready';
+import {Mutation} from '../../jobs/state/mutation';
+import {JobFeedback} from '../../jobs/components/JobFeedback';
+import type {Conversation} from '../../chat/models';
 import { PublicLocation } from '../../location/components/PublicLocation';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useSyncExternalStore } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../app/navigation/routes';
@@ -29,15 +33,20 @@ export function PartnerProfileScreen({
         key={state.user?.id ?? state.phase}
         id={route.params.id}
         login={() => navigation.navigate('Account')}
+        hire={()=>navigation.navigate('JobCreate',{partnerId:route.params.id})}
+        chat={id=>navigation.navigate('Conversation',{id})}
       />
     </ProductShell>
   );
 }
-function Profile({ id, login }: { id: string; login: () => void }) {
+function Profile({ id, login, hire, chat }: { id: string; login: () => void; hire:()=>void; chat:(id:string)=>void }) {
   const { manager, state } = useAuth(),
     api = usePartnersApi(),
     { t, locale } = useLocale();
   const owner = state.user?.id;
+  const [opening]=useState(()=>new Mutation<Conversation>());
+  const openingState=useSyncExternalStore(opening.subscribe,opening.getSnapshot,opening.getSnapshot);
+  const openChat=async()=>{if(owner){const c=await opening.run(key=>manager.openConversation(owner,{partner_id:id},key));if(c)chat(c.id);}};
   const [profile, setProfile] = useState<PartnerProfile | null>(null),
     [error, setError] = useState<string | null>(null),
     [attempt, setAttempt] = useState(0);
@@ -47,7 +56,7 @@ function Profile({ id, login }: { id: string; login: () => void }) {
       setProfile(null);
       setError(null);
       const work = owner
-        ? manager.partnerProfile(owner, id, locale, c.signal)
+        ? sessionReady(manager,owner).then(()=>{if(c.signal.aborted)throw new ApiError('CANCELLED');return manager.partnerProfile(owner,id,locale,c.signal);})
         : api.profile(id, locale, c.signal);
       work
         .then((p) => {
@@ -114,7 +123,9 @@ function Profile({ id, login }: { id: string; login: () => void }) {
             )}
           </>
         )}
-        <AppText tone="muted">{t('search.comingNext')}</AppText>
+        {profile.can_hire&&<Button testID="profile-hire" label={t('jobs.create')} disabled={state.busy} onPress={hire}/>}
+        {profile.can_message&&<Button testID="profile-chat" label={t('chat.open')} disabled={state.busy||openingState.pending} onPress={()=>void openChat()}/>}
+        <JobFeedback error={openingState.error} pending={openingState.pending} busy={openingState.busy||state.busy} retry={openingState.pending?()=>void opening.run().then(c=>{if(c)chat(c.id);}):undefined}/>
       </Card>
     </>
   );

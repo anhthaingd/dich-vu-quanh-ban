@@ -1,0 +1,38 @@
+appId: vn.dichvuquanhban.app
+---
+- stopApp
+- openLink: ${DEV_URL}
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "Close"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: search-open
+    timeout: 60000
+- tapOn:
+    id: locale-vi
+- tapOn:
+    id: search-open
+- tapOn:
+    id: search-service-open
+- tapOn: "Điện nước"
+- tapOn: "Điện dân dụng"
+- takeScreenshot: service-picker
+- tapOn: "Thay ổ cắm / công tắc"
+- assertVisible: "Thay ổ cắm / công tắc"
+- takeScreenshot: service-selected
+- tapOn:
+    id: search-service-open
+- tapOn:
+    id: service-root
+- tapOn:
+    id: service-cancel
+- assertVisible: "Thay ổ cắm / công tắc"
+- tapOn:
+    id: search-service-open
+- tapOn:
+    id: service-all
+- assertVisible: "Tất cả dịch vụ"

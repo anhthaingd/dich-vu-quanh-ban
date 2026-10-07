@@ -257,7 +257,7 @@ export class PartnersService {
       if (!p) throw new NotFoundException();
       const skills = (
         await db.query(
-          `${visibleSkills} SELECT s.id,s.code,s.name_vi,s.translations,s.schema_version,s.form_schema,
+          `${visibleSkills} SELECT s.id,s.code,s.name_vi,s.translations,s.schema_version,s.form_schema,ps.modes,
         ARRAY(SELECT sc.category_id FROM skill_categories sc JOIN visible_categories c ON c.id=sc.category_id WHERE sc.skill_id=s.id ORDER BY sc.category_id) AS category_ids
         FROM visible_skills s JOIN partner_skills ps ON ps.skill_id=s.id WHERE ps.partner_id=$1 AND ps.active ORDER BY s.id`,
           [id]
@@ -265,7 +265,7 @@ export class PartnersService {
       ).rows;
       const addresses = (
         await db.query(
-          `SELECT address_text AS text,json_build_object('latitude',ST_Y(point::geometry),'longitude',ST_X(point::geometry)) AS point FROM partner_locations
+          `SELECT id,address_text AS text,json_build_object('latitude',ST_Y(point::geometry),'longitude',ST_X(point::geometry)) AS point FROM partner_locations
         WHERE partner_id=$1 AND public AND active ORDER BY created_at,id`,
           [id]
         )
@@ -282,7 +282,8 @@ export class PartnersService {
       await db.query('COMMIT');
       return {
         ...publicFields,
-        skills: skills.map(({ translations, ...s }) => {
+        skills: skills.map(({ translations, modes: _modes, ...s }) => {
+          void _modes;
           const translated = translations[locale];
           const use =
             locale !== 'vi' &&
@@ -294,7 +295,9 @@ export class PartnersService {
             name_locale: use ? locale : 'vi'
           };
         }),
-        public_addresses: addresses,
+        public_addresses: addresses.map(({id: _id,...address})=>{void _id;return address;}),
+        public_locations: addresses.map(({id,...address})=>({id,address})),
+        service_modes: skills.map(s=>({skill_id:s.id,modes:s.modes})),
         contact: actor
           ? { phone: profile.phone ?? '', zalo: profile.zalo ?? '' }
           : null,

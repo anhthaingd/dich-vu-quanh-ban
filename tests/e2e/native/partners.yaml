@@ -206,24 +206,30 @@ appId: vn.dichvuquanhban.app
     id: nav-back
 - tapOn:
     id: search-open
+- tapOn:
+    id: search-service-open
+- tapOn: "Điện nước"
+- tapOn: "Điện dân dụng"
+- tapOn: "Thay ổ cắm / công tắc"
+- takeScreenshot: search-service-selected
 - scrollUntilVisible:
     element:
-      id: search-advanced
+      id: search-pick-location
     direction: DOWN
 - tapOn:
-    id: search-advanced
-- scrollUntilVisible:
-    element:
-      id: search-lat
-    direction: DOWN
+    id: search-pick-location
 - tapOn:
-    id: search-lat
-- inputText: "21.0285"
+    id: location-query
+- inputText: "DEMO public test address"
 - pressKey: Enter
+- extendedWaitUntil:
+    visible:
+      id: location-result-0
+    timeout: 15000
 - tapOn:
-    id: search-lng
-- inputText: "105.8542"
-- pressKey: Enter
+    id: location-result-0
+- tapOn:
+    id: location-confirm
 - scrollUntilVisible:
     element:
       id: search-submit

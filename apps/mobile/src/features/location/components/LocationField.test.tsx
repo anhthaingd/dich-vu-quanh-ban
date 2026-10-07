@@ -13,7 +13,7 @@ const result={id:'a',text:'DEMO public address',point,precision:'approximate' as
 async function mount(){
  const f=authFixture(), change=jest.fn();
  const locale=new LocaleState({read:async()=>null,write:async()=>{}});
- render(<AuthProvider manager={f.manager}><LocaleProvider manager={locale}><LocationField lat="" lng="" prefix="test" onChange={change} changeCoordinate={()=>{}} /></LocaleProvider></AuthProvider>);
+ render(<AuthProvider manager={f.manager}><LocaleProvider manager={locale}><LocationField lat="" lng="" prefix="test" onChange={change} /></LocaleProvider></AuthProvider>);
  await waitFor(()=>expect(f.manager.getSnapshot().phase).toBe('anonymous'));
  fireEvent.press(screen.getByTestId('test-pick-location'));
  return {change};

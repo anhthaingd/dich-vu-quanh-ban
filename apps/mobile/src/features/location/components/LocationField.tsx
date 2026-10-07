@@ -11,15 +11,14 @@ import { LocationDraft } from '../state/location-draft';
 import { pointFromText, type LocationValue, type Point } from '../models';
 import { LocationMap } from './LocationMap';
 import { LocationAttribution } from './LocationAttribution';
-import { Coordinates } from '../../partners/components/PartnerFields';
 import type { SavedAddress } from '../../accounts/models';
 import { theme } from '../../../theme/tokens';
-export function LocationField({ lat, lng, text = '', radius, prefix, disabled = false, onChange, changeCoordinate }: {
+export function LocationField({ lat, lng, text = '', radius, prefix, disabled = false, onChange }: {
   lat: string; lng: string; text?: string; radius?: number; prefix: string; disabled?: boolean;
-  onChange: (v: LocationValue) => void; changeCoordinate: (key: 'lat' | 'lng', value: string) => void;
+  onChange: (v: LocationValue) => void;
 }) {
   const { t } = useLocale(), { state: auth } = useAuth();
-  const [opened, setOpened] = useState(false), [advanced, setAdvanced] = useState(false);
+  const [opened, setOpened] = useState(false);
   const owner = auth.user?.id ?? 'guest';
   useEffect(() => { setOpened(false); }, [owner]);
   const point = pointFromText(lat, lng);
@@ -27,8 +26,6 @@ export function LocationField({ lat, lng, text = '', radius, prefix, disabled = 
     {point && <AppText tone="muted">{text || `${point.latitude.toFixed(5)}, ${point.longitude.toFixed(5)}`}</AppText>}
     {point && <LocationAttribution />}
     <Button testID={`${prefix}-pick-location`} label={t(point ? 'location.change' : 'location.open')} variant="secondary" disabled={disabled} onPress={() => setOpened(true)} />
-    <Button testID={`${prefix}-advanced`} label={t('location.advanced')} variant="link" disabled={disabled} onPress={() => setAdvanced(v => !v)} />
-    {advanced && <Coordinates lat={lat} lng={lng} prefix={prefix} disabled={disabled} change={changeCoordinate} />}
     {opened && <LocationPicker key={owner} initial={point ? { text, point, source: 'saved' } : null} radius={radius} close={() => setOpened(false)} confirm={value => { if (!disabled) { onChange(value); setOpened(false); } }} />}
   </View>;
 }

@@ -217,7 +217,7 @@
     "auth": "Public; liên hệ cần đăng nhập",
     "request": null,
     "response": "PartnerProfile",
-    "rule": "Nếu có bearer hợp lệ mở DTO đăng nhập, không bao giờ lộ giấy tờ/ví. P0-1: chỉ published chưa archive, suspended trả404. Tắt nhận việc vẫn xem qua link. Liên hệ chỉ khi bearer hợp lệ; kỹ năng theo locale; không trả vùng riêng/version."
+    "rule": "Nếu có bearer hợp lệ mở DTO đăng nhập, không bao giờ lộ giấy tờ/ví. P0-1: chỉ published chưa archive, suspended trả404. Tắt nhận việc vẫn xem qua link. Liên hệ chỉ khi bearer hợp lệ; kỹ năng theo locale; không trả vùng riêng/version. P0-2 / API v0.1.9: public_locations active/public và service_modes theo skill_id; không điểm riêng."
   },
   {
     "id": "createPartner",
@@ -371,7 +371,7 @@
     "auth": "Khách có phone verified",
     "request": "JobCreate",
     "response": "Job",
-    "rule": "Không bắt buộc gọi trước; chống request lặp; không tạo booking tiền trước. Chặn thuê chính mình hoặc doanh nghiệp đang là thành viên; kiểm server, không chỉ ẩn nút."
+    "rule": "Không bắt buộc gọi trước; chống request lặp; không tạo booking tiền trước. Chặn thuê chính mình hoặc doanh nghiệp đang là thành viên; kiểm server, không chỉ ẩn nút. P0-2 / API v0.1.9: Job trả mode/location/note/ETA; HTTP chat và thử lại theo quyền hiện tại; WebSocket Pending. Xem phụ lục P0-2."
   },
   {
     "id": "listJobs",
@@ -382,7 +382,7 @@
     "auth": "Theo vai và tenant",
     "request": null,
     "response": "listJobsPage",
-    "rule": ""
+    "rule": " P0-2 / API v0.1.9: Job trả mode/location/note/ETA; HTTP chat và thử lại theo quyền hiện tại; WebSocket Pending. Xem phụ lục P0-2."
   },
   {
     "id": "getJob",
@@ -393,7 +393,7 @@
     "auth": "Khách / partner quản lý / nhân viên đang giao",
     "request": null,
     "response": "Job",
-    "rule": " Việc đã nhận không tự hết hạn theo giờ hẹn; hoàn tất bình thường cần dấu khách đã trả và thợ đã nhận. Quyết toán vẫn đúng một lần; xác nhận hóa đơn riêng chưa kết thúc việc."
+    "rule": " Việc đã nhận không tự hết hạn theo giờ hẹn; hoàn tất bình thường cần dấu khách đã trả và thợ đã nhận. Quyết toán vẫn đúng một lần; xác nhận hóa đơn riêng chưa kết thúc việc. P0-2 / API v0.1.9: Job trả mode/location/note/ETA; HTTP chat và thử lại theo quyền hiện tại; WebSocket Pending. Xem phụ lục P0-2."
   },
   {
     "id": "acceptJob",
@@ -404,7 +404,7 @@
     "auth": "jobs.accept",
     "request": "AcceptJob",
     "response": "Job",
-    "rule": "ETA cho làm ngay; gửi tin hệ thống một lần."
+    "rule": "ETA cho làm ngay; gửi tin hệ thống một lần. P0-2 / API v0.1.9: Job trả mode/location/note/ETA; HTTP chat và thử lại theo quyền hiện tại; WebSocket Pending. Xem phụ lục P0-2."
   },
   {
     "id": "declineJob",
@@ -657,7 +657,7 @@
     "auth": "Participant hoặc inbox doanh nghiệp theo quyền",
     "request": null,
     "response": "listConversationsPage",
-    "rule": ""
+    "rule": " P0-2 / API v0.1.9: Job trả mode/location/note/ETA; HTTP chat và thử lại theo quyền hiện tại; WebSocket Pending. Xem phụ lục P0-2."
   },
   {
     "id": "listMessages",
@@ -668,7 +668,7 @@
     "auth": "ACL phòng, không chỉ job membership",
     "request": null,
     "response": "listMessagesPage",
-    "rule": ""
+    "rule": " P0-2 / API v0.1.9: Job trả mode/location/note/ETA; HTTP chat và thử lại theo quyền hiện tại; WebSocket Pending. Xem phụ lục P0-2."
   },
   {
     "id": "sendMessage",
@@ -679,7 +679,7 @@
     "auth": "ACL phòng",
     "request": "MessageInput",
     "response": "Message",
-    "rule": "Lưu DB trước ACK; dedupe sender+client_message_id; không yêu cầu job."
+    "rule": "Lưu DB trước ACK; dedupe sender+client_message_id; không yêu cầu job. P0-2 / API v0.1.9: Job trả mode/location/note/ETA; HTTP chat và thử lại theo quyền hiện tại; WebSocket Pending. Xem phụ lục P0-2."
   },
   {
     "id": "readConversation",
@@ -690,7 +690,7 @@
     "auth": "ACL phòng",
     "request": "ReadCursor",
     "response": "Ack",
-    "rule": "Monotonic max; không vượt sequence hiện có."
+    "rule": "Monotonic max; không vượt sequence hiện có. P0-2 / API v0.1.9: Job trả mode/location/note/ETA; HTTP chat và thử lại theo quyền hiện tại; WebSocket Pending. Xem phụ lục P0-2."
   },
   {
     "id": "startCall",

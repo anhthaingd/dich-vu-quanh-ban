@@ -1,3 +1,5 @@
+import { JobsModule } from './modules/jobs/jobs.module.js';
+import { ChatModule } from './modules/chat/chat.module.js';
 import { LocationsModule } from './modules/locations/locations.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { PartnersModule } from './modules/partners/partners.module.js';
@@ -17,7 +19,7 @@ export class AppModule {
     return {
       module: AppModule,
       imports: [LocationsModule.register(settings.geoapifyKey), LoggingModule.register(log), DatabaseModule.register(settings, database, log), CatalogModule.register(settings.cursorSecret), HealthModule,
-        ...(settings.authSecret ? [AuthModule.register(settings.authSecret), AccountsModule.register(settings.cursorSecret), PartnersModule.register(settings.cursorSecret)] : [])],
+        ...(settings.authSecret ? [AuthModule.register(settings.authSecret), AccountsModule.register(settings.cursorSecret), PartnersModule.register(settings.cursorSecret), JobsModule.register(settings.cursorSecret), ChatModule.register(settings.cursorSecret)] : [])],
     };
   }
 }

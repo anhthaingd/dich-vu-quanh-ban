@@ -1,5 +1,10 @@
 # Kế hoạch triển khai và học code
 
+**Sửa thiếu sót tìm dịch vụ · 07/10:** bổ sung chọn ngành → nhóm → kỹ năng ngay trên màn tìm, xóa kết quả cũ khi đổi bộ lọc. Đây là sửa khớp spec; xem [B03-05](bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md). Chủ dự án đã yêu cầu commit/push MAP-03 + P0-2 và bản sửa này.
+
+**Đợt mới 07/10 — MAP-03 + P0-2:** đã bỏ nhập tọa độ thủ công; đã nối yêu cầu/nhận việc và chat văn bản qua API trong phạm vi DEMO local/test đã duyệt. Xem [B03-03](bao-cao/B03-03-bo-nhap-toa-do.md) và [B03-04](bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md). Web hai tài khoản và native Android/iOS đạt phạm vi ghi trong báo cáo; code chưa commit/push, chưa remote CI/UAT. OTP và WebSocket Pending. Bước nghiệp vụ kế tiếp là P0-3 với tiền test.
+
+
 
 **Cập nhật 07/10:** MAP-01 đã push `4dc7600`, [CI đạt cả 3 job](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37577265358). **MAP-02 đã push `a6d4735` và bản sửa camera `8fdc9d4`; [CI MAP-02](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37584532165) đạt cả 3 job** theo quyết định chỉ ghim địa điểm công khai; người chưa có điểm công khai vẫn hiện danh sách. [Báo cáo B03-02](bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md) ghi kiểm thử/ảnh và trạng thái push riêng. Thứ tự P0-1 → MAP-01 → MAP-02 → P0-2 → P0-3. Các mốc chưa tích hợp bản đồ phía dưới là lịch sử, không thay trạng thái này.
 DOC-082 · v1.0 · 01/10/2026 · DELIVERY-01. Mốc lập kế hoạch: `50d184a`; ưu tiên hiện hành: MAP-01 chọn địa điểm bằng địa chỉ/bản đồ trước P0-2, ngày 07/10/2026.
@@ -38,6 +43,9 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 | Người cung cấp và tìm dịch vụ | [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) | Gói P0-1 DB/API/app; local/native; DEMO riêng; đã push `fe35564`, [CI](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37566935703) đạt 3 jobs; chưa UAT; B02/B03 còn upload/map/xác minh/ranking |
 | Chọn địa điểm và bản đồ | [B03-01 / MAP-01](bao-cao/B03-01-chon-dia-diem-va-ban-do.md) | Bộ chọn 4 nơi; API/web/local; bản đồ thật Android emulator/iOS simulator. Remote CI MAP-01 đạt; chưa điện thoại thật hoặc UAT; chưa đóng toàn B03 |
 | Bản đồ kết quả tìm kiếm | [B03-02 / MAP-02](bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md) | Ghim địa điểm public, ghim trùng, hồ sơ; giữ người không có ghim trong danh sách. 153 mobile, 68 API và web E2E đạt; native Android/iOS đã kiểm; [CI MAP-02](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37584532165) đạt cả 3 job tại `8fdc9d4`. Chưa UAT/thiết bị thật. |
+| Bỏ nhập tọa độ | [B03-03 / MAP-03](bao-cao/B03-03-bo-nhap-toa-do.md) | Bộ chọn địa điểm chung, giữ point nội bộ/API; 4 web E2E đạt. |
+| Chọn dịch vụ trước khi tìm | [B03-05](bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md) | Sửa thiếu UI chọn ngành/nhóm/kỹ năng; giữ lọc backend, kiểm hai nghề cùng khu vực. |
+| Yêu cầu, nhận việc và chat | [B03-04 / P0-2](bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md) | Ba mode, ETA, đổi lịch/dừng, phân công và HTTP chat; web hai tài khoản + Android/iOS đạt phạm vi; chưa UAT. |
 | Tài khoản email/mật khẩu | [B01-01](bao-cao/B01-01-email-mat-khau.md) | Đăng ký/đăng nhập, refresh/logout local; không đóng toàn bộ B01 |
 
 Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng này và liên kết dòng checklist. Không sửa báo cáo cũ để biến kết quả của commit cũ thành bằng chứng cho commit mới. Nếu sửa báo cáo, giữ ngày/commit và ghi phần đính chính.

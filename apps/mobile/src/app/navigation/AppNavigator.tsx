@@ -1,3 +1,8 @@
+import {ConversationScreen} from '../../features/chat/screens/ConversationScreen';
+import {ConversationsScreen} from '../../features/chat/screens/ConversationsScreen';
+import {JobDetailScreen} from '../../features/jobs/screens/JobDetailScreen';
+import {JobCreateScreen} from '../../features/jobs/screens/JobCreateScreen';
+import {JobsScreen} from '../../features/jobs/screens/JobsScreen';
 import { PartnersScreen } from '../../features/partners/screens/PartnersScreen';
 import { PartnerEditorScreen } from '../../features/partners/screens/PartnerEditorScreen';
 import { PartnerProfileScreen } from '../../features/partners/screens/PartnerProfileScreen';
@@ -25,6 +30,11 @@ export function AppNavigator() {
       <Stack.Screen name="Partners" component={PartnersScreen} />
       <Stack.Screen name="PartnerEditor" component={PartnerEditorScreen} />
       <Stack.Screen name="PartnerProfile" component={PartnerProfileScreen} />
+      <Stack.Screen name="Jobs" component={JobsScreen} />
+      <Stack.Screen name="JobCreate" component={JobCreateScreen} />
+      <Stack.Screen name="JobDetail" component={JobDetailScreen} />
+      <Stack.Screen name="Conversations" component={ConversationsScreen} />
+      <Stack.Screen name="Conversation" component={ConversationScreen} />
       <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen name="Account" component={AccountScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />

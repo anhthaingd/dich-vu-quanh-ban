@@ -17,7 +17,7 @@ async function get(path: string) { const res = await fetch(base + path); return 
 
 test('replacement removes old catalog only, preserves accounts/sessions, and remains stable after reseeding', async () => {
   // Exercise the historical catalog-only bootstrap. Supply FKs intentionally block replacement now.
-  await pool.query('DROP TABLE partner_skills');
+  await pool.query('DROP TABLE partner_skills, job_skills');
   const user = (await pool.query("INSERT INTO users(display_name) VALUES('Catalog replacement test') RETURNING id")).rows[0].id;
   await pool.query("INSERT INTO identities(user_id,provider,subject) VALUES($1,'email','catalog@example.test')", [user]);
   await pool.query("INSERT INTO sessions(user_id,refresh_hash,family_id,expires_at) VALUES($1,'test-refresh-hash',$2,now()+interval '1 day')", [user, randomUUID()]);
@@ -51,7 +51,7 @@ test('replacement rejects even cascading external references without touching ca
 });
 test('replacement rolls back deletes and restores exact previous catalog if insertion fails', async () => {
   // Exercise the historical catalog-only bootstrap. Supply FKs intentionally block replacement now.
-  await pool.query('DROP TABLE partner_skills');
+  await pool.query('DROP TABLE partner_skills, job_skills');
   const snapshot = async () => Promise.all(['categories','skills','skill_categories'].map(async table => (await pool.query(`SELECT * FROM ${table} ORDER BY id`)).rows));
   await pool.query("UPDATE categories SET name_vi='Edited before replacement' WHERE code='beauty'");
   const before = await snapshot();
@@ -63,7 +63,7 @@ test('replacement rolls back deletes and restores exact previous catalog if inse
 
 test('empty-schema migration, PostGIS, rerun migration/seed and preserve edited data', async () => {
   assert.match((await pool.query('SELECT postgis_version() AS version')).rows[0].version, /^3\./);
-  assert.equal((await pool.query('SELECT count(*) FROM schema_migrations')).rows[0].count, '6');
+  assert.equal((await pool.query('SELECT count(*) FROM schema_migrations')).rows[0].count, '7');
   const count = async () => (await pool.query('SELECT (SELECT count(*) FROM categories) AS c,(SELECT count(*) FROM skills) AS s,(SELECT count(*) FROM skill_categories) AS sc')).rows[0];
   const original = await count();
   assert.deepEqual(original, { c: '49', s: '128', sc: '128' });

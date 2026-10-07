@@ -7,7 +7,7 @@ import { Button } from '../../../components/ui/Button';
 import { LoadingState } from '../../../components/ui/Feedback';
 import { Card } from '../../../components/ui/Card';
 import { LanguageSettings } from './LanguageSettings';
-export function AccountPage({ title, back, login, children }: { title: 'addresses.title' | 'sessions.title' | 'partners.title'; back: () => void; login: () => void; children: (owner: string) => ReactNode }) {
+export function AccountPage({ title, back, login, children }: { title: 'addresses.title' | 'sessions.title' | 'partners.title' | 'jobs.title' | 'jobs.create' | 'jobs.detail' | 'chat.title'; back: () => void; login: () => void; children: (owner: string) => ReactNode }) {
   const { manager, state } = useAuth(); const { t } = useLocale();
   return <ProductShell keyboardDismissMode="on-drag" onBack={back}>
     <AppText variant={title === 'partners.title' ? 'section' : 'title'} accessibilityRole="header">{t(title)}</AppText>

@@ -970,5 +970,53 @@
     "level": "Unit/Integration/E2E",
     "priority": "P0",
     "status": "Bằng chứng và giới hạn xem B03-02 trong repo; chưa UAT"
+  },
+  {
+    "id": "QA-082",
+    "group": "Công việc và liên hệ",
+    "requirement": "MAP-03",
+    "operation": "searchPartners",
+    "setup": "DB và tài khoản DEMO/test cô lập",
+    "steps": "Mở tìm/sổ địa chỉ/cửa hàng/vùng/form thuê; chọn địa chỉ và lưu",
+    "expected": "Không ô tọa độ; tọa độ từ bộ chọn vẫn lưu và tìm đúng",
+    "level": "Unit/Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng B03-03/B03-04; chưa UAT"
+  },
+  {
+    "id": "QA-083",
+    "group": "Công việc và liên hệ",
+    "requirement": "P0-2",
+    "operation": "createJob",
+    "setup": "DB và tài khoản DEMO/test cô lập",
+    "steps": "Ba mode, now/scheduled, sai vùng/schema/phone/self-hire, response mất",
+    "expected": "Đủ dữ liệu, kiểm hiện hành, cùng key không trùng",
+    "level": "Unit/Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng B03-03/B03-04; chưa UAT"
+  },
+  {
+    "id": "QA-084",
+    "group": "Công việc và liên hệ",
+    "requirement": "P0-2",
+    "operation": "acceptJob",
+    "setup": "DB và tài khoản DEMO/test cô lập",
+    "steps": "ETA, hai người đổi cùng version, đổi lịch, stop có/không phí, phân công lại",
+    "expected": "Một ghi thắng, lịch sử đúng, không tự đóng, người cũ mất quyền việc",
+    "level": "Unit/Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng B03-03/B03-04; chưa UAT"
+  },
+  {
+    "id": "QA-085",
+    "group": "Công việc và liên hệ",
+    "requirement": "P0-2",
+    "operation": "sendMessage",
+    "setup": "DB và tài khoản DEMO/test cô lập",
+    "steps": "Chat trước/sau thuê, hai tài khoản, retry, sequence/cursor/read cũ, outsider, lỗi outbox",
+    "expected": "Đúng phòng/quyền, không trùng/mất trang, mốc đọc không lùi, rollback nguyên tử",
+    "level": "Unit/Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng B03-03/B03-04; chưa UAT"
   }
 ]

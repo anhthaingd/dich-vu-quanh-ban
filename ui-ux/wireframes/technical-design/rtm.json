@@ -179,7 +179,8 @@
       "QA-053",
       "QA-075",
       "QA-080",
-      "QA-081"
+      "QA-081",
+      "QA-082"
     ],
     "status": "Chưa chạy"
   },
@@ -305,7 +306,8 @@
     "contract_case": "CT-createJob",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-017"
+      "QA-017",
+      "QA-083"
     ],
     "status": "Chưa chạy"
   },
@@ -330,7 +332,8 @@
     "contract_case": "CT-acceptJob",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-018"
+      "QA-018",
+      "QA-084"
     ],
     "status": "Chưa chạy"
   },
@@ -539,7 +542,8 @@
     "contract_case": "CT-sendMessage",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-023"
+      "QA-023",
+      "QA-085"
     ],
     "status": "Chưa chạy"
   },

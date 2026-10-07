@@ -1,3 +1,5 @@
+import { locationsApi } from '../../location/api/locations-api';
+jest.mock('../../location/api/locations-api', () => ({ locationsApi: { search: jest.fn(), reverse: jest.fn() } }));
 import {
   act,
   fireEvent,
@@ -12,6 +14,14 @@ import { authFixture, session } from '../../../../test/helpers/auth';
 import { ApiError } from '../../../lib/http/api-error';
 import type { PartnersApi } from '../api/partners-api';
 import type { Partner } from '../models';
+async function choosePlace(prefix: string) {
+  jest.mocked(locationsApi.search).mockResolvedValue([{id:'demo',text:'DEMO address',point:{latitude:21,longitude:105},precision:'address'}]);
+  fireEvent.press(screen.getByTestId(`${prefix}-pick-location`));
+  fireEvent.changeText(screen.getByTestId('location-query'), 'DEMO address');
+  fireEvent.press(screen.getByTestId('location-search'));
+  fireEvent.press(await screen.findByTestId('location-result-0'));
+  fireEvent.press(screen.getByTestId('location-confirm'));
+}
 const id = '00000000-0000-4000-8000-000000000002';
 const skill = {
   id: '00000000-0000-4000-8000-000000000003',
@@ -188,14 +198,12 @@ test('owner edits skills, modes, prices, circles and public shops with a shared 
   fireEvent.press(screen.getByTestId('partner-section-areas'));
   fireEvent.press(screen.getByTestId('partner-add-area'));
   fireEvent.changeText(screen.getByLabelText('Tên khu vực'), 'Hanoi');
-  if (!screen.queryByTestId('area-0-lat')) fireEvent.press(screen.getByTestId('area-0-advanced'));
-  fireEvent.changeText(screen.getByTestId('area-0-lat'), '21');
-  fireEvent.changeText(screen.getByTestId('area-0-lng'), '105');
+  await choosePlace('area-0');
   fireEvent.press(screen.getByTestId('locale-en'));
   await waitFor(() =>
     expect(screen.getByTestId('locale-vi')).not.toBeDisabled()
   );
-  expect(screen.getByTestId('area-0-lat').props.value).toBe('21');
+  expect(screen.getByTestId('area-0-pick-location')).toHaveTextContent('Change location');
   fireEvent.press(screen.getByTestId('locale-vi'));
   await waitFor(() =>
     expect(screen.getByTestId('locale-en')).not.toBeDisabled()
@@ -207,9 +215,7 @@ test('owner edits skills, modes, prices, circles and public shops with a shared 
   fireEvent.press(screen.getByTestId('partner-section-locations'));
   fireEvent.press(screen.getByTestId('partner-add-location'));
   fireEvent.changeText(screen.getByLabelText('Địa chỉ'), 'Shop');
-  if (!screen.queryByTestId('location-0-lat')) fireEvent.press(screen.getByTestId('location-0-advanced'));
-  fireEvent.changeText(screen.getByTestId('location-0-lat'), '21');
-  fireEvent.changeText(screen.getByTestId('location-0-lng'), '105');
+  await choosePlace('location-0');
   fireEvent.press(screen.getByTestId('partner-save-locations'));
   await waitFor(() =>
     expect(screen.getByTestId('partner-publication')).not.toBeDisabled()
@@ -251,9 +257,7 @@ test('unverified account cannot create provider and anonymous search opens publi
   fireEvent.press(screen.getByTestId('search-open'));
   fireEvent.press(screen.getByTestId('search-submit'));
   expect(f.partners.search).not.toHaveBeenCalled();
-  if (!screen.queryByTestId('search-lat')) fireEvent.press(screen.getByTestId('search-advanced'));
-  fireEvent.changeText(screen.getByTestId('search-lat'), '21');
-  fireEvent.changeText(screen.getByTestId('search-lng'), '105');
+  await choosePlace('search');
   f.partners.search.mockRejectedValueOnce(new ApiError('NETWORK'));
   fireEvent.press(screen.getByTestId('search-submit'));
   fireEvent.press(await screen.findByText('Thử lại'));

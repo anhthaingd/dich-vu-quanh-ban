@@ -67,6 +67,8 @@ export type PartnerProfile = Pick<
   'id' | 'name' | 'kind' | 'bio' | 'verification_status'
 > & {
   skills: Skill[];
+  public_locations: {id:string;address:Location['address']}[];
+  service_modes: {skill_id:string;modes:Mode[]}[];
   public_addresses: Location['address'][];
   contact: { phone?: string; zalo?: string } | null;
   can_hire: boolean;

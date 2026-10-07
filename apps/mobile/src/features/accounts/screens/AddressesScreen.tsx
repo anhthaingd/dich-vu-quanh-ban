@@ -54,7 +54,6 @@ function Addresses({ owner }: { owner: string }) {
       <Input testID="address-label" label={t('addresses.label')} value={draft.label} editable={!disabled} onChangeText={label => update({label})} />
       <Input testID="address-text" label={t('addresses.text')} value={draft.text} editable={!disabled} onChangeText={text => update({text})} />
       <LocationField prefix="address" lat={draft.lat} lng={draft.lng} text={draft.text} disabled={disabled}
-        changeCoordinate={(key, value) => update({[key]:value})}
         onChange={value => update({text:value.text, lat:String(value.point.latitude), lng:String(value.point.longitude)})} />
       <View><AppText>{t('addresses.default')}</AppText><Switch testID="address-default" accessibilityLabel={t('addresses.default')} value={draft.is_default} disabled={disabled} onValueChange={is_default => update({is_default})} /></View>
       {invalid && <AppText accessibilityRole="alert" tone="error">{t('accountTools.invalid')}</AppText>}

@@ -1,7 +1,9 @@
 export const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-export const routes = ['/v1/locations/autocomplete', '/v1/locations/geocode', '/v1/locations/reverse', '/v1/partners', '/v1/partners/:id', ...['management','profile','skills','service-areas','locations','publication','availability'].map(action => `/v1/partners/:id/${action}`), '/v1/categories', '/v1/skills', '/v1/health', '/v1/ready', '/v1/auth/register', '/v1/auth/login', '/v1/auth/refresh', '/v1/auth/logout', '/v1/me', '/v1/me/sessions', '/v1/me/sessions/:id/revoke', '/v1/me/addresses', '/v1/me/addresses/:id', '/v1/me/addresses/:id/archive', 'unmatched'];
+export const routes = ['/v1/jobs','/v1/jobs/:id','/v1/jobs/:id/accept','/v1/jobs/:id/reschedule','/v1/jobs/:id/:action','/v1/conversations','/v1/conversations/:id/messages','/v1/conversations/:id/read','/v1/locations/autocomplete', '/v1/locations/geocode', '/v1/locations/reverse', '/v1/partners', '/v1/partners/:id', ...['management','profile','skills','service-areas','locations','publication','availability','members'].map(action => `/v1/partners/:id/${action}`), '/v1/categories', '/v1/skills', '/v1/health', '/v1/ready', '/v1/auth/register', '/v1/auth/login', '/v1/auth/refresh', '/v1/auth/logout', '/v1/me', '/v1/me/sessions', '/v1/me/sessions/:id/revoke', '/v1/me/addresses', '/v1/me/addresses/:id', '/v1/me/addresses/:id/archive', 'unmatched'];
 export function safeRoute(path: string): string {
   if (routes.includes(path)) return path;
+  const work=path.match(/^\/v1\/(jobs|conversations)\/([^/]+)(\/[^/]+)?$/);
+  if(work&&uuid.test(work[2])){const route=`/v1/${work[1]}/:id${work[3]??''}`;if(routes.includes(route))return route;if(work[1]==='jobs'&&['/decline','/withdraw','/stop','/assignments'].includes(work[3]))return '/v1/jobs/:id/:action';return 'unmatched';}
   const partner = path.match(/^\/v1\/partners\/([^/]+)(\/[^/]+)?$/);
   if (partner && uuid.test(partner[1])) { const route = `/v1/partners/:id${partner[2] ?? ''}`; return routes.includes(route) ? route : 'unmatched'; }
   const match = path.match(/^\/v1\/me\/(sessions|addresses)\/([^/]+)(\/(revoke|archive))?$/);

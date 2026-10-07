@@ -500,11 +500,6 @@ function Editor({
                     lat={a.lat}
                     lng={a.lng}
                     disabled={blocked}
-                    changeCoordinate={(key, text) =>
-                      setAreas((v) =>
-                        v.map((x, j) => (j === i ? { ...x, [key]: text } : x))
-                      )
-                    }
                   />
                   <Input
                     testID={`area-${i}-radius`}
@@ -580,11 +575,6 @@ function Editor({
                     lat={l.lat}
                     lng={l.lng}
                     disabled={blocked}
-                    changeCoordinate={(key, text) =>
-                      setLocations((v) =>
-                        v.map((x, j) => (j === i ? { ...x, [key]: text } : x))
-                      )
-                    }
                   />
                   <AppText>
                     {t(l.public ? 'partners.public' : 'partners.private')}

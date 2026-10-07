@@ -72,6 +72,7 @@ test('management response validation protects editor and preserves null vs zero 
       verification_status: 'unverified',
       skills: [],
       public_addresses: [],
+      public_locations: [], service_modes: [],
       contact: null,
       can_hire: false,
       can_message: false

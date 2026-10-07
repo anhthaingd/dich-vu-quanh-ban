@@ -1,0 +1,149 @@
+appId: vn.dichvuquanhban.app
+---
+- stopApp
+- openLink: ${DEV_URL}
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "Close"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: nav-account
+    timeout: 60000
+- tapOn:
+    id: locale-vi
+- tapOn:
+    id: nav-account
+- scrollUntilVisible:
+    element:
+      id: auth-email
+    direction: DOWN
+- tapOn:
+    id: auth-email
+- inputText: ${TEST_EMAIL}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: auth-password
+    direction: DOWN
+- tapOn:
+    id: auth-password
+- inputText: ${TEST_PASSWORD}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Enter
+- runFlow: dismiss-password-prompt.yaml
+- extendedWaitUntil:
+    visible: "Email chưa xác minh"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: jobs-open
+    direction: DOWN
+- tapOn:
+    id: jobs-open
+- tapOn:
+    id: "jobs-partner-.*"
+- scrollUntilVisible:
+    element:
+      id: "job-open-.*"
+    direction: DOWN
+- tapOn:
+    id: "job-open-.*"
+- scrollUntilVisible:
+    element:
+      id: job-action-accept
+    direction: DOWN
+- tapOn:
+    id: job-action-accept
+- scrollUntilVisible:
+    element:
+      id: job-eta
+    direction: DOWN
+- tapOn:
+    id: job-eta
+- eraseText
+- inputText: "45"
+
+- scrollUntilVisible:
+    element:
+      id: job-action-confirm
+    direction: DOWN
+- tapOn:
+    id: job-action-confirm
+- extendedWaitUntil:
+    visible: "Đã nhận · đang xử lý"
+    timeout: 15000
+- takeScreenshot: job-accepted
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: locale-en
+          direction: UP
+      - tapOn:
+          id: locale-en
+      - scrollUntilVisible:
+          element:
+            text: "Accepted · in progress"
+          direction: DOWN
+      - scrollUntilVisible:
+          element:
+            id: locale-ja
+          direction: UP
+      - tapOn:
+          id: locale-ja
+      - tapOn:
+          id: locale-vi
+- scrollUntilVisible:
+    element:
+      id: job-chat
+    direction: DOWN
+- tapOn:
+    id: job-chat
+- scrollUntilVisible:
+    element:
+      id: "conversation-open-.*"
+    direction: DOWN
+- tapOn:
+    id: "conversation-open-.*"
+- assertVisible: "DEMO khách: tôi đang chờ tại cửa."
+- takeScreenshot: chat-received
+- scrollUntilVisible:
+    element:
+      id: chat-body
+    direction: DOWN
+- tapOn:
+    id: chat-body
+- inputText: "DEMO native: toi se den sau 45 phut"
+
+- scrollUntilVisible:
+    element:
+      id: chat-send
+    direction: DOWN
+- tapOn:
+    id: chat-send
+- extendedWaitUntil:
+    visible: "DEMO native: toi se den sau 45 phut"
+    timeout: 15000
+- takeScreenshot: chat-sent
