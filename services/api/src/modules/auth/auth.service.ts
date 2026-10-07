@@ -12,9 +12,13 @@ export class AuthService {
   private readonly key: Uint8Array;
   constructor(private readonly pool: Pool, secret: string) { this.key = new TextEncoder().encode(secret); }
 
-  private me(user: User) {
-    // This slice cannot grant partner/admin capabilities or verified contact.
-    return { ...user, phone_verified: false, email_verified: false, partner_ids: [], admin_permissions: [] };
+  private async me(user: User, db: Pool | PoolClient) {
+    const { rows: [flags] } = await db.query(`SELECT
+      EXISTS(SELECT 1 FROM identities WHERE user_id=$1 AND provider='phone' AND verified_at IS NOT NULL) AS phone_verified,
+      EXISTS(SELECT 1 FROM identities WHERE user_id=$1 AND provider='email' AND verified_at IS NOT NULL) AS email_verified,
+      ARRAY(SELECT m.partner_id FROM memberships m JOIN partners p ON p.id=m.partner_id
+        WHERE m.user_id=$1 AND m.active AND p.archived_at IS NULL ORDER BY m.partner_id) AS partner_ids`, [user.id]);
+    return { ...user, ...flags, admin_permissions: [] };
   }
   private async issue(db: PoolClient, user: User, family = randomUUID(), expiry = new Date(Date.now() + 30 * 86400000)) {
     const refresh = randomBytes(32).toString('hex');
@@ -22,7 +26,7 @@ export class AuthService {
     const expires = Math.min(Math.floor(Date.now() / 1000) + 900, Math.floor(expiry.getTime() / 1000));
     const access = await new SignJWT({ sid: session.id }).setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .setSubject(user.id).setIssuer(issuer).setAudience(audience).setIssuedAt().setExpirationTime(expires).sign(this.key);
-    return { access_token: access, refresh_token: refresh, expires_at: new Date(expires * 1000).toISOString(), user: this.me(user) };
+    return { access_token: access, refresh_token: refresh, expires_at: new Date(expires * 1000).toISOString(), user: await this.me(user, db) };
   }
   private async transaction<T>(work: (db: PoolClient) => Promise<T>) {
     const db = await this.pool.connect();
@@ -83,7 +87,7 @@ export class AuthService {
     const { rows: [user] } = await db.query<User>(`UPDATE sessions s SET last_seen_at=clock_timestamp() FROM users u
       WHERE s.user_id=u.id AND s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND u.status='active' RETURNING u.id,u.display_name,u.status,u.locale,u.version`, [claims.sid,claims.sub]);
     if (!user) throw new UnauthorizedException();
-    return { user: this.me(user), sessionId: claims.sid };
+    return { user: await this.me(user, db), sessionId: claims.sid };
   }
   async logout(header: string | undefined) {
     const { sessionId, user } = await this.authenticate(header);

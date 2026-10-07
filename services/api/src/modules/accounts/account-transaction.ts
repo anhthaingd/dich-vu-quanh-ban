@@ -8,7 +8,8 @@ import type { AuthService } from '../auth/auth.service.js';
 export class AccountTransaction {
   constructor(private readonly pool: Pool, private readonly auth: AuthService) {}
   async run<T>(header: string | undefined, operation: string, key: string, input: unknown,
-    work: (db: PoolClient, actor: Awaited<ReturnType<AuthService['authenticate']>>) => Promise<T>): Promise<T> {
+    work: (db: PoolClient, actor: Awaited<ReturnType<AuthService['authenticate']>>) => Promise<T>,
+    authorize?: (db: PoolClient, actor: Awaited<ReturnType<AuthService['authenticate']>>) => Promise<void>): Promise<T> {
     const actor = await this.auth.authenticate(header);
     const hash = createHash('sha256').update(JSON.stringify(input)).digest('hex');
     const db = await this.pool.connect();
@@ -16,6 +17,7 @@ export class AccountTransaction {
       await db.query('BEGIN');
       await db.query('SELECT id FROM users WHERE id=$1 FOR UPDATE', [actor.user.id]);
       const current = await this.auth.authenticate(header, db);
+      await authorize?.(db, current);
       const { rows: [previous] } = await db.query('SELECT request_hash,response_snapshot FROM idempotency_keys WHERE actor_id=$1 AND operation=$2 AND request_key=$3', [current.user.id, operation, key]);
       if (previous && previous.request_hash !== hash) throw new ConflictException({ code: 'IDEMPOTENCY_MISMATCH' });
       const result: T = previous ? previous.response_snapshot : await work(db, current);

@@ -1,3 +1,6 @@
+import type { PartnersApi } from '../../partners/api/partners-api';
+import type { PartnerCreate, PartnerEdit } from '../../partners/models';
+import type { Locale } from '../../../lib/i18n';
 import type { AccountsApi, ProfileEdit } from '../../accounts/api/accounts-api';
 import type { AddressInput } from '../../accounts/models';
 import { ApiError } from '../../../lib/http/api-error';
@@ -8,7 +11,7 @@ export class AuthSession {
   private session: Session | null = null;
   private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
   private readonly listeners = new Set<() => void>();
-  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi) {}
+  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi) {}
   getSnapshot = () => this.snapshot;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   private update(values: Partial<Snapshot>) { this.snapshot = { ...this.snapshot, ...values }; this.listeners.forEach(fn => fn()); }
@@ -103,6 +106,11 @@ export class AuthSession {
     }
     return user;
   }
+  private partnerApi() { if (!this.partners) throw new ApiError('CONFIG'); return this.partners; }
+  createPartner = (owner:string,input:PartnerCreate,key:string) => this.accountOperation(owner,token=>this.partnerApi().create(token,input,key));
+  loadPartner = (owner:string,id:string) => this.accountOperation(owner,token=>this.partnerApi().management(token,id));
+  editPartner = (owner:string,id:string,input:PartnerEdit,key:string) => this.accountOperation(owner,token=>this.partnerApi().edit(token,id,input,key));
+  partnerProfile = (owner:string,id:string,locale:Locale,signal?:AbortSignal) => this.accountOperation(owner,token=>this.partnerApi().profile(id,locale,signal,token));
   private accountApi() { if (!this.accounts) throw new ApiError('CONFIG'); return this.accounts; }
   listAddresses = (owner: string, cursor?: string) => this.accountOperation(owner, token => this.accountApi().addresses(token,cursor));
   saveAddress = (owner: string, id: string | null, input: AddressInput, key: string) => this.accountOperation(owner, token => this.accountApi().saveAddress(token,id,input,key));

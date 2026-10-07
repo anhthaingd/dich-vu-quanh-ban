@@ -13,7 +13,8 @@
     "db:seed": "node --env-file-if-exists=.env --import tsx src/database/cli.ts seed",
     "db:replace-catalog": "node --env-file-if-exists=.env --import tsx src/database/cli.ts replace-catalog",
     "test:coverage": "c8 --all --src src --include \"src/**/*.ts\" --reporter=text --reporter=json --reporter=json-summary --reporter=lcov --reporter=html --reports-dir ../../coverage/api node --import tsx --test --test-concurrency=1 --test-reporter=spec --test-reporter=junit --test-reporter-destination=stdout --test-reporter-destination=../../test-results/api/junit.xml test/unit/*.test.ts test/integration/*.test.ts && node ../../scripts/test/coverage-gate.mjs src ../../coverage/api/coverage-final.json",
-    "pretest:coverage": "node -e \"require('node:fs').mkdirSync('../../test-results/api', {recursive:true})\""
+    "pretest:coverage": "node -e \"require('node:fs').mkdirSync('../../test-results/api', {recursive:true})\"",
+    "db:demo-partners": "node --env-file-if-exists=.env --import tsx src/database/demo-partners.ts"
   },
   "dependencies": {
     "@nestjs/common": "12.1.0",

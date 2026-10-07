@@ -4,31 +4,32 @@ DOC-085 · v1.0 · 01/10/2026 · DELIVERY-01. [Checklist](01-checklist.md) · [Q
 
 Các đường dẫn ghi “dự kiến” chưa có code. Dùng spec/API/QA liên kết trong checklist cho từng nhóm; không dựng lại thiết kế từ đầu hoặc chuyển toàn bộ prototype sang app trong một lần. Mỗi lát có luồng chạy thật và báo cáo riêng trước khi chuyển lát tiếp theo.
 
-## Thứ tự ưu tiên hiện hành — 06/10/2026
+## Thứ tự ưu tiên hiện hành — 07/10/2026
 
 **Thay thứ tự tuần tự B00 → B01 → B02 trước đây bằng các gói dưới đây.** Mã Bxx là nhóm chức năng để tra cứu, không phải thứ tự phải làm hết từng nhóm. Phần nền và tài khoản đã đủ để chuyển trọng tâm sang nghiệp vụ; không làm thêm tiện ích tài khoản vì chức năng chính đang cần quyết định.
 
-Code tài khoản mới nhất đã push `a823d0e` (gói trước `4a98dc0`). [Báo cáo](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) giữ bằng chứng local/native riêng. Đợt đang hoạt động chuyển sang **P0-1: người cung cấp và tìm dịch vụ**. Chưa được ghi gói này đã implement; hiện đang chốt các khoảng trống cụ thể trong [đề xuất P0-1](de-xuat/P0-01-nguon-cung-va-tim-dich-vu.md).
+Code tài khoản mới nhất đã push `a823d0e` (gói trước `4a98dc0`). [Báo cáo](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) giữ bằng chứng local/native riêng. **P0-1 đã được duyệt và triển khai**; xem [báo cáo gói nguồn cung/tìm dịch vụ](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md). Theo yêu cầu 07/10, gói tiếp theo là **MAP-01 chọn địa điểm bằng địa chỉ/bản đồ**, rồi mới **P0-2 gửi/nhận việc và chat**. [Kế hoạch MAP-01](de-xuat/MAP-01-ban-do-mien-phi.md) ghi phạm vi đề xuất, API, phụ thuộc và tiêu chí; thứ tự và hướng thử MapLibre + Geoapify Free đã chốt, chưa bật billing; contract mới chưa chốt.
 
 | Thứ tự | Gói bàn giao và lý do ưu tiên | Nối các mục checklist | Điều kiện bàn giao / phụ thuộc |
 |---|---|---|---|
-| **P0-1 — làm trước** | **Có người cung cấp, khách tìm và xem hồ sơ thật.** Đây là đầu vào của mọi yêu cầu thuê. Gom tạo/sửa hồ sơ, kỹ năng, giá tham khảo, vùng/cửa hàng, công bố và bật/tắt nhận việc; phía khách chọn kỹ năng/vị trí, lọc và xem hồ sơ. | B02-03/04 + phần cần thiết của B01-05, B02-02, B03-01; không yêu cầu hoàn tất cả B01 | Hai tài khoản đi hết luồng trên DB thật; không rò dữ liệu riêng; bật/tắt hoặc đổi vùng tác động kết quả; lưu/thử lại/version đúng. Cần chốt xác minh trong môi trường kiểm thử và phần API còn thiếu. Tạo nền ví cùng hồ sơ theo contract, chưa mở giao dịch tiền. Upload cần cho tiêu chí hồ sơ thì làm trong gói, không dựng toàn hệ thống asset trước. |
-| **P0-2 — ngay sau P0-1** | **Khách gửi yêu cầu, người cung cấp nhận và hai bên theo dõi việc.** Gom làm ngay/hẹn trước, danh sách/chi tiết, nhận/từ chối/rút/đổi lịch/dừng và chat tối thiểu trước/sau thuê. | B03-02/03/04 + B05-01; B04-02 khi dùng nhân viên | Hai tài khoản thực hiện được; kiểm điện thoại đã xác minh, tự thuê, trạng thái và vùng ngay lúc gửi; retry không tạo trùng; chat giữ quyền. Làm ngay có ETA, không thêm bước bắt đầu. OTP thật chưa mở thì chỉ được nghiệm thu trong phạm vi test đã duyệt. |
+| **P0-1 — làm trước** | **Có người cung cấp, khách tìm và xem hồ sơ thật.** Đây là đầu vào của mọi yêu cầu thuê. Gom tạo/sửa hồ sơ, kỹ năng, giá tham khảo, vùng/cửa hàng, công bố và bật/tắt nhận việc; phía khách chọn kỹ năng/vị trí, lọc và xem hồ sơ. | B02-03/04 + phần cần thiết của B01-05, B02-02, B03-01; không yêu cầu hoàn tất cả B01 | Hai tài khoản đi hết luồng trên DB thật; không rò dữ liệu riêng; bật/tắt hoặc đổi vùng tác động kết quả; lưu/thử lại/version đúng. Đã chốt tài khoản DEMO local/test và phần API bổ sung theo P0-1. Tạo nền ví cùng hồ sơ theo contract, chưa mở giao dịch tiền. Upload cần cho tiêu chí hồ sơ thì làm trong gói, không dựng toàn hệ thống asset trước. |
+| **MAP-01 — trước P0-2** | **Chọn địa điểm dễ dàng bằng nhập địa chỉ/gợi ý hoặc chọn ghim.** Đề xuất bộ chọn chung cho tìm dịch vụ, sổ địa chỉ, cửa hàng, tâm vùng; GPS một lần. | B03-01 + phần địa điểm B01-04/B02-03 | [Kế hoạch](de-xuat/MAP-01-ban-do-mien-phi.md); đã chọn hướng thử Geoapify Free, cần chốt contract, thử địa chỉ Việt Nam và SDK Android/iOS/web. Nối DB/API/app/test, bàn giao trọn đợt; không tự công khai tâm vùng hoặc coi khoảng cách là ETA. |
+| **P0-2 — sau MAP-01** | **Khách gửi yêu cầu, người cung cấp nhận và hai bên theo dõi việc.** Gom làm ngay/hẹn trước, danh sách/chi tiết, nhận/từ chối/rút/đổi lịch/dừng và chat tối thiểu trước/sau thuê. | B03-02/03/04 + B05-01; B04-02 khi dùng nhân viên | Hai tài khoản thực hiện được; kiểm điện thoại đã xác minh, tự thuê, trạng thái và vùng ngay lúc gửi; retry không tạo trùng; chat giữ quyền. Làm ngay có ETA, không thêm bước bắt đầu. OTP thật chưa mở thì chỉ được nghiệm thu trong phạm vi test đã duyệt. |
 | **P0-3 — hoàn thành vòng sử dụng** | **Ghi kết quả, hóa đơn và hoàn tất việc bằng tiền test.** Gom ảnh kết quả, công/vật tư, sửa/xác nhận hóa đơn, point/giữ phí/quyết toán và hai dấu thanh toán. | B02-02 cho ảnh + B06-01/02/03 + B07-01/02/03 | Luồng từ P0-2 đi tới hoàn tất; số tiền theo spec, ledger cân bằng, không nhân đôi khi retry; admin không giả xác nhận nhận tiền. Chưa nối tiền thật, chưa gọi ngân hàng. Q02 chưa chốt vẫn chặn tiền thật. |
 | **P1-1** | Đội ngũ cửa hàng/doanh nghiệp đầy đủ: mời, quyền, phân công/đổi người; không để gói quản trị nhân viên chặn luồng thợ/chủ tự thực hiện. | B04-01/02 | Nhiều người dùng, đúng quyền từng việc; người rời không truy cập việc mới; phòng chat riêng không lộ. Phần phân công bắt buộc của luồng đã chọn được kéo vào P0-2. |
-| **P1-2** | Hoàn thiện hỗ trợ cho luồng chính: thông báo/inbox/lịch, tìm trên bản đồ/GPS, đánh giá, xét xác minh và xử lý báo cáo/admin. | Phần còn lại B03-01, B05-02/03, B02-05, B09, B10-01 | Provider/ngân sách riêng nếu có. Admin tối thiểu bắt buộc cho quyền, xác minh hoặc vận hành được làm cùng gói P0 có phụ thuộc, không chờ đến đây mới bảo vệ dữ liệu. |
+| **P1-2** | Hoàn thiện hỗ trợ cho luồng chính: thông báo/inbox/lịch, bản đồ kết quả nâng cao ngoài MAP-01, đánh giá, xét xác minh và xử lý báo cáo/admin. | Phần còn lại B03-01, B05-02/03, B02-05, B09, B10-01 | Provider/ngân sách riêng nếu có. Admin tối thiểu bắt buộc cho quyền, xác minh hoặc vận hành được làm cùng gói P0 có phụ thuộc, không chờ đến đây mới bảo vệ dữ liệu. |
 | **P2** | Hoàn thiện tiện ích tài khoản, đồng bộ locale tài khoản, gọi trong app, ngân hàng sandbox và vận hành mở rộng. | Phần còn lại B01, I18N-03, B08, B10-02, B11-01/03 | Nâng lên P0/P1 chỉ khi là điều kiện bắt buộc để hoàn thành gói đang chạy. Không coi ưu tiên thấp là loại khỏi phase hoặc khỏi điều kiện ra mắt. |
 | **Cổng nghiệm thu** | UAT toàn hành trình, bảo mật, phục hồi dữ liệu, vận hành và phê duyệt phát hành. | B11-02, G-MONEY | Kiểm cả các phần P1/P2 bắt buộc trước ra mắt. Đạt local/test không có nghĩa được production hoặc tiền thật. |
 
 ### Cách thực hiện từ trên xuống
 
-1. Chọn gói P0 đầu tiên chưa hoàn tất. Đọc code + spec + checklist và liệt kê quyết định thực sự còn thiếu. Không dựng lại thiết kế đã có.
+1. Theo thứ tự P0-1 → MAP-01 → P0-2 → P0-3; chọn gói đầu tiên chưa hoàn tất trong phạm vi đã duyệt. Đọc code + spec + checklist và liệt kê quyết định thực sự còn thiếu. Không dựng lại thiết kế đã có.
 2. Gom quyết định thiếu trong một đề xuất cụ thể. Chỉ sửa spec sau khi duyệt; không xem “làm chức năng chính” là mở lại OTP, duyệt chi phí hoặc bỏ điều kiện quyền.
 3. Triển khai phần đủ căn cứ trong gói: dữ liệu và quyền → API → màn hình theo thiết kế → test nhiều tài khoản/lỗi/retry. Giữ VI/EN/JA và chất lượng UI ngay trong gói, không tạo giao diện giả rồi đánh dấu xong.
 4. Kiểm DB thật, app, Android và iOS; báo cáo học code theo thao tác người dùng. Ghi rõ phần chưa có dữ liệu thật, chưa chạy native/CI hoặc chưa UAT.
 5. Chỉ chuyển gói khi tiêu chí trong phạm vi đã duyệt đạt. Nếu bị chặn, tiếp tục phần độc lập của cùng gói; không tự đi làm chức năng phụ để lấp thời gian.
 
-**OTP giữ Pending** theo yêu cầu ngày 01/10. Việc cho dùng dữ liệu xác minh kiểm thử ở P0-1 đang là đề xuất, chưa được duyệt; không cập nhật tài khoản thật hoặc gắn huy hiệu partner đã xác minh. Mẫu thử không thay bằng chứng gửi SMS/email thật.
+**OTP giữ Pending** theo yêu cầu ngày 01/10. P0-1 đã được duyệt 06/10/2026, cho phép fixture test và tài khoản DEMO mới local riêng; không cập nhật tài khoản thật hoặc gắn huy hiệu partner đã xác minh. Mẫu thử không thay bằng chứng gửi SMS/email thật.
 
 ### Những mục chi tiết bên dưới dùng để tra cứu
 
@@ -152,3 +153,8 @@ Các phần 1–12 dưới đây giữ hướng dẫn kỹ thuật cho từng nh
 4. G-MONEY chỉ mở khi Q02/PLAN-005, provider/ngân sách/PLAN-007 và kiểm ngoại lệ được chốt, có phê duyệt tiền thật riêng.
 
 **Đạt:** mỗi yêu cầu bắt buộc có bằng chứng hoặc quyết định ngoài phạm vi rõ ràng, UAT có người duyệt; production chưa được phép vẫn ghi chưa được phép.
+
+
+### Bàn giao P0-1 · 06/10/2026
+
+[B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) ghi phạm vi triển khai, bằng chứng và phần còn mở. Gói tiếp theo theo bảng ưu tiên là P0-2 yêu cầu/nhận việc/chat; bản đồ là [đề xuất miễn phí](de-xuat/MAP-01-ban-do-mien-phi.md), chưa tích hợp.

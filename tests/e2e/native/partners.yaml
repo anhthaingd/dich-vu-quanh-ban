@@ -1,0 +1,240 @@
+appId: vn.dichvuquanhban.app
+---
+- stopApp
+- openLink: ${DEV_URL}
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "Close"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: nav-account
+    timeout: 60000
+- tapOn:
+    id: locale-vi
+- tapOn:
+    id: nav-account
+- scrollUntilVisible:
+    element:
+      id: auth-email
+    direction: DOWN
+- tapOn:
+    id: auth-email
+- inputText: ${TEST_EMAIL}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: auth-password
+    direction: DOWN
+- tapOn:
+    id: auth-password
+- inputText: ${TEST_PASSWORD}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Enter
+- runFlow: dismiss-password-prompt.yaml
+- extendedWaitUntil:
+    visible: "Email chưa xác minh"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: partners-open
+    direction: DOWN
+- tapOn:
+    id: partners-open
+- extendedWaitUntil:
+    visible: "Native company"
+    timeout: 15000
+- takeScreenshot: partner-list
+- scrollUntilVisible:
+    element:
+      id: partner-create-open
+    direction: DOWN
+- tapOn:
+    id: partner-create-open
+- takeScreenshot: partner-create
+- tapOn:
+    id: nav-back
+- tapOn: "Native company"
+- extendedWaitUntil:
+    visible:
+      id: partner-publication
+    timeout: 15000
+- takeScreenshot: partner-draft
+- tapOn:
+    id: partner-publication
+- extendedWaitUntil:
+    visible: ".*Đã công bố"
+    timeout: 15000
+- takeScreenshot: partner-paused
+- scrollUntilVisible:
+    element:
+      id: partner-availability
+    direction: UP
+- tapOn:
+    id: partner-availability
+- extendedWaitUntil:
+    visible: "Tắt nhận việc"
+    timeout: 15000
+- takeScreenshot: partner-published
+- tapOn:
+    id: partner-availability
+- extendedWaitUntil:
+    visible: "Bật nhận việc"
+    timeout: 15000
+- tapOn:
+    id: partner-availability
+- extendedWaitUntil:
+    visible: "Tắt nhận việc"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: partner-section-profile
+    direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
+- tapOn:
+    id: partner-section-profile
+- scrollUntilVisible:
+    element:
+      id: partner-save-profile
+    direction: DOWN
+- takeScreenshot: partner-profile-edit
+- scrollUntilVisible:
+    element:
+      id: partner-section-skills
+    direction: UP
+    centerElement: true
+    visibilityPercentage: 100
+- tapOn:
+    id: partner-section-skills
+- scrollUntilVisible:
+    element:
+      id: skill-mode-0-at_customer
+    direction: DOWN
+- takeScreenshot: partner-skills
+- scrollUntilVisible:
+    element:
+      id: partner-section-areas
+    direction: UP
+    centerElement: true
+    visibilityPercentage: 100
+- tapOn:
+    id: partner-section-areas
+- scrollUntilVisible:
+    element:
+      id: partner-save-areas
+    direction: DOWN
+- takeScreenshot: partner-areas
+- scrollUntilVisible:
+    element:
+      id: partner-section-locations
+    direction: UP
+    centerElement: true
+    visibilityPercentage: 100
+- tapOn:
+    id: partner-section-locations
+- scrollUntilVisible:
+    element:
+      id: partner-add-location
+    direction: DOWN
+- takeScreenshot: partner-locations
+- scrollUntilVisible:
+    element:
+      id: locale-en
+    direction: DOWN
+- scrollUntilVisible:
+    element:
+      id: locale-en
+    direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
+- tapOn:
+    id: locale-en
+- extendedWaitUntil:
+    visible: "Language"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: locale-ja
+    direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
+- tapOn:
+    id: locale-ja
+- extendedWaitUntil:
+    visible: "言語"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: locale-vi
+    direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
+- tapOn:
+    id: locale-vi
+- extendedWaitUntil:
+    visible: "Ngôn ngữ"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: nav-back
+    direction: UP
+- tapOn:
+    id: nav-back
+- tapOn:
+    id: nav-back
+- tapOn:
+    id: nav-back
+- tapOn:
+    id: search-open
+- scrollUntilVisible:
+    element:
+      id: search-lat
+    direction: DOWN
+- tapOn:
+    id: search-lat
+- inputText: "21.0285"
+- pressKey: Enter
+- tapOn:
+    id: search-lng
+- inputText: "105.8542"
+- pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: search-submit
+    direction: DOWN
+- takeScreenshot: partner-search-form
+- tapOn:
+    id: search-submit
+- scrollUntilVisible:
+    element:
+      text: "Native company"
+    direction: DOWN
+- assertVisible: "Native company"
+- scrollUntilVisible:
+    element:
+      text: "Xem hồ sơ"
+    direction: DOWN
+- takeScreenshot: partner-search-results
+- tapOn: "Xem hồ sơ"
+- assertVisible: "Native company"
+- takeScreenshot: partner-public

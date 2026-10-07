@@ -1,5 +1,7 @@
 # Kế hoạch QA, RTM và UAT
 
+> **P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.**
+
 > **B01-04A · 06/10/2026 · v0.1.5: chủ dự án duyệt gộp quản lý phiên và sổ địa chỉ. Một mục phiên đại diện một lần đăng nhập (id = family_id ổn định qua refresh), có created_at, last_seen_at, is_current; state active/expired/revoked; không trả IP, token/hash. Thu hồi chặn toàn bộ family và kiểm lại quyền trong transaction. Địa chỉ thêm is_default/version; địa chỉ đầu tiên khi sổ đang rỗng tự mặc định. Chọn mặc định mới bỏ mặc định cũ và tăng version bản cũ. Gỡ mặc định để chưa có mặc định, không tự chọn mục khác. PUT yêu cầu expected_version. Mọi mutation giữ Idempotency-Key khi retry, kiểm chủ sở hữu; archive giữ dữ liệu lịch sử, không đổi snapshot công việc. Nhập địa chỉ/tọa độ thủ công, chưa chọn GPS/map provider. OTP Pending; không production/chi phí.**
 
 > **B01-04 · 06/10/2026 · v0.1.4:** Bổ sung QA-070/071 cho `Me.version` và sửa tên: schema Session/Me, phiên bị thu hồi khi chờ khóa, chống ghi đè, retry sau mất phản hồi, rollback, bảo toàn bản nháp VI/EN/JA, lưu tên qua mở lại native. Các ca dưới đây là tiêu chí kiểm; kết quả thực tế và giới hạn ghi trong báo cáo B01-04 ở repo.
@@ -154,3 +156,8 @@ API dùng Node test/c8; mobile Jest/RNTL; core ≥90% lines/85% branches, phần
 
 - **QA-072** — List/phân trang, thu hồi phiên khác/hiện tại, race refresh/revoke, retry và truy cập chéo. Kỳ vọng: Một mục mỗi family, đúng phiên hiện tại, không lộ token/IP; thu hồi chặn mọi token cùng family, actor khác 404; mất phiên ẩn dữ liệu riêng.
 - **QA-073** — CRUD/mặc định, pagination, conflict, mất phản hồi, rollback, đổi ngôn ngữ, khởi động lại. Kỳ vọng: Tối đa một mặc định; gỡ mặc định không chọn thay; không trùng khi retry; 409 sửa cũ; rollback tên/default/key; không lộ địa chỉ; draft giữ khi đổi tiếng.
+
+## P0-1 — nguồn cung và tìm dịch vụ
+
+- **QA-074** — Tạo draft, điền kỹ năng/vùng/cửa hàng, công bố và nhận việc; sửa cạnh tranh, mất response, mất quyền, rollback. Ví rỗng cùng transaction; nháp riêng tư; đầy đủ theo mọi mode; shared version; replay kiểm lại quyền; tắt/nháp loại khỏi search; không cấp verified từ client.
+- **QA-075** — Lọc kỹ năng/mode/category/verified; biên vùng/bán kính; cursor đổi filter; đổi vị trí liên tục; xem profile VI/EN/JA/anonymous. Lọc trước xếp hạng; mỗi partner một kết quả; vùng phủ khách và tâm trong radius; distance cursor không lặp trên tập ổn định; không rò địa chỉ riêng; phản hồi cũ không ghi đè mới.

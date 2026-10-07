@@ -1,3 +1,5 @@
+import { AuthModule } from './modules/auth/auth.module.js';
+import { PartnersModule } from './modules/partners/partners.module.js';
 import { AppLog } from './logging/logger.js';
 import { LoggingModule } from './logging/logging.module.js';
 import { Module, type DynamicModule } from '@nestjs/common';
@@ -14,7 +16,7 @@ export class AppModule {
     return {
       module: AppModule,
       imports: [LoggingModule.register(log), DatabaseModule.register(settings, database, log), CatalogModule.register(settings.cursorSecret), HealthModule,
-        ...(settings.authSecret ? [AccountsModule.register(settings.authSecret, settings.cursorSecret)] : [])],
+        ...(settings.authSecret ? [AuthModule.register(settings.authSecret), AccountsModule.register(settings.cursorSecret), PartnersModule.register(settings.cursorSecret)] : [])],
     };
   }
 }

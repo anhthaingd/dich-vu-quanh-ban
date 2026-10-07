@@ -171,3 +171,10 @@ Bản hiện hành React v0.15 / UI-UX-v0.19.zip. Đã sửa kiểm trạng thá
 
 
 </details>
+
+
+### Thử nguồn cung và tìm dịch vụ — P0-1
+
+Sau `npm run db:migrate` và `npm run db:seed`, chạy `npm run db:demo-partners` một lần trên DB local. Lệnh chỉ nhận NODE_ENV=development, DB dvqb_local trên localhost. Ba tài khoản mới có tên DEMO (thợ/cửa hàng/doanh nghiệp), không đổi tài khoản đang dùng, ví 0đ. Email/mật khẩu nằm trong `.local/demo-partners.json` được Git bỏ qua; lệnh chạy lại sẽ dừng để bạn dùng lại bộ đã tạo.
+
+Khởi động lại API (`npm run api`), mở app → **Tìm dịch vụ**, nhập vĩ độ `21.0285`, kinh độ `105.8542`, bán kính `10000` mét. Đăng nhập một tài khoản DEMO → **Hồ sơ cung cấp dịch vụ** để sửa/tắt nhận việc và kiểm lại tìm kiếm. Tài khoản thường chưa xác minh điện thoại chưa tạo được hồ sơ; OTP đang Pending. [Hướng dẫn tự thử và học code](docs/ke-hoach-trien-khai/bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md).

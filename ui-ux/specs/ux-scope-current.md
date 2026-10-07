@@ -250,3 +250,11 @@ Cập nhật HTML và Markdown phạm vi trên Drive. Native SRS/FR-NFR chưa đ
 ### Quy tắc hiện hành 23/09 — công việc
 
 Đã chốt 23/09/2026: chặn thuê chính mình hoặc doanh nghiệp đang là thành viên. Đổi lịch chỉ để thay đổi ngày/giờ hẹn sau khi hai bên trao đổi, không bắt buộc vì công việc kéo dài. Công việc đã nhận không tự hết hạn, tự hủy hoặc tự hoàn tất theo thời gian; có thể kéo dài nhiều ngày. Luồng hoàn tất bình thường cần khách báo đã trả và thợ xác nhận đã nhận; xác nhận hóa đơn riêng chưa kết thúc công việc. Giữ quy tắc quyết toán một lần và ngoại lệ admin đã chốt. Không tạo luồng đổi lịch qua báo cáo/admin. Sau xác nhận hóa đơn không còn hành động đổi lịch; hỗ trợ/bảo hành vẫn trao đổi trong chat.
+
+## P0-1 — quyết định triển khai 06/10/2026
+
+P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.
+
+Hồ sơ public và màn quản lý dùng dữ liệu riêng. Chỉ profile.manage/owner đang hoạt động được sửa; draft không hiện public. Công bố yêu cầu ít nhất một kỹ năng active và nơi làm phù hợp từng mode, ảnh năng lực chưa bắt buộc trong gói đầu. Sửa làm published không còn hợp lệ bị từ chối; về draft tắt nhận việc. Tắt nhận việc vẫn xem qua link, không hiện search. Tên kỹ năng public theo VI/EN/JA; không tự dịch tên/bio người dùng. Prototype trước P0-1 còn dữ liệu mô phỏng, không làm chuẩn thay quy tắc máy chủ mới.
+
+Bổ sung theo yêu cầu chủ dự án P0-1: được tạo tài khoản DEMO mới cho thợ/cửa hàng/doanh nghiệp trong DB local để tự thử khi OTP Pending. Không sửa tài khoản hiện hữu, không huy hiệu xác minh hồ sơ, ví 0đ; công cụ chỉ chạy NODE_ENV=development, DB dvqb_local trên localhost. Tài khoản thử không chứng minh xác minh SMS hay đăng ký production đã hoàn tất.

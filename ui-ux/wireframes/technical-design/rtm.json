@@ -176,7 +176,8 @@
     "scenario_ids": [
       "QA-010",
       "QA-011",
-      "QA-053"
+      "QA-053",
+      "QA-075"
     ],
     "status": "Chưa chạy"
   },
@@ -185,7 +186,8 @@
     "contract_case": "CT-getPartner",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-012"
+      "QA-012",
+      "QA-075"
     ],
     "status": "Chưa chạy"
   },
@@ -194,7 +196,8 @@
     "contract_case": "CT-createPartner",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-008"
+      "QA-008",
+      "QA-074"
     ],
     "status": "Chưa chạy"
   },
@@ -202,7 +205,9 @@
     "operation_id": "editPartner",
     "contract_case": "CT-editPartner",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-074"
+    ],
     "status": "Chưa chạy"
   },
   {
@@ -210,7 +215,8 @@
     "contract_case": "CT-setAvailability",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-009"
+      "QA-009",
+      "QA-074"
     ],
     "status": "Chưa chạy"
   },
@@ -218,21 +224,27 @@
     "operation_id": "setSkills",
     "contract_case": "CT-setSkills",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-074"
+    ],
     "status": "Chưa chạy"
   },
   {
     "operation_id": "setAreas",
     "contract_case": "CT-setAreas",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-074"
+    ],
     "status": "Chưa chạy"
   },
   {
     "operation_id": "setLocations",
     "contract_case": "CT-setLocations",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-074"
+    ],
     "status": "Chưa chạy"
   },
   {
@@ -959,5 +971,23 @@
     "checks": "200 status; readiness503 khi DB không sẵn sàng; không lộ lỗi nội bộ",
     "scenario_ids": [],
     "status": "Đã kiểm local Đợt1 + LOGTEST-01; native/remoteCI chưa nghiệm thu"
+  },
+  {
+    "operation_id": "getPartnerManagement",
+    "contract_case": "CT-getPartnerManagement",
+    "checks": "schema; permission; version; retry; privacy",
+    "scenario_ids": [
+      "QA-074"
+    ],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "setPublication",
+    "contract_case": "CT-setPublication",
+    "checks": "schema; permission; version; retry; privacy",
+    "scenario_ids": [
+      "QA-074"
+    ],
+    "status": "Chưa chạy"
   }
 ]

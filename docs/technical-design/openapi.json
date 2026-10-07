@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Dịch vụ quanh bạn — API thiết kế",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local. B01-04 (06/10/2026): Me.version bat buoc >=1, PATCH /me sua ten theo expected_version va Idempotency-Key da duyet."
   },
   "servers": [
@@ -2558,7 +2558,7 @@
           "Tìm và quản lý partner"
         ],
         "summary": "Tìm danh sách/bản đồ",
-        "description": "Quyền: Public. Lọc availability/moderation/kỹ năng/vùng trước xếp hạng. Không lộ tọa độ cá nhân. Trọng số khoảng cách/đánh giá/chuyên môn còn đề xuất.",
+        "description": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "security": [],
         "parameters": [
           {
@@ -2624,7 +2624,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Opaque cursor ký, gắn bộ lọc và actor; thứ tự created_at,id."
+            "description": "HMAC cursor gắn các bộ lọc public; thứ tự distance_m,created_at,id. Đổi bộ lọc phải bắt đầu lại."
           },
           {
             "name": "limit",
@@ -2653,7 +2653,7 @@
               "minimum": 1,
               "maximum": 5
             },
-            "description": "Sao tối thiểu"
+            "description": "Chưa triển khai trong P0-1; gửi tham số này trả400."
           },
           {
             "name": "category_id",
@@ -2673,9 +2673,10 @@
                 "recommended",
                 "distance",
                 "rating"
-              ]
+              ],
+              "default": "distance"
             },
-            "description": "Khớp chuyên môn trước xếp hạng"
+            "description": "P0-1 chỉ distance; recommended/rating còn Pending và trả400, không âm thầm đổi sort."
           }
         ],
         "responses": {
@@ -2771,7 +2772,7 @@
           }
         },
         "x-authorization": "Public",
-        "x-rules": "Lọc availability/moderation/kỹ năng/vùng trước xếp hạng. Không lộ tọa độ cá nhân. Trọng số khoảng cách/đánh giá/chuyên môn còn đề xuất."
+        "x-rules": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
       },
       "post": {
         "operationId": "createPartner",
@@ -2779,7 +2780,7 @@
           "Tìm và quản lý partner"
         ],
         "summary": "Đăng ký partner",
-        "description": "Quyền: User đã xác minh. Tạo owner membership + wallet trong transaction; nhãn chưa xác minh, chưa nhận việc cho tới khi hồ sơ hợp lệ.",
+        "description": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "security": [
           {
             "bearerAuth": []
@@ -2803,7 +2804,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PartnerProfile"
+                  "$ref": "#/components/schemas/PartnerManagement"
                 }
               }
             }
@@ -2889,8 +2890,8 @@
             }
           }
         },
-        "x-authorization": "User đã xác minh",
-        "x-rules": "Tạo owner membership + wallet trong transaction; nhãn chưa xác minh, chưa nhận việc cho tới khi hồ sơ hợp lệ.",
+        "x-authorization": "User có điện thoại đã xác minh",
+        "x-rules": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -2921,6 +2922,20 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "vi",
+                "en",
+                "ja"
+              ],
+              "default": "vi"
+            },
+            "description": "Tên kỹ năng theo locale; fallback VI như API danh mục."
           }
         ],
         "responses": {
@@ -3016,7 +3031,7 @@
           }
         },
         "x-authorization": "Public; liên hệ cần đăng nhập",
-        "x-rules": "Nếu có bearer hợp lệ mở DTO đăng nhập, không bao giờ lộ giấy tờ/ví."
+        "x-rules": "Nếu có bearer hợp lệ mở DTO đăng nhập, không bao giờ lộ giấy tờ/ví. P0-1: chỉ published chưa archive, suspended trả404. Tắt nhận việc vẫn xem qua link. Liên hệ chỉ khi bearer hợp lệ; kỹ năng theo locale; không trả vùng riêng/version."
       }
     },
     "/partners/{id}/profile": {
@@ -3026,7 +3041,7 @@
           "Tìm và quản lý partner"
         ],
         "summary": "Sửa hồ sơ",
-        "description": "Quyền: profile.manage đúng partner. Kiểm version; không đổi snapshot việc cũ.",
+        "description": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "security": [
           {
             "bearerAuth": []
@@ -3059,7 +3074,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PartnerProfile"
+                  "$ref": "#/components/schemas/PartnerManagement"
                 }
               }
             }
@@ -3146,7 +3161,7 @@
           }
         },
         "x-authorization": "profile.manage đúng partner",
-        "x-rules": "Kiểm version; không đổi snapshot việc cũ.",
+        "x-rules": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -3166,7 +3181,7 @@
           "Tìm và quản lý partner"
         ],
         "summary": "Bật/tắt nhận việc",
-        "description": "Quyền: profile.manage đúng partner. Kiểm version; không đổi snapshot việc cũ.",
+        "description": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "security": [
           {
             "bearerAuth": []
@@ -3199,7 +3214,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PartnerProfile"
+                  "$ref": "#/components/schemas/PartnerManagement"
                 }
               }
             }
@@ -3286,7 +3301,7 @@
           }
         },
         "x-authorization": "profile.manage đúng partner",
-        "x-rules": "Kiểm version; không đổi snapshot việc cũ.",
+        "x-rules": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -3306,7 +3321,7 @@
           "Tìm và quản lý partner"
         ],
         "summary": "Sửa kỹ năng",
-        "description": "Quyền: profile.manage đúng partner. Kiểm version; không đổi snapshot việc cũ.",
+        "description": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "security": [
           {
             "bearerAuth": []
@@ -3339,7 +3354,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PartnerProfile"
+                  "$ref": "#/components/schemas/PartnerManagement"
                 }
               }
             }
@@ -3426,7 +3441,7 @@
           }
         },
         "x-authorization": "profile.manage đúng partner",
-        "x-rules": "Kiểm version; không đổi snapshot việc cũ.",
+        "x-rules": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -3446,7 +3461,7 @@
           "Tìm và quản lý partner"
         ],
         "summary": "Sửa vùng phục vụ",
-        "description": "Quyền: profile.manage đúng partner. Kiểm version; không đổi snapshot việc cũ.",
+        "description": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "security": [
           {
             "bearerAuth": []
@@ -3479,7 +3494,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PartnerProfile"
+                  "$ref": "#/components/schemas/PartnerManagement"
                 }
               }
             }
@@ -3566,7 +3581,7 @@
           }
         },
         "x-authorization": "profile.manage đúng partner",
-        "x-rules": "Kiểm version; không đổi snapshot việc cũ.",
+        "x-rules": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -3586,7 +3601,7 @@
           "Tìm và quản lý partner"
         ],
         "summary": "Sửa cửa hàng",
-        "description": "Quyền: profile.manage đúng partner. Kiểm version; không đổi snapshot việc cũ.",
+        "description": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "security": [
           {
             "bearerAuth": []
@@ -3619,7 +3634,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PartnerProfile"
+                  "$ref": "#/components/schemas/PartnerManagement"
                 }
               }
             }
@@ -3706,7 +3721,7 @@
           }
         },
         "x-authorization": "profile.manage đúng partner",
-        "x-rules": "Kiểm version; không đổi snapshot việc cũ.",
+        "x-rules": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -15978,6 +15993,266 @@
           }
         ]
       }
+    },
+    "/partners/{id}/management": {
+      "get": {
+        "operationId": "getPartnerManagement",
+        "tags": [
+          "Tìm và quản lý partner"
+        ],
+        "summary": "Đọc hồ sơ để quản lý",
+        "description": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerManagement"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Owner hoặc profile.manage đúng partner",
+        "x-rules": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
+      }
+    },
+    "/partners/{id}/publication": {
+      "put": {
+        "operationId": "setPublication",
+        "tags": [
+          "Tìm và quản lý partner"
+        ],
+        "summary": "Công bố hoặc đưa về nháp",
+        "description": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerManagement"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "profile.manage đúng partner",
+        "x-rules": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicationInput"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -16879,7 +17154,8 @@
         "required": [
           "expected_version",
           "areas"
-        ]
+        ],
+        "description": "P0-1 chỉ vùng tròn center/radius_m; boundary_geojson phải null hoặc bỏ trống. Polygon chưa triển khai."
       },
       "ShopLocation": {
         "type": "object",
@@ -19827,6 +20103,112 @@
           "address",
           "is_default",
           "expected_version"
+        ]
+      },
+      "PartnerManagement": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "verification_status": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "zalo": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "publication_status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "accepting_jobs": {
+            "type": "boolean"
+          },
+          "moderation_status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "new_work_suspended",
+              "suspended"
+            ]
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerSkillInput"
+            }
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceArea"
+            }
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShopLocation"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "bio",
+          "verification_status",
+          "phone",
+          "zalo",
+          "version",
+          "publication_status",
+          "accepting_jobs",
+          "moderation_status",
+          "skills",
+          "areas",
+          "locations"
+        ],
+        "description": "Chỉ owner hoặc profile.manage đang hiệu lực trên đúng partner. Không trả ví/giấy tờ. Retry cũng kiểm lại quyền trước khi trả snapshot."
+      },
+      "PublicationInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "publication_status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          }
+        },
+        "required": [
+          "expected_version",
+          "publication_status"
         ]
       }
     }

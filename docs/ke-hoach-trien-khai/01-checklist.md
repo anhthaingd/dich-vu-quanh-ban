@@ -6,7 +6,7 @@ DOC-083 · v1.0 · 01/10/2026 · DELIVERY-01. Baseline code `50d184a`. [Mục l�
 
 - `[x]` = đạt phạm vi kỹ thuật của đúng dòng tại baseline/bằng chứng dẫn kèm; không đồng nghĩa toàn nhóm Bxx đã xong hoặc đã UAT.
 - `[ ]` = chưa hoàn thành; lý do/đầu việc còn thiếu ở cột tiêu chí. Toàn nhóm có thể “một phần”. Không tính phần trăm app từ số ô tick.
-- Đợt đang hoạt động: **P0-1 — người cung cấp và tìm dịch vụ**. Thực hiện theo [bảng ưu tiên](03-thu-tu-trien-khai.md), không theo thứ tự mã Bxx. Đã push phần tài khoản `a823d0e`; dừng mở rộng tiện ích tài khoản. [Đề xuất P0-1](de-xuat/P0-01-nguon-cung-va-tim-dich-vu.md) nêu các bổ sung contract và tài khoản test đang chờ duyệt; chưa bắt đầu code các phần phụ thuộc. **B01-02 OTP vẫn Pending**, gồm cả local và gửi thật.
+- Gói vừa triển khai: **P0-1 — người cung cấp và tìm dịch vụ**, đã duyệt ngày 06/10/2026. [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) ghi bằng chứng local/native và giới hạn. Tiếp theo **MAP-01 chọn địa điểm bằng địa chỉ/bản đồ**, rồi **P0-2 gửi/nhận việc + chat**, theo yêu cầu 07/10. [Kế hoạch MAP-01](de-xuat/MAP-01-ban-do-mien-phi.md) đã viết; đã chốt hướng thử MapLibre + Geoapify Free, chưa bật billing; chưa triển khai/chốt contract mới. **B01-02 OTP vẫn Pending**; chỉ tài khoản DEMO mới local/test được cấp định danh thử theo cho phép của chủ dự án.
 - Hạng mục mới theo kế hoạch chưa có phê duyệt tích hợp trả phí/production. Phần thay contract cần chốt rõ trước khi code.
 - Chưa có dòng nào được gắn “UAT chủ dự án đã nghiệm thu”.
 
@@ -16,15 +16,20 @@ Bảng này là thứ tự làm việc mới nhất; bảng chi tiết Bxx bên 
 
 | Ưu tiên | Kết quả bàn giao | Trạng thái hiện tại |
 |---|---|---|
-| **P0-1** | Tạo/quản lý/công bố hồ sơ cung cấp, kỹ năng/giá/vùng, nhận việc; khách tìm và xem hồ sơ | **Đang chuẩn bị gói chính**: code chỉ có danh mục; chưa có partner/search. Chờ duyệt [các khoảng trống đã xác định](de-xuat/P0-01-nguon-cung-va-tim-dich-vu.md), không tự mở OTP hoặc tự cấp verified. |
-| **P0-2** | Gửi/nhận/theo dõi yêu cầu, thay đổi/rút/dừng, chat trước/sau thuê | Sau nguồn cung P0-1; quyền/xác minh vẫn bắt buộc. |
+| **P0-1** | Tạo/quản lý/công bố hồ sơ cung cấp, kỹ năng/giá/vùng, nhận việc; khách tìm và xem hồ sơ | **Đã implement và kiểm local/native** theo phạm vi đã duyệt. [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md). Chưa UAT/CI mới; không đóng bản đồ/GPS/upload/xét xác minh/ranking. |
+| **MAP-01** | Nhập địa chỉ/gợi ý, chọn ghim, GPS; bộ chọn chung tìm dịch vụ/sổ địa chỉ/cửa hàng/tâm vùng | **Ưu tiên trước P0-2 đã chốt 07/10; đã chọn hướng thử Geoapify Free, chưa bật billing; contract mới còn đề xuất.** [MAP-01](de-xuat/MAP-01-ban-do-mien-phi.md); chưa code/test bản đồ, chưa đóng B03-01. |
+| **P0-2** | Gửi/nhận/theo dõi yêu cầu, thay đổi/rút/dừng, chat trước/sau thuê | Sau nguồn cung P0-1 và MAP-01; quyền/xác minh vẫn bắt buộc. |
 | **P0-3** | Ảnh kết quả, hóa đơn, point/phí và hoàn tất với tiền test | Sau P0-2; ảnh và nền ví cần thiết được làm ngay trong gói phụ thuộc. |
-| **P1** | Đội ngũ/phân công đầy đủ, thông báo/lịch, bản đồ/GPS, đánh giá, hỗ trợ/admin | Kéo phần tối thiểu lên P0 khi bắt buộc để luồng chính chạy đúng; provider/cost cần duyệt riêng. |
+| **P1** | Đội ngũ/phân công đầy đủ, thông báo/lịch, bản đồ kết quả nâng cao ngoài MAP-01, đánh giá, hỗ trợ/admin | Kéo phần tối thiểu lên P0 khi bắt buộc để luồng chính chạy đúng; provider/cost cần duyệt riêng. |
 | **P2** | Tiện ích tài khoản còn lại, locale tài khoản, gọi, ngân hàng sandbox, vận hành mở rộng | Không chen trước P0 vì dễ làm; vẫn là yêu cầu cần xử lý trước ra mắt nếu nằm trong phạm vi bắt buộc. |
 
 UAT và phê duyệt production/tiền thật là cổng riêng, không tự mở từ bảng này.
 
 ## Bằng chứng hiện hành
+
+**Rà soát UI P0-1 · 07/10/2026:** làm rõ khối nhận việc đầu màn, trạng thái ở danh sách, bốn mục chỉnh sửa hai cột và ngôn ngữ ở cuối. [Báo cáo và 24 ảnh Android/iOS](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) ghi 139 mobile, web P0-1 và native hai nền tảng đạt; typecheck/lint đạt. Không đổi API/DB/spec; chưa commit/push/CI mới, chưa nghiệm thu UI sau sửa.
+
+**P0-1 · 06/10/2026:** [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) — hồ sơ quản lý → công bố/nhận việc → tìm PostGIS → public profile, DEMO local riêng. API/mobile/web/native có bằng chứng chi tiết tại báo cáo; chưa push/CI/UAT gói này. OTP/map/tiền thật chưa mở.
 
 **Đợt gộp mới 06/10/2026:** sửa tên đã push `312972b`, [CI](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37402534136) đạt 3 jobs. [Phiên và địa chỉ](bao-cao/B01-04-phien-va-dia-chi.md) đã implement và kiểm local: 50 API, 106 mobile, 7 web (hành trình mới kiểm lại sau sửa tọa độ), accounts Android/iOS PASS; typecheck/lint/build, tooling đạt. Gói đã push `4a98dc0`; [CI 37424414095](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37424414095) đạt cả 3 jobs. Chưa UAT. [Đợt bổ sung](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) đạt 124 mobile, 8 web (hai hành trình tài khoản kiểm lại sau chỉnh UI cuối), accounts Android/iOS PASS, lint/typecheck/build và 3 tooling; đã push `a823d0e`; [CI 37428334396](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37428334396) đạt cả 3 jobs, chưa UAT. Các mốc bên dưới là lịch sử.
 
@@ -83,7 +88,7 @@ Nguồn: [spec](../../ui-ux/specs/account-batch.md), [backlog](../technical-desi
 | [ ] | B01-06 | Khôi phục thủ công và yêu cầu xóa tài khoản | Kiểm nghĩa vụ server, không xóa lịch sử tài chính; đóng toàn luồng sau màn admin B09/B11 |
 | [ ] | B01-07 | Tiếp tục hành động sau đăng nhập và deep link có quyền | **Một phần:** [trở lại Profile/Sessions/Addresses sau login](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md), đọc lại theo tài khoản, không tự gửi mutation. Chat/thuê và deep link ngoài app còn mở |
 
-## B02 — Nguồn cung — chỉ có danh mục đọc thật
+## B02 — Nguồn cung — P0-1 đã có phần chạy thật
 
 Nguồn: [spec](../../ui-ux/specs/partner-journey.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F02/F03/F05; QA-007…009,012,049.
 
@@ -91,17 +96,17 @@ Nguồn: [spec](../../ui-ux/specs/partner-journey.md), [backlog](../technical-de
 |---|---|---|---|
 | [x] | B02-01 | Đọc ngành → nhóm → kỹ năng | Đạt lát đọc kỹ thuật: API DB thật, lọc toàn cây active, cursor ký, UI tải/rỗng/lỗi/retry; chưa CRUD quản trị; xem [báo cáo](bao-cao/B00-01-nen-tang-danh-muc.md). [Thay bộ dữ liệu theo yêu cầu 05/10](bao-cao/B02-01-thay-du-lieu-danh-muc.md): 39 nhóm/128 kỹ năng, đã kiểm local; chưa UAT nội dung |
 | [ ] | B02-02 | Upload/asset làm nền cho ảnh và giấy tờ | createUpload/completeUpload/getAsset; ownership, trạng thái ready, private/public, dung lượng/loại file |
-| [ ] | B02-03 | Đăng ký/hồ sơ partner đa loại, kỹ năng, vùng, địa điểm | Thợ/cửa hàng/doanh nghiệp; nháp và công bố; dữ liệu nhạy cảm không ra public |
-| [ ] | B02-04 | Bật/tắt nhận việc và đình chỉ | Recheck lúc gửi thuê; việc cũ vẫn theo quyền hiện hành |
+| [ ] | B02-03 | Đăng ký/hồ sơ partner đa loại, kỹ năng, vùng, địa điểm | **Một phần đạt P0-1**: thợ/cửa hàng/doanh nghiệp, kỹ năng/giá/vùng tròn/địa điểm, nháp/công bố và DTO riêng. [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md). Ảnh/upload/xét xác minh còn mở |
+| [ ] | B02-04 | Bật/tắt nhận việc và đình chỉ | **Một phần đạt P0-1**: bật/tắt nhận việc, loại khỏi tìm kiếm, lọc đình chỉ. Recheck lúc gửi thuê ở P0-2; admin đình chỉ còn mở |
 | [ ] | B02-05 | Gửi/xét xác minh và quản trị danh mục tối thiểu | Admin thật có quyền/audit; cần bổ sung/đạt/không đạt; không có nút partner tự duyệt |
 
-## B03 — Tìm và thuê — P0, chưa có code sản phẩm
+## B03 — Tìm và thuê — đã có tìm danh sách P0-1, MAP-01 kế tiếp
 
 Nguồn: [spec](../../ui-ux/specs/customer-journey.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F04/F06/F07; QA-010,011,017,018,053.
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B03-01 | Tìm danh sách/bản đồ, GPS/tay, bộ lọc và hồ sơ | Lọc điều kiện trước xếp hạng; 10km/mở rộng theo spec; từ chối GPS vẫn dùng được |
+| [ ] | B03-01 | Tìm danh sách/bản đồ, GPS/tay, bộ lọc và hồ sơ | **Một phần đạt P0-1**: danh sách, nhập tọa độ/địa chỉ lưu, 10km/mở rộng, bộ lọc ngành/kỹ năng/mode/xác minh, sort distance, public profile. Bản đồ/GPS/polygon/ranking khác chưa làm; xem [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) |
 | [ ] | B03-02 | Gửi yêu cầu làm ngay/hẹn trước, nhiều kỹ năng | Điện thoại đã xác minh; chặn tự thuê/doanh nghiệp đang tham gia; retry không nhân đôi |
 | [ ] | B03-03 | Danh sách/chi tiết việc, nhận/từ chối/rút | Kiểm version/cạnh tranh; làm ngay có ETA, không thêm bước bắt đầu |
 | [ ] | B03-04 | Đổi lịch/dừng việc và liên hệ trước thuê | Đổi lịch chỉ giờ hẹn, không tự đóng việc; chat trước thuê hoàn tất tích hợp khi B05 đạt |

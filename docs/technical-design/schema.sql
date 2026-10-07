@@ -78,6 +78,7 @@ CREATE TABLE partners (
   name text NOT NULL,
   bio text NOT NULL DEFAULT '',
   verification_status text NOT NULL DEFAULT 'unverified',
+  publication_status text NOT NULL DEFAULT 'draft' CHECK (publication_status IN ('draft','published')),
   accepting_jobs boolean NOT NULL DEFAULT false,
   moderation_status text NOT NULL DEFAULT 'active',
   profile jsonb NOT NULL DEFAULT '{}',

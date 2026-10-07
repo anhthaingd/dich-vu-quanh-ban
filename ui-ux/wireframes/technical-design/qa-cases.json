@@ -874,5 +874,29 @@
     "level": "Integration/E2E",
     "priority": "P0",
     "status": "Tiêu chí; bằng chứng thực thi xem báo cáo repo"
+  },
+  {
+    "id": "QA-074",
+    "group": "Nguồn cung",
+    "requirement": "P0-1",
+    "operation": "createPartner/getPartnerManagement/editPartner/setSkills/setAreas/setLocations/setPublication/setAvailability",
+    "setup": "Hai user test, chỉ một có phone_verified; owner/delegate/outsider",
+    "steps": "Tạo draft, điền kỹ năng/vùng/cửa hàng, công bố và nhận việc; sửa cạnh tranh, mất response, mất quyền, rollback",
+    "expected": "Ví rỗng cùng transaction; nháp riêng tư; đầy đủ theo mọi mode; shared version; replay kiểm lại quyền; tắt/nháp loại khỏi search; không cấp verified từ client.",
+    "level": "Integration/E2E",
+    "priority": "P0",
+    "status": "Tiêu chí; bằng chứng xem báo cáo repo"
+  },
+  {
+    "id": "QA-075",
+    "group": "Tìm dịch vụ",
+    "requirement": "P0-1",
+    "operation": "searchPartners/getPartner",
+    "setup": "Provider test nhiều kỹ năng/vùng/cửa hàng, cùng khoảng cách, public/private",
+    "steps": "Lọc kỹ năng/mode/category/verified; biên vùng/bán kính; cursor đổi filter; đổi vị trí liên tục; xem profile VI/EN/JA/anonymous",
+    "expected": "Lọc trước xếp hạng; mỗi partner một kết quả; vùng phủ khách và tâm trong radius; distance cursor không lặp trên tập ổn định; không rò địa chỉ riêng; phản hồi cũ không ghi đè mới.",
+    "level": "Integration/E2E",
+    "priority": "P0",
+    "status": "Tiêu chí; bằng chứng xem báo cáo repo"
   }
 ]

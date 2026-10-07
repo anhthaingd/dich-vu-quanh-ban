@@ -45,8 +45,13 @@ export const test = base.extend({
     } finally {
       try { await testInfo.attach('api-log.jsonl', { body: logs.join(''), contentType: 'application/x-ndjson' }); }
       finally {
-        try { await base.step('Close test API', async () => { await app?.close(); }); } finally {
-          try { await base.step('Close test web server', async () => { await new Promise(r => server ? server.close(r) : r()); }); } finally {
+        try { await base.step('Close test API', async () => {
+          // Tests are finished. Offline/reload scenarios can leave browser sockets
+          // half open; close only this fixture's connections before Nest teardown.
+          app?.getHttpServer().closeAllConnections();
+          await app?.close();
+        }); } finally {
+          try { await base.step('Close test web server', async () => { server?.closeAllConnections(); await new Promise(r => server ? server.close(r) : r()); }); } finally {
             try { await base.step('Close test DB pool', async () => { await pool.end(); }); } finally {
               try { if (created) await admin.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`); } finally { await admin.end(); await rm(directory, { recursive: true, force: true }); }
             }

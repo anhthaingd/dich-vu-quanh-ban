@@ -1,3 +1,7 @@
+import { PartnersScreen } from '../../features/partners/screens/PartnersScreen';
+import { PartnerEditorScreen } from '../../features/partners/screens/PartnerEditorScreen';
+import { PartnerProfileScreen } from '../../features/partners/screens/PartnerProfileScreen';
+import { SearchScreen } from '../../features/search/screens/SearchScreen';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CatalogScreen } from '../../features/catalog/screens/CatalogScreen';
@@ -18,6 +22,10 @@ export function AppNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}>
       <Stack.Screen name="CatalogHome" component={CatalogScreen} />
       <Stack.Screen name="CatalogCategory" component={CatalogScreen} getId={({ params }) => params.categoryId} />
+      <Stack.Screen name="Partners" component={PartnersScreen} />
+      <Stack.Screen name="PartnerEditor" component={PartnerEditorScreen} />
+      <Stack.Screen name="PartnerProfile" component={PartnerProfileScreen} />
+      <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen name="Account" component={AccountScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Sessions" component={SessionsScreen} />

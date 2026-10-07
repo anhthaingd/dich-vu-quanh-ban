@@ -13,6 +13,10 @@
       ],
       "branches": [
         [
+          "Gói P0-1 hiện hành",
+          "P0-1 đã duyệt 06/10/2026: tài khoản có điện thoại xác minh tạo hồ sơ draft, owner và ví 0 cùng giao dịch. Công bố cần tên, kỹ năng active và nơi phục vụ cho mọi mode; ảnh chưa bắt buộc trong gói này. Công bố không tự bật nhận việc. Chuyển draft tắt nhận việc; sửa published mất điều kiện bị từ chối. Chủ/profile.manage dùng management riêng, shared version và key retry kiểm lại quyền. Public không lộ địa chỉ riêng/giấy tờ/ví; liên hệ cần đăng nhập. Tìm sort=distance dùng shop công khai hoặc tâm vùng tròn với cả điều kiện phủ khách và bán kính; mỗi hồ sơ một kết quả, cursor gắn bộ lọc và distance/created_at/id. OTP, bản đồ/GPS, polygon và ranking khác giữ Pending. DEMO local/test được phép tạo mới riêng, không sửa tài khoản có sẵn hoặc nạp tiền. Chuẩn chi tiết: technical-design v0.1.6, openapi.json và schema.sql."
+        ],
+        [
           "Không cho GPS",
           "Nhập vị trí bằng tay → tìm lại"
         ],
@@ -29,7 +33,7 @@
           "Dùng số/kênh đã khai báo; gọi trong app theo UF-06"
         ]
       ],
-      "refs": "SRS-SEARCH-005; UX-HIRE-001"
+      "refs": "SRS-SEARCH-005; UX-HIRE-001; P0-1 / technical-design v0.1.6"
     },
     {
       "id": "UF-02",
@@ -382,6 +386,10 @@
       ],
       "branches": [
         [
+          "Gói P0-1 hiện hành",
+          "P0-1 đã duyệt 06/10/2026: tài khoản có điện thoại xác minh tạo hồ sơ draft, owner và ví 0 cùng giao dịch. Công bố cần tên, kỹ năng active và nơi phục vụ cho mọi mode; ảnh chưa bắt buộc trong gói này. Công bố không tự bật nhận việc. Chuyển draft tắt nhận việc; sửa published mất điều kiện bị từ chối. Chủ/profile.manage dùng management riêng, shared version và key retry kiểm lại quyền. Public không lộ địa chỉ riêng/giấy tờ/ví; liên hệ cần đăng nhập. Tìm sort=distance dùng shop công khai hoặc tâm vùng tròn với cả điều kiện phủ khách và bán kính; mỗi hồ sơ một kết quả, cursor gắn bộ lọc và distance/created_at/id. OTP, bản đồ/GPS, polygon và ranking khác giữ Pending. DEMO local/test được phép tạo mới riêng, không sửa tài khoản có sẵn hoặc nạp tiền. Chuẩn chi tiết: technical-design v0.1.6, openapi.json và schema.sql."
+        ],
+        [
           "Tắt nhận việc",
           "Ẩn khỏi tìm kiếm/nhận mới; vẫn xử lý việc cũ và liên lạc"
         ],
@@ -402,7 +410,7 @@
           "Chỉ công khai khu phục vụ; không lộ điểm hoạt động riêng tư"
         ]
       ],
-      "refs": "UC-PAR-01/02; SRS-SEARCH-005; UX onboarding"
+      "refs": "UC-PAR-01/02; SRS-SEARCH-005; UX onboarding; P0-1 / technical-design v0.1.6"
     },
     {
       "id": "UF-12",

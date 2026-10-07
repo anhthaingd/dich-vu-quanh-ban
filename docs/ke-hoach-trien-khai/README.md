@@ -1,14 +1,14 @@
 # Kế hoạch triển khai và học code
 
-DOC-082 · v1.0 · 01/10/2026 · DELIVERY-01. Mốc lập kế hoạch: `50d184a`; ưu tiên hiện hành: P0-1 nguồn cung và tìm dịch vụ, ngày 06/10/2026.
+DOC-082 · v1.0 · 01/10/2026 · DELIVERY-01. Mốc lập kế hoạch: `50d184a`; ưu tiên hiện hành: MAP-01 chọn địa điểm bằng địa chỉ/bản đồ trước P0-2, ngày 07/10/2026.
 
 Đây là điểm vào công việc cho các phiên Codex tiếp theo. Kế hoạch phân rã thiết kế sẵn có thành các lát triển khai có thể kiểm chứng; không thay SRS, hợp đồng API hoặc quyết định nghiệp vụ. Những nhiệm vụ chưa làm là kế hoạch, không phải phê duyệt nhà cung cấp, chi phí hay production.
 
 ## Ưu tiên hiện tại: chức năng chính
 
-Theo yêu cầu mới nhất ngày 06/10/2026, chuyển sang **nguồn cung và tìm dịch vụ → gửi/nhận việc và chat → hóa đơn/hoàn tất với tiền test**. Không làm hết mọi tiện ích B01 trước B02. [Bảng ưu tiên và tiêu chí từng gói](03-thu-tu-trien-khai.md) là thứ tự thực hiện cho các phiên tiếp theo.
+Theo yêu cầu mới nhất ngày 07/10/2026, thứ tự là **nguồn cung và tìm dịch vụ → MAP-01 chọn địa điểm bằng địa chỉ/bản đồ → gửi/nhận việc và chat → hóa đơn/hoàn tất với tiền test**. Không làm hết mọi tiện ích B01 trước B02. [Bảng ưu tiên và tiêu chí từng gói](03-thu-tu-trien-khai.md) là thứ tự thực hiện cho các phiên tiếp theo.
 
-Phần tài khoản đã push `a823d0e`. **P0-1 đang chuẩn bị, chưa có code partner/search.** [Đề xuất để duyệt một lần cho cả gói](de-xuat/P0-01-nguon-cung-va-tim-dich-vu.md) giải thích dữ liệu quản lý hồ sơ/công bố còn thiếu trong API và cách kiểm miễn phí trong DB test khi OTP Pending. Chưa tự thay spec hoặc trạng thái xác minh.
+**P0-1 đã triển khai theo duyệt ngày 06/10/2026**, gồm hồ sơ nguồn cung, tìm PostGIS, public profile và DEMO local/test. Xem [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) để tự thử và lần theo code. **Rà soát UI 07/10:** làm rõ bật/tắt nhận việc và bổ sung ảnh màn hình vào báo cáo P0-1 theo phản hồi chủ dự án. **Gói kế tiếp MAP-01: lập kế hoạch và chốt bộ chọn địa điểm trước P0-2** theo yêu cầu 07/10. [Kế hoạch bản đồ](de-xuat/MAP-01-ban-do-mien-phi.md) đề xuất nhập địa chỉ/gợi ý, chọn ghim và GPS dùng chung cho tìm dịch vụ, sổ địa chỉ, cửa hàng và tâm vùng. Đã chốt hướng thử MapLibre + Geoapify Free, chưa bật billing; API mới và hành vi chi tiết vẫn là đề xuất; OTP giữ Pending.
 
 ## Mở theo thứ tự
 
@@ -33,6 +33,7 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 | Sửa tên hiển thị | [B01-04](bao-cao/B01-04-ho-so-ten-hien-thi.md) | API/DB/app, version, retry an toàn và VI/EN/JA; B01-04 vẫn một phần |
 | Phiên đăng nhập và sổ địa chỉ | [B01-04 — gói tài khoản](bao-cao/B01-04-phien-va-dia-chi.md) | Danh sách/thu hồi từng phiên; thêm/sửa/gỡ/mặc định địa chỉ; đạt local Android/iOS, đã push `4a98dc0` và CI đạt; chưa UAT |
 | Thu hồi nhiều phiên và quay lại sau login | [B01-04/07 — bổ sung](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) | Dùng API hiện có, thử lại phần chưa xác nhận, quay lại ba màn tài khoản; đạt 124 mobile, 8 web và native Android/iOS; đã push `a823d0e`; [CI 37428334396](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37428334396) đạt cả 3 jobs, chưa UAT |
+| Người cung cấp và tìm dịch vụ | [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) | Gói P0-1 DB/API/app; local/native; DEMO riêng; chưa UAT/CI mới; B02/B03 còn upload/map/xác minh/ranking |
 | Tài khoản email/mật khẩu | [B01-01](bao-cao/B01-01-email-mat-khau.md) | Đăng ký/đăng nhập, refresh/logout local; không đóng toàn bộ B01 |
 
 Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng này và liên kết dòng checklist. Không sửa báo cáo cũ để biến kết quả của commit cũ thành bằng chứng cho commit mới. Nếu sửa báo cáo, giữ ngày/commit và ghi phần đính chính.

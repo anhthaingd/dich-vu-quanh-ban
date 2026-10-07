@@ -1,5 +1,7 @@
 # Hợp đồng API và realtime
 
+> **P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.**
+
 > **B01-04A · 06/10/2026 · v0.1.5: chủ dự án duyệt gộp quản lý phiên và sổ địa chỉ. Một mục phiên đại diện một lần đăng nhập (id = family_id ổn định qua refresh), có created_at, last_seen_at, is_current; state active/expired/revoked; không trả IP, token/hash. Thu hồi chặn toàn bộ family và kiểm lại quyền trong transaction. Địa chỉ thêm is_default/version; địa chỉ đầu tiên khi sổ đang rỗng tự mặc định. Chọn mặc định mới bỏ mặc định cũ và tăng version bản cũ. Gỡ mặc định để chưa có mặc định, không tự chọn mục khác. PUT yêu cầu expected_version. Mọi mutation giữ Idempotency-Key khi retry, kiểm chủ sở hữu; archive giữ dữ liệu lịch sử, không đổi snapshot công việc. Nhập địa chỉ/tọa độ thủ công, chưa chọn GPS/map provider. OTP Pending; không production/chi phí.**
 
 > **B01-04 · 06/10/2026 · v0.1.4:** Chủ dự án duyệt bổ sung `Me.version` bắt buộc, integer ≥ 1. Áp dụng cho GET/PATCH `/me` và `Session.user` từ register/login/refresh. `PATCH /me` dùng `expected_version` và UUID `Idempotency-Key` theo thiết kế hiện có. Sai phiên bản trả 409 `VERSION_CONFLICT`; cùng actor/operation/key nhưng payload khác trả 409 `IDEMPOTENCY_MISMATCH`. Cùng key/payload trả kết quả đã lưu, không tăng version lần hai. Kiểm phiên/quyền lại trước trả kết quả, kể cả replay. Lát hiện tại chỉ sửa tên: trim, 1–100 ký tự theo giới hạn đăng ký, không ký tự điều khiển. Locale tài khoản vẫn `vi`; không mở I18N-03/OTP. Bảng idempotency dùng thiết kế PLAN-001 hiện hành, chưa đặt retention mới. Bằng chứng triển khai nằm trong báo cáo B01-04 ở repo, không suy ra production/UAT.
@@ -106,12 +108,12 @@ OpenAPI JSON đi kèm có schema request/response, quyền, parameters và lỗi
 | listSkills | GET /skills | Public | Không body → listSkillsPage |
 | searchPartners | GET /partners | Public | Không body → searchPartnersPage |
 | getPartner | GET /partners/{id} | Public; liên hệ cần đăng nhập | Không body → PartnerProfile |
-| createPartner | POST /partners | User đã xác minh | PartnerCreate → PartnerProfile |
-| editPartner | PUT /partners/{id}/profile | profile.manage đúng partner | PartnerEdit → PartnerProfile |
-| setAvailability | PUT /partners/{id}/availability | profile.manage đúng partner | Availability → PartnerProfile |
-| setSkills | PUT /partners/{id}/skills | profile.manage đúng partner | SkillsEdit → PartnerProfile |
-| setAreas | PUT /partners/{id}/service-areas | profile.manage đúng partner | AreasEdit → PartnerProfile |
-| setLocations | PUT /partners/{id}/locations | profile.manage đúng partner | LocationsEdit → PartnerProfile |
+| createPartner | POST /partners | User có điện thoại đã xác minh | PartnerCreate → PartnerManagement |
+| editPartner | PUT /partners/{id}/profile | profile.manage đúng partner | PartnerEdit → PartnerManagement |
+| setAvailability | PUT /partners/{id}/availability | profile.manage đúng partner | Availability → PartnerManagement |
+| setSkills | PUT /partners/{id}/skills | profile.manage đúng partner | SkillsEdit → PartnerManagement |
+| setAreas | PUT /partners/{id}/service-areas | profile.manage đúng partner | AreasEdit → PartnerManagement |
+| setLocations | PUT /partners/{id}/locations | profile.manage đúng partner | LocationsEdit → PartnerManagement |
 | submitVerification | POST /partners/{id}/verification | profile.manage | VerificationInput → Ack |
 | listMembers | GET /partners/{id}/members | members.manage / jobs.assign | Không body → listMembersPage |
 | inviteMember | POST /partners/{id}/invitations | members.manage | Invite → Ack |
@@ -222,3 +224,12 @@ Nguồn định dạng: [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0.html)
 Phương án A đã triển khai và kiểm local; chi tiết vận hành/bằng chứng tại [DOC-071](../implementation/logging-testing.md). Native còn BLOCKED; `.github/workflows/quality.yml` đã chuẩn bị, chưa push/chạy remote CI.
 
 Bốn GET danh mục/health/ready trả `X-Request-Id`; lỗi có `correlation_id` bằng header. `X-Client-Request-Id` UUID hợp lệ được ghi metadata, không xác thực. CORS expose ID cho app web. Lỗi input400, không tìm thấy404, nội bộ500 (`INTERNAL`), DB unavailable/timeout503; không trả stack/SQL. OpenAPI0.1.2 phản ánh header và lỗi; không mở endpoint ngoài phạm vi.
+
+## P0-1 — hồ sơ quản lý và công bố
+
+| Thao tác | API | Quyền | Input → Output |
+|---|---|---|---|
+| getPartnerManagement | GET /partners/{id}/management | owner hoặc profile.manage | Không body → PartnerManagement |
+| setPublication | PUT /partners/{id}/publication | owner hoặc profile.manage | PublicationInput → PartnerManagement |
+
+Công bố cần tên, ít nhất một kỹ năng active và nơi phục vụ theo mọi mode; ảnh năng lực chưa bắt buộc. Công bố không tự bật nhận việc. Sửa làm hồ sơ published thiếu điều kiện trả400 và rollback; chuyển draft tắt nhận việc. Một version chung cho mọi phần. GET public hỗ trợ locale VI/EN/JA cho tên kỹ năng, signed-in contact không làm lộ dữ liệu quản lý. Ảnh/giấy tờ và xác minh partner không được tự đánh dấu hoàn tất.

@@ -12,6 +12,8 @@ import { AppLog } from '../../services/api/dist/src/logging/logger.js';
 import { migrate } from '../../services/api/dist/src/database/migrate.js';
 import { seed } from '../../services/api/dist/src/database/seed.js';
 import { AuthService } from '../../services/api/dist/src/modules/auth/auth.service.js';
+import { PartnersService } from '../../services/api/dist/src/modules/partners/partners.service.js';
+import { stableId } from '../../services/api/dist/src/database/seed.js';
 import { CatalogService } from '../../services/api/dist/src/modules/catalog/catalog.service.js';
 import { requireTestDatabase } from './native-options.mjs';
 /* global AbortSignal */
@@ -22,7 +24,7 @@ import { requireTestDatabase } from './native-options.mjs';
 const platform = process.argv[2];
 if (!['android', 'ios'].includes(platform)) throw Error('Use android or ios');
 const flow = process.argv[3] ?? 'catalog';
-if (!['catalog', 'auth', 'i18n', 'i18n-layout', 'shell', 'profile', 'accounts'].includes(flow)) throw Error('Use catalog, auth, i18n, i18n-layout shell, profile or accounts flow');
+if (!['catalog', 'auth', 'i18n', 'i18n-layout', 'shell', 'profile', 'accounts', 'partners'].includes(flow)) throw Error('Use catalog, auth, i18n, i18n-layout shell, profile, accounts or partners flow');
 const directory = resolve('test-results/native', platform, flow === 'catalog' ? '.' : flow);
 await mkdir(directory, { recursive: true });
 const run = (cmd, args) => spawnSync(cmd, args, { encoding: 'utf8', timeout: 30000, env: { ...process.env, MAESTRO_CLI_NO_ANALYTICS: '1' } });
@@ -90,7 +92,7 @@ const listen = (server, port = 0, host = '127.0.0.1') => new Promise((done, reje
 const close = server => new Promise((done, reject) => server.close(error => error ? reject(error) : done()));
 const devLink = port => `exp+dich-vu-quanh-ban://expo-development-client/?url=${encodeURIComponent(`http://${platform === 'ios' ? 'localhost' : host}:${port}`)}`;
 try {
-  if (platform === 'android' && ['profile','accounts'].includes(flow)) {
+  if (platform === 'android' && ['profile','accounts','partners'].includes(flow)) {
     // Gboard's stylus tutorial can intercept Maestro typing in name fields.
     originalHandwriting = check('adb', ['-s', device, 'shell', 'settings', 'get', 'secure', 'stylus_handwriting_enabled']).trim();
     check('adb', ['-s', device, 'shell', 'settings', 'put', 'secure', 'stylus_handwriting_enabled', '0']);
@@ -119,7 +121,17 @@ try {
   const original = service.list.bind(service);
   const key = randomUUID();
   const testEmail = `native-${randomUUID()}@example.test`;
-  if (['profile','accounts'].includes(flow)) await app.get(AuthService).register(testEmail, 'native-test-only-password', 'Native profile');
+  if (['profile','accounts','partners'].includes(flow)) await app.get(AuthService).register(testEmail, 'native-test-only-password', 'Native profile');
+  if (flow === 'partners') {
+    const auth = app.get(AuthService);
+    const session = await auth.login(testEmail, 'native-test-only-password');
+    // Only this isolated test schema receives a verified fixture identity.
+    await pool.query("INSERT INTO identities(user_id,provider,subject,verified_at) VALUES($1,'phone',$2,now())", [session.user.id,`native:${session.user.id}`]);
+    const partners = app.get(PartnersService), header = `Bearer ${session.access_token}`;
+    let p = await partners.create(header, {kind:'company',name:'Native company',bio:''},randomUUID());
+    p = await partners.edit(header,p.id,{action:'skills',expected_version:p.version,skills:[{skill_id:stableId('socket_replacement'),modes:['at_customer'],reference_labor:'0',inspection_fee:null,travel_fee:null}]},randomUUID());
+    await partners.edit(header,p.id,{action:'service-areas',expected_version:p.version,areas:[{label:'Hanoi demo',center:{latitude:21.0285,longitude:105.8542},radius_m:5000,boundary_geojson:null}]},randomUUID());
+  }
   if (flow === 'accounts') {
     await app.get(AuthService).login(testEmail, 'native-test-only-password');
     await app.get(AuthService).login(testEmail, 'native-test-only-password');
@@ -160,7 +172,7 @@ try {
     maestroProcess.once('close', code => { clearTimeout(timeout); done(code ?? 1); });
   });
   if (aborted || result !== 0) throw Error(`Maestro failed (${result}); inspect ${directory}`);
-  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'accounts' ? ['address-create-edit-default-archive', 'locale-draft-retention', 'address-cold-start', 'revoke-all-other-and-current-sessions', 'return-after-login'] : flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery', 'account-return-to-category', 'catalog-root', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
+  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'partners' ? ['manage-draft-profile', 'publish-and-enable', 'manual-distance-search', 'public-profile', 'locale-switch'] : flow === 'accounts' ? ['address-create-edit-default-archive', 'locale-draft-retention', 'address-cold-start', 'revoke-all-other-and-current-sessions', 'return-after-login'] : flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery', 'account-return-to-category', 'catalog-root', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
 } catch (error) {
   outcome = { status: 'FAIL', platform, device, reason: error.message };
   console.error(error.message); process.exitCode = 1;

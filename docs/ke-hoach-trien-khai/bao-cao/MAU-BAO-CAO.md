@@ -10,6 +10,8 @@ Mở đầu bằng hành động cụ thể: trước đây người dùng chưa
 
 Để mã checklist, ngày và phiên bản code ở dòng thông tin riêng. Giải thích `commit` là một phiên bản code đã lưu trong Git; `working tree` là code đang sửa chưa lưu thành phiên bản đó nếu cần dùng các từ này.
 
+Với phần có giao diện, chèn ảnh các màn đã làm sau khi kiểm trên app chạy thật. Lưu ảnh trong thư mục `anh/<ma-bao-cao>/` cạnh báo cáo, ghi tên màn, nền tảng/ngày chụp, dữ liệu DEMO/test và thao tác chính. Không chứa mật khẩu/token hoặc dữ liệu riêng. Ghi rõ emulator/simulator hay thiết bị thật; ảnh không chứng minh các luồng chưa kiểm.
+
 ## 2. Những khái niệm cần biết
 
 Chỉ giải thích các từ thực sự cần cho câu chuyện, ngay trước hoặc ngay khi dùng. Ví dụ:

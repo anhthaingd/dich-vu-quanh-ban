@@ -1,3 +1,4 @@
+import { createPartnersApi } from '../features/partners/api/partners-api';
 import { createAccountsApi } from '../features/accounts/api/accounts-api';
 import { createCatalogApi } from '../features/catalog/api/catalog-api';
 import { AppNavigator } from './navigation/AppNavigator';
@@ -7,7 +8,8 @@ import { createAuthApi } from '../features/auth/api/auth-api';
 import { AuthSession } from '../features/auth/state/auth-session';
 import { tokenStorage } from '../features/auth/state/token-storage';
 const api = createCatalogApi(process.env.EXPO_PUBLIC_API_URL);
-const auth = new AuthSession(createAuthApi(process.env.EXPO_PUBLIC_API_URL), tokenStorage, createAccountsApi(process.env.EXPO_PUBLIC_API_URL));
+const partners = createPartnersApi(process.env.EXPO_PUBLIC_API_URL);
+const auth = new AuthSession(createAuthApi(process.env.EXPO_PUBLIC_API_URL), tokenStorage, createAccountsApi(process.env.EXPO_PUBLIC_API_URL), partners);
 export default function App() {
-  return <AppProviders api={api}><AuthProvider manager={auth}><AppNavigator /></AuthProvider></AppProviders>;
+  return <AppProviders api={api} partners={partners}><AuthProvider manager={auth}><AppNavigator /></AuthProvider></AppProviders>;
 }

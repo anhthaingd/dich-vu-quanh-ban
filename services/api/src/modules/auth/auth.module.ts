@@ -1,7 +1,8 @@
-import { Module, type DynamicModule } from '@nestjs/common';
+import { Global, Module, type DynamicModule } from '@nestjs/common';
 import { Pool } from 'pg';
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
+@Global()
 @Module({})
 export class AuthModule {
   static register(secret: string): DynamicModule {

@@ -206,7 +206,7 @@
     "auth": "Public",
     "request": null,
     "response": "searchPartnersPage",
-    "rule": "Lọc availability/moderation/kỹ năng/vùng trước xếp hạng. Không lộ tọa độ cá nhân. Trọng số khoảng cách/đánh giá/chuyên môn còn đề xuất."
+    "rule": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
   },
   {
     "id": "getPartner",
@@ -217,7 +217,7 @@
     "auth": "Public; liên hệ cần đăng nhập",
     "request": null,
     "response": "PartnerProfile",
-    "rule": "Nếu có bearer hợp lệ mở DTO đăng nhập, không bao giờ lộ giấy tờ/ví."
+    "rule": "Nếu có bearer hợp lệ mở DTO đăng nhập, không bao giờ lộ giấy tờ/ví. P0-1: chỉ published chưa archive, suspended trả404. Tắt nhận việc vẫn xem qua link. Liên hệ chỉ khi bearer hợp lệ; kỹ năng theo locale; không trả vùng riêng/version."
   },
   {
     "id": "createPartner",
@@ -225,10 +225,10 @@
     "path": "/partners",
     "group": "Tìm và quản lý partner",
     "title": "Đăng ký partner",
-    "auth": "User đã xác minh",
+    "auth": "User có điện thoại đã xác minh",
     "request": "PartnerCreate",
-    "response": "PartnerProfile",
-    "rule": "Tạo owner membership + wallet trong transaction; nhãn chưa xác minh, chưa nhận việc cho tới khi hồ sơ hợp lệ."
+    "response": "PartnerManagement",
+    "rule": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
   },
   {
     "id": "editPartner",
@@ -238,8 +238,8 @@
     "title": "Sửa hồ sơ",
     "auth": "profile.manage đúng partner",
     "request": "PartnerEdit",
-    "response": "PartnerProfile",
-    "rule": "Kiểm version; không đổi snapshot việc cũ."
+    "response": "PartnerManagement",
+    "rule": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
   },
   {
     "id": "setAvailability",
@@ -249,8 +249,8 @@
     "title": "Bật/tắt nhận việc",
     "auth": "profile.manage đúng partner",
     "request": "Availability",
-    "response": "PartnerProfile",
-    "rule": "Kiểm version; không đổi snapshot việc cũ."
+    "response": "PartnerManagement",
+    "rule": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
   },
   {
     "id": "setSkills",
@@ -260,8 +260,8 @@
     "title": "Sửa kỹ năng",
     "auth": "profile.manage đúng partner",
     "request": "SkillsEdit",
-    "response": "PartnerProfile",
-    "rule": "Kiểm version; không đổi snapshot việc cũ."
+    "response": "PartnerManagement",
+    "rule": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
   },
   {
     "id": "setAreas",
@@ -271,8 +271,8 @@
     "title": "Sửa vùng phục vụ",
     "auth": "profile.manage đúng partner",
     "request": "AreasEdit",
-    "response": "PartnerProfile",
-    "rule": "Kiểm version; không đổi snapshot việc cũ."
+    "response": "PartnerManagement",
+    "rule": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
   },
   {
     "id": "setLocations",
@@ -282,8 +282,8 @@
     "title": "Sửa cửa hàng",
     "auth": "profile.manage đúng partner",
     "request": "LocationsEdit",
-    "response": "PartnerProfile",
-    "rule": "Kiểm version; không đổi snapshot việc cũ."
+    "response": "PartnerManagement",
+    "rule": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
   },
   {
     "id": "submitVerification",
@@ -1296,5 +1296,27 @@
     "request": "",
     "response": "Ready",
     "rule": "Đợt 1 local; ready kiểm DB/PostGIS/bảng, lỗi503 có cấu trúc. LOGTEST-01: X-Request-Id trả mọi response; X-Client-Request-Id UUID tùy chọn; lỗi nội bộ500, lỗi DB unavailable/timeout503; lỗi không chứa dữ liệu thô."
+  },
+  {
+    "id": "getPartnerManagement",
+    "method": "GET",
+    "path": "/partners/{id}/management",
+    "group": "Tìm và quản lý partner",
+    "title": "Đọc hồ sơ quản lý",
+    "auth": "Owner hoặc profile.manage đúng partner",
+    "request": null,
+    "response": "PartnerManagement",
+    "rule": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
+  },
+  {
+    "id": "setPublication",
+    "method": "PUT",
+    "path": "/partners/{id}/publication",
+    "group": "Tìm và quản lý partner",
+    "title": "Công bố hoặc đưa về nháp",
+    "auth": "Owner hoặc profile.manage đúng partner",
+    "request": "PublicationInput",
+    "response": "PartnerManagement",
+    "rule": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
   }
 ]

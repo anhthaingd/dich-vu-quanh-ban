@@ -332,6 +332,12 @@
         "Tắt: ẩn tìm kiếm, chặn yêu cầu mới"
       ],
       [
+        "publication_status",
+        "text",
+        "NOT NULL DEFAULT 'draft' CHECK IN ('draft','published')",
+        "Nháp không hiện public; về nháp tắt nhận việc"
+      ],
+      [
         "moderation_status",
         "text",
         "NOT NULL DEFAULT 'active'",

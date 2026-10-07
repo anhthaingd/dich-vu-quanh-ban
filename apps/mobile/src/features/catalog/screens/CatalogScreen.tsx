@@ -7,6 +7,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../app/navigation/routes';
 import { useCatalogApi } from '../../../app/providers/AppProviders';
 import { AppText } from '../../../components/ui/AppText';
+import { Button } from '../../../components/ui/Button';
 import { ActionCard } from '../../../components/ui/Card';
 import { EmptyState, ErrorState, LoadingState } from '../../../components/ui/Feedback';
 import { ProductShell } from '../../../app/layout/ProductShell';
@@ -48,6 +49,7 @@ export function CatalogScreen({ route, navigation }: Props) {
     <AppText tone="muted" style={styles.subtitle}>{t(selectedId ? 'catalog.categorySubtitle' : 'catalog.subtitle')}</AppText>
     </View>
     <LanguageSettings />
+    <Button testID="search-open" label={t('search.title')} variant="secondary" onPress={() => navigation.navigate('Search', {categoryId:selectedId})} />
     {state.kind === 'ready' && state.locale === locale && [...state.categories, ...state.skills, ...(state.selected ? [state.selected] : [])].some(item => item.name_locale !== locale) && <AppText variant="caption" tone="muted">{t('catalog.translationNotice')}</AppText>}
     {state.kind === 'loading' && <LoadingState message={t('catalog.loading')} />}
     {state.kind === 'error' && <ErrorState message={t('catalog.error')} retryLabel={t('common.retry')}
@@ -65,7 +67,7 @@ export function CatalogScreen({ route, navigation }: Props) {
       </>}
       {state.skills.length > 0 && <AppText accessibilityRole="header" variant="section" style={styles.section}>{t('catalog.skills', { count: state.skills.length })}</AppText>}
       {state.skills.map(skill => <View key={skill.id} style={styles.skill}>
-        <View style={styles.dot} /><AppText style={styles.skillText}>{skill.name}</AppText>
+        <View style={styles.skillText}><Button label={skill.name} variant="link" onPress={() => navigation.navigate('Search', {skillId:skill.id,categoryId:selectedId})} /></View>
       </View>)}
     </>}
   </ProductShell>;

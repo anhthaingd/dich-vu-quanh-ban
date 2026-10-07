@@ -1,12 +1,12 @@
 # P0-1 — Người cung cấp và tìm dịch vụ
 
-06/10/2026 · DELIVERY-01 · **Đề xuất, chưa duyệt các bổ sung bên dưới.** [Thứ tự ưu tiên](../03-thu-tu-trien-khai.md) · [Checklist](../01-checklist.md). Tài liệu thuộc bộ kế hoạch trong repo; không phải báo cáo chức năng đã code hoặc spec đã chốt.
+06/10/2026 · DELIVERY-01 · **Đã được chủ dự án duyệt ngày 06/10/2026 bằng “ok làm đi”; cho phép tự tạo tài khoản thợ/doanh nghiệp phục vụ kiểm thử.** [Thứ tự ưu tiên](../03-thu-tu-trien-khai.md) · [Checklist](../01-checklist.md). Tài liệu thuộc bộ kế hoạch trong repo; ghi lại phạm vi đã duyệt; bằng chứng code xem báo cáo bàn giao.
 
 ## Bạn sẽ thử được gì khi gói này hoàn tất?
 
 Một người đăng nhập, tạo hồ sơ thợ/cửa hàng/doanh nghiệp, chọn kỹ năng từ danh mục thật, đặt giá tham khảo và nơi phục vụ, công bố rồi bật nhận việc. Người khác chọn kỹ năng và vị trí, thấy đúng người phù hợp, mở hồ sơ. Khi người cung cấp tắt nhận việc hoặc sửa vùng, kết quả tìm cập nhật theo dữ liệu máy chủ.
 
-Gói này gồm cả hai phía cung và cầu, DB/API/app, VI/EN/JA, test và báo cáo học code. Chưa có gửi yêu cầu/nhận việc: đó là gói P0-2 ngay sau, không xen thêm tiện ích tài khoản. Các màn vẫn bám thiết kế hiện có, không thiết kế lại toàn app.
+Gói này gồm cả hai phía cung và cầu, DB/API/app, VI/EN/JA, test và báo cáo học code. Chưa có gửi yêu cầu/nhận việc: đó là gói P0-2. Cập nhật ưu tiên 07/10: làm [MAP-01 chọn địa điểm bằng địa chỉ/bản đồ](MAP-01-ban-do-mien-phi.md) trước P0-2 theo yêu cầu mới; không xen thêm tiện ích tài khoản. Các màn vẫn bám thiết kế hiện có, không thiết kế lại toàn app.
 
 ## Vì sao cần chốt một lần trước khi code cả gói?
 
@@ -19,13 +19,13 @@ Gói này gồm cả hai phía cung và cầu, DB/API/app, VI/EN/JA, test và b�
 
 Đây là khoảng trống cụ thể của hợp đồng giữa app và máy chủ, không phải yêu cầu duyệt từng file code. [AGENTS.md](../../../AGENTS.md) quy định: “Nếu cần thay đổi spec chưa được duyệt, trao đổi với chủ dự án trước; không tự biến phương án triển khai thành yêu cầu đã chốt.”
 
-## Gói bổ sung đề nghị duyệt
+## Gói bổ sung đã duyệt
 
 ### 1. Kiểm thử miễn phí, vẫn giữ yêu cầu xác minh
 
-Giữ OTP/SMS/email thật và triển khai OTP local **Pending**. Cho phép tạo **tài khoản kiểm thử có điện thoại đã xác minh trong DB test tách biệt**, bằng công cụ test, để kiểm trọn luồng người cung cấp/khách. Không đổi trạng thái tài khoản đang dùng trong DB local, không thêm nút tự xác minh trong app, không có API bỏ qua xác minh. Công cụ chỉ chạy với DB test và schema thử do nó tạo, dọn dữ liệu của chính lượt thử sau kiểm.
+Giữ OTP/SMS/email thật và triển khai OTP local **Pending**. Cho phép tạo **tài khoản kiểm thử có điện thoại đã xác minh trong DB test tách biệt**, bằng công cụ test, để kiểm trọn luồng người cung cấp/khách. Không đổi trạng thái tài khoản đang dùng trong DB local, không thêm nút tự xác minh trong app, không có API bỏ qua xác minh. Công cụ E2E chỉ chạy với DB test và schema thử do nó tạo, dọn dữ liệu của chính lượt thử sau kiểm. Theo yêu cầu bổ sung cùng ngày, được tạo **tài khoản DEMO mới riêng trong DB local** cho chủ dự án tự thử thợ/cửa hàng/doanh nghiệp. Công cụ local chỉ nhận DB `dvqb_local` trên localhost với NODE_ENV=development; không sửa tài khoản có sẵn, không tạo số dư hoặc provider thật.
 
-Đề nghị làm rõ `User đã xác minh` ở đăng ký người cung cấp là **điện thoại đã xác minh**. API vẫn từ chối tài khoản thường chưa đạt điều kiện. Xác minh điện thoại của tài khoản khác với xác minh danh tính/chuyên môn của hồ sơ: hồ sơ mới luôn có nhãn **chưa xác minh**; người cung cấp không được tự đổi nhãn này.
+Đã chốt `User đã xác minh` ở đăng ký người cung cấp là **điện thoại đã xác minh**. API vẫn từ chối tài khoản thường chưa đạt điều kiện. Xác minh điện thoại của tài khoản khác với xác minh danh tính/chuyên môn của hồ sơ: hồ sơ mới luôn có nhãn **chưa xác minh**; người cung cấp không được tự đổi nhãn này.
 
 Giới hạn phải báo rõ: bạn có thể kiểm chức năng trong môi trường thử; đăng ký người cung cấp từ tài khoản email thường vẫn bị chặn cho tới khi mở xác minh. Đây không phải bằng chứng SMS hoạt động hoặc luồng đăng ký công khai đã sẵn sàng.
 
@@ -45,7 +45,7 @@ Tạo hồ sơ, owner membership và ví rỗng trong cùng giao dịch theo spe
 
 Gói đầu dùng vị trí nhập tay hoặc địa chỉ đã lưu, bán kính mặc định **10km**, cho người dùng mở rộng; lọc ngành/kỹ năng/nơi làm/xác minh. Chưa cần mua bản đồ hoặc dịch vụ GPS/geocode. Tất cả điều kiện kỹ năng, trạng thái và vùng được lọc **trước** phân trang/xếp hạng.
 
-Đề nghị chốt khoảng cách: tại cửa hàng đo tới địa điểm công khai gần nhất phù hợp; tại khách/tùy chọn dùng vùng tròn, vị trí khách phải nằm trong vùng và tâm vùng phải nằm trong bán kính tìm đã chọn. UI ghi rõ **khoảng cách tới tâm vùng phục vụ**, không gọi là vị trí hiện tại của thợ. Chọn một kết quả tốt nhất cho mỗi hồ sơ, không nhân đôi khi nhiều kỹ năng/vùng/địa điểm phù hợp.
+Đã chốt khoảng cách: tại cửa hàng đo tới địa điểm công khai gần nhất phù hợp; tại khách/tùy chọn dùng vùng tròn, vị trí khách phải nằm trong vùng và tâm vùng phải nằm trong bán kính tìm đã chọn. UI ghi rõ **khoảng cách tới tâm vùng phục vụ**, không gọi là vị trí hiện tại của thợ. Chọn một kết quả tốt nhất cho mỗi hồ sơ, không nhân đôi khi nhiều kỹ năng/vùng/địa điểm phù hợp.
 
 Đợt đầu chọn `sort=distance`, mặc định khoảng cách tăng dần, hòa thì `created_at,id`; cursor ký gắn toàn bộ bộ lọc và giá trị cuối của thứ tự này. Thay bộ lọc phải bắt đầu trang đầu. Không tự tạo điểm xếp hạng “đề xuất”. Polygon, bản đồ/GPS, xếp hạng theo đánh giá/đề xuất giữ chưa triển khai, không trả kết quả giả hoặc tự thay bằng sort khác nếu client yêu cầu phần chưa hỗ trợ. Trong báo cáo vẫn để B03-01 **một phần** cho tới khi đủ phạm vi.
 
@@ -56,7 +56,7 @@ Hồ sơ public giữ thông tin tối thiểu; địa chỉ riêng/giấy tờ/
 1. Đồng bộ đúng phần API/data/UX/QA bị tác động và sổ quản lý theo AGENTS; không tải bộ báo cáo lên Drive.
 2. Migration mới cho nguồn cung/quyền/ví cần thiết, giữ tài khoản và danh mục hiện tại. Công cụ test tách biệt kiểm quyền người chưa xác minh/chủ/người ngoài, rollback và cạnh tranh.
 3. Module partner quản lý hồ sơ, công bố, nhận việc; app onboarding/editor có tải lại và lỗi version/thử lại. Dùng dữ liệu danh mục thật, không chép catalog mẫu của prototype.
-4. Module tìm kiếm PostGIS, danh sách và hồ sơ khách; nối từ màn chọn kỹ năng hiện có. Dùng fixture test rõ tên cho E2E, không nạp provider tưởng là thật vào DB làm việc.
+4. Module tìm kiếm PostGIS, danh sách và hồ sơ khách; nối từ màn chọn kỹ năng hiện có. Dùng fixture test rõ tên cho E2E, dữ liệu local phải có tên DEMO rõ ràng, không giả thành nhà cung cấp thật.
 5. Kiểm hai tài khoản xuyên app/API/DB; chạy Android và iOS, tình huống mạng lỗi/trả kết quả cũ/đổi ngôn ngữ/riêng tư. Tạo báo cáo học code một gói, cập nhật checklist theo đúng phần đã kiểm.
 
 ## Tiêu chí kiểm gói P0-1
@@ -68,4 +68,4 @@ Hồ sơ public giữ thông tin tối thiểu; địa chỉ riêng/giấy tờ/
 - Không rò dữ liệu riêng; bộ test có nhiều địa điểm/kỹ năng để bắt trường hợp khớp sai giữa kỹ năng và chế độ làm việc.
 - Đạt DB/API/mobile/web và native từng nền tảng được ghi riêng; chưa UAT hoặc chưa gửi SMS thật luôn ghi rõ.
 
-Các tên file mới sẽ theo `features/partners`, `features/search`, `modules/partners`, `modules/search` khi có code thực tế. Không tạo sẵn package/framework/microservice hoặc folder trống. Bản đề xuất này chưa thay các nguồn spec; sau duyệt mới cập nhật phiên bản và trạng thái quyết định.
+Các tên file mới sẽ theo `features/partners`, `features/search`, `modules/partners`, `modules/search` khi có code thực tế. Không tạo sẵn package/framework/microservice hoặc folder trống. Quyết định P0-1 đã chốt; các nguồn spec/API/data được đồng bộ theo phạm vi tác động trong đợt triển khai.

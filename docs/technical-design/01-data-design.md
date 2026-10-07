@@ -1,5 +1,7 @@
 # Thiết kế dữ liệu và migration
 
+> **P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật.**
+
 > **B01-04A · 06/10/2026 · v0.1.5: chủ dự án duyệt gộp quản lý phiên và sổ địa chỉ. Một mục phiên đại diện một lần đăng nhập (id = family_id ổn định qua refresh), có created_at, last_seen_at, is_current; state active/expired/revoked; không trả IP, token/hash. Thu hồi chặn toàn bộ family và kiểm lại quyền trong transaction. Địa chỉ thêm is_default/version; địa chỉ đầu tiên khi sổ đang rỗng tự mặc định. Chọn mặc định mới bỏ mặc định cũ và tăng version bản cũ. Gỡ mặc định để chưa có mặc định, không tự chọn mục khác. PUT yêu cầu expected_version. Mọi mutation giữ Idempotency-Key khi retry, kiểm chủ sở hữu; archive giữ dữ liệu lịch sử, không đổi snapshot công việc. Nhập địa chỉ/tọa độ thủ công, chưa chọn GPS/map provider. OTP Pending; không production/chi phí.**
 
 > **I18N-04 · 05/10/2026 · v0.1.3 (phạm vi danh mục đã duyệt):** Giữ 10 ngành đã chốt; bộ dữ liệu thực tế trong `services/api/seeds/catalog.json` có 50 nhóm (10 nhóm chung giữ tương thích + 40 nhóm chuyên biệt), 140 kỹ năng và 141 liên kết. Nguồn nghiên cứu ở `catalog-sources.json`; đây là phân loại dịch vụ, không phải provider/giá mẫu. Categories và skills lưu translations EN/JA. Migration mới 003 chỉ thêm skills.translations, không sửa checksum lịch sử. Seed giữ ID/code/name_vi/active/form và các khóa bản dịch đã có; chỉ chèn bản ghi, mapping và khóa dịch còn thiếu. Không reset DB.
@@ -57,7 +59,7 @@ Một `partner` sở hữu ví; `membership` là người có quyền thao tác.
 
 ## Tìm gần và vùng phục vụ
 
-Tại cửa hàng: lọc khoảng cách tới `partner_locations.point` theo bán kính tìm mặc định 10.000m. Tại khách: vị trí phải nằm trong ít nhất một vùng phục vụ và đáp ứng bán kính tìm đã chọn. Đề xuất khoảng cách hiển thị cho vùng là tới tâm vùng; polygon dùng điểm đại diện riêng được xác định khi cấu hình, không giả là vị trí hiện tại của thợ. Cách hiển thị/xếp hạng polygon cần kiểm UX trước triển khai. Dùng ST_DWithin với geography để đo mét, GiST cho truy vấn không gian; polygon kiểm bằng phép phủ vị trí. Không lấy GPS cá nhân làm điểm công khai.
+Tại cửa hàng: lọc khoảng cách tới `partner_locations.point` theo bán kính tìm mặc định 10.000m. Tại khách: vị trí phải nằm trong ít nhất một vùng phục vụ và đáp ứng bán kính tìm đã chọn. P0-1 đã chốt khoảng cách hiển thị vùng tròn là tới tâm vùng; polygon dùng điểm đại diện riêng được xác định khi cấu hình, không giả là vị trí hiện tại của thợ. Cách hiển thị/xếp hạng polygon cần kiểm UX trước triển khai. Dùng ST_DWithin với geography để đo mét, GiST cho truy vấn không gian; polygon kiểm bằng phép phủ vị trí. Không lấy GPS cá nhân làm điểm công khai.
 
 ```sql
 -- Ví dụ cho vùng tròn; $1 là geography vị trí cần làm, $2 là bán kính tìm.
@@ -228,6 +230,7 @@ Thợ tự do, cửa hàng, doanh nghiệp cùng một mô hình ví và dịch 
 | name | text | NOT NULL | Tên công khai |
 | bio | text | NOT NULL DEFAULT '' | Giới thiệu năng lực |
 | verification_status | text | NOT NULL DEFAULT 'unverified' | Tách xác minh khỏi đình chỉ |
+| publication_status | text | NOT NULL DEFAULT 'draft'; draft/published | P0-1 công bố tách nhận việc |
 | accepting_jobs | boolean | NOT NULL DEFAULT false | Tắt: ẩn tìm kiếm, chặn yêu cầu mới |
 | moderation_status | text | NOT NULL DEFAULT 'active' | active / new_work_suspended / suspended |
 | profile | jsonb | NOT NULL DEFAULT '{}' | Kinh nghiệm, portfolio, kênh liên hệ; schema kiểm server |
