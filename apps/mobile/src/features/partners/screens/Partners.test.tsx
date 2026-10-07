@@ -67,6 +67,7 @@ function fixture(saved: string | null = 'saved', verified = true) {
           verification_status: 'unverified',
           distance_m: 100,
           distance_kind: 'service_area',
+          map_location: null,
           reference_labor: '0',
           stars: null,
           review_count: 0

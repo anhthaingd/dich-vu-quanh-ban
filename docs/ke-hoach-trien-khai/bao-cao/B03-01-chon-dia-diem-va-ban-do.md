@@ -1,6 +1,6 @@
 # B03-01 — Chọn địa điểm bằng địa chỉ và bản đồ
 
-MAP-01 · kiểm ngày 07/10/2026 · thuộc bộ DELIVERY-01. Code đang sửa trong Git sau `d005fca`, chưa commit/push/CI cho MAP-01. [Mục lục](../README.md) · [Kế hoạch](../de-xuat/MAP-01-ban-do-mien-phi.md).
+MAP-01 · kiểm ngày 07/10/2026 · thuộc bộ DELIVERY-01. Đã push MAP-01 tại `4dc7600` ngày 07/10/2026; [CI](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37577265358) đã đạt cả 3 job. Các kết quả local dưới đây giữ ngày kiểm gốc. [Mục lục](../README.md) · [Kế hoạch](../de-xuat/MAP-01-ban-do-mien-phi.md).
 
 ## 1. Bạn đã dùng được những gì?
 
@@ -149,7 +149,7 @@ Tất cả kết quả ngày 07/10/2026, local. Log trong `.local/map-01/` bị 
 | iOS build/runtime | Xcode simulator build PASS, scheme `Dchvquanhbn`; map thật hiện | `ios-build.log`, ảnh iOS; development build cần rebuild sau thêm SDK |
 | Native hồi quy | Android `accounts` PASS; iOS `partners` PASS | `node scripts/test/native.mjs android accounts`, `node scripts/test/native.mjs ios partners`; `android-accounts.log`, `ios-partners.log`. Luồng này kiểm tọa độ nâng cao/quyền/lưu và phiên, không thay live picker UAT. |
 | Sơ đồ | Mermaid được render và xem trước bàn giao | Khối Mermaid trong báo cáo; bản render tạm không lưu trong Git |
-| CI và UAT MAP-01 | Chưa chạy remote CI, chưa chủ dự án nghiệm thu | CI P0-1 trước đó không dùng làm bằng chứng MAP-01 |
+| CI và UAT MAP-01 | Push `4dc7600`, CI 37577265358 đạt cả 3 job; chưa UAT | Cập nhật 07/10/2026; không thay kiểm thiết bị thật |
 
 API mới: `POST /v1/locations/autocomplete`, `/geocode`, `/reverse`; body JSON, locale vi/en/ja, query 3–300 ký tự, tối đa 5 kết quả. OpenAPI v0.1.7 tại [contract](../../technical-design/openapi.json); [QA-076–079](../../technical-design/qa-cases.json).
 
@@ -166,3 +166,9 @@ Pilot giới hạn một tiến trình: 4 lookup/giây, 30/IP hoặc tài khoả
 Chủ dự án thử bốn nơi trên thiết bị dùng hằng ngày, nhất là GPS, địa chỉ ngõ và tên không dấu. Tiếp tục giữ Free và chưa billing; nếu chất lượng không đáp ứng thì đưa kết quả cụ thể để chọn hướng khác, không tự đổi provider.
 
 P0-2 nhận vị trí đã xác nhận theo contract công việc sau này. MAP-01 không mở OTP thật, routing, tracking, bản đồ toàn bộ người cung cấp, polygon hoặc ranking khác. Xem [checklist](../01-checklist.md) để phân biệt phần code đã kiểm với nghiệm thu còn mở.
+
+### Kiểm trước push ngày 07/10/2026
+
+Đã chạy lại typecheck, lint, 3 tooling test, 148 mobile test và 67 API test: PASS, coverage gates đạt. Log local `.local/map-01/push-{typecheck,lint,tooling,coverage}.log`. Hai key thật không xuất hiện trong các file đưa vào commit; `.env` và DEMO local được ignore. Chủ dự án yêu cầu tiếp bản đồ kết quả, xem [MAP-02](../de-xuat/MAP-02-ban-do-ket-qua-tim-kiem.md); quy tắc ghim sau đó đã chốt chỉ dùng địa điểm công khai.
+
+Cập nhật tiếp 07/10: chủ dự án yêu cầu và chốt MAP-02 chỉ ghim điểm công khai; xem [báo cáo B03-02](B03-02-ban-do-ket-qua-tim-kiem.md). Giới hạn “chưa bản đồ kết quả” ở trên là phạm vi riêng MAP-01, đã được mở trong MAP-02.

@@ -83,6 +83,26 @@ async function ready(name = "Test provider", mode = "at_customer") {
 }
 const query = (tail = "") =>
   `/partners?latitude=${point.latitude}&longitude=${point.longitude}&sort=distance${tail}`;
+test('map pins expose only nearest active public location in radius, without dropping providers lacking a pin',async()=>{
+  let p=await ready('Map provider');
+  assert.equal((await call(query())).body.items[0].map_location,null);
+  const near={latitude:point.latitude+0.001,longitude:point.longitude};
+  p=await edit(p,'locations',{locations:[
+    {address:{text:'PRIVATE_MAP_CANARY',point},public:false},
+    {address:{text:'Public near',point:near},public:true},
+    {address:{text:'Public far',point:{latitude:point.latitude+0.01,longitude:point.longitude}},public:true}
+  ]});
+  const response=await call(query(), 'GET',undefined,null);
+  assert.equal(response.body.items.length,1);
+  assert.deepEqual(response.body.items[0].map_location,{text:'Public near',point:near});
+  assert.equal(response.body.items[0].distance_kind,'service_area');
+  assert.ok(!JSON.stringify(response.body).includes('PRIVATE_MAP_CANARY'));
+  assert.equal((await call(query('&radius_m=50'))).body.items[0].map_location,null);
+  p=await edit(p,'locations',{locations:[{address:{text:'Public near',point:near},public:false}]});
+  assert.equal((await call(query())).body.items[0].map_location,null);
+  await edit(p,'locations',{locations:[]});
+  assert.equal((await call(query())).body.items[0].map_location,null);
+});
 
 test("verified account creates draft + owner + empty wallet atomically; Me derives verification and memberships", async () => {
   const key = randomUUID(),

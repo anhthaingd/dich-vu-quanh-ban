@@ -946,5 +946,29 @@
     "level": "Unit/Integration/E2E",
     "priority": "P0",
     "status": "Bằng chứng và giới hạn xem B03-01 trong repo; chưa UAT"
+  },
+  {
+    "id": "QA-080",
+    "group": "Tìm kiếm",
+    "requirement": "MAP-02",
+    "operation": "searchPartners",
+    "setup": "Dữ liệu public/private test; live DEMO kiểm riêng",
+    "steps": "Điểm riêng, điểm inactive, nhiều điểm public, điểm ngoài bán kính và thợ chỉ có tâm vùng",
+    "expected": "Chỉ trả điểm public active gần nhất trong bán kính; thiếu điểm trả null, giữ người trong danh sách; không lộ private/tâm vùng.",
+    "level": "Unit/Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng và giới hạn xem B03-02 trong repo; chưa UAT"
+  },
+  {
+    "id": "QA-081",
+    "group": "Tìm kiếm",
+    "requirement": "MAP-02",
+    "operation": "searchPartners",
+    "setup": "Dữ liệu public/private test; live DEMO kiểm riêng",
+    "steps": "Danh sách/bản đồ, ghim trùng, bấm hồ sơ, đổi điểm, phân trang, lỗi bản đồ",
+    "expected": "Cùng kết quả đã tải; ghim trùng mở được từng người; đổi điểm xóa cũ; có Xem thêm; lỗi cho thử lại hoặc danh sách.",
+    "level": "Unit/Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng và giới hạn xem B03-02 trong repo; chưa UAT"
   }
 ]

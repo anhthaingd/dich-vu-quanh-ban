@@ -172,12 +172,14 @@
   {
     "operation_id": "searchPartners",
     "contract_case": "CT-searchPartners",
-    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations; MAP-02 public map_location, null, same result pages",
     "scenario_ids": [
       "QA-010",
       "QA-011",
       "QA-053",
-      "QA-075"
+      "QA-075",
+      "QA-080",
+      "QA-081"
     ],
     "status": "Chưa chạy"
   },

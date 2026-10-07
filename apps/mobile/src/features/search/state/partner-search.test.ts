@@ -23,7 +23,13 @@ test('late response cannot replace new location search even if transport ignores
   old.resolve({ items: [{ id: 'old' }], next_cursor: null });
   await first;
   expect(search.getSnapshot().items).toEqual([{ id: 'new' }]);
+  expect(search.getSnapshot().criteria?.latitude).toBe(22);
   expect(api.search.mock.calls[0][2].aborted).toBe(true);
+});
+test('reset removes map criteria and pins and ignores the old in-flight response',async()=>{
+ const {api,search}=fixture(),pending=deferred<unknown>();api.search.mockReturnValueOnce(pending.promise);
+ const work=search.search(q);search.reset();pending.resolve({items:[{id:'old'}],next_cursor:null});await work;
+ expect(search.getSnapshot()).toMatchObject({criteria:null,items:[],searched:false,next:null});
 });
 test('deduplicates pages, retries read errors and rejects cursor loops', async () => {
   const { api, search } = fixture();

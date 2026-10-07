@@ -45,6 +45,7 @@ test('management response validation protects editor and preserves null vs zero 
     })
   ).toBe(false);
   const card = {
+    map_location: null,
     id,
     name: 'Test',
     kind: 'shop',
@@ -56,6 +57,9 @@ test('management response validation protects editor and preserves null vs zero 
     reference_labor: '0'
   };
   expect(isCard(card)).toBe(true);
+  expect(isCard({...card,map_location:{text:'Public',point:{latitude:0,longitude:0}}})).toBe(true);
+  expect(isCard({...card,map_location:{text:'Public',point:{latitude:91,longitude:0}}})).toBe(false);
+  expect(isCard({...card,map_location:undefined})).toBe(false);
   expect(isCard({ ...card, reference_labor: null })).toBe(true);
   expect(isCard({ ...card, distance_m: -1 })).toBe(false);
   expect(isCard({ ...card, reference_labor: 0 })).toBe(false);

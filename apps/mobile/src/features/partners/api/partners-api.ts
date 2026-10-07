@@ -80,6 +80,7 @@ export const isPartner = (x: unknown): x is Partner =>
   );
 export const isCard = (x: unknown): x is PartnerCard =>
   base(x) &&
+  (x.map_location === null || address(x.map_location)) &&
   typeof x.distance_m === 'number' &&
   Number.isFinite(x.distance_m) &&
   x.distance_m >= 0 &&

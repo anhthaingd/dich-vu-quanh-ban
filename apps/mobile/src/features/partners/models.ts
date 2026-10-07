@@ -51,6 +51,7 @@ export type PartnerEdit = { expected_version: number } & (
   | { action: 'availability'; accepting_jobs: boolean }
 );
 export type PartnerCard = {
+  map_location: Location['address'] | null;
   id: string;
   name: string;
   kind: Kind;

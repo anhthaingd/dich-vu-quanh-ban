@@ -31,6 +31,7 @@ import {
   Options
 } from '../../partners/components/PartnerFields';
 import { PartnerSearch } from '../state/partner-search';
+import { SearchResultsMap } from '../components/SearchResultsMap';
 import type { Mode, Point } from '../../partners/models';
 import type { SavedAddress } from '../../accounts/models';
 import { theme } from '../../../theme/tokens';
@@ -49,6 +50,7 @@ export function SearchScreen({
     search.getSnapshot
   );
   const [placeText, setPlaceText] = useState('');
+  const [mapView,setMapView]=useState(false);
   const [lat, setLat] = useState(''),
     [lng, setLng] = useState(''),
     [radius, setRadius] = useState('10000'),
@@ -201,7 +203,14 @@ export function SearchScreen({
       {state.searched && !state.busy && !state.error && !state.items.length && (
         <EmptyState message={t('search.empty')} />
       )}
-      {state.items.map((p) => (
+      {state.searched && <View style={{flexDirection:'row',gap:8}}>
+        <Button testID="search-view-list" label={t('searchMap.list')} variant={mapView?'secondary':'primary'} onPress={()=>setMapView(false)} />
+        <Button testID="search-view-map" label={t('searchMap.map')} variant={mapView?'primary':'secondary'} onPress={()=>setMapView(true)} />
+      </View>}
+      {mapView && state.searched && state.criteria && <SearchResultsMap
+        key={`${state.criteria.latitude},${state.criteria.longitude},${state.criteria.radius_m},${state.criteria.service_mode},${state.criteria.verified},${state.criteria.skill_id},${state.criteria.category_id}`}
+        items={state.items} center={state.criteria} hasMore={!!state.next} openProfile={id=>navigation.navigate('PartnerProfile',{id})} />}
+      {state.items.filter(p=>!mapView || !p.map_location).map((p) => (
         <Card key={p.id} testID={`search-result-${p.id}`}>
           <AppText variant="section">{p.name}</AppText>
           <AppText>

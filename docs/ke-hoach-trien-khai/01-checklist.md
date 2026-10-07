@@ -1,12 +1,14 @@
 # Checklist chức năng và bằng chứng
 
+
+**Cập nhật 07/10:** MAP-01 đã push `4dc7600`, [CI đạt cả 3 job](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37577265358). **MAP-02 đã triển khai** theo quyết định chỉ ghim địa điểm công khai; người chưa có điểm công khai vẫn hiện danh sách. [Báo cáo B03-02](bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md) ghi kiểm thử/ảnh và trạng thái push riêng. Thứ tự P0-1 → MAP-01 → MAP-02 → P0-2 → P0-3. Các mốc chưa tích hợp bản đồ phía dưới là lịch sử, không thay trạng thái này.
 DOC-083 · v1.0 · 01/10/2026 · DELIVERY-01. Baseline code `50d184a`. [Mục lục](README.md).
 
 ## Quy ước
 
 - `[x]` = đạt phạm vi kỹ thuật của đúng dòng tại baseline/bằng chứng dẫn kèm; không đồng nghĩa toàn nhóm Bxx đã xong hoặc đã UAT.
 - `[ ]` = chưa hoàn thành; lý do/đầu việc còn thiếu ở cột tiêu chí. Toàn nhóm có thể “một phần”. Không tính phần trăm app từ số ô tick.
-- Gói vừa triển khai: **P0-1 — người cung cấp và tìm dịch vụ**, đã duyệt ngày 06/10/2026. [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) ghi bằng chứng local/native và giới hạn. Tiếp theo **MAP-01 chọn địa điểm bằng địa chỉ/bản đồ**, rồi **P0-2 gửi/nhận việc + chat**, theo yêu cầu 07/10. [Kế hoạch MAP-01](de-xuat/MAP-01-ban-do-mien-phi.md) đã triển khai theo duyệt tiếp ngày 07/10, OpenAPI v0.1.7; xem [B03-01 / MAP-01](bao-cao/B03-01-chon-dia-diem-va-ban-do.md). Đã thử live, chưa billing/CI/UAT MAP-01. **B01-02 OTP vẫn Pending**; chỉ tài khoản DEMO mới local/test được cấp định danh thử theo cho phép của chủ dự án.
+- Gói vừa triển khai: **P0-1 — người cung cấp và tìm dịch vụ**, đã duyệt ngày 06/10/2026. [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) ghi bằng chứng local/native và giới hạn. Tiếp theo **MAP-01 chọn địa điểm bằng địa chỉ/bản đồ**, rồi **P0-2 gửi/nhận việc + chat**, theo yêu cầu 07/10. [Kế hoạch MAP-01](de-xuat/MAP-01-ban-do-mien-phi.md) đã triển khai theo duyệt tiếp ngày 07/10, OpenAPI v0.1.7; xem [B03-01 / MAP-01](bao-cao/B03-01-chon-dia-diem-va-ban-do.md). Đã thử live, CI MAP-01 đạt; chưa billing/UAT. **B01-02 OTP vẫn Pending**; chỉ tài khoản DEMO mới local/test được cấp định danh thử theo cho phép của chủ dự án.
 - Hạng mục mới theo kế hoạch chưa có phê duyệt tích hợp trả phí/production. Phần thay contract cần chốt rõ trước khi code.
 - Chưa có dòng nào được gắn “UAT chủ dự án đã nghiệm thu”.
 
@@ -17,10 +19,11 @@ Bảng này là thứ tự làm việc mới nhất; bảng chi tiết Bxx bên 
 | Ưu tiên | Kết quả bàn giao | Trạng thái hiện tại |
 |---|---|---|
 | **P0-1** | Tạo/quản lý/công bố hồ sơ cung cấp, kỹ năng/giá/vùng, nhận việc; khách tìm và xem hồ sơ | **Đã implement và kiểm local/native** theo phạm vi đã duyệt. [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md). Đã push `fe35564`, [CI](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37566935703) đạt 3 jobs; chưa UAT, không đóng bản đồ/GPS/upload/xét xác minh/ranking. |
-| **MAP-01** | Nhập địa chỉ/gợi ý, chọn ghim, GPS; bộ chọn chung tìm dịch vụ/sổ địa chỉ/cửa hàng/tâm vùng | **Code/local đã kiểm; live map trên web, Android emulator, iOS simulator.** [B03-01 / MAP-01](bao-cao/B03-01-chon-dia-diem-va-ban-do.md). Chưa kiểm trọn 4 nơi trên từng native, GPS thiết bị thật, UAT hoặc CI MAP-01. Chưa billing. |
-| **P0-2** | Gửi/nhận/theo dõi yêu cầu, thay đổi/rút/dừng, chat trước/sau thuê | Sau nguồn cung P0-1 và MAP-01; quyền/xác minh vẫn bắt buộc. |
+| **MAP-01** | Nhập địa chỉ/gợi ý, chọn ghim, GPS; bộ chọn chung tìm dịch vụ/sổ địa chỉ/cửa hàng/tâm vùng | **Code/local đã kiểm; live map trên web, Android emulator, iOS simulator.** [B03-01 / MAP-01](bao-cao/B03-01-chon-dia-diem-va-ban-do.md). Chưa kiểm trọn 4 nơi trên từng native, GPS thiết bị thật, UAT; CI MAP-01 đã đạt. Chưa billing. |
+| **MAP-02 — trước P0-2** | Ghim địa điểm công khai trong kết quả; giữ người không có ghim trong danh sách | [B03-02 / MAP-02](bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md): API/app/test, điểm trùng và hồ sơ; không công khai tâm vùng, không GPS thợ. |
+| **P0-2** | Gửi/nhận/theo dõi yêu cầu, thay đổi/rút/dừng, chat trước/sau thuê | Sau nguồn cung P0-1, MAP-01 và MAP-02; quyền/xác minh vẫn bắt buộc. |
 | **P0-3** | Ảnh kết quả, hóa đơn, point/phí và hoàn tất với tiền test | Sau P0-2; ảnh và nền ví cần thiết được làm ngay trong gói phụ thuộc. |
-| **P1** | Đội ngũ/phân công đầy đủ, thông báo/lịch, bản đồ kết quả nâng cao ngoài MAP-01, đánh giá, hỗ trợ/admin | Kéo phần tối thiểu lên P0 khi bắt buộc để luồng chính chạy đúng; provider/cost cần duyệt riêng. |
+| **P1** | Đội ngũ/phân công đầy đủ, thông báo/lịch, bản đồ nâng cao ngoài MAP-01/MAP-02, đánh giá, hỗ trợ/admin | Kéo phần tối thiểu lên P0 khi bắt buộc để luồng chính chạy đúng; provider/cost cần duyệt riêng. |
 | **P2** | Tiện ích tài khoản còn lại, locale tài khoản, gọi, ngân hàng sandbox, vận hành mở rộng | Không chen trước P0 vì dễ làm; vẫn là yêu cầu cần xử lý trước ra mắt nếu nằm trong phạm vi bắt buộc. |
 
 UAT và phê duyệt production/tiền thật là cổng riêng, không tự mở từ bảng này.
@@ -108,7 +111,7 @@ Nguồn: [spec](../../ui-ux/specs/customer-journey.md), [backlog](../technical-d
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B03-01 | Tìm danh sách/bản đồ, GPS/tay, bộ lọc và hồ sơ | **P0-1 + MAP-01 đạt phần code/local**: bộ chọn chung, map/GPS theo nút, địa chỉ lưu, vùng tròn và điểm cửa hàng public. [B03-01 / MAP-01](bao-cao/B03-01-chon-dia-diem-va-ban-do.md). Chưa bản đồ toàn bộ kết quả/gom ghim, polygon/ranking khác; UAT và thiết bị thật còn mở. |
+| [ ] | B03-01 | Tìm danh sách/bản đồ, GPS/tay, bộ lọc và hồ sơ | **P0-1 + MAP-01 đạt phần code/local**: bộ chọn chung, map/GPS theo nút, địa chỉ lưu, vùng tròn và điểm cửa hàng public. [B03-01 / MAP-01](bao-cao/B03-01-chon-dia-diem-va-ban-do.md). MAP-02 thêm ghim public theo kết quả đã tải và gom điểm trùng, xem báo cáo B03-02. Polygon/ranking khác, UAT và thiết bị thật còn mở. |
 | [ ] | B03-02 | Gửi yêu cầu làm ngay/hẹn trước, nhiều kỹ năng | Điện thoại đã xác minh; chặn tự thuê/doanh nghiệp đang tham gia; retry không nhân đôi |
 | [ ] | B03-03 | Danh sách/chi tiết việc, nhận/từ chối/rút | Kiểm version/cạnh tranh; làm ngay có ETA, không thêm bước bắt đầu |
 | [ ] | B03-04 | Đổi lịch/dừng việc và liên hệ trước thuê | Đổi lịch chỉ giờ hẹn, không tự đóng việc; chat trước thuê hoàn tất tích hợp khi B05 đạt |
@@ -212,4 +215,14 @@ Ghi mã lát, trạng thái, commit, kết quả kiểm, báo cáo và phần th
 - [x] 148 mobile; API toàn bộ 66 và nhóm địa điểm 6 bài sau bổ sung contract; 10 web và bài MAP chạy lại đạt. Typecheck/lint/native config đạt.
 - [x] Build Android/iOS; live map trên emulator/simulator; Android accounts và iOS partners hồi quy đạt. Mermaid đã render, ảnh trong [B03-01 / MAP-01](bao-cao/B03-01-chon-dia-diem-va-ban-do.md).
 - [ ] Live picker trọn 4 nơi trên từng native, GPS/chữ lớn/thiết bị thật, chủ dự án UAT.
-- [ ] Commit/push và remote CI cho MAP-01.
+- [x] MAP-01 push `4dc7600`; CI 37577265358 đạt cả 3 job.
+
+### MAP-02 — bằng chứng ngày 07/10/2026
+
+- [x] Quyết định public-only; API `map_location` Address/null, giữ ranking/cursor/quyền.
+- [x] Danh sách/bản đồ, ghim trùng mở từng hồ sơ, thiếu ghim vẫn hiện danh sách; lỗi map/thử lại; VI/EN/JA.
+- [x] Typecheck/lint, 152 mobile và 68 API, coverage gate; E2E web và web live.
+- [x] Ảnh bản đồ/thẻ ghim trên Android emulator và iOS simulator; iOS mở hồ sơ đạt. Xem [B03-02](bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md).
+- [x] Android kiểm lại đạt nhập địa chỉ → tìm → ghim → mở hồ sơ, sau gián đoạn emulator; có ảnh hồ sơ.
+- [ ] Commit/push và remote CI MAP-02.
+- [ ] Thiết bị thật, UAT; chưa billing/production.

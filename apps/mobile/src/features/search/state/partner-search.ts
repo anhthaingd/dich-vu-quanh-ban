@@ -2,6 +2,7 @@ import type { PartnersApi } from '../../partners/api/partners-api';
 import type { PartnerCard, SearchInput } from '../../partners/models';
 import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
 type State = {
+  criteria: SearchInput | null;
   items: PartnerCard[];
   next: string | null;
   busy: boolean;
@@ -10,6 +11,7 @@ type State = {
 };
 export class PartnerSearch {
   private state: State = {
+    criteria: null,
     items: [],
     next: null,
     busy: false,
@@ -37,9 +39,10 @@ export class PartnerSearch {
     this.request = null;
     this.update({ busy: false });
   };
-  reset = () => { this.cancel(); this.query = null; this.cursors.clear(); this.update({ items: [], next: null, error: null, searched: false }); };
+  reset = () => { this.cancel(); this.query = null; this.cursors.clear(); this.update({ criteria: null, items: [], next: null, error: null, searched: false }); };
   search = (query: SearchInput) => {
     this.query = { ...query };
+    this.update({ criteria: { ...query } });
     this.cursors.clear();
     return this.load(false);
   };

@@ -39,8 +39,15 @@ export class SearchService {
         ORDER BY id,distance_m,distance_kind,reference_labor NULLS LAST
       )
       SELECT p.id,p.name,p.kind,p.verification_status,b.distance_m,b.distance_kind,b.reference_labor::text,
-        NULL::numeric AS stars,0 AS review_count,b.created_at::text
+        NULL::numeric AS stars,0 AS review_count,b.created_at::text,ml.map_location
       FROM best b JOIN partners p ON p.id=b.id
+      LEFT JOIN LATERAL (
+        SELECT json_build_object('text',l.address_text,'point',json_build_object(
+          'latitude',ST_Y(l.point::geometry),'longitude',ST_X(l.point::geometry))) AS map_location
+        FROM partner_locations l CROSS JOIN point x
+        WHERE l.partner_id=p.id AND l.active AND l.public AND ST_DWithin(l.point,x.point,$3)
+        ORDER BY ST_Distance(l.point,x.point),l.created_at,l.id LIMIT 1
+      ) ml ON true
       WHERE ($8::double precision IS NULL OR (b.distance_m,b.created_at,b.id)>($8::double precision,$9::timestamptz,$10::uuid))
       ORDER BY b.distance_m,b.created_at,b.id LIMIT $11`,
         [

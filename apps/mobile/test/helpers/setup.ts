@@ -3,3 +3,4 @@ jest.mock('expo-crypto', () => ({ randomUUID: () => jest.requireActual('node:cry
 jest.mock('react-native-safe-area-context', () => jest.requireActual('react-native-safe-area-context/jest/mock').default);
 // Map rendering is exercised in browser/native runs; unit tests control map events.
 jest.mock('../../src/features/location/components/LocationMap', () => ({ LocationMap: () => null }));
+jest.mock('../../src/features/search/components/ResultsMap', () => ({ ResultsMap: () => null }));
