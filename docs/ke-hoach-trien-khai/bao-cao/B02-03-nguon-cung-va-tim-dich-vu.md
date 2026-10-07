@@ -8,7 +8,7 @@ Trước đây app mới có danh mục và tài khoản. Bây giờ, vào **Tà
 
 Khách bấm **Tìm dịch vụ**, nhập tọa độ hoặc chọn địa chỉ đã lưu, chọn bán kính và bộ lọc, rồi xem hồ sơ. Khoảng cách được tính bằng dữ liệu địa lý trong DB, không phải con số minh họa. Nhãn giao diện hỗ trợ Việt/Anh/Nhật; nội dung người dùng tự nhập không tự dịch.
 
-Đã viết code và kiểm local, gồm Android/iOS Simulator. Chưa UAT của chủ dự án, chưa có CI cho code mới, chưa triển khai production. Gói này chưa có gửi/nhận yêu cầu thuê hoặc chat; đó là P0-2.
+Đã viết code và kiểm local, gồm Android emulator/iOS simulator. Đã push `fe35564`; [CI ngày 07/10](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37566935703) đạt cả 3 jobs. Chưa UAT của chủ dự án, chưa triển khai production. Gói này chưa có gửi/nhận yêu cầu thuê hoặc chat; đó là P0-2.
 
 ## Bổ sung 07/10 — Tìm nút nhận việc và xem giao diện
 
@@ -148,7 +148,7 @@ Bộ kiểm tự động gồm quyền nhiều tài khoản, thu hồi quyền r
 | iOS | `DEVICE_ID=9B485B08-15C4-40BB-9E29-03816068E6AC npm run test:native -- ios partners`; PASS, `test-results/native/ios/partners/result.json` |
 | Static/build | `npm run typecheck`, `npm run lint`, `npm run build`; không thêm thư viện sản phẩm mới |
 | DEMO | [demo-partners.ts](../../../services/api/src/database/demo-partners.ts), [guard môi trường](../../../services/api/src/database/demo-options.ts); đã nạp ba tài khoản mới và kiểm API local trả ba hồ sơ |
-| GitHub CI / UAT | Chưa chạy CI cho code mới; chủ dự án chưa nghiệm thu P0-1 |
+| GitHub CI / UAT — cập nhật 07/10 | `fe35564`, [CI](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37566935703) đạt 3 jobs; chủ dự án chưa nghiệm thu P0-1 |
 
 Kiểm sâu quyền/giao dịch tại [partners.test.ts](../../../services/api/test/integration/partners.test.ts); điều hướng/form tại [Partners.test.tsx](../../../apps/mobile/src/features/partners/screens/Partners.test.tsx); native flow tại [partners.yaml](../../../tests/e2e/native/partners.yaml). Native test dùng schema riêng trong `dvqb_test` và dọn sau khi xong, khác bộ DEMO local giữ lại cho bạn.
 
@@ -157,6 +157,8 @@ AuthModule được đăng ký một lần dùng chung; Me đọc trạng thái 
 API/data chuẩn tại [v0.1.6](../../technical-design/README.md), [OpenAPI](../../technical-design/openapi.json), [schema](../../technical-design/schema.sql), QA-074/075. Đã đồng bộ phần spec P0-1 được duyệt: UX/quyền/trạng thái/luồng, bản xuất và sổ quản lý v1.44. Các file Drive được cập nhật cùng ID và tải lại đối chiếu; PRD/SRS/UX/FR được đọc lại phần đã sửa. Kiểm sổ Excel không thấy thay đổi ô cũ ngoài phạm vi dự kiến. Sơ đồ báo cáo đã render và kiểm hình; báo cáo này chỉ lưu repo.
 
 </details>
+
+**Đã push P0-1 tại `fe35564` ngày 07/10/2026; [CI 37566935703](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37566935703) đạt cả 3 jobs: static/mobile/build, API/PostGIS và web E2E.** Chưa UAT; native dùng bằng chứng emulator/simulator đã ghi, không phải thiết bị thật. Các ghi chú chưa push/CI ở mốc kiểm trước là lịch sử.
 
 ### Kiểm lại trước push ngày 07/10/2026
 

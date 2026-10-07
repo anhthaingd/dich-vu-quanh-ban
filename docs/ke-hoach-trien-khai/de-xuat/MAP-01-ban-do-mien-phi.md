@@ -96,7 +96,7 @@ Giải thích ngắn trên app rằng tìm địa chỉ/chọn ghim gửi truy v
 
 | Bước | Công việc và phụ thuộc | Điều kiện chuyển bước |
 |---|---|---|
-| 1. Thử provider | Chốt phương án/budget, có key local hợp lệ; kiểm lưu dữ liệu/ghi nguồn/hạn chế key. Thử 30 địa chỉ công khai ở Việt Nam: số nhà, ngõ, không dấu, trùng tên, chung cư, vùng ven; bắt đầu Hà Nội theo DEMO | Lưu từng mẫu/kết quả; đề xuất ít nhất 24/30 có gợi ý đúng khu vực trong 5 dòng, còn lại sửa ghim được; không ca âm thầm xác nhận sai. Không đạt thì chọn lại provider |
+| 1. Thử provider | Dùng Geoapify Free đã chọn, cần key local hợp lệ; kiểm lưu dữ liệu/ghi nguồn/hạn chế key. Thử 30 địa chỉ công khai ở Việt Nam: số nhà, ngõ, không dấu, trùng tên, chung cư, vùng ven; bắt đầu Hà Nội theo DEMO | Lưu từng mẫu/kết quả; đề xuất ít nhất 24/30 có gợi ý đúng khu vực trong 5 dòng, còn lại sửa ghim được; không ca âm thầm xác nhận sai. Không đạt thì chọn lại provider |
 | 2. Khóa thiết kế/contract | Duyệt API/luồng, đối chiếu spec hiện hành; đồng bộ tài liệu chịu ảnh hưởng theo AGENTS khi đã chốt | OpenAPI, lỗi, quyền, dữ liệu và tiêu chí cùng phạm vi; ưu tiên không tự duyệt provider/cost |
 | 3. SDK và adapter | Build MapLibre + vị trí Android/iOS development build, thử Expo web; API adapter và test input/timeout/quota | Map thật và ghi nguồn trên ba nền tảng; live provider có bằng chứng riêng với CI dùng giả lập |
 | 4. Bộ chọn và tìm dịch vụ | Gợi ý, tìm cả chuỗi, ghim/tra ngược, GPS, địa chỉ lưu; nối SearchScreen | Không phải nhập tọa độ; PostGIS đổi kết quả theo điểm xác nhận; đổi điểm reset phân trang |
@@ -118,10 +118,10 @@ Chờ key/provider thì tiếp tục phần độc lập đã được phép tro
 
 Không tính hoàn tất toàn B03-01: bản đồ người cung cấp/gom ghim, polygon, ranking còn ngoài đợt. Chưa chỉ đường/ETA đường bộ, theo dõi thợ, tải vùng offline hoặc OTP. Khoảng cách PostGIS không phải thời gian di chuyển.
 
-## 8. Nhóm quyết định còn cần chốt
+## 8. Quyết định đã chốt và phần còn cần duyệt
 
 1. **Đã chốt provider/budget thử nghiệm:** MapLibre + Geoapify Free, chưa bật billing. Cần tài khoản/key do chủ dự án quản lý khi bắt đầu thử live; không gửi key vào Git hoặc nội dung báo cáo. Nếu chất lượng không đạt, báo kết quả trước khi chọn lại provider; chưa duyệt Google/gói trả phí.
-2. **Phạm vi:** bộ chọn chung 4 nơi, GPS một lần, vòng tròn vùng và điểm cửa hàng public; bản đồ toàn bộ người cung cấp để sau. Việt Nam là vùng thử đề xuất, không đổi phạm vi thị trường hiện hành.
+2. **Phạm vi theo hướng đã chọn:** bộ chọn chung 4 nơi với gợi ý địa chỉ, ghim và GPS một lần. Đề xuất kèm vòng tròn vùng và điểm cửa hàng public; bản đồ toàn bộ người cung cấp để sau. Việt Nam là vùng thử đề xuất, không đổi phạm vi thị trường hiện hành.
 3. **Contract/UX:** ba endpoint, khách chưa login có hạn mức, quy tắc điểm/mô tả và dự phòng. Sau duyệt mới đồng bộ spec/API/QA theo phạm vi ảnh hưởng rồi triển khai.
 
 Yêu cầu hiện tại đủ để ghi kế hoạch, đổi thứ tự, ghi lựa chọn thử Geoapify Free và push P0-1; chưa phải quyết định chọn dịch vụ trả phí hoặc tự tạo tài khoản provider. Đợt này bàn giao kế hoạch; chưa cài SDK, gọi API provider hoặc thay contract nghiệp vụ.

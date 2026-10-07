@@ -33,12 +33,14 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 | Sửa tên hiển thị | [B01-04](bao-cao/B01-04-ho-so-ten-hien-thi.md) | API/DB/app, version, retry an toàn và VI/EN/JA; B01-04 vẫn một phần |
 | Phiên đăng nhập và sổ địa chỉ | [B01-04 — gói tài khoản](bao-cao/B01-04-phien-va-dia-chi.md) | Danh sách/thu hồi từng phiên; thêm/sửa/gỡ/mặc định địa chỉ; đạt local Android/iOS, đã push `4a98dc0` và CI đạt; chưa UAT |
 | Thu hồi nhiều phiên và quay lại sau login | [B01-04/07 — bổ sung](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) | Dùng API hiện có, thử lại phần chưa xác nhận, quay lại ba màn tài khoản; đạt 124 mobile, 8 web và native Android/iOS; đã push `a823d0e`; [CI 37428334396](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37428334396) đạt cả 3 jobs, chưa UAT |
-| Người cung cấp và tìm dịch vụ | [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) | Gói P0-1 DB/API/app; local/native; DEMO riêng; chưa UAT/CI mới; B02/B03 còn upload/map/xác minh/ranking |
+| Người cung cấp và tìm dịch vụ | [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) | Gói P0-1 DB/API/app; local/native; DEMO riêng; đã push `fe35564`, [CI](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37566935703) đạt 3 jobs; chưa UAT; B02/B03 còn upload/map/xác minh/ranking |
 | Tài khoản email/mật khẩu | [B01-01](bao-cao/B01-01-email-mat-khau.md) | Đăng ký/đăng nhập, refresh/logout local; không đóng toàn bộ B01 |
 
 Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng này và liên kết dòng checklist. Không sửa báo cáo cũ để biến kết quả của commit cũ thành bằng chứng cho commit mới. Nếu sửa báo cáo, giữ ngày/commit và ghi phần đính chính.
 
 ## Hiện trạng và công việc kế tiếp
+
+**Đã push P0-1 tại `fe35564` ngày 07/10/2026; [CI 37566935703](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37566935703) đạt cả 3 jobs: static/mobile/build, API/PostGIS và web E2E.** Chưa UAT; native dùng bằng chứng emulator/simulator đã ghi, không phải thiết bị thật. Các ghi chú chưa push/CI ở mốc kiểm trước là lịch sử.
 
 - **Mốc 06/10/2026:** đã push I18N-04/B02-01 tại `1c80f67`; [CI 37398471842](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37398471842) đạt cả ba jobs (API/PostGIS, static/mobile, web E2E). Chủ dự án đã xác nhận bộ danh mục 10 ngành/39 nhóm/128 kỹ năng. Các mốc chưa push/CI dưới đây là lịch sử ngày 05/10.
 - **B01-04 sửa tên hiển thị:** đã duyệt `Me.version` và implement ngày 06/10; [báo cáo học code](bao-cao/B01-04-ho-so-ten-hien-thi.md). API/app/web và native Android/iOS đạt local; sửa tên đã push `312972b` và CI đạt; gói phiên/địa chỉ mới xem mục Đợt gộp bên dưới. Hồ sơ/phiên/địa chỉ còn một phần. OTP vẫn Pending.

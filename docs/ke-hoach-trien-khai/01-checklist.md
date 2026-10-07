@@ -16,7 +16,7 @@ Bảng này là thứ tự làm việc mới nhất; bảng chi tiết Bxx bên 
 
 | Ưu tiên | Kết quả bàn giao | Trạng thái hiện tại |
 |---|---|---|
-| **P0-1** | Tạo/quản lý/công bố hồ sơ cung cấp, kỹ năng/giá/vùng, nhận việc; khách tìm và xem hồ sơ | **Đã implement và kiểm local/native** theo phạm vi đã duyệt. [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md). Chưa UAT/CI mới; không đóng bản đồ/GPS/upload/xét xác minh/ranking. |
+| **P0-1** | Tạo/quản lý/công bố hồ sơ cung cấp, kỹ năng/giá/vùng, nhận việc; khách tìm và xem hồ sơ | **Đã implement và kiểm local/native** theo phạm vi đã duyệt. [B02-03 / P0-1](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md). Đã push `fe35564`, [CI](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37566935703) đạt 3 jobs; chưa UAT, không đóng bản đồ/GPS/upload/xét xác minh/ranking. |
 | **MAP-01** | Nhập địa chỉ/gợi ý, chọn ghim, GPS; bộ chọn chung tìm dịch vụ/sổ địa chỉ/cửa hàng/tâm vùng | **Ưu tiên trước P0-2 đã chốt 07/10; đã chọn hướng thử Geoapify Free, chưa bật billing; contract mới còn đề xuất.** [MAP-01](de-xuat/MAP-01-ban-do-mien-phi.md); chưa code/test bản đồ, chưa đóng B03-01. |
 | **P0-2** | Gửi/nhận/theo dõi yêu cầu, thay đổi/rút/dừng, chat trước/sau thuê | Sau nguồn cung P0-1 và MAP-01; quyền/xác minh vẫn bắt buộc. |
 | **P0-3** | Ảnh kết quả, hóa đơn, point/phí và hoàn tất với tiền test | Sau P0-2; ảnh và nền ví cần thiết được làm ngay trong gói phụ thuộc. |
@@ -26,6 +26,8 @@ Bảng này là thứ tự làm việc mới nhất; bảng chi tiết Bxx bên 
 UAT và phê duyệt production/tiền thật là cổng riêng, không tự mở từ bảng này.
 
 ## Bằng chứng hiện hành
+
+**Đã push P0-1 tại `fe35564` ngày 07/10/2026; [CI 37566935703](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37566935703) đạt cả 3 jobs: static/mobile/build, API/PostGIS và web E2E.** Chưa UAT; native dùng bằng chứng emulator/simulator đã ghi, không phải thiết bị thật. Các ghi chú chưa push/CI ở mốc kiểm trước là lịch sử.
 
 **Rà soát UI P0-1 · 07/10/2026:** làm rõ khối nhận việc đầu màn, trạng thái ở danh sách, bốn mục chỉnh sửa hai cột và ngôn ngữ ở cuối. [Báo cáo và 24 ảnh Android/iOS](bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md) ghi 139 mobile, web P0-1 và native hai nền tảng đạt; typecheck/lint đạt. Không đổi API/DB/spec; chưa commit/push/CI mới, chưa nghiệm thu UI sau sửa.
 
