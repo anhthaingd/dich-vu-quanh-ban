@@ -1,5 +1,7 @@
 # B03-05 — Chọn đúng dịch vụ trước khi tìm người phù hợp
 
+**Cập nhật push 07/10/2026:** code đã lên `main` tại `293b073`; [CI 37604427549](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37604427549) đạt cả 3 job: app/build, API/PostGIS, web E2E. Các ghi chú “chưa commit/push/CI” bên dưới là mốc kiểm local trước khi push; kết quả CI này xác nhận đúng commit `293b073`. Chưa UAT hoặc phát hành production.
+
 B03 / sửa thiếu sót P0-1 · 07/10/2026 · Theo phản hồi của chủ dự án. Đây là sửa code để khớp spec đã chốt, không thay API hoặc nghiệp vụ; không đồng bộ lại Excel/Drive.
 
 ## Bạn dùng được gì?

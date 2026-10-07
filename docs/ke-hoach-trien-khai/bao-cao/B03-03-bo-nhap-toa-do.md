@@ -1,5 +1,7 @@
 # B03-03 — Chọn địa điểm, bỏ nhập tọa độ thủ công
 
+**Cập nhật push 07/10/2026:** code đã lên `main` tại `293b073`; [CI 37604427549](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37604427549) đạt cả 3 job: app/build, API/PostGIS, web E2E. Các ghi chú “chưa commit/push/CI” bên dưới là mốc kiểm local trước khi push; kết quả CI này xác nhận đúng commit `293b073`. Chưa UAT hoặc phát hành production.
+
 07/10/2026 · MAP-03 · Code đang sửa trong repo, chưa commit/push. [Mục lục](../README.md) · [Gói tiếp theo P0-2](B03-04-yeu-cau-nhan-viec-va-chat.md).
 
 ## Bạn thấy gì thay đổi?

@@ -1,5 +1,7 @@
 # B03-04 — Gửi yêu cầu, nhận việc và trò chuyện
 
+**Cập nhật push 07/10/2026:** code đã lên `main` tại `293b073`; [CI 37604427549](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37604427549) đạt cả 3 job: app/build, API/PostGIS, web E2E. Các ghi chú “chưa commit/push/CI” bên dưới là mốc kiểm local trước khi push; kết quả CI này xác nhận đúng commit `293b073`. Chưa UAT hoặc phát hành production.
+
 07/10/2026 · P0-2 · Checklist B03-02/03/04, phần phân công B04-02, HTTP chat B05-01. Code local chưa commit/push. [Mục lục](../README.md) · [Bỏ nhập tọa độ](B03-03-bo-nhap-toa-do.md).
 
 ## Bạn đã dùng được gì?
