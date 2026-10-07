@@ -12,7 +12,7 @@ Nếu nhiều người cùng tọa độ, ghim ghi số người, chẳng hạn 
 
 ## Ảnh app chạy thật
 
-Ảnh ngày 07/10/2026 dùng dữ liệu DEMO, API/PostGIS cục bộ và bản đồ nền Geoapify thật. Web là Chromium; Android là emulator API 36; iOS là iPhone 18 Pro simulator iOS 27. Không phải ảnh thiết bị thật hoặc nghiệm thu UAT.
+Ảnh ngày 07/10/2026 dùng dữ liệu DEMO, API/PostGIS cục bộ và bản đồ nền Geoapify thật. Web là Chromium; Android là emulator API 36; iOS là iPhone 18 Pro simulator iOS 27. Ảnh iOS chụp lại lúc 16:03 JST với giao diện tiếng Nhật; tên và mô tả DEMO do người cung cấp nhập vẫn giữ tiếng Việt. Không phải ảnh thiết bị thật hoặc nghiệm thu UAT.
 
 | Web: bản đồ và ghim được chọn | Web: thẻ địa điểm và danh sách |
 |---|---|
@@ -89,21 +89,21 @@ Câu hỏi học code: Vì sao trả `null` mà không bỏ luôn hồ sơ? Vì 
 
 Kiểm thử tự động đã kiểm dữ liệu riêng/công khai, điểm gần nhất, ngoài bán kính, chuyển trạng thái public và lưu trữ điểm. Kiểm UI đã kiểm ghim trùng mở từng hồ sơ, giữ người không có điểm trong danh sách, đổi tọa độ xóa cũ, lỗi bản đồ và thử lại. Web dùng API/DB test thật, chỉ nền tile được giả lập trong E2E; lượt ảnh DEMO kiểm nền Geoapify thật riêng.
 
-Web, iOS simulator và Android emulator đã đi từ tìm → ghim → thẻ → hồ sơ. Android được kiểm lại thành công lúc 15:54 JST sau khi WebView của emulator tự cập nhật và đóng app ở lượt trước; lượt cuối còn đi qua nhập địa chỉ và chọn gợi ý Geoapify thật. Chưa nghiệm thu trên điện thoại thật hoặc UAT của chủ dự án. Gom ghim hiện chỉ xử lý tọa độ trùng tuyệt đối, chưa có gom cụm theo mức zoom.
+Web, iOS simulator và Android emulator đã đi từ tìm → ghim → thẻ → hồ sơ. iOS được kiểm lại lúc 16:03 JST sau bản sửa camera `8fdc9d4`: chuyển Danh sách/Bản đồ, chọn ghim và mở hồ sơ không còn cảnh báo React. Bài hồi quy camera kiểm Promise từ SDK không bị trả về làm hàm dọn dẹp của `useEffect`. Android được kiểm lại thành công lúc 15:54 JST sau khi WebView của emulator tự cập nhật và đóng app ở lượt trước; lượt cuối còn đi qua nhập địa chỉ và chọn gợi ý Geoapify thật. Chưa nghiệm thu trên điện thoại thật hoặc UAT của chủ dự án. Gom ghim hiện chỉ xử lý tọa độ trùng tuyệt đối, chưa có gom cụm theo mức zoom.
 
 <details>
 <summary>Lệnh, test và bằng chứng kỹ thuật</summary>
 
 | Kiểm tra | Kết quả ngày 07/10/2026 | Bằng chứng |
 |---|---|---|
-| Typecheck, lint | PASS | `.local/map-02/typecheck-final.log`, `lint-final.log` |
-| Mobile unit/UI + coverage | 152 test, 32 suite PASS; core lines 100%, branches 92.56%; app lines 82.81%, branches 76.76%; đạt gate repo | `.local/map-02/mobile-coverage-final.log` |
+| Typecheck, lint | PASS | `.local/map-02/typecheck-camera.log`, `lint-camera.log` |
+| Mobile unit/UI + coverage | 153 test, 33 suite PASS; core lines 100%, branches 92.56%; app lines 82.81%, branches 76.76%; đạt gate repo | `.local/map-02/mobile-camera-coverage.log`; [ResultsMap.native.test.tsx](../../../apps/mobile/src/features/search/components/ResultsMap.native.test.tsx) |
 | API unit/integration + PostGIS coverage | 68 test PASS; core lines 100%, branches 92.17%; app lines 90.98%, branches 88.20% | `.local/map-02/coverage.log`; [partners.test.ts](../../../services/api/test/integration/partners.test.ts) |
-| Web E2E MAP-02 | 1 hành trình PASS | [search-map.spec.mjs](../../../tests/e2e/web/search-map.spec.mjs), `.local/map-02/web.log` |
+| Web E2E MAP-02 | 1 hành trình PASS | [search-map.spec.mjs](../../../tests/e2e/web/search-map.spec.mjs), `.local/map-02/web-final.log` |
 | Web live + Geoapify | PASS ghim, thẻ, hồ sơ | `.local/map-02/live-web.log`, ảnh trên |
-| iOS simulator / Android emulator | Ghi đúng phạm vi ở đoạn trên; không thay thiết bị thật | Ảnh và thao tác Mobile MCP; Maestro Android không khởi động được driver, không tính PASS Maestro |
+| iOS simulator / Android emulator | Ghi đúng phạm vi ở đoạn trên; không thay thiết bị thật | Ảnh và thao tác Mobile MCP; Maestro Android không khởi động được driver; lượt Maestro iOS cuối dừng ở đối chiếu câu tiếng Việt khi app đang tiếng Nhật. Không tính PASS toàn hành trình Maestro; thao tác chọn ghim/hồ sơ kiểm lại bằng Mobile MCP |
 | MAP-01 đã push | `4dc7600`, cả ba job CI PASS | [CI MAP-01](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37577265358) |
-| MAP-02 Git/CI | Chưa push tại thời điểm viết báo cáo; cập nhật sau khi xác nhận remote | Không dùng CI MAP-01 để kết luận MAP-02 |
+| MAP-02 Git/CI | Đã push `a6d4735` và sửa camera `8fdc9d4`; cả 3 job PASS: static/mobile/build, API/PostGIS, web E2E | [CI MAP-02](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37584532165) kiểm code `8fdc9d45a95442b0145027411e13d30c739ed81f`; lần `37584240737` trước bị hủy khi push bản sửa. Bản cập nhật báo cáo/ảnh sau đó không đổi code và dùng `[skip ci]`. |
 
 Các log `.local` được bỏ qua bởi Git. Chạy lại bằng `npm run typecheck`, `npm run lint`, `npm run test:coverage` và `npx playwright test --config tests/e2e/web/playwright.config.mjs search-map.spec.mjs`. E2E tạo dữ liệu cô lập; không sửa hồ sơ DEMO sẵn có.
 

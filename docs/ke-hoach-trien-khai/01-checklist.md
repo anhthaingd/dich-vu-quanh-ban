@@ -1,7 +1,7 @@
 # Checklist chức năng và bằng chứng
 
 
-**Cập nhật 07/10:** MAP-01 đã push `4dc7600`, [CI đạt cả 3 job](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37577265358). **MAP-02 đã triển khai** theo quyết định chỉ ghim địa điểm công khai; người chưa có điểm công khai vẫn hiện danh sách. [Báo cáo B03-02](bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md) ghi kiểm thử/ảnh và trạng thái push riêng. Thứ tự P0-1 → MAP-01 → MAP-02 → P0-2 → P0-3. Các mốc chưa tích hợp bản đồ phía dưới là lịch sử, không thay trạng thái này.
+**Cập nhật 07/10:** MAP-01 đã push `4dc7600`, [CI đạt cả 3 job](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37577265358). **MAP-02 đã push `a6d4735` và bản sửa camera `8fdc9d4`; [CI MAP-02](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37584532165) đạt cả 3 job** theo quyết định chỉ ghim địa điểm công khai; người chưa có điểm công khai vẫn hiện danh sách. [Báo cáo B03-02](bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md) ghi kiểm thử/ảnh và trạng thái push riêng. Thứ tự P0-1 → MAP-01 → MAP-02 → P0-2 → P0-3. Các mốc chưa tích hợp bản đồ phía dưới là lịch sử, không thay trạng thái này.
 DOC-083 · v1.0 · 01/10/2026 · DELIVERY-01. Baseline code `50d184a`. [Mục lục](README.md).
 
 ## Quy ước
@@ -221,8 +221,8 @@ Ghi mã lát, trạng thái, commit, kết quả kiểm, báo cáo và phần th
 
 - [x] Quyết định public-only; API `map_location` Address/null, giữ ranking/cursor/quyền.
 - [x] Danh sách/bản đồ, ghim trùng mở từng hồ sơ, thiếu ghim vẫn hiện danh sách; lỗi map/thử lại; VI/EN/JA.
-- [x] Typecheck/lint, 152 mobile và 68 API, coverage gate; E2E web và web live.
+- [x] Typecheck/lint, 153 mobile và 68 API, coverage gate; E2E web và web live.
 - [x] Ảnh bản đồ/thẻ ghim trên Android emulator và iOS simulator; iOS mở hồ sơ đạt. Xem [B03-02](bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md).
 - [x] Android kiểm lại đạt nhập địa chỉ → tìm → ghim → mở hồ sơ, sau gián đoạn emulator; có ảnh hồ sơ.
-- [ ] Commit/push và remote CI MAP-02.
+- [x] Commit/push `a6d4735`, sửa camera `8fdc9d4`; [CI MAP-02](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37584532165) đạt static/mobile/build, API/PostGIS và web E2E. Báo cáo/ảnh cập nhật riêng, không thay code đã kiểm.
 - [ ] Thiết bị thật, UAT; chưa billing/production.
