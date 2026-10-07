@@ -1,3 +1,4 @@
+import { PublicLocation } from '../../location/components/PublicLocation';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -94,7 +95,7 @@ function Profile({ id, login }: { id: string; login: () => void }) {
         <Card>
           <AppText variant="section">{t('partners.locations')}</AppText>
           {profile.public_addresses.map((a, i) => (
-            <AppText key={i}>{a.text}</AppText>
+            <PublicLocation key={i} text={a.text} point={a.point} />
           ))}
         </Card>
       )}

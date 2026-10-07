@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Dịch vụ quanh bạn — API thiết kế",
-    "version": "0.1.6",
-    "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local. B01-04 (06/10/2026): Me.version bat buoc >=1, PATCH /me sua ten theo expected_version va Idempotency-Key da duyet."
+    "version": "0.1.7",
+    "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local. B01-04 (06/10/2026): Me.version bat buoc >=1, PATCH /me sua ten theo expected_version va Idempotency-Key da duyet. MAP-01 (07/10/2026): thử MapLibre + Geoapify Free và bộ chọn 4 nơi theo yêu cầu triển khai; chưa billing/production."
   },
   "servers": [
     {
@@ -16253,6 +16253,294 @@
           }
         }
       }
+    },
+    "/locations/autocomplete": {
+      "post": {
+        "operationId": "locationAutocomplete",
+        "tags": [
+          "Địa điểm"
+        ],
+        "summary": "Gợi ý địa chỉ",
+        "description": "MAP-01 pilot local. Public lookup with per-IP or authenticated-account limits and a global limit. No history or shared persistent cache. No automatic selection. Reverse preserves requested coordinates. 429 has Retry-After. Does not save addresses; existing authenticated APIs retain ownership/version/idempotency checks.",
+        "security": [
+          {},
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Normalized result; Cache-Control: no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationSuggestions"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid supplied credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit; wait Retry-After seconds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Provider disabled or unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Provider timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/locations/geocode": {
+      "post": {
+        "operationId": "locationGeocode",
+        "tags": [
+          "Địa điểm"
+        ],
+        "summary": "Tìm địa chỉ đầy đủ",
+        "description": "MAP-01 pilot local. Public lookup with per-IP or authenticated-account limits and a global limit. No history or shared persistent cache. No automatic selection. Reverse preserves requested coordinates. 429 has Retry-After. Does not save addresses; existing authenticated APIs retain ownership/version/idempotency checks.",
+        "security": [
+          {},
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Normalized result; Cache-Control: no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationSuggestions"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid supplied credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit; wait Retry-After seconds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Provider disabled or unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Provider timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/locations/reverse": {
+      "post": {
+        "operationId": "locationReverse",
+        "tags": [
+          "Địa điểm"
+        ],
+        "summary": "Tra địa chỉ tại ghim",
+        "description": "MAP-01 pilot local. Public lookup with per-IP or authenticated-account limits and a global limit. No history or shared persistent cache. No automatic selection. Reverse preserves requested coordinates. 429 has Retry-After. Does not save addresses; existing authenticated APIs retain ownership/version/idempotency checks.",
+        "security": [
+          {},
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationReverseInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Normalized result; Cache-Control: no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationReverse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid supplied credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit; wait Retry-After seconds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Provider disabled or unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Provider timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -20209,6 +20497,128 @@
         "required": [
           "expected_version",
           "publication_status"
+        ]
+      },
+      "LocationQuery": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 300,
+            "description": "Trim; reject control characters. Search is filtered to Vietnam in this pilot."
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "vi",
+              "en",
+              "ja"
+            ]
+          },
+          "bias": {
+            "$ref": "#/components/schemas/Point"
+          }
+        },
+        "required": [
+          "text",
+          "locale"
+        ]
+      },
+      "LocationReverseInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "point": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "vi",
+              "en",
+              "ja"
+            ]
+          }
+        },
+        "required": [
+          "point",
+          "locale"
+        ]
+      },
+      "LocationSuggestion": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "point": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "precision": {
+            "type": "string",
+            "enum": [
+              "address",
+              "approximate"
+            ],
+            "description": "Provider result granularity, not address verification."
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "point",
+          "precision"
+        ]
+      },
+      "LocationSuggestions": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 5,
+            "items": {
+              "$ref": "#/components/schemas/LocationSuggestion"
+            }
+          },
+          "attribution": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "items",
+          "attribution"
+        ]
+      },
+      "LocationReverse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LocationSuggestion"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attribution": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "attribution"
         ]
       }
     }

@@ -1,3 +1,4 @@
+import { LocationsModule } from './modules/locations/locations.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { PartnersModule } from './modules/partners/partners.module.js';
 import { AppLog } from './logging/logger.js';
@@ -15,7 +16,7 @@ export class AppModule {
   static register(settings: Config, database: Pool | undefined, log: AppLog): DynamicModule {
     return {
       module: AppModule,
-      imports: [LoggingModule.register(log), DatabaseModule.register(settings, database, log), CatalogModule.register(settings.cursorSecret), HealthModule,
+      imports: [LocationsModule.register(settings.geoapifyKey), LoggingModule.register(log), DatabaseModule.register(settings, database, log), CatalogModule.register(settings.cursorSecret), HealthModule,
         ...(settings.authSecret ? [AuthModule.register(settings.authSecret), AccountsModule.register(settings.cursorSecret), PartnersModule.register(settings.cursorSecret)] : [])],
     };
   }

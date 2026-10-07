@@ -36,3 +36,7 @@ Nguồn triển khai và runbook: [DOC-065](../implementation/dot-1.md), [ADR-00
 ## LOGTEST-01 · 28/09/2026
 
 Phương án A đã triển khai và kiểm local; chi tiết vận hành/bằng chứng tại [DOC-071](../implementation/logging-testing.md). Native còn BLOCKED; `.github/workflows/quality.yml` đã chuẩn bị, chưa push/chạy remote CI.
+
+## MAP-01 — phiên bản API v0.1.7
+
+Ba endpoint địa điểm và QA-076–079, thử MapLibre + Geoapify Free theo duyệt triển khai 07/10/2026. Chưa billing/production. Báo cáo B03-01 trong repo ghi riêng code/local/native/live provider; DB không đổi. ZIP v0.1.1 tiếp tục là gói hiện hành, tên giữ để không hỏng liên kết.

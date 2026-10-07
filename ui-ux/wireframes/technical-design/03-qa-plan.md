@@ -161,3 +161,13 @@ API dùng Node test/c8; mobile Jest/RNTL; core ≥90% lines/85% branches, phần
 
 - **QA-074** — Tạo draft, điền kỹ năng/vùng/cửa hàng, công bố và nhận việc; sửa cạnh tranh, mất response, mất quyền, rollback. Ví rỗng cùng transaction; nháp riêng tư; đầy đủ theo mọi mode; shared version; replay kiểm lại quyền; tắt/nháp loại khỏi search; không cấp verified từ client.
 - **QA-075** — Lọc kỹ năng/mode/category/verified; biên vùng/bán kính; cursor đổi filter; đổi vị trí liên tục; xem profile VI/EN/JA/anonymous. Lọc trước xếp hạng; mỗi partner một kết quả; vùng phủ khách và tâm trong radius; distance cursor không lặp trên tập ổn định; không rò địa chỉ riêng; phản hồi cũ không ghi đè mới.
+
+## MAP-01 — chọn địa điểm, thử local ngày 07/10/2026
+
+Theo yêu cầu triển khai tiếp sau khi chốt MapLibre + Geoapify Free: bộ chọn chung cho tìm dịch vụ, sổ địa chỉ, cửa hàng và tâm vùng. Có nhập địa chỉ/gợi ý, tìm cả chuỗi, chạm/kéo bản đồ, GPS khi bấm nút, địa chỉ đã lưu và nhập tọa độ nâng cao. Người dùng chọn kết quả và xác nhận; không tự lấy dòng đầu. Gõ truy vấn khác hủy lựa chọn cũ, sửa mô tả tầng/phòng giữ ghim. Hủy không sửa form. Đổi tài khoản xóa bản nháp riêng; phản hồi cũ không ghi đè điểm mới.
+
+Ba POST `/v1/locations/autocomplete`, `/geocode`, `/reverse` nhận JSON body theo OpenAPI v0.1.7. Query 3–300 ký tự, locale vi/en/ja, tối đa 5 gợi ý. Tra ngược giữ chính điểm yêu cầu, rỗng/lỗi vẫn cho nhập mô tả sau khi có điểm. Khách chưa đăng nhập được tra cứu với hạn mức IP; bearer hợp lệ dùng tài khoản. Pilot một tiến trình: 4 lookup/giây, 30/actor/phút, 1000/24h; restart reset bộ đếm. 429 có Retry-After; timeout provider 6 giây trả 504 TIMEOUT. Các giới hạn này không bao gồm tile và không phải bảo đảm chặn chi phí toàn project.
+
+Key tra cứu ở server; key tile công khai ở app. Chưa billing/production, chưa dùng Google. Không ghi log địa chỉ/tọa độ/key, không lưu lịch sử GPS. Geoapify và OpenStreetMap được ghi nguồn. Bản đồ nền do app tải trực tiếp; không gửi token dự án tới Geoapify.
+
+Không migration: giữ `{text, point}` và quyền/version/idempotency của API lưu hiện hành. `source` chỉ ở state app, ID gợi ý chỉ tạm. Tâm vùng không thành vị trí thợ công khai; chỉ điểm cửa hàng đã công khai được vẽ trong hồ sơ. Polygon, gom ghim toàn bộ kết quả, routing/ETA và theo dõi thợ ngoài đợt. Bằng chứng code/local/native ở báo cáo B03-01 trong repo; không suy ra UAT/production.

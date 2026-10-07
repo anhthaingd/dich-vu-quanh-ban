@@ -1,0 +1,2281 @@
+{
+  "testedAt": "2026-10-07T03:53:19.391Z",
+  "filter": "countrycode:vn",
+  "locale": "vi",
+  "bias": null,
+  "rows": [
+    {
+      "id": 1,
+      "group": "number",
+      "text": "1 Tràng Tiền, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1484,
+          "items": [
+            {
+              "formatted": "Viện Bảo tàng Lịch sử Việt Nam, 1, Phố Tràng Tiền, Phường Hoàn Kiếm, Hà Nội, 11024, Việt Nam",
+              "lat": 21.02414,
+              "lon": 105.8597599,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Tràng Tiền",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "1, Phố Tràng Tiền, Hà Nội, HI 11024, Việt Nam",
+              "lat": 21.024538,
+              "lon": 105.859742,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Phố Tràng Tiền",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "44, Phố Tràng Tiền, Hà Nội, HI 11024, Việt Nam",
+              "lat": 21.025487,
+              "lon": 105.854553,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Phố Tràng Tiền",
+              "housenumber": "44"
+            },
+            {
+              "formatted": "44, Phố Tràng Tiền, Phường Hoàn Kiếm, Hà Nội, 11024, Việt Nam",
+              "lat": 21.0253598,
+              "lon": 105.8546157,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Phố Tràng Tiền",
+              "housenumber": "44"
+            },
+            {
+              "formatted": "62, Phố Tràng Tiền, Phường Hoàn Kiếm, Hà Nội, HI 11024, Việt Nam",
+              "lat": 21.0253751,
+              "lon": 105.8537104,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Phố Tràng Tiền",
+              "housenumber": "62"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 914,
+          "items": [
+            {
+              "formatted": "Viện Bảo tàng Lịch sử Việt Nam, 1, Phố Tràng Tiền, Phường Hoàn Kiếm, Hà Nội, 11024, Việt Nam",
+              "lat": 21.02414,
+              "lon": 105.8597599,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Tràng Tiền",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "Uniqlo, 1, Phố Bà Triệu, Phường Hoàn Kiếm, Hà Nội, 11018, Việt Nam",
+              "lat": 21.0256337,
+              "lon": 105.8518593,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Bà Triệu",
+              "housenumber": "1"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 2,
+      "group": "number",
+      "text": "58 Quốc Tử Giám, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 982,
+          "items": [
+            {
+              "formatted": "1B, Phố Quốc Tử Giám, Hà Nội, HI 100000, Việt Nam",
+              "lat": 21.025946,
+              "lon": 105.837964,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Phố Quốc Tử Giám",
+              "housenumber": "1B"
+            },
+            {
+              "formatted": "1, Phố Quốc Tử Giám, Phường Văn Miếu - Quốc Tử Giám, Hà Nội, HI 11508, Việt Nam",
+              "lat": 21.0258584,
+              "lon": 105.8381734,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "district": "Thanh Giám",
+              "street": "Phố Quốc Tử Giám",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "12, Phố Quốc Tử Giám, Phường Văn Miếu - Quốc Tử Giám, Hà Nội, HI 11508, Việt Nam",
+              "lat": 21.0262311,
+              "lon": 105.837946,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "district": "Thanh Giám",
+              "street": "Phố Quốc Tử Giám",
+              "housenumber": "12"
+            },
+            {
+              "formatted": "5a, Phố Quốc Tử Giám, Phường Văn Miếu - Quốc Tử Giám, Hà Nội, HI 11508, Việt Nam",
+              "lat": 21.0260725,
+              "lon": 105.8377757,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "district": "Thanh Giám",
+              "street": "Phố Quốc Tử Giám",
+              "housenumber": "5a"
+            },
+            {
+              "formatted": "9, Phố Quốc Tử Giám, Phường Văn Miếu - Quốc Tử Giám, Hà Nội, HI 11508, Việt Nam",
+              "lat": 21.0261468,
+              "lon": 105.8376122,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "district": "Thanh Giám",
+              "street": "Phố Quốc Tử Giám",
+              "housenumber": "9"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1147,
+          "items": [
+            {
+              "formatted": "58, Phố Quốc Tử Giám, Hà Nội, HI, Việt Nam",
+              "lat": 21.0271325,
+              "lon": 105.835904,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Phố Quốc Tử Giám",
+              "housenumber": "58"
+            },
+            {
+              "formatted": "58, Ngõ 25 Quốc Tử Giám, Hà Nội, HI, Việt Nam",
+              "lat": 21.026158,
+              "lon": 105.837218,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Ngõ 25 Quốc Tử Giám",
+              "housenumber": "58"
+            },
+            {
+              "formatted": "58, Ngõ 65 Quốc Tử Giám, Hà Nội, HI, Việt Nam",
+              "lat": 21.027455,
+              "lon": 105.834729,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Ngõ 65 Quốc Tử Giám",
+              "housenumber": "58"
+            },
+            {
+              "formatted": "Phường Văn Miếu - Quốc Tử Giám, Hà Nội, Việt Nam",
+              "lat": 21.0191312,
+              "lon": 105.8361676,
+              "result_type": "suburb",
+              "city": "Hà Nội"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Autocomplete is on the correct street but misses house 58. Geocode includes house 58."
+      }
+    },
+    {
+      "id": 3,
+      "group": "number",
+      "text": "1 Hỏa Lò, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 2246,
+          "items": [
+            {
+              "formatted": "Nhà tù Hoả Lò, 1, Phố Hỏa Lò, Phường Cửa Nam, Hà Nội, 11018, Việt Nam",
+              "lat": 21.0254222,
+              "lon": 105.8465093,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Hỏa Lò",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "1, Phố Hỏa Lò, Hà Nội, HI 11018, Việt Nam",
+              "lat": 21.025346,
+              "lon": 105.846562,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Phố Hỏa Lò",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "1, Phố Hỏa Lò, Phường Cửa Nam, Hà Nội, 11018, Việt Nam",
+              "lat": 21.0258446,
+              "lon": 105.8467027,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Phố Hỏa Lò",
+              "housenumber": "1"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 644,
+          "items": [
+            {
+              "formatted": "Nhà tù Hoả Lò, 1, Phố Hỏa Lò, Phường Cửa Nam, Hà Nội, 11018, Việt Nam",
+              "lat": 21.0254222,
+              "lon": 105.8465093,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Hỏa Lò",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "1, Phố Hỏa Lò, Phường Cửa Nam, Hà Nội, 11018, Việt Nam",
+              "lat": 21.0258446,
+              "lon": 105.8467027,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Phố Hỏa Lò",
+              "housenumber": "1"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 4,
+      "group": "number",
+      "text": "78 Giải Phóng, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 839,
+          "items": [
+            {
+              "formatted": "78, Đường Giải Phóng, Phường Kim Liên, Hà Nội, 11520, Việt Nam",
+              "lat": 21.001945,
+              "lon": 105.8407066,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Đường Giải Phóng",
+              "housenumber": "78"
+            },
+            {
+              "formatted": "Bệnh viện Bạch Mai, 78, Đường Giải Phóng, Phường Kim Liên, Hà Nội, 11520, Việt Nam",
+              "lat": 21.0018168,
+              "lon": 105.8396722,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường Giải Phóng",
+              "housenumber": "78"
+            },
+            {
+              "formatted": "Bệnh viện Tai-Mũi-Họng Trung ương, 78, Đường Giải Phóng, Phường Kim Liên, Hà Nội, 11520, Việt Nam",
+              "lat": 20.9997135,
+              "lon": 105.8405694,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường Giải Phóng",
+              "housenumber": "78"
+            },
+            {
+              "formatted": "BIDV, 78, Đường Giải Phóng, Phường Kim Liên, Hà Nội, 11520, Việt Nam",
+              "lat": 21.0031568,
+              "lon": 105.8410062,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường Giải Phóng",
+              "housenumber": "78"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 812,
+          "items": [
+            {
+              "formatted": "78, Đường Giải Phóng, Phường Kim Liên, Hà Nội, 11520, Việt Nam",
+              "lat": 21.001945,
+              "lon": 105.8407066,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Đường Giải Phóng",
+              "housenumber": "78"
+            },
+            {
+              "formatted": "Bệnh viện Bạch Mai, 78, Đường Giải Phóng, Phường Kim Liên, Hà Nội, 11520, Việt Nam",
+              "lat": 21.0018168,
+              "lon": 105.8396722,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường Giải Phóng",
+              "housenumber": "78"
+            },
+            {
+              "formatted": "Bệnh viện Tai-Mũi-Họng Trung ương, 78, Đường Giải Phóng, Phường Kim Liên, Hà Nội, 11520, Việt Nam",
+              "lat": 20.9997135,
+              "lon": 105.8405694,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường Giải Phóng",
+              "housenumber": "78"
+            },
+            {
+              "formatted": "BIDV, 78, Đường Giải Phóng, Phường Kim Liên, Hà Nội, 11520, Việt Nam",
+              "lat": 21.0031568,
+              "lon": 105.8410062,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường Giải Phóng",
+              "housenumber": "78"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 5,
+      "group": "number",
+      "text": "54 Nguyễn Du, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 2089,
+          "items": [
+            {
+              "formatted": "Vietcombank, 54, Phố Nguyễn Du, Phường Cửa Nam, Hà Nội, HI 11018, Việt Nam",
+              "lat": 21.0193291,
+              "lon": 105.8474621,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Nguyễn Du",
+              "housenumber": "54"
+            },
+            {
+              "formatted": "54, Phố Bùi Thị Xuân, Phường Hai Bà Trưng, Hà Nội, 11626, Việt Nam",
+              "lat": 21.0160219,
+              "lon": 105.8497338,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "district": "Vân Hồ",
+              "street": "Phố Bùi Thị Xuân",
+              "housenumber": "54"
+            },
+            {
+              "formatted": "54, Phố Mai Hắc Đế, Phường Hai Bà Trưng, Hà Nội, 11626, Việt Nam",
+              "lat": 21.0143466,
+              "lon": 105.8508157,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "district": "Vân Hồ",
+              "street": "Phố Mai Hắc Đế",
+              "housenumber": "54"
+            },
+            {
+              "formatted": "Winston International School, 54, Phố Mai Hắc Đế, Phường Hai Bà Trưng, Hà Nội, 11626, Việt Nam",
+              "lat": 21.0143514,
+              "lon": 105.8508573,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Vân Hồ",
+              "street": "Phố Mai Hắc Đế",
+              "housenumber": "54"
+            },
+            {
+              "formatted": "54, Phố Triệu Việt Vương, Phường Hai Bà Trưng, Hà Nội, 11626, Việt Nam",
+              "lat": 21.0167562,
+              "lon": 105.8502616,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "district": "Vân Hồ",
+              "street": "Phố Triệu Việt Vương",
+              "housenumber": "54"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1050,
+          "items": [
+            {
+              "formatted": "54, Phố Nguyễn Du, Phường Cửa Nam, Hà Nội, HI 11018, Việt Nam",
+              "lat": 21.0193291,
+              "lon": 105.8474621,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "street": "Phố Nguyễn Du",
+              "housenumber": "54"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 6,
+      "group": "alley",
+      "text": "Ngõ 6 Đặng Văn Ngữ, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1233,
+          "items": [
+            {
+              "formatted": "Ngõ 6 Đặng Văn Ngữ, Phường Kim Liên, Hà Nội, 11520, Việt Nam",
+              "lat": 21.0125955,
+              "lon": 105.8331831,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Ngõ 6 Đặng Văn Ngữ"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1528,
+          "items": [
+            {
+              "formatted": "Ngõ 6 Đặng Văn Ngữ, Phường Kim Liên, Hà Nội, 11520, Việt Nam",
+              "lat": 21.0125955,
+              "lon": 105.8331831,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Ngõ 6 Đặng Văn Ngữ"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 7,
+      "group": "alley",
+      "text": "Ngõ 165 Cầu Giấy, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1176,
+          "items": [
+            {
+              "formatted": "Ngõ 260 Đường Cầu Giấy, Phường Cầu Giấy, Hà Nội, 11314, Việt Nam",
+              "lat": 21.0355978,
+              "lon": 105.7961828,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "district": "Dịch Vọng Trung",
+              "street": "Ngõ 260 Đường Cầu Giấy"
+            },
+            {
+              "formatted": "Ngõ 66 Dịch Vọng Hậu, Phường Cầu Giấy, Hà Nội, 11314, Việt Nam",
+              "lat": 21.0316124,
+              "lon": 105.7849289,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "district": "Dịch Vọng Hậu",
+              "street": "Ngõ 66 Dịch Vọng Hậu"
+            },
+            {
+              "formatted": "Ngõ 1 Phố Dịch Vọng Hậu, Phường Cầu Giấy, Hà Nội, 11314, Việt Nam",
+              "lat": 21.0326702,
+              "lon": 105.7879997,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "district": "Dịch Vọng Hậu",
+              "street": "Ngõ 1 Phố Dịch Vọng Hậu"
+            },
+            {
+              "formatted": "Ngõ 15 Phố Duy Tân, Phường Cầu Giấy, Hà Nội, 11314, Việt Nam",
+              "lat": 21.0287436,
+              "lon": 105.7836545,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Ngõ 15 Phố Duy Tân"
+            },
+            {
+              "formatted": "Ngõ 25 Phố Hoàng Quán Chi, Phường Cầu Giấy, Hà Nội, 11314, Việt Nam",
+              "lat": 21.0277123,
+              "lon": 105.7933409,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "district": "Thượng Yên Quyết",
+              "street": "Ngõ 25 Phố Hoàng Quán Chi"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1084,
+          "items": [
+            {
+              "formatted": "Ngõ 165 Đường Cầu Giấy, Hà Nội, HI, Việt Nam",
+              "lat": 21.032285,
+              "lon": 105.797236,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Ngõ 165 Đường Cầu Giấy"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": false,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 8,
+      "group": "alley",
+      "text": "Ngõ 44 Trần Thái Tông, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 2228,
+          "items": [
+            {
+              "formatted": "Hà Nội, HI, Việt Nam",
+              "lat": 21.0245,
+              "lon": 105.84117,
+              "result_type": "city",
+              "city": "Hà Nội"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1396,
+          "items": [
+            {
+              "formatted": "Ngõ 44 Phố Trần Thái Tông, Hà Nội, HI, Việt Nam",
+              "lat": 21.033261,
+              "lon": 105.786836,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Ngõ 44 Phố Trần Thái Tông"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": false,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 9,
+      "group": "alley",
+      "text": "Ngõ 198 Xã Đàn, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1548,
+          "items": [
+            {
+              "formatted": "Ngõ 198 Xã Đàn, Phường Văn Miếu - Quốc Tử Giám, Hà Nội, 11508, Việt Nam",
+              "lat": 21.0114357,
+              "lon": 105.837179,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "district": "Kim Liên",
+              "street": "Ngõ 198 Xã Đàn"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1962,
+          "items": [
+            {
+              "formatted": "Ngõ 198 Xã Đàn, Phường Văn Miếu - Quốc Tử Giám, Hà Nội, 11508, Việt Nam",
+              "lat": 21.0114357,
+              "lon": 105.837179,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "district": "Kim Liên",
+              "street": "Ngõ 198 Xã Đàn"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 10,
+      "group": "alley",
+      "text": "Ngõ 26 Nguyên Hồng, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1677,
+          "items": [
+            {
+              "formatted": "Hà Nội, HI, Việt Nam",
+              "lat": 21.0245,
+              "lon": 105.84117,
+              "result_type": "city",
+              "city": "Hà Nội"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 2513,
+          "items": [
+            {
+              "formatted": "Ngõ 26 Phố Nguyên Hồng, Hà Nội, HI, Việt Nam",
+              "lat": 21.017855,
+              "lon": 105.810462,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Ngõ 26 Phố Nguyên Hồng"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": false,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 11,
+      "group": "unaccented",
+      "text": "Ho Hoan Kiem, Ha Noi",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1336,
+          "items": [
+            {
+              "formatted": "Hồ Hoàn Kiếm, Phường Hoàn Kiếm, Hà Nội, 11024, Việt Nam",
+              "lat": 21.0288313,
+              "lon": 105.8525357,
+              "result_type": "amenity",
+              "city": "Hà Nội"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 617,
+          "items": [
+            {
+              "formatted": "Hồ Hoàn Kiếm, Phường Hoàn Kiếm, Hà Nội, 11024, Việt Nam",
+              "lat": 21.0288313,
+              "lon": 105.8525357,
+              "result_type": "amenity",
+              "city": "Hà Nội"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 12,
+      "group": "unaccented",
+      "text": "Benh vien E, Ha Noi",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1411,
+          "items": [
+            {
+              "formatted": "Bệnh viện E - 87 Trần Cung, 87-89, Phố Trần Cung, Phường Nghĩa Đô, Hà Nội, 11307, Việt Nam",
+              "lat": 21.0503603,
+              "lon": 105.7897443,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Nghia Do Ward",
+              "street": "Phố Trần Cung",
+              "housenumber": "87-89"
+            },
+            {
+              "formatted": "Hospital E, 87-89, Tran Cung Street, Phường Nghĩa Đô, Hanoi, 11307, Vietnam",
+              "lat": 21.0503898,
+              "lon": 105.7885022,
+              "result_type": "amenity",
+              "city": "Hanoi",
+              "district": "Nghia Do Ward",
+              "street": "Tran Cung Street",
+              "housenumber": "87-89"
+            },
+            {
+              "formatted": "Nhà tang lễ Bệnh viện E, Ngõ 109 Phố Trần Cung, Phường Nghĩa Đô, Hà Nội, 11307, Việt Nam",
+              "lat": 21.0510685,
+              "lon": 105.7892794,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Cổ Nhuế Hoàng",
+              "street": "Ngõ 109 Phố Trần Cung"
+            },
+            {
+              "formatted": "Café Don 105E5 Thái Thịnh - Đối diện Bệnh viện Châm cứu Trung ương, Phố Thái Thịnh, Phường Đống Đa, Hà Nội, 11527, Việt Nam",
+              "lat": 21.0076049,
+              "lon": 105.8209127,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Thái Hà Ấp",
+              "street": "Phố Thái Thịnh"
+            },
+            {
+              "formatted": "Cổng bệnh viện Quân y 108 - Đối diện 2E Trần Hưng Đạo, Phố Trần Hưng Đạo, Phường Cửa Nam, Hà Nội, 11018, Việt Nam",
+              "lat": 21.0184313,
+              "lon": 105.8607263,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Cua Nam Ward",
+              "street": "Phố Trần Hưng Đạo"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1241,
+          "items": [
+            {
+              "formatted": "Bệnh viện E, 87-89, Phố Trần Cung, Phường Nghĩa Đô, Hà Nội, 11307, Việt Nam",
+              "lat": 21.0503898,
+              "lon": 105.7885022,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Trần Cung",
+              "housenumber": "87-89"
+            },
+            {
+              "formatted": "Bệnh viện E, 87-89, Đường Trần Cung, Phường Nghĩa Đô, Hà Nội, HI 11307, Việt Nam",
+              "lat": 21.050206,
+              "lon": 105.78837,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường Trần Cung",
+              "housenumber": "87-89"
+            },
+            {
+              "formatted": "Bệnh viện E - 87 Trần Cung, Phường Nghĩa Đô, Hà Nội, HI 11307, Việt Nam",
+              "lat": 21.05036,
+              "lon": 105.789744,
+              "result_type": "amenity",
+              "city": "Hà Nội"
+            },
+            {
+              "formatted": "Bệnh viện Bãi Cháy, Hạ Long, Việt Nam",
+              "lat": 20.975483,
+              "lon": 107.015676,
+              "result_type": "amenity"
+            },
+            {
+              "formatted": "Nhà tang lễ Bệnh viện E, Ngõ 109 Phố Trần Cung, Phường Nghĩa Đô, Hà Nội, HI 11307, Việt Nam",
+              "lat": 21.0510685,
+              "lon": 105.7892794,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Cổ Nhuế Hoàng",
+              "street": "Ngõ 109 Phố Trần Cung"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 13,
+      "group": "unaccented",
+      "text": "Dai hoc Bach Khoa, Ha Noi",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1429,
+          "items": [
+            {
+              "formatted": "Đại học Bách khoa Hà Nội, 1, Đường Đại Cồ Việt, Phường Bạch Mai, Hà Nội, Hà Nội 11618, Việt Nam",
+              "lat": 21.0055269,
+              "lon": 105.8435926,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Bach Mai Ward",
+              "street": "Đường Đại Cồ Việt",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "Đoàn Thanh niên Đại học Bách khoa Hà Nội, 1, Đường Đại Cồ Việt, Phường Bạch Mai, Hà Nội, Hà Nội 11618, Việt Nam",
+              "lat": 21.0066083,
+              "lon": 105.8423296,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Bach Mai Ward",
+              "street": "Đường Đại Cồ Việt",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "Hội sinh viên Đại học Bách khoa Hà Nội, 1, Đường Đại Cồ Việt, Phường Bạch Mai, Hà Nội, Hà Nội 11618, Việt Nam",
+              "lat": 21.0051856,
+              "lon": 105.8466075,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Bạch Mai",
+              "street": "Đường Đại Cồ Việt",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "Đại học Bách khoa Hà Nội, 1, Đường Đại Cồ Việt, Hanoi, HI 11618, Việt Nam",
+              "lat": 21.005528,
+              "lon": 105.843363,
+              "result_type": "amenity",
+              "city": "Hanoi",
+              "district": "Bach Mai Ward",
+              "street": "Đường Đại Cồ Việt",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "Bach Mai Ward, Hanoi, HI 11618, Việt Nam",
+              "lat": 21.005186,
+              "lon": 105.846608,
+              "result_type": "suburb",
+              "city": "Hanoi",
+              "district": "Bach Mai Ward"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 2320,
+          "items": [
+            {
+              "formatted": "Đại học Bách khoa Hà Nội, 1, Đường Đại Cồ Việt, Phường Bạch Mai, Hà Nội, 11618, Việt Nam",
+              "lat": 21.0055269,
+              "lon": 105.8435926,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường Đại Cồ Việt",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "Đại học Bách khoa Hà Nội, 1, Đường Đại Cồ Việt, Hà Nội, HI 11618, Việt Nam",
+              "lat": 21.005528,
+              "lon": 105.843363,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường Đại Cồ Việt",
+              "housenumber": "1"
+            },
+            {
+              "formatted": "Đại học Bách Khoa, Phố Trần Đại Nghĩa, Phường Bạch Mai, Hà Nội, 11618, Việt Nam",
+              "lat": 21.0067276,
+              "lon": 105.8450354,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Bạch Mai",
+              "street": "Phố Trần Đại Nghĩa"
+            },
+            {
+              "formatted": "Khu B Đại Học Mỏ, HI, Việt Nam",
+              "lat": 21.067309,
+              "lon": 105.762666,
+              "result_type": "street",
+              "street": "Khu B Đại Học Mỏ"
+            },
+            {
+              "formatted": "Hầm chui nút giao đại học Tây Nam, HI, Việt Nam",
+              "lat": 21.007619,
+              "lon": 105.756684,
+              "result_type": "street",
+              "street": "Hầm chui nút giao đại học Tây Nam"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 14,
+      "group": "unaccented",
+      "text": "Cong vien Cau Giay, Ha Noi",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1539,
+          "items": [
+            {
+              "formatted": "Tập đoàn Công nghiệp – Viễn thông Quân đội, D26, Ngõ 7 Tôn Thất Thuyết, Phường Cầu Giấy, Hà Nội, Hà Nội 11314, Việt Nam",
+              "lat": 21.0252531,
+              "lon": 105.7856366,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Cau Giay Ward",
+              "street": "Ngõ 7 Tôn Thất Thuyết",
+              "housenumber": "D26"
+            },
+            {
+              "formatted": "Viện Hàn lâm Khoa học và Công nghệ Việt Nam, 18, Đường Hoàng Quốc Việt, Phường Nghĩa Đô, Hà Nội, Hà Nội 10072, Việt Nam",
+              "lat": 21.0477865,
+              "lon": 105.8009131,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Trung Nha",
+              "street": "Đường Hoàng Quốc Việt",
+              "housenumber": "18"
+            },
+            {
+              "formatted": "Tổng công ty Viễn thông MobiFone, Ngõ 4 Phố Dương Đình Nghệ, Phường Cầu Giấy, Hà Nội, Hà Nội 11314, Việt Nam",
+              "lat": 21.023397,
+              "lon": 105.789332,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Cau Giay Ward",
+              "street": "Ngõ 4 Phố Dương Đình Nghệ"
+            },
+            {
+              "formatted": "Phòng khám đa khoa Bệnh viện Đại học Y Hà Nội - Cơ sở Cầu Giấy, 10, Phố Trương Công Giai, Phường Cầu Giấy, Hà Nội, HI 11314, Việt Nam",
+              "lat": 21.0350951,
+              "lon": 105.7910343,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Hoài Đức Phủ",
+              "street": "Phố Trương Công Giai",
+              "housenumber": "10"
+            },
+            {
+              "formatted": "Công viên CV1 Cầu Giấy, Phường Cầu Giấy, Hà Nội, 11314, Việt Nam",
+              "lat": 21.0235591,
+              "lon": 105.7826947,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Cau Giay Ward"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1029,
+          "items": [
+            {
+              "formatted": "Công viên Cầu Giấy, Phường Cầu Giấy, Hà Nội, 11314, Việt Nam",
+              "lat": 21.0281011,
+              "lon": 105.7908655,
+              "result_type": "amenity",
+              "city": "Hà Nội"
+            },
+            {
+              "formatted": "Ga Cầu Giấy, Đường Cầu Giấy, Phường Láng, Hà Nội, 11528, Việt Nam",
+              "lat": 21.029127,
+              "lon": 105.8035724,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Láng Thượng",
+              "street": "Đường Cầu Giấy"
+            },
+            {
+              "formatted": "Công viên Cầu Giấy, Phố Thành Thái, Phường Cầu Giấy, Hà Nội, 11314, Việt Nam",
+              "lat": 21.0295846,
+              "lon": 105.7915148,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Thành Thái"
+            },
+            {
+              "formatted": "Cầu Giấy, Phường Cầu Giấy, Hà Nội, HI 11314, Việt Nam",
+              "lat": 21.03032,
+              "lon": 105.801387,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Cầu Giấy"
+            },
+            {
+              "formatted": "Ga Cầu Giấy, Đường Cầu Giấy, Hà Nội, HI 11528, Việt Nam",
+              "lat": 21.029117,
+              "lon": 105.803352,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường Cầu Giấy"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": false,
+        "geocodeLocality": true,
+        "note": "CV1 is a different park; autocomplete not accepted. Full geocode returns Công viên Cầu Giấy."
+      }
+    },
+    {
+      "id": 15,
+      "group": "unaccented",
+      "text": "San bay Noi Bai, Ha Noi",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 2087,
+          "items": [
+            {
+              "formatted": "Sân bay Quốc tế Nội Bài, Lối ra, Hà Nội, Việt Nam",
+              "lat": 21.2188925,
+              "lon": 105.8044596,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Xã Nội Bài",
+              "street": "Lối ra"
+            },
+            {
+              "formatted": "Đi Sân bay Nội Bài, Hà Nội, 12910, Việt Nam",
+              "lat": 21.206052,
+              "lon": 105.7798617,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "district": "Xã Nội Bài",
+              "street": "Đi Sân bay Nội Bài"
+            },
+            {
+              "formatted": "Hải quan Cửa khẩu Sân bay Quốc tế Nội Bài, Đường Võ Nguyên Giáp, Hà Nội, Việt Nam",
+              "lat": 21.2090535,
+              "lon": 105.8065281,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Xã Nội Bài",
+              "street": "Đường Võ Nguyên Giáp"
+            },
+            {
+              "formatted": "Bãi đỗ xe sân bay Nội Bài, Hanoi, HI, Việt Nam",
+              "lat": 21.214126,
+              "lon": 105.801965,
+              "result_type": "street",
+              "city": "Hanoi",
+              "district": "Noi Bai Commune",
+              "street": "Bãi đỗ xe sân bay Nội Bài"
+            },
+            {
+              "formatted": "Bãi đỗ xe sân bay Nội Bài, Lối ra, Hà Nội, HI, Việt Nam",
+              "lat": 21.2140871,
+              "lon": 105.8016882,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Xã Nội Bài",
+              "street": "Lối ra"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 2083,
+          "items": [
+            {
+              "formatted": "Sân bay Nội Bài (Nhà ga T2), Ga đến Quốc tế, Hà Nội, Việt Nam",
+              "lat": 21.2169534,
+              "lon": 105.7937453,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Xã Nội Bài",
+              "street": "Ga đến Quốc tế"
+            },
+            {
+              "formatted": "Cầu Sân Bay, BR, Việt Nam",
+              "lat": 10.26272,
+              "lon": 106.352828,
+              "result_type": "street",
+              "street": "Cầu Sân Bay"
+            },
+            {
+              "formatted": "Phố Sân Bay, QN, Việt Nam",
+              "lat": 21.528565,
+              "lon": 107.400446,
+              "result_type": "street",
+              "street": "Phố Sân Bay"
+            },
+            {
+              "formatted": "Đi Sân bay Nội Bài, HI, Việt Nam",
+              "lat": 21.206078,
+              "lon": 105.779843,
+              "result_type": "street",
+              "street": "Đi Sân bay Nội Bài"
+            },
+            {
+              "formatted": "Đường bao sân bay, BU, Việt Nam",
+              "lat": 10.997438,
+              "lon": 108.224342,
+              "result_type": "street",
+              "street": "Đường bao sân bay"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 16,
+      "group": "duplicate-street",
+      "text": "Nguyễn Huệ, Quận 1, Thành phố Hồ Chí Minh",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 3025,
+          "items": [
+            {
+              "formatted": "Công An Quận 1, Đường Nguyễn Thái Học, Phường Bến Thành, Thành phố Thủ Đức, HC 71010, Việt Nam",
+              "lat": 10.7669571,
+              "lon": 106.6969779,
+              "result_type": "amenity",
+              "city": "Thành phố Thủ Đức",
+              "district": "Khu phố 18",
+              "street": "Đường Nguyễn Thái Học"
+            },
+            {
+              "formatted": "Wedo Skin Clinic Quan 1, 11, Trần Doãn Khanh, Thành phố Hồ Chí Minh, HC 710000, Việt Nam",
+              "lat": 10.788921,
+              "lon": 106.697483,
+              "result_type": "amenity",
+              "city": "Thành phố Hồ Chí Minh",
+              "street": "Trần Doãn Khanh",
+              "housenumber": "11"
+            },
+            {
+              "formatted": "Elipsport Quận 1, 507, Đường Trần Hưng Đạo, Phường Cầu Ông Lãnh, Thành phố Thủ Đức, HC 70000, Việt Nam",
+              "lat": 10.7577142,
+              "lon": 106.6866017,
+              "result_type": "amenity",
+              "city": "Thành phố Thủ Đức",
+              "district": "Khu phố 17",
+              "street": "Đường Trần Hưng Đạo",
+              "housenumber": "507"
+            },
+            {
+              "formatted": "Ban Quản lý Phát triển đô thị Thành phố Hồ Chí Minh (trụ sở 1), 9-11, Tân Phú, Phường Tân Mỹ, Thành phố Hồ Chí Minh, HC 72915, Việt Nam",
+              "lat": 10.7301771,
+              "lon": 106.7272095,
+              "result_type": "amenity",
+              "city": "Thành phố Hồ Chí Minh",
+              "street": "Tân Phú",
+              "housenumber": "9-11"
+            },
+            {
+              "formatted": "Wedo Skin Clinic Quan 1, 11, Đường Trần Doãn Khanh, Phường Tân Định, Thành phố Thủ Đức, 72200, Việt Nam",
+              "lat": 10.7889205,
+              "lon": 106.6974826,
+              "result_type": "amenity",
+              "city": "Thành phố Thủ Đức",
+              "district": "Khu phố 19",
+              "street": "Đường Trần Doãn Khanh",
+              "housenumber": "11"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 2545,
+          "items": []
+        }
+      },
+      "review": {
+        "autocompleteLocality": false,
+        "geocodeLocality": false,
+        "note": "No Nguyễn Huệ in top 5; full geocode returned empty."
+      }
+    },
+    {
+      "id": 17,
+      "group": "duplicate-street",
+      "text": "Nguyễn Huệ, Huế",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1033,
+          "items": [
+            {
+              "formatted": "Nguyễn Huệ, Phú Nhuận, Phường Thuận Hoá, 54000, Việt Nam",
+              "lat": 16.4578544,
+              "lon": 107.5884527,
+              "result_type": "street",
+              "city": "Phường Thuận Hoá",
+              "street": "Nguyễn Huệ"
+            },
+            {
+              "formatted": "Nguyễn Huệ, Phú Nhuận, Phường Thuận Hoá, 49118, Việt Nam",
+              "lat": 16.4587579,
+              "lon": 107.5982107,
+              "result_type": "street",
+              "city": "Phường Thuận Hoá",
+              "street": "Nguyễn Huệ"
+            },
+            {
+              "formatted": "Huế, TT, Việt Nam",
+              "lat": 16.46667,
+              "lon": 107.6,
+              "result_type": "city",
+              "city": "Huế"
+            },
+            {
+              "formatted": "Nguyen Hue, Nguyễn Huệ, Phú Nhuận, Phường Thuận Hoá, 54000, Việt Nam",
+              "lat": 16.4579973,
+              "lon": 107.5910025,
+              "result_type": "amenity",
+              "city": "Phường Thuận Hoá",
+              "street": "Nguyễn Huệ"
+            },
+            {
+              "formatted": "Thừa Thiên Huế, Việt Nam",
+              "lat": 16.349255,
+              "lon": 107.395227,
+              "result_type": "state"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1062,
+          "items": [
+            {
+              "formatted": "Nguyễn Huệ, Huế, TT, Việt Nam",
+              "lat": 16.457854,
+              "lon": 107.58845,
+              "result_type": "street",
+              "city": "Huế",
+              "street": "Nguyễn Huệ"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 18,
+      "group": "duplicate-street",
+      "text": "Trần Phú, Đà Nẵng",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1248,
+          "items": [
+            {
+              "formatted": "Trần Phú, Phường Hải Châu, Thành phố Đà Nẵng, 50207, Việt Nam",
+              "lat": 16.0664573,
+              "lon": 108.2236852,
+              "result_type": "street",
+              "city": "Thành phố Đà Nẵng",
+              "street": "Trần Phú"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1132,
+          "items": [
+            {
+              "formatted": "Trần Phú, Phường Hải Châu, Thành phố Đà Nẵng, 50207, Việt Nam",
+              "lat": 16.0664573,
+              "lon": 108.2236852,
+              "result_type": "street",
+              "city": "Thành phố Đà Nẵng",
+              "street": "Trần Phú"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 19,
+      "group": "duplicate-street",
+      "text": "Trần Phú, Nha Trang",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1941,
+          "items": [
+            {
+              "formatted": "Trần Phú, Phường Nha Trang, Nha Trang, Khánh Hòa 57131, Việt Nam",
+              "lat": 12.2167085,
+              "lon": 109.2071867,
+              "result_type": "street",
+              "city": "Nha Trang",
+              "street": "Trần Phú"
+            },
+            {
+              "formatted": "Trần Phú, Phước Hòa, Nha Trang, Khánh Hòa 57131, Việt Nam",
+              "lat": 12.2276554,
+              "lon": 109.1997654,
+              "result_type": "street",
+              "city": "Nha Trang",
+              "street": "Trần Phú"
+            },
+            {
+              "formatted": "Trần Phú, Phường Nha Trang, Nha Trang, Khánh Hòa 57100, Việt Nam",
+              "lat": 12.2574883,
+              "lon": 109.1977892,
+              "result_type": "street",
+              "city": "Nha Trang",
+              "street": "Trần Phú"
+            },
+            {
+              "formatted": "Trần Phú, Phước Hòa, Nha Trang, Khánh Hòa 48058, Việt Nam",
+              "lat": 12.23474,
+              "lon": 109.1974449,
+              "result_type": "street",
+              "city": "Nha Trang",
+              "street": "Trần Phú"
+            },
+            {
+              "formatted": "Trần Phú, Phước Hòa, Nha Trang, Khánh Hòa 57106, Việt Nam",
+              "lat": 12.2398935,
+              "lon": 109.1966721,
+              "result_type": "street",
+              "city": "Nha Trang",
+              "street": "Trần Phú"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1294,
+          "items": [
+            {
+              "formatted": "Trần Phú, Phường Nha Trang, Nha Trang, Khánh Hòa 57131, Việt Nam",
+              "lat": 12.2167085,
+              "lon": 109.2071867,
+              "result_type": "street",
+              "city": "Nha Trang",
+              "street": "Trần Phú"
+            },
+            {
+              "formatted": "Trần Phú, Phước Hòa, Nha Trang, Khánh Hòa 57131, Việt Nam",
+              "lat": 12.2276554,
+              "lon": 109.1997654,
+              "result_type": "street",
+              "city": "Nha Trang",
+              "street": "Trần Phú"
+            },
+            {
+              "formatted": "Trần Phú, Phường Nha Trang, Nha Trang, Khánh Hòa 57100, Việt Nam",
+              "lat": 12.2574883,
+              "lon": 109.1977892,
+              "result_type": "street",
+              "city": "Nha Trang",
+              "street": "Trần Phú"
+            },
+            {
+              "formatted": "Trần Phú, Phước Hòa, Nha Trang, Khánh Hòa 48058, Việt Nam",
+              "lat": 12.23474,
+              "lon": 109.1974449,
+              "result_type": "street",
+              "city": "Nha Trang",
+              "street": "Trần Phú"
+            },
+            {
+              "formatted": "Trần Phú, Phước Hòa, Nha Trang, Khánh Hòa 57106, Việt Nam",
+              "lat": 12.2398935,
+              "lon": 109.1966721,
+              "result_type": "street",
+              "city": "Nha Trang",
+              "street": "Trần Phú"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 20,
+      "group": "duplicate-street",
+      "text": "Lê Lợi, Cần Thơ",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1490,
+          "items": [
+            {
+              "formatted": "Lê Lợi, Phường Trung Nhứt, Thành phố Cần Thơ, 81768, Việt Nam",
+              "lat": 10.250057,
+              "lon": 105.5334046,
+              "result_type": "street",
+              "city": "Thành phố Cần Thơ",
+              "district": "Khu vực Phúc Lộc 1",
+              "street": "Lê Lợi"
+            },
+            {
+              "formatted": "Lê Lợi, Phường Thốt Nốt, Thành phố Cần Thơ, 81768, Việt Nam",
+              "lat": 10.271318,
+              "lon": 105.5340237,
+              "result_type": "street",
+              "city": "Thành phố Cần Thơ",
+              "street": "Lê Lợi"
+            },
+            {
+              "formatted": "Lê Lợi, Phường Cái Khế, Thành phố Cần Thơ, 94111, Việt Nam",
+              "lat": 10.0428368,
+              "lon": 105.7909558,
+              "result_type": "street",
+              "city": "Thành phố Cần Thơ",
+              "street": "Lê Lợi"
+            },
+            {
+              "formatted": "Lê Lợi, Thành phố Cần Thơ, 96113, Việt Nam",
+              "lat": 9.6086657,
+              "lon": 105.9737821,
+              "result_type": "street",
+              "city": "Thành phố Cần Thơ",
+              "district": "Phường Sóc Trăng",
+              "street": "Lê Lợi"
+            },
+            {
+              "formatted": "Lê Lợi, Cái Nhum, Tỉnh Vĩnh Long, Việt Nam",
+              "lat": 10.1743509,
+              "lon": 106.1099433,
+              "result_type": "street",
+              "city": "Cái Nhum",
+              "district": "Xã Cái Nhum",
+              "street": "Lê Lợi"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 2444,
+          "items": [
+            {
+              "formatted": "Lê Lợi, Phường Trung Nhứt, Thành phố Cần Thơ, 81768, Việt Nam",
+              "lat": 10.2583331,
+              "lon": 105.5337513,
+              "result_type": "street",
+              "city": "Thành phố Cần Thơ",
+              "district": "Khu vực Tràng Thọ A",
+              "street": "Lê Lợi"
+            },
+            {
+              "formatted": "Lê Lợi, Phường Thốt Nốt, Thành phố Cần Thơ, 81768, Việt Nam",
+              "lat": 10.2665037,
+              "lon": 105.5326962,
+              "result_type": "street",
+              "city": "Thành phố Cần Thơ",
+              "street": "Lê Lợi"
+            },
+            {
+              "formatted": "Lê Lợi, Phường Ô Môn, Thành phố Cần Thơ, Việt Nam",
+              "lat": 10.1214916,
+              "lon": 105.6271555,
+              "result_type": "street",
+              "city": "Thành phố Cần Thơ",
+              "street": "Lê Lợi"
+            },
+            {
+              "formatted": "Lê Lợi, Thành phố Cần Thơ, 96113, Việt Nam",
+              "lat": 9.6086657,
+              "lon": 105.9737821,
+              "result_type": "street",
+              "city": "Thành phố Cần Thơ",
+              "district": "Phường Sóc Trăng",
+              "street": "Lê Lợi"
+            },
+            {
+              "formatted": "Lê Lợi, Phường Cái Khế, Thành phố Cần Thơ, 94111, Việt Nam",
+              "lat": 10.0451562,
+              "lon": 105.7895984,
+              "result_type": "street",
+              "city": "Thành phố Cần Thơ",
+              "street": "Lê Lợi"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 21,
+      "group": "apartment",
+      "text": "Times City, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1789,
+          "items": [
+            {
+              "formatted": "Công viên Park Hill - Times City, Phường Vĩnh Tuy, Hà Nội, 11622, Việt Nam",
+              "lat": 20.9916293,
+              "lon": 105.86834,
+              "result_type": "amenity",
+              "city": "Hà Nội"
+            },
+            {
+              "formatted": "Phường Vĩnh Tuy, Hà Nội, Vinhomes Times City, Việt Nam",
+              "lat": 20.9949711,
+              "lon": 105.8689009,
+              "result_type": "suburb",
+              "city": "Hà Nội",
+              "district": "Vinhomes Times City"
+            },
+            {
+              "formatted": "Phường Vĩnh Tuy, Hà Nội, Vinhomes Times City - Park Hill, Việt Nam",
+              "lat": 20.9917089,
+              "lon": 105.868937,
+              "result_type": "suburb",
+              "city": "Hà Nội",
+              "district": "Vinhomes Times City - Park Hill"
+            },
+            {
+              "formatted": "Phường Vĩnh Tuy, Hà Nội, Vinhomes Times City - Park Hill PREMIUM, Việt Nam",
+              "lat": 20.9922305,
+              "lon": 105.8665902,
+              "result_type": "suburb",
+              "city": "Hà Nội",
+              "district": "Vinhomes Times City - Park Hill PREMIUM"
+            },
+            {
+              "formatted": "458, Phường Vĩnh Tuy, Hà Nội, 11622, Việt Nam",
+              "lat": 20.9949711,
+              "lon": 105.8689009,
+              "result_type": "building",
+              "city": "Hà Nội",
+              "district": "Vinhomes Times City",
+              "housenumber": "458"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1784,
+          "items": [
+            {
+              "formatted": "Vinpearl Aquarium Times City, Phường Vĩnh Tuy, Hà Nội, HI 11622, Việt Nam",
+              "lat": 20.996404,
+              "lon": 105.868057,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Vinpearl Aquarium Times City"
+            },
+            {
+              "formatted": "Tower 1 Times City, Phố Minh Khai, Phường Vĩnh Tuy, Hà Nội, HI 11622, Việt Nam",
+              "lat": 20.9977948,
+              "lon": 105.8682263,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Vinhomes Times City",
+              "street": "Phố Minh Khai"
+            },
+            {
+              "formatted": "Vinhomes Times City, 458, Phố Minh Khai, Hà Nội, HI 100000, Việt Nam",
+              "lat": 20.994358,
+              "lon": 105.867057,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Minh Khai",
+              "housenumber": "458"
+            },
+            {
+              "formatted": "Tower 2 Times City, Đường Số 1 Times City - 458 Minh Khai, Phường Vĩnh Tuy, Hà Nội, HI 11622, Việt Nam",
+              "lat": 20.9972801,
+              "lon": 105.8671522,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Vinhomes Times City",
+              "street": "Đường Số 1 Times City - 458 Minh Khai"
+            },
+            {
+              "formatted": "Vinpearl Aquarium Times City, Đường Số 2 Times City, Phường Vĩnh Tuy, Hà Nội, 11622, Việt Nam",
+              "lat": 20.9963717,
+              "lon": 105.8678926,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Vinhomes Times City",
+              "street": "Đường Số 2 Times City"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 22,
+      "group": "apartment",
+      "text": "Royal City, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1377,
+          "items": [
+            {
+              "formatted": "Royal City, Phường Thanh Xuân, Hà Nội, 11417, Việt Nam",
+              "lat": 21.0006496,
+              "lon": 105.8161446,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Royal City"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 2026,
+          "items": [
+            {
+              "formatted": "Vinhomes Royal City, Hà Nội, HI, Việt Nam",
+              "lat": 21.003184,
+              "lon": 105.815707,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Vinhomes Royal City"
+            },
+            {
+              "formatted": "Vinhomes Royal City, Phường Thanh Xuân, Hà Nội, 11417, Việt Nam",
+              "lat": 21.002167,
+              "lon": 105.8154867,
+              "result_type": "amenity",
+              "city": "Hà Nội"
+            },
+            {
+              "formatted": "Royal City R1, Hẻm 101 Ngách 1 Ngõ 72 Nguyễn Trãi, Phường Thanh Xuân, Hà Nội, HI 11417, Việt Nam",
+              "lat": 21.0038511,
+              "lon": 105.8146381,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Cự Lộc",
+              "street": "Hẻm 101 Ngách 1 Ngõ 72 Nguyễn Trãi"
+            },
+            {
+              "formatted": "Vincom Mega Mall Royal City, 72A, Đường Nguyễn Trãi, Phường Thanh Xuân, Hà Nội, HI 11417, Việt Nam",
+              "lat": 21.0022833,
+              "lon": 105.8160462,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Chính Kinh",
+              "street": "Đường Nguyễn Trãi",
+              "housenumber": "72A"
+            },
+            {
+              "formatted": "Hanoi, HI, Việt Nam",
+              "lat": 21.0028,
+              "lon": 105.8151,
+              "result_type": "city",
+              "city": "Hanoi"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 23,
+      "group": "apartment",
+      "text": "Chung cư Linh Đàm, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 2133,
+          "items": [
+            {
+              "formatted": "Chung cư VP6 Linh Đàm, Ngõ 2 Phố Hoàng Liệt, Hoàng Liệt, Hà Nội, 11719, Việt Nam",
+              "lat": 20.9672312,
+              "lon": 105.8332597,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Phường Hoàng Liệt",
+              "street": "Ngõ 2 Phố Hoàng Liệt"
+            },
+            {
+              "formatted": "Khu chung cư Hà Nội Melody Residences, Bằng Liệt, Hà Nội, HI 1000000, Việt Nam",
+              "lat": 20.958778,
+              "lon": 105.82416,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Bằng Liệt"
+            },
+            {
+              "formatted": "Khu chung cư Hà Nội Melody Residences, Hoàng Liệt, Hà Nội, 11719, Việt Nam",
+              "lat": 20.9587715,
+              "lon": 105.8241613,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Phường Hoàng Liệt"
+            },
+            {
+              "formatted": "Cụm chung cư CT8 The Sparks Dương Nội, Phố Nguyễn Trác, Phường Dương Nội, Hà Nội, HI 10189, Việt Nam",
+              "lat": 20.9622594,
+              "lon": 105.7454044,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Nguyễn Trác"
+            },
+            {
+              "formatted": "CT2 Chung cư Hà Nội Homeland Long Biên, Đường nội bộ, Phường Bồ Đề, Hà Nội, HI 11810, Việt Nam",
+              "lat": 21.0559687,
+              "lon": 105.8844924,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Gia Quất Thượng",
+              "street": "Đường nội bộ"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 2040,
+          "items": [
+            {
+              "formatted": "Chung cư VP6 Linh Đàm, Ngõ 2 Phố Hoàng Liệt, Hoàng Liệt, Hà Nội, 11719, Việt Nam",
+              "lat": 20.9672312,
+              "lon": 105.8332597,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Phường Hoàng Liệt",
+              "street": "Ngõ 2 Phố Hoàng Liệt"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 24,
+      "group": "apartment",
+      "text": "The Manor, Mễ Trì, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1150,
+          "items": [
+            {
+              "formatted": "The Manor Mễ Trì, Phường Từ Liêm, Hà Nội, Việt Nam",
+              "lat": 21.0145568,
+              "lon": 105.7756551,
+              "result_type": "amenity",
+              "city": "Hà Nội"
+            },
+            {
+              "formatted": "Tòa nhà The Manor Mễ Trì, Phố Vũ Quỳnh, Phường Từ Liêm, Hà Nội, 10074, Việt Nam",
+              "lat": 21.0137221,
+              "lon": 105.7754581,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Vũ Quỳnh"
+            },
+            {
+              "formatted": "Hà Nội, HI, Việt Nam",
+              "lat": 21.0245,
+              "lon": 105.84117,
+              "result_type": "city",
+              "city": "Hà Nội"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 2331,
+          "items": [
+            {
+              "formatted": "The Manor Mễ Trì, Phường Từ Liêm, Hà Nội, Việt Nam",
+              "lat": 21.0145568,
+              "lon": 105.7756551,
+              "result_type": "amenity",
+              "city": "Hà Nội"
+            },
+            {
+              "formatted": "Tòa nhà The Manor Mễ Trì, Phố Vũ Quỳnh, Phường Từ Liêm, Hà Nội, 10074, Việt Nam",
+              "lat": 21.0137221,
+              "lon": 105.7754581,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Vũ Quỳnh"
+            },
+            {
+              "formatted": "Hà Nội, HI, Việt Nam",
+              "lat": 21.0245,
+              "lon": 105.84117,
+              "result_type": "city",
+              "city": "Hà Nội"
+            },
+            {
+              "formatted": "Hà Nội, HM, Việt Nam",
+              "lat": 20.47366,
+              "lon": 106.02292,
+              "result_type": "city",
+              "city": "Hà Nội"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 25,
+      "group": "apartment",
+      "text": "Ecopark, Văn Giang, Hưng Yên",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 540,
+          "items": [
+            {
+              "formatted": "Hưng Yên, Phường Nam Định, Tỉnh Ninh Bình 42000, Việt Nam",
+              "lat": 20.433835,
+              "lon": 106.1729735,
+              "result_type": "street",
+              "city": "Phường Nam Định",
+              "street": "Hưng Yên"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 854,
+          "items": [
+            {
+              "formatted": "Ecopark, HY, Việt Nam",
+              "lat": 20.958773,
+              "lon": 105.93401,
+              "result_type": "amenity",
+              "street": "Ecopark"
+            },
+            {
+              "formatted": "Ecopark, Van Giang, Việt Nam",
+              "lat": 20.9621,
+              "lon": 105.9318,
+              "result_type": "city",
+              "city": "Ecopark"
+            },
+            {
+              "formatted": "Ecopark, Xã Phụng Công, Tỉnh Hưng Yên, Việt Nam",
+              "lat": 20.9609556,
+              "lon": 105.9332244,
+              "result_type": "amenity",
+              "city": "Xã Phụng Công"
+            },
+            {
+              "formatted": "rạp chiếu phim CGV, Đường Thủy Trúc, Xã Phụng Công, Tỉnh Hưng Yên 11709, Việt Nam",
+              "lat": 20.9526519,
+              "lon": 105.9376109,
+              "result_type": "amenity",
+              "city": "Xã Phụng Công",
+              "street": "Đường Thủy Trúc"
+            },
+            {
+              "formatted": "Đại lộ Ecopark, Xã Phụng Công, Tỉnh Hưng Yên 17710, Việt Nam",
+              "lat": 20.9491509,
+              "lon": 105.9413434,
+              "result_type": "street",
+              "city": "Xã Phụng Công",
+              "street": "Đại lộ Ecopark"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": false,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 26,
+      "group": "suburb",
+      "text": "Bát Tràng, Gia Lâm, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 2192,
+          "items": [
+            {
+              "formatted": "Xã Bát Tràng cũ, Hà Nội, Xã Bát Tràng, Việt Nam",
+              "lat": 20.9900848,
+              "lon": 105.9130156,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Xã Bát Tràng"
+            },
+            {
+              "formatted": "Công ty Cổ phần Đầu tư Bất động sản Hà Nội, Phường Đống Đa, Hà Nội, HI 11527, Việt Nam",
+              "lat": 21.0140256,
+              "lon": 105.8314285,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Công ty Cổ phần Đầu tư Bất động sản Hà Nội"
+            },
+            {
+              "formatted": "Qua ngã 3 Bát Tràng - Xuân Quan 30m (chiều đi Hà Nội), Đường tỉnh 378, Xã Bát Tràng, Xã Phụng Công, HY 11709, Việt Nam",
+              "lat": 20.973179,
+              "lon": 105.9198429,
+              "result_type": "amenity",
+              "city": "Xã Phụng Công",
+              "district": "Xã Bát Tràng",
+              "street": "Đường tỉnh 378"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 879,
+          "items": [
+            {
+              "formatted": "Hà Nội, Xã Bát Tràng, Việt Nam",
+              "lat": 20.9796328,
+              "lon": 105.9146403,
+              "result_type": "suburb",
+              "city": "Hà Nội",
+              "district": "Xã Bát Tràng"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 27,
+      "group": "suburb",
+      "text": "Thị trấn Đông Anh, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 1420,
+          "items": [
+            {
+              "formatted": "Thị trấn Đông Anh, Đường Cổ Loa, Hà Nội, 12323, Việt Nam",
+              "lat": 21.1352589,
+              "lon": 105.8618583,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Xã Đông Anh",
+              "street": "Đường Cổ Loa"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1624,
+          "items": [
+            {
+              "formatted": "Thị trấn Đông Anh, Đường Cổ Loa, Hà Nội, 12323, Việt Nam",
+              "lat": 21.1352589,
+              "lon": 105.8618583,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Xã Đông Anh",
+              "street": "Đường Cổ Loa"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 28,
+      "group": "suburb",
+      "text": "Vân Đình, Ứng Hòa, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 2037,
+          "items": [
+            {
+              "formatted": "Nhà văn hóa Công đoàn Hà Nội, Phố Chu Văn An, Phường Hà Đông, Hà Nội, HI 12100, Việt Nam",
+              "lat": 20.973828,
+              "lon": 105.7782516,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Phố Chu Văn An"
+            },
+            {
+              "formatted": "Trung tâm Văn hóa thành phố Hà Nội, Đường Phùng Hưng, Phường Hà Đông, Hà Nội, HI 12100, Việt Nam",
+              "lat": 20.9728547,
+              "lon": 105.7833134,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Văn Quán",
+              "street": "Đường Phùng Hưng"
+            },
+            {
+              "formatted": "Trung tâm Văn hóa Trung Quốc tại Hà Nội, 300, Phố Kim Mã, Phường Ngọc Hà, Hà Nội, 11119, Việt Nam",
+              "lat": 21.031259,
+              "lon": 105.8174327,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Vạn Phúc",
+              "street": "Phố Kim Mã",
+              "housenumber": "300"
+            },
+            {
+              "formatted": "Trường Đại học Văn hóa Hà Nội, 418, Đường La Thành, Phường Ô Chợ Dừa, Hà Nội, HI 11511, Việt Nam",
+              "lat": 21.024116,
+              "lon": 105.822803,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Đường La Thành",
+              "housenumber": "418"
+            },
+            {
+              "formatted": "Bệnh viện Đa khoa Vân Đình, Quốc lộ 21B, Hà Nội, Việt Nam",
+              "lat": 20.7255813,
+              "lon": 105.7740191,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "street": "Quốc lộ 21B"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1243,
+          "items": [
+            {
+              "formatted": "Vân Đình, Hà Nội, Việt Nam",
+              "lat": 20.7324048,
+              "lon": 105.770073,
+              "result_type": "city",
+              "city": "Hà Nội"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 29,
+      "group": "suburb",
+      "text": "Sơn Tây, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 2043,
+          "items": [
+            {
+              "formatted": "Sơn Tây, Việt Nam",
+              "lat": 21.1391687,
+              "lon": 105.5045108,
+              "result_type": "city",
+              "city": "Sơn Tây"
+            },
+            {
+              "formatted": "Công an thành phố Hà Nội - cơ sở Sơn Tây, Sơn Tây, HI 12800, Việt Nam",
+              "lat": 21.122912,
+              "lon": 105.492674,
+              "result_type": "street",
+              "city": "Sơn Tây",
+              "street": "Công an thành phố Hà Nội - cơ sở Sơn Tây"
+            },
+            {
+              "formatted": "Công an thành phố Hà Nội - cơ sở Sơn Tây, Đường tránh khu vực Sơn Tây, Phường Sơn Tây, Hà Nội, 12800, Việt Nam",
+              "lat": 21.1224535,
+              "lon": 105.4924995,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Phường Sơn Tây",
+              "street": "Đường tránh khu vực Sơn Tây"
+            },
+            {
+              "formatted": "Vinh Son Noi Bai Hotel, Quốc lộ 2, Hà Nội, HI 12910, Việt Nam",
+              "lat": 21.2154114,
+              "lon": 105.7806681,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Xã Nội Bài",
+              "street": "Quốc lộ 2"
+            },
+            {
+              "formatted": "Thanh Son Noi Bai Airport Hotel, Quốc lộ 2, Hà Nội, HI 12910, Việt Nam",
+              "lat": 21.2152249,
+              "lon": 105.7810611,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Xã Nội Bài",
+              "street": "Quốc lộ 2"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 1055,
+          "items": [
+            {
+              "formatted": "Sơn Tây, Việt Nam",
+              "lat": 21.1391687,
+              "lon": 105.5045108,
+              "result_type": "city",
+              "city": "Sơn Tây"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    },
+    {
+      "id": 30,
+      "group": "suburb",
+      "text": "Sóc Sơn, Hà Nội",
+      "responses": {
+        "autocomplete": {
+          "status": 200,
+          "ms": 2185,
+          "items": [
+            {
+              "formatted": "Sóc Sơn, Hà Nội, Việt Nam",
+              "lat": 21.2597163,
+              "lon": 105.8508041,
+              "result_type": "city",
+              "city": "Hà Nội"
+            },
+            {
+              "formatted": "Trường Cao đẳng Cơ điện Hà Nội (Cơ sở Sóc Sơn - Cơ sở 4), Đường cao tốc Nội Bài – Bắc Ninh, Xã Sóc Sơn, Hà Nội, HI, Việt Nam",
+              "lat": 21.2200221,
+              "lon": 105.8607488,
+              "result_type": "amenity",
+              "city": "Hà Nội",
+              "district": "Xã Sóc Sơn",
+              "street": "Đường cao tốc Nội Bài – Bắc Ninh"
+            },
+            {
+              "formatted": "Trường Cao đẳng Cơ điện Hà Nội (Cơ sở Sóc Sơn - Cơ sở 4), Hà Nội, HI, Việt Nam",
+              "lat": 21.219783,
+              "lon": 105.860855,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Trường Cao đẳng Cơ điện Hà Nội (Cơ sở Sóc Sơn - Cơ sở 4)"
+            },
+            {
+              "formatted": "Trung tâm Chăm sóc người khuyết tật Hà Nội, Hà Nội, HI, Việt Nam",
+              "lat": 21.156571,
+              "lon": 105.405721,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Trung tâm Chăm sóc người khuyết tật Hà Nội"
+            },
+            {
+              "formatted": "Trung tâm Chăm sóc và Phục hồi chức năng người tâm thần số 2 Hà Nội, Hà Nội, HI 02103, Việt Nam",
+              "lat": 21.198637,
+              "lon": 105.376032,
+              "result_type": "street",
+              "city": "Hà Nội",
+              "street": "Trung tâm Chăm sóc và Phục hồi chức năng người tâm thần số 2 Hà Nội"
+            }
+          ]
+        },
+        "search": {
+          "status": 200,
+          "ms": 920,
+          "items": [
+            {
+              "formatted": "Sóc Sơn, Hà Nội, Việt Nam",
+              "lat": 21.2597163,
+              "lon": 105.8508041,
+              "result_type": "city",
+              "city": "Hà Nội"
+            }
+          ]
+        }
+      },
+      "review": {
+        "autocompleteLocality": true,
+        "geocodeLocality": true,
+        "note": "Locality assessment only; user must check pin."
+      }
+    }
+  ],
+  "review": {
+    "method": "Manual comparison of returned public street/landmark names and locality in the first five results. This is a locality screening, not independent ground truth or doorstep accuracy.",
+    "autocompleteLocalityMatches": 24,
+    "geocodeLocalityMatches": 29,
+    "threshold": 24,
+    "total": 30
+  }
+}

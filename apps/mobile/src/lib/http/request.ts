@@ -32,7 +32,7 @@ export async function requestJson(url: string, request: typeof fetch, signal?: A
       const id = response.headers?.get('x-request-id');
       if (id && uuid.test(id)) requestId = id;
       if (!response.ok) {
-        const codes: Record<number, ApiErrorCode> = { 400: 'VALIDATION', 401: 'UNAUTHENTICATED', 403: 'FORBIDDEN', 404: 'NOT_FOUND', 429: 'RATE_LIMITED', 500: 'INTERNAL', 503: 'SERVICE_UNAVAILABLE' };
+        const codes: Record<number, ApiErrorCode> = { 400: 'VALIDATION', 401: 'UNAUTHENTICATED', 403: 'FORBIDDEN', 404: 'NOT_FOUND', 429: 'RATE_LIMITED', 500: 'INTERNAL', 503: 'SERVICE_UNAVAILABLE', 504: 'TIMEOUT' };
         let code = codes[status] ?? 'HTTP';
         if (status === 409) {
           try {
@@ -41,7 +41,8 @@ export async function requestJson(url: string, request: typeof fetch, signal?: A
             if (conflict === 'VERSION_CONFLICT' || conflict === 'IDEMPOTENCY_MISMATCH') code = conflict;
           } catch { /* Unknown error bodies stay generic and never enter logs. */ }
         }
-        throw new ApiError(code, status, requestId, clientId);
+        const retry = Number(response.headers?.get('retry-after'));
+        throw new ApiError(code, status, requestId, clientId, status === 429 && Number.isFinite(retry) && retry > 0 ? Math.min(Math.ceil(retry), 86400) : undefined);
       }
       try { const data: unknown = await response.json(); if (validate && !validate(data)) throw new Error('Invalid response'); return data; } catch { throw new ApiError('INVALID_RESPONSE', status, requestId, clientId); }
     })()]);

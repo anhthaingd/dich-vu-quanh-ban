@@ -898,5 +898,53 @@
     "level": "Integration/E2E",
     "priority": "P0",
     "status": "Tiêu chí; bằng chứng xem báo cáo repo"
+  },
+  {
+    "id": "QA-076",
+    "group": "Địa điểm",
+    "requirement": "MAP-01",
+    "operation": "locationAutocomplete/locationGeocode",
+    "setup": "Provider fixture trong CI; live public samples kiểm riêng",
+    "steps": "Nhập có/không dấu, chọn gợi ý, nhập truy vấn khác, phản hồi chậm",
+    "expected": "Không tự chọn kết quả đầu; truy vấn mới hủy điểm cũ; phản hồi cũ không ghi đè.",
+    "level": "Unit/Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng và giới hạn xem B03-01 trong repo; chưa UAT"
+  },
+  {
+    "id": "QA-077",
+    "group": "Địa điểm",
+    "requirement": "MAP-01",
+    "operation": "locationReverse",
+    "setup": "Provider fixture trong CI; live public samples kiểm riêng",
+    "steps": "Chọn ghim, sửa mô tả, GPS từ chối/timeout, Hủy",
+    "expected": "Tra ngược giữ tọa độ; lỗi cho mô tả tay; Hủy không đổi form; GPS chỉ theo nút.",
+    "level": "Unit/Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng và giới hạn xem B03-01 trong repo; chưa UAT"
+  },
+  {
+    "id": "QA-078",
+    "group": "Địa điểm",
+    "requirement": "MAP-01",
+    "operation": "locationAutocomplete/locationGeocode/locationReverse",
+    "setup": "Provider fixture trong CI; live public samples kiểm riêng",
+    "steps": "Body sai, bearer sai, thiếu key, 429, 504 và dữ liệu riêng",
+    "expected": "400/401/503/429/504 đúng envelope; Retry-After; no-store; không log body/key/tọa độ.",
+    "level": "Unit/Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng và giới hạn xem B03-01 trong repo; chưa UAT"
+  },
+  {
+    "id": "QA-079",
+    "group": "Địa điểm",
+    "requirement": "MAP-01",
+    "operation": "createAddress/updateAddress/updateServiceAreas/updateLocations",
+    "setup": "Provider fixture trong CI; live public samples kiểm riêng",
+    "steps": "Bộ chọn chung 4 nơi; lưu/mở lại; public/private; đổi tài khoản",
+    "expected": "Giữ text/point và quyền/version/retry; không rò tâm vùng/private; xóa draft khi đổi owner.",
+    "level": "Unit/Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng và giới hạn xem B03-01 trong repo; chưa UAT"
   }
 ]

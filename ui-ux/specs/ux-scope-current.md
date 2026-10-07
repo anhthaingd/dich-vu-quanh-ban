@@ -258,3 +258,13 @@ P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có ver
 Hồ sơ public và màn quản lý dùng dữ liệu riêng. Chỉ profile.manage/owner đang hoạt động được sửa; draft không hiện public. Công bố yêu cầu ít nhất một kỹ năng active và nơi làm phù hợp từng mode, ảnh năng lực chưa bắt buộc trong gói đầu. Sửa làm published không còn hợp lệ bị từ chối; về draft tắt nhận việc. Tắt nhận việc vẫn xem qua link, không hiện search. Tên kỹ năng public theo VI/EN/JA; không tự dịch tên/bio người dùng. Prototype trước P0-1 còn dữ liệu mô phỏng, không làm chuẩn thay quy tắc máy chủ mới.
 
 Bổ sung theo yêu cầu chủ dự án P0-1: được tạo tài khoản DEMO mới cho thợ/cửa hàng/doanh nghiệp trong DB local để tự thử khi OTP Pending. Không sửa tài khoản hiện hữu, không huy hiệu xác minh hồ sơ, ví 0đ; công cụ chỉ chạy NODE_ENV=development, DB dvqb_local trên localhost. Tài khoản thử không chứng minh xác minh SMS hay đăng ký production đã hoàn tất.
+
+## MAP-01 — chọn địa điểm, thử local ngày 07/10/2026
+
+Theo yêu cầu triển khai tiếp sau khi chốt MapLibre + Geoapify Free: bộ chọn chung cho tìm dịch vụ, sổ địa chỉ, cửa hàng và tâm vùng. Có nhập địa chỉ/gợi ý, tìm cả chuỗi, chạm/kéo bản đồ, GPS khi bấm nút, địa chỉ đã lưu và nhập tọa độ nâng cao. Người dùng chọn kết quả và xác nhận; không tự lấy dòng đầu. Gõ truy vấn khác hủy lựa chọn cũ, sửa mô tả tầng/phòng giữ ghim. Hủy không sửa form. Đổi tài khoản xóa bản nháp riêng; phản hồi cũ không ghi đè điểm mới.
+
+Ba POST `/v1/locations/autocomplete`, `/geocode`, `/reverse` nhận JSON body theo OpenAPI v0.1.7. Query 3–300 ký tự, locale vi/en/ja, tối đa 5 gợi ý. Tra ngược giữ chính điểm yêu cầu, rỗng/lỗi vẫn cho nhập mô tả sau khi có điểm. Khách chưa đăng nhập được tra cứu với hạn mức IP; bearer hợp lệ dùng tài khoản. Pilot một tiến trình: 4 lookup/giây, 30/actor/phút, 1000/24h; restart reset bộ đếm. 429 có Retry-After; timeout provider 6 giây trả 504 TIMEOUT. Các giới hạn này không bao gồm tile và không phải bảo đảm chặn chi phí toàn project.
+
+Key tra cứu ở server; key tile công khai ở app. Chưa billing/production, chưa dùng Google. Không ghi log địa chỉ/tọa độ/key, không lưu lịch sử GPS. Geoapify và OpenStreetMap được ghi nguồn. Bản đồ nền do app tải trực tiếp; không gửi token dự án tới Geoapify.
+
+Không migration: giữ `{text, point}` và quyền/version/idempotency của API lưu hiện hành. `source` chỉ ở state app, ID gợi ý chỉ tạm. Tâm vùng không thành vị trí thợ công khai; chỉ điểm cửa hàng đã công khai được vẽ trong hồ sơ. Polygon, gom ghim toàn bộ kết quả, routing/ETA và theo dõi thợ ngoài đợt. Bằng chứng code/local/native ở báo cáo B03-01 trong repo; không suy ra UAT/production.

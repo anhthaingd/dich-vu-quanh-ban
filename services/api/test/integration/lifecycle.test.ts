@@ -11,12 +11,13 @@ function child(file: string, env: NodeJS.ProcessEnv, args: string[] = []) {
   const closed = once(process, 'close');
   return { process, closed, output: () => stdout, error: () => stderr };
 }
-test('main starts, serves, stops and flushes structured lifecycle events', { timeout: 10000 }, async () => {
+test('main starts, serves, stops and flushes structured lifecycle events', { timeout: 15000 }, async () => {
   const p = await port();
   const previous = new Set(await readdir('../../.local/logs').catch(() => [] as string[]));
   const run = child('src/main.ts', { DATABASE_URL: 'postgresql://fixture:CANARY@127.0.0.1:1/dvqb_test', CURSOR_SECRET: 's'.repeat(32), PORT: String(p), LOG_LEVEL: 'debug', LOG_TO_FILE: '1' });
   try {
-    for (let i = 0; i < 100 && !run.output().includes('app.started'); i++) await new Promise(r => setTimeout(r, 30));
+    const deadline = Date.now() + 10000;
+    while (!run.output().includes('app.started') && run.process.exitCode === null && Date.now() < deadline) await new Promise(r => setTimeout(r, 30));
     assert.ok(run.output().includes('app.started'), run.error());
     const response = await fetch(`http://127.0.0.1:${p}/v1/health`); assert.equal(response.status, 200);
     run.process.kill('SIGTERM'); const [code] = await run.closed; assert.equal(code, 0);

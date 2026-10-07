@@ -1,12 +1,12 @@
 # MAP-01 Kế hoạch chọn địa điểm bằng địa chỉ và bản đồ
 
-07/10/2026 · bộ kế hoạch DELIVERY-01, chỉ lưu repo. **Đã chốt thứ tự P0-1 → MAP-01 → P0-2** theo yêu cầu chủ dự án. **Đã chốt hướng thử MapLibre + Geoapify Free, chưa bật billing**, theo phản hồi chủ dự án trong phiên 07/10. API mới và hành vi chi tiết dưới đây vẫn là **đề xuất để duyệt**, chưa triển khai hoặc phát sinh chi phí. Giữ đường dẫn MAP-01 cũ để các liên kết tiếp tục hoạt động.
+07/10/2026 · bộ kế hoạch DELIVERY-01, chỉ lưu repo. **Đã chốt thứ tự P0-1 → MAP-01 → P0-2** theo yêu cầu chủ dự án. **Đã chốt hướng thử MapLibre + Geoapify Free, chưa bật billing**, theo phản hồi chủ dự án trong phiên 07/10. Sau đó chủ dự án yêu cầu **“ok làm đi”** và đã điền key: phạm vi bộ chọn/API dưới đây được triển khai thử local, OpenAPI v0.1.7. [Báo cáo B03-01](../bao-cao/B03-01-chon-dia-diem-va-ban-do.md) ghi ảnh, kết quả và giới hạn; chưa billing/production/remote CI/UAT. Giữ đường dẫn MAP-01 cũ để các liên kết tiếp tục hoạt động.
 
-Mục tiêu: người dùng chọn được địa điểm bằng cách gõ địa chỉ hoặc chạm bản đồ, không cần biết kinh độ/vĩ độ. Đề xuất một bộ chọn chung cho tìm dịch vụ, sổ địa chỉ, cửa hàng và tâm vùng phục vụ, bàn giao cùng một đợt trước P0-2.
+Mục tiêu: người dùng chọn được địa điểm bằng cách gõ địa chỉ hoặc chạm bản đồ, không cần biết kinh độ/vĩ độ. Dùng một bộ chọn chung cho tìm dịch vụ, sổ địa chỉ, cửa hàng và tâm vùng phục vụ, bàn giao cùng một đợt trước P0-2.
 
 ## 1. Nền đã có và phạm vi đợt
 
-| Nơi sử dụng | Code và dữ liệu thật | Bổ sung dự kiến |
+| Nơi sử dụng | Code và dữ liệu thật | Bổ sung MAP-01 |
 |---|---|---|
 | Khách tìm dịch vụ | [SearchScreen](../../../apps/mobile/src/features/search/screens/SearchScreen.tsx), `submit`/`SavedPositions`; nhập tọa độ hoặc chọn địa chỉ đã lưu | Chọn địa điểm chung, giữ bán kính và bộ lọc |
 | Sổ địa chỉ | [AddressesScreen](../../../apps/mobile/src/features/accounts/screens/AddressesScreen.tsx), `save`/`inputOf`; `address.text` + `address.point` | Chọn trên bản đồ rồi đặt nhãn Nhà/Công ty và mô tả; giữ mặc định/version/retry |
@@ -14,7 +14,7 @@ Mục tiêu: người dùng chọn được địa điểm bằng cách gõ đ�
 | Vùng phục vụ | Cùng màn trên, phần `areas`; tâm + bán kính, chưa hỗ trợ polygon | Chọn tâm, xem vòng tròn bán kính, đặt tên vùng |
 | Tìm gần đây | [SearchService.list](../../../services/api/src/modules/search/search.service.ts) | Tiếp tục lọc vùng/khoảng cách bằng PostGIS trong DB dự án |
 
-[Package app](../../../apps/mobile/package.json) đang khóa Expo `57.0.26`, React Native `0.86.3`; chưa có SDK map hoặc `expo-location`. `PartnerCard` chỉ có khoảng cách, **chưa có tọa độ ghim kết quả**. MAP-01 ưu tiên bản đồ chọn địa điểm; bản đồ toàn bộ người cung cấp/gom ghim để sau, cần contract về tọa độ được công khai. Hồ sơ public đã có `public_addresses`, có thể hiển thị các điểm cửa hàng này, không lấy dữ liệu quản lý hoặc tâm vùng riêng để làm vị trí thợ.
+[Package app](../../../apps/mobile/package.json) đang khóa Expo `57.0.26`, React Native `0.86.3`; đã thêm MapLibre React Native `11.5.0`, MapLibre GL JS `5.22.0` và `expo-location` `57.0.20`. `PartnerCard` chỉ có khoảng cách, **chưa có tọa độ ghim kết quả**. MAP-01 ưu tiên bản đồ chọn địa điểm; bản đồ toàn bộ người cung cấp/gom ghim để sau, cần contract về tọa độ được công khai. Hồ sơ public đã có `public_addresses`, có thể hiển thị các điểm cửa hàng này, không lấy dữ liệu quản lý hoặc tâm vùng riêng để làm vị trí thợ.
 
 ## 2. Trải nghiệm người dùng
 
@@ -58,7 +58,7 @@ Không dùng Nominatim công cộng cho autocomplete vì chính sách cấm. [Ng
 
 Luồng chung: **màn đang sửa → bộ chọn → API dự án → Geoapify → gợi ý → người dùng xác nhận → form ban đầu → API lưu hiện có → DB**. Bản đồ tải style/tiles theo cấu hình riêng, không gửi token dự án tới provider.
 
-| Lớp | Vị trí dự kiến, chưa có code | Trách nhiệm |
+| Lớp | Vị trí code đã triển khai | Trách nhiệm |
 |---|---|---|
 | Bộ chọn | `apps/mobile/src/features/location/{models,api,state,components,screens}` | Bản nháp, tìm/ghim/GPS, hủy/xác nhận, lỗi dạng mã; dùng chung 4 nơi |
 | Bản đồ từng nền tảng | `LocationMap.native.tsx`, `LocationMap.web.tsx` trong feature trên | MapLibre React Native trên Android/iOS, MapLibre GL JS cho Expo web kiểm thử; chung input/output, không chuyển app sang WebView |
@@ -68,15 +68,15 @@ Luồng chung: **màn đang sửa → bộ chọn → API dự án → Geoapify 
 
 Không thêm framework, package chung hoặc microservice riêng. [MapLibre](https://maplibre.org/maplibre-react-native/docs/setup/getting-started/) có yêu cầu React Native/new architecture; [Expo setup](https://maplibre.org/maplibre-react-native/docs/setup/expo/) cần plugin và rebuild native. Đạt phiên bản tối thiểu chưa chứng minh tương thích bộ Expo/RN của repo; phải build/thử cả hai nền tảng trước khi nối tất cả form.
 
-### Contract dự kiến cần duyệt trước code
+### Contract đã triển khai thử theo yêu cầu tiếp ngày 07/10
 
 | API dự án | Body | Kết quả |
 |---|---|---|
 | `POST /v1/locations/autocomplete` | `{ text, locale, bias? }` | `{ items: [{ id, text, point, precision }], attribution }` |
 | `POST /v1/locations/geocode` | `{ text, locale, bias? }` | Cùng dạng danh sách; người dùng chọn, không tự lấy dòng đầu |
-| `POST /v1/locations/reverse` | `{ point, locale }` | `{ address: { text, point, precision } hoặc null, attribution }`; point chuẩn hóa giữ tọa độ đầu vào |
+| `POST /v1/locations/reverse` | `{ point, locale }` | `{ address: { id, text, point, precision } hoặc null, attribution }`; point chuẩn hóa giữ tọa độ đầu vào |
 
-Đây là endpoint nội bộ dự kiến, khác GET của provider. Dùng body tránh địa chỉ nằm trong query access log; logger cũng không được ghi body hoặc URL provider chứa key. `id` gợi ý dùng tạm trong phiên chọn; `precision` chỉ mức gần đúng, không phải xác minh địa chỉ.
+Đây là endpoint nội bộ của pilot, khác GET của provider. Dùng body tránh địa chỉ nằm trong query access log; logger cũng không được ghi body hoặc URL provider chứa key. `id` gợi ý dùng tạm trong phiên chọn; `precision` chỉ mức gần đúng, không phải xác minh địa chỉ.
 
 Tìm dịch vụ hiện công khai: đề xuất cho khách chưa login tra địa chỉ với rate limit theo IP/phiên ẩn danh và tổng hệ thống; đã login có hạn mức theo tài khoản. Lỗi chuẩn gồm input sai, quá hạn mức/kèm thời gian thử lại, timeout và provider thiếu cấu hình/không sẵn sàng. Bổ sung OpenAPI, giới hạn độ dài truy vấn và kiểm lạm dụng trước mở endpoint.
 
@@ -122,6 +122,10 @@ Không tính hoàn tất toàn B03-01: bản đồ người cung cấp/gom ghim,
 
 1. **Đã chốt provider/budget thử nghiệm:** MapLibre + Geoapify Free, chưa bật billing. Cần tài khoản/key do chủ dự án quản lý khi bắt đầu thử live; không gửi key vào Git hoặc nội dung báo cáo. Nếu chất lượng không đạt, báo kết quả trước khi chọn lại provider; chưa duyệt Google/gói trả phí.
 2. **Phạm vi theo hướng đã chọn:** bộ chọn chung 4 nơi với gợi ý địa chỉ, ghim và GPS một lần. Đề xuất kèm vòng tròn vùng và điểm cửa hàng public; bản đồ toàn bộ người cung cấp để sau. Việt Nam là vùng thử đề xuất, không đổi phạm vi thị trường hiện hành.
-3. **Contract/UX:** ba endpoint, khách chưa login có hạn mức, quy tắc điểm/mô tả và dự phòng. Sau duyệt mới đồng bộ spec/API/QA theo phạm vi ảnh hưởng rồi triển khai.
+3. **Contract/UX:** ba endpoint, khách chưa login có hạn mức, quy tắc điểm/mô tả và dự phòng. Đã triển khai và đồng bộ phần spec/API/QA ảnh hưởng theo yêu cầu tiếp ngày 07/10.
 
-Yêu cầu hiện tại đủ để ghi kế hoạch, đổi thứ tự, ghi lựa chọn thử Geoapify Free và push P0-1; chưa phải quyết định chọn dịch vụ trả phí hoặc tự tạo tài khoản provider. Đợt này bàn giao kế hoạch; chưa cài SDK, gọi API provider hoặc thay contract nghiệp vụ.
+Đã triển khai theo yêu cầu tiếp của chủ dự án sau khi chốt hướng thử và nhận key. Chưa duyệt trả phí hoặc production. Hai key live trả 200; 30 mẫu có 24/30 autocomplete và 29/30 tìm cả chuỗi phù hợp khu vực theo rà sơ bộ, không xác minh đúng số nhà. Có bản đồ thật trên ba nền tảng; test/local và ảnh xem B03-01. Kiểm cả bốn nơi trên từng native, GPS thiết bị thật, chữ lớn, dashboard credit và UAT vẫn mở.
+
+### Quyền lưu và hạn mức đã đối chiếu
+
+Ngày 07/10/2026, [Geocoding](https://www.geoapify.com/geocoding-api/) và [FAQ Reverse](https://www.geoapify.com/reverse-geocoding-api/) cho phép giữ kết quả; app giữ attribution cạnh dữ liệu/bản đồ. Không lưu lịch sử tra cứu/cache chung. Hạn mức backend một tiến trình là 4 lookup/giây, 30/actor/phút, 1000/24h, reset khi restart; không bao gồm tile. Chưa kiểm dashboard tổng credit hoặc khóa hạn chế native, không suy ra hard cap chi phí.

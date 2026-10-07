@@ -4,7 +4,7 @@ test('address book and session management work with real DB, lost response and r
   await page.goto(environment.webUrl);await page.getByTestId('nav-account').click();await page.getByTestId('auth-toggle').click();
   await page.getByTestId('auth-name').fill('Account management');await page.getByTestId('auth-email').fill(email);await page.getByTestId('auth-password').fill(password);await page.getByTestId('auth-submit').click();
   await page.getByTestId('addresses-open').click();await expect(page.getByTestId('addresses-empty')).toBeVisible();
-  const fill=async(label,text)=>{await page.getByTestId('address-label').fill(label);await page.getByTestId('address-text').fill(text);await page.getByTestId('address-lat').fill('10.77');await page.getByTestId('address-lng').fill('106.7');};
+  const fill=async(label,text)=>{await page.getByTestId('address-label').fill(label);await page.getByTestId('address-text').fill(text);if (!await page.getByTestId('address-lat').isVisible()) await page.getByTestId('address-advanced').click();await page.getByTestId('address-lat').fill('10.77');await page.getByTestId('address-lng').fill('106.7');};
   await page.getByTestId('address-add').click();await fill('Home','Street one');
   await page.getByRole('button',{name:'English',exact:true}).click();await expect(page.getByTestId('address-text')).toHaveValue('Street one');
   await page.getByRole('button',{name:'日本語',exact:true}).click();await expect(page.getByTestId('address-text')).toHaveValue('Street one');

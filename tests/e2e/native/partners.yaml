@@ -208,6 +208,12 @@ appId: vn.dichvuquanhban.app
     id: search-open
 - scrollUntilVisible:
     element:
+      id: search-advanced
+    direction: DOWN
+- tapOn:
+    id: search-advanced
+- scrollUntilVisible:
+    element:
       id: search-lat
     direction: DOWN
 - tapOn:

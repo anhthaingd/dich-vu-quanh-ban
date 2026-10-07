@@ -187,6 +187,7 @@ test('owner edits skills, modes, prices, circles and public shops with a shared 
   fireEvent.press(screen.getByTestId('partner-section-areas'));
   fireEvent.press(screen.getByTestId('partner-add-area'));
   fireEvent.changeText(screen.getByLabelText('Tên khu vực'), 'Hanoi');
+  if (!screen.queryByTestId('area-0-lat')) fireEvent.press(screen.getByTestId('area-0-advanced'));
   fireEvent.changeText(screen.getByTestId('area-0-lat'), '21');
   fireEvent.changeText(screen.getByTestId('area-0-lng'), '105');
   fireEvent.press(screen.getByTestId('locale-en'));
@@ -205,6 +206,7 @@ test('owner edits skills, modes, prices, circles and public shops with a shared 
   fireEvent.press(screen.getByTestId('partner-section-locations'));
   fireEvent.press(screen.getByTestId('partner-add-location'));
   fireEvent.changeText(screen.getByLabelText('Địa chỉ'), 'Shop');
+  if (!screen.queryByTestId('location-0-lat')) fireEvent.press(screen.getByTestId('location-0-advanced'));
   fireEvent.changeText(screen.getByTestId('location-0-lat'), '21');
   fireEvent.changeText(screen.getByTestId('location-0-lng'), '105');
   fireEvent.press(screen.getByTestId('partner-save-locations'));
@@ -248,6 +250,7 @@ test('unverified account cannot create provider and anonymous search opens publi
   fireEvent.press(screen.getByTestId('search-open'));
   fireEvent.press(screen.getByTestId('search-submit'));
   expect(f.partners.search).not.toHaveBeenCalled();
+  if (!screen.queryByTestId('search-lat')) fireEvent.press(screen.getByTestId('search-advanced'));
   fireEvent.changeText(screen.getByTestId('search-lat'), '21');
   fireEvent.changeText(screen.getByTestId('search-lng'), '105');
   f.partners.search.mockRejectedValueOnce(new ApiError('NETWORK'));

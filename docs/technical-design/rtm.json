@@ -989,5 +989,41 @@
       "QA-074"
     ],
     "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "locationAutocomplete",
+    "contract_case": "CT-locationAutocomplete",
+    "checks": "schema; quota; errors; privacy; stale response; attribution",
+    "scenario_ids": [
+      "QA-076",
+      "QA-077",
+      "QA-078",
+      "QA-079"
+    ],
+    "status": "Local kiểm theo B03-01; chưa remote CI/UAT"
+  },
+  {
+    "operation_id": "locationGeocode",
+    "contract_case": "CT-locationGeocode",
+    "checks": "schema; quota; errors; privacy; stale response; attribution",
+    "scenario_ids": [
+      "QA-076",
+      "QA-077",
+      "QA-078",
+      "QA-079"
+    ],
+    "status": "Local kiểm theo B03-01; chưa remote CI/UAT"
+  },
+  {
+    "operation_id": "locationReverse",
+    "contract_case": "CT-locationReverse",
+    "checks": "schema; quota; errors; privacy; stale response; attribution",
+    "scenario_ids": [
+      "QA-076",
+      "QA-077",
+      "QA-078",
+      "QA-079"
+    ],
+    "status": "Local kiểm theo B03-01; chưa remote CI/UAT"
   }
 ]

@@ -14,6 +14,7 @@ async function mount(kind:'addresses'|'sessions') {
 }
 test('address form validates, preserves draft across locale, retries lost response, supports edit and confirmed archive',async()=>{
   const f=await mount('addresses');fireEvent.press(screen.getByTestId('address-add'));fireEvent.press(screen.getByTestId('address-save'));expect(await screen.findByRole('alert')).toBeVisible();
+  fireEvent.press(screen.getByTestId('address-advanced'));
   for(const [id,value] of [['label','Home'],['text','Street'],['lat','10'],['lng','106']]) fireEvent.changeText(screen.getByTestId('address-'+id),value);
   fireEvent.press(screen.getByRole('button',{name:'English'}));await waitFor(()=>expect(screen.getByTestId('locale-ja')).not.toBeDisabled());expect(screen.getByTestId('address-text').props.value).toBe('Street');
   f.accounts.saveAddress.mockRejectedValueOnce(new ApiError('NETWORK'));fireEvent.press(screen.getByTestId('address-save'));await screen.findByTestId('account-retry');expect(screen.getByTestId('address-text').props.editable).toBe(false);

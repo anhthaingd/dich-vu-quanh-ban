@@ -1318,5 +1318,38 @@
     "request": "PublicationInput",
     "response": "PartnerManagement",
     "rule": "P0-1 · 06/10/2026 · v0.1.6 · Đã duyệt: hồ sơ quản lý riêng có version; draft/published, công bố không tự bật nhận việc; phone_verified trước tạo partner, owner và ví rỗng cùng transaction. Tìm theo distance mặc định, vùng tròn đo tới tâm và phải bao phủ khách; cursor theo distance_m/created_at/id, gắn bộ lọc. Tài khoản/provider test tách biệt được phép tạo trực tiếp; OTP, polygon, bản đồ và xếp hạng recommended/rating chưa triển khai. Không production/tiền thật."
+  },
+  {
+    "id": "locationAutocomplete",
+    "method": "POST",
+    "path": "/locations/autocomplete",
+    "group": "Địa điểm",
+    "title": "Gợi ý địa chỉ",
+    "auth": "Public có hạn mức; bearer tùy chọn",
+    "request": "LocationQuery",
+    "response": "LocationSuggestions",
+    "rule": "MAP-01 pilot local. Public lookup with per-IP or authenticated-account limits and a global limit. No history or shared persistent cache. No automatic selection. Reverse preserves requested coordinates. 429 has Retry-After. Does not save addresses; existing authenticated APIs retain ownership/version/idempotency checks."
+  },
+  {
+    "id": "locationGeocode",
+    "method": "POST",
+    "path": "/locations/geocode",
+    "group": "Địa điểm",
+    "title": "Tìm địa chỉ đầy đủ",
+    "auth": "Public có hạn mức; bearer tùy chọn",
+    "request": "LocationQuery",
+    "response": "LocationSuggestions",
+    "rule": "MAP-01 pilot local. Public lookup with per-IP or authenticated-account limits and a global limit. No history or shared persistent cache. No automatic selection. Reverse preserves requested coordinates. 429 has Retry-After. Does not save addresses; existing authenticated APIs retain ownership/version/idempotency checks."
+  },
+  {
+    "id": "locationReverse",
+    "method": "POST",
+    "path": "/locations/reverse",
+    "group": "Địa điểm",
+    "title": "Tra địa chỉ tại ghim",
+    "auth": "Public có hạn mức; bearer tùy chọn",
+    "request": "LocationReverseInput",
+    "response": "LocationReverse",
+    "rule": "MAP-01 pilot local. Public lookup with per-IP or authenticated-account limits and a global limit. No history or shared persistent cache. No automatic selection. Reverse preserves requested coordinates. 429 has Retry-After. Does not save addresses; existing authenticated APIs retain ownership/version/idempotency checks."
   }
 ]

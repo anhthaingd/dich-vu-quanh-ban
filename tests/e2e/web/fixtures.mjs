@@ -40,7 +40,7 @@ export const test = base.extend({
       await app.listen(0, '127.0.0.1');
       const apiUrl = await app.getUrl() + '/v1';
       if (!(await fetch(apiUrl + '/ready')).ok) throw Error('API readiness failed');
-      execFileSync('npm', ['exec','-w','apps/mobile','--','expo','export','--clear','--platform','web','--output-dir',directory], { stdio: 'pipe', env: { ...process.env, CI: '1', EXPO_NO_TELEMETRY: '1', EXPO_PUBLIC_API_URL: apiUrl } });
+      execFileSync('npm', ['exec','-w','apps/mobile','--','expo','export','--clear','--platform','web','--output-dir',directory], { stdio: 'pipe', env: { ...process.env, CI: '1', EXPO_NO_TELEMETRY: '1', EXPO_NO_DOTENV: '1', EXPO_PUBLIC_GEOAPIFY_MAPS_KEY: 'test-only', EXPO_PUBLIC_API_URL: apiUrl } });
       await use({ webUrl, apiUrl, pool, app, logs });
     } finally {
       try { await testInfo.attach('api-log.jsonl', { body: logs.join(''), contentType: 'application/x-ndjson' }); }

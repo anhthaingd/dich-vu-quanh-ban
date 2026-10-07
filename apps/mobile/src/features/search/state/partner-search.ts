@@ -37,6 +37,7 @@ export class PartnerSearch {
     this.request = null;
     this.update({ busy: false });
   };
+  reset = () => { this.cancel(); this.query = null; this.cursors.clear(); this.update({ items: [], next: null, error: null, searched: false }); };
   search = (query: SearchInput) => {
     this.query = { ...query };
     this.cursors.clear();

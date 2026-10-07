@@ -1,3 +1,5 @@
+import { LocationField } from '../../location/components/LocationField';
+import { LocationAttribution } from '../../location/components/LocationAttribution';
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { Keyboard, Switch, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -51,9 +53,9 @@ function Addresses({ owner }: { owner: string }) {
       <AppText variant="section">{t(draft.id ? 'addresses.edit' : 'addresses.add')}</AppText>
       <Input testID="address-label" label={t('addresses.label')} value={draft.label} editable={!disabled} onChangeText={label => update({label})} />
       <Input testID="address-text" label={t('addresses.text')} value={draft.text} editable={!disabled} onChangeText={text => update({text})} />
-      <AppText tone="muted">{t('addresses.coordinates')}</AppText>
-      <Input testID="address-lat" label={t('addresses.lat')} value={draft.lat} editable={!disabled} keyboardType="numbers-and-punctuation" returnKeyType="done" onSubmitEditing={() => Keyboard.dismiss()} onChangeText={lat => update({lat})} />
-      <Input testID="address-lng" label={t('addresses.lng')} value={draft.lng} editable={!disabled} keyboardType="numbers-and-punctuation" returnKeyType="done" onSubmitEditing={() => Keyboard.dismiss()} onChangeText={lng => update({lng})} />
+      <LocationField prefix="address" lat={draft.lat} lng={draft.lng} text={draft.text} disabled={disabled}
+        changeCoordinate={(key, value) => update({[key]:value})}
+        onChange={value => update({text:value.text, lat:String(value.point.latitude), lng:String(value.point.longitude)})} />
       <View><AppText>{t('addresses.default')}</AppText><Switch testID="address-default" accessibilityLabel={t('addresses.default')} value={draft.is_default} disabled={disabled} onValueChange={is_default => update({is_default})} /></View>
       {invalid && <AppText accessibilityRole="alert" tone="error">{t('accountTools.invalid')}</AppText>}
       <Button testID="address-save" label={t('addresses.save')} disabled={disabled || changed} onPress={save} />
@@ -67,7 +69,7 @@ function Addresses({ owner }: { owner: string }) {
     {!draft && !archive && <>
       {state.loaded && !state.items.length && <AppText testID="addresses-empty">{t('addresses.empty')}</AppText>}
       {state.items.map(item => <Card key={item.id} testID={`address-${item.id}`}>
-        <AppText variant="card">{item.label}</AppText><AppText>{item.address.text}</AppText>
+        <AppText variant="card">{item.label}</AppText><AppText>{item.address.text}</AppText><LocationAttribution />
         {item.is_default && <AppText testID="address-default-badge">{t('addresses.default')}</AppText>}
         <Button testID="address-edit" label={t('addresses.edit')} variant="secondary" disabled={disabled} onPress={() => { setInvalid(false);setDraft(draftOf(item)); }} />
         {!item.is_default && <Button testID="address-make-default" label={t('addresses.makeDefault')} variant="secondary" disabled={disabled} onPress={() => void collection.perform(key => manager.saveAddress(owner,item.id,{...inputOf(draftOf(item)),is_default:true},key))} />}

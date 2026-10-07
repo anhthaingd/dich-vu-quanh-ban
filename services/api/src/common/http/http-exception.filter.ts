@@ -5,7 +5,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   constructor(private readonly log: AppLog) {}
   catch(error: unknown, host: ArgumentsHost) {
     const status = error instanceof HttpException ? error.getStatus() : 500;
-    const codes: Record<number, string> = { 400: 'VALIDATION', 401: 'UNAUTHENTICATED', 403: 'FORBIDDEN', 404: 'NOT_FOUND', 429: 'RATE_LIMITED', 503: 'SERVICE_UNAVAILABLE' };
+    const codes: Record<number, string> = { 400: 'VALIDATION', 401: 'UNAUTHENTICATED', 403: 'FORBIDDEN', 404: 'NOT_FOUND', 429: 'RATE_LIMITED', 503: 'SERVICE_UNAVAILABLE', 504: 'TIMEOUT' };
     const detail = error instanceof HttpException ? error.getResponse() : null;
     const conflict = detail && typeof detail === 'object' && 'code' in detail ? detail.code : null;
     const code = status === 409 && (conflict === 'VERSION_CONFLICT' || conflict === 'IDEMPOTENCY_MISMATCH') ? conflict : codes[status] ?? 'INTERNAL';

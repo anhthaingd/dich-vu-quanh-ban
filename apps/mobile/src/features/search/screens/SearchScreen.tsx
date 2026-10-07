@@ -1,3 +1,4 @@
+import { LocationField } from '../../location/components/LocationField';
 import {
   useCallback,
   useEffect,
@@ -26,7 +27,6 @@ import {
   EmptyState
 } from '../../../components/ui/Feedback';
 import {
-  Coordinates,
   coordinateNumber,
   Options
 } from '../../partners/components/PartnerFields';
@@ -48,6 +48,7 @@ export function SearchScreen({
     search.getSnapshot,
     search.getSnapshot
   );
+  const [placeText, setPlaceText] = useState('');
   const [lat, setLat] = useState(''),
     [lng, setLng] = useState(''),
     [radius, setRadius] = useState('10000'),
@@ -71,7 +72,10 @@ export function SearchScreen({
         .catch(() => {});
     return () => c.abort();
   }, [catalog, route.params.categoryId, route.params.skillId, locale]);
+  useEffect(() => { search.reset(); }, [search, lat, lng]);
+  useEffect(() => { setLat(''); setLng(''); setPlaceText(''); }, [auth.user?.id]);
   const choose = (p: Point) => {
+    setPlaceText('');
     setLat(String(p.latitude));
     setLng(String(p.longitude));
   };
@@ -115,11 +119,14 @@ export function SearchScreen({
       {!!skillName && <AppText variant="section">{skillName}</AppText>}
       <AppText tone="muted">{t('search.intro')}</AppText>
       <Card>
-        <Coordinates
+        <LocationField
+          text={placeText}
+          onChange={v => { choose(v.point); setPlaceText(v.text); }}
+          radius={Number(radius)}
           prefix="search"
           lat={lat}
           lng={lng}
-          change={(key, v) => (key === 'lat' ? setLat(v) : setLng(v))}
+          changeCoordinate={(key, v) => { setPlaceText(''); if (key === 'lat') setLat(v); else setLng(v); }}
         />
         <Input
           testID="search-radius"

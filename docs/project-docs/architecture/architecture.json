@@ -52,6 +52,10 @@
       {
         "kind": "p",
         "text": "Bộ này bổ sung D08–D12 ở mức thiết kế sơ bộ và mở danh sách tích hợp D13. Đã có OpenAPI và DDL tham chiếu v0.1; Đợt 1 ngày 28/09 đã triển khai migration/backend danh mục local; DOC-065 ghi bằng chứng và giới hạn. Các miền khác chưa triển khai. Chọn nhà cung cấp, dự toán, kế hoạch tải và kiểm thử bảo mật vẫn còn. Native SRS/FR/UX giữ nghiệp vụ đã chốt; Q03 được cập nhật, thiết kế chi tiết mới vẫn cần review."
+      },
+      {
+        "kind": "p",
+        "text": "MAP-01: bộ chọn địa điểm thử local với MapLibre + Geoapify Free, theo yêu cầu triển khai sau kế hoạch MAP-01. Chưa bật billing hoặc production.\n\nNgười dùng có thể nhập địa chỉ, chọn một gợi ý, chạm/kéo bản đồ, dùng GPS một lần khi bấm nút hoặc chọn địa chỉ của chính mình đã lưu. Bộ chọn dùng ở tìm dịch vụ, sổ địa chỉ, cửa hàng và tâm vùng phục vụ. Người dùng luôn xác nhận ghim; không tự lấy kết quả đầu tiên. Gõ truy vấn mới bỏ lựa chọn cũ; sửa mô tả tầng/phòng giữ tọa độ; Hủy giữ nguyên form. Lỗi tra ngược vẫn giữ ghim để nhập mô tả. Đổi tài khoản xóa bản nháp riêng.\n\nBa API POST /v1/locations/autocomplete, /geocode và /reverse nhận JSON body. Locale vi/en/ja, query 3–300 ký tự, tối đa 5 kết quả. Tra ngược giữ tọa độ người dùng chọn. Khách chưa login có hạn mức IP, bearer hợp lệ có hạn mức tài khoản. 429 có Retry-After; provider timeout trả 504. Pilot một tiến trình có hạn mức tổng; bộ đếm reset khi restart và không bao gồm tile nên không là bảo đảm chặn chi phí.\n\nKhông đổi mô hình lưu: vẫn address.text + point, quyền/version/idempotency hiện hành. Không lưu lịch sử GPS hoặc provider ID. Source chỉ ở state app. Key tra cứu ở server, key tile công khai ở app; không log địa chỉ/tọa độ/key và không gửi token dự án tới provider. Hiển thị nguồn Geoapify và OpenStreetMap. Chỉ các điểm cửa hàng public được vẽ; không công khai tâm vùng làm vị trí thợ. Polygon, toàn bộ ghim kết quả, routing/ETA và tracking ngoài đợt. OpenAPI hiện hành v0.1.7; bằng chứng kiểm triển khai ở báo cáo B03-01 trong repo, không thay nghiệm thu UAT hoặc phê duyệt production."
       }
     ]
   },
@@ -1901,6 +1905,10 @@
       {
         "kind": "p",
         "text": "Đã có baseline BRD/PRD/FR-NFR/SRS/UX, các luồng và wireframe. Q03 đã chốt: Expo/React Native, React, NestJS, PostgreSQL/PostGIS. Đã soạn thiết kế kỹ thuật v0.1 gồm ERD vật lý/DDL tham chiếu, OpenAPI/realtime, kế hoạch QA/RTM/UAT và backlog; thiết kế ngoài Đợt 1 vẫn chờ review; backend danh mục local đã triển khai 28/09 theo DOC-065, chưa native/remote CI/production. Còn Design System/đặc tả field, runbook CI/CD/backup, runbook Q02 và tích hợp/dự toán. Q04 chưa có ngân sách; không tự chọn gói trả phí."
+      },
+      {
+        "kind": "p",
+        "text": "MAP-01: bộ chọn địa điểm thử local với MapLibre + Geoapify Free, theo yêu cầu triển khai sau kế hoạch MAP-01. Chưa bật billing hoặc production.\n\nNgười dùng có thể nhập địa chỉ, chọn một gợi ý, chạm/kéo bản đồ, dùng GPS một lần khi bấm nút hoặc chọn địa chỉ của chính mình đã lưu. Bộ chọn dùng ở tìm dịch vụ, sổ địa chỉ, cửa hàng và tâm vùng phục vụ. Người dùng luôn xác nhận ghim; không tự lấy kết quả đầu tiên. Gõ truy vấn mới bỏ lựa chọn cũ; sửa mô tả tầng/phòng giữ tọa độ; Hủy giữ nguyên form. Lỗi tra ngược vẫn giữ ghim để nhập mô tả. Đổi tài khoản xóa bản nháp riêng.\n\nBa API POST /v1/locations/autocomplete, /geocode và /reverse nhận JSON body. Locale vi/en/ja, query 3–300 ký tự, tối đa 5 kết quả. Tra ngược giữ tọa độ người dùng chọn. Khách chưa login có hạn mức IP, bearer hợp lệ có hạn mức tài khoản. 429 có Retry-After; provider timeout trả 504. Pilot một tiến trình có hạn mức tổng; bộ đếm reset khi restart và không bao gồm tile nên không là bảo đảm chặn chi phí.\n\nKhông đổi mô hình lưu: vẫn address.text + point, quyền/version/idempotency hiện hành. Không lưu lịch sử GPS hoặc provider ID. Source chỉ ở state app. Key tra cứu ở server, key tile công khai ở app; không log địa chỉ/tọa độ/key và không gửi token dự án tới provider. Hiển thị nguồn Geoapify và OpenStreetMap. Chỉ các điểm cửa hàng public được vẽ; không công khai tâm vùng làm vị trí thợ. Polygon, toàn bộ ghim kết quả, routing/ETA và tracking ngoài đợt. OpenAPI hiện hành v0.1.7; bằng chứng kiểm triển khai ở báo cáo B03-01 trong repo, không thay nghiệm thu UAT hoặc phê duyệt production."
       }
     ]
   }

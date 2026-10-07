@@ -80,6 +80,12 @@ appId: vn.dichvuquanhban.app
 - pressKey: Enter
 - scrollUntilVisible:
     element:
+      id: address-advanced
+    direction: DOWN
+- tapOn:
+    id: address-advanced
+- scrollUntilVisible:
+    element:
       id: address-lat
     direction: DOWN
 - tapOn:

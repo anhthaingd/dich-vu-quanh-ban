@@ -1,5 +1,5 @@
 export const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-export const routes = ['/v1/partners', '/v1/partners/:id', ...['management','profile','skills','service-areas','locations','publication','availability'].map(action => `/v1/partners/:id/${action}`), '/v1/categories', '/v1/skills', '/v1/health', '/v1/ready', '/v1/auth/register', '/v1/auth/login', '/v1/auth/refresh', '/v1/auth/logout', '/v1/me', '/v1/me/sessions', '/v1/me/sessions/:id/revoke', '/v1/me/addresses', '/v1/me/addresses/:id', '/v1/me/addresses/:id/archive', 'unmatched'];
+export const routes = ['/v1/locations/autocomplete', '/v1/locations/geocode', '/v1/locations/reverse', '/v1/partners', '/v1/partners/:id', ...['management','profile','skills','service-areas','locations','publication','availability'].map(action => `/v1/partners/:id/${action}`), '/v1/categories', '/v1/skills', '/v1/health', '/v1/ready', '/v1/auth/register', '/v1/auth/login', '/v1/auth/refresh', '/v1/auth/logout', '/v1/me', '/v1/me/sessions', '/v1/me/sessions/:id/revoke', '/v1/me/addresses', '/v1/me/addresses/:id', '/v1/me/addresses/:id/archive', 'unmatched'];
 export function safeRoute(path: string): string {
   if (routes.includes(path)) return path;
   const partner = path.match(/^\/v1\/partners\/([^/]+)(\/[^/]+)?$/);

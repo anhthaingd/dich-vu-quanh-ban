@@ -1,3 +1,4 @@
+import { LocationField } from '../../location/components/LocationField';
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { Switch, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -14,7 +15,6 @@ import { PartnerEditor } from '../state/partner-editor';
 import type { Kind, Partner, PartnerChange, PartnerSkill } from '../models';
 import type { Category, Skill } from '../../catalog/models/catalog.types';
 import {
-  Coordinates,
   coordinateNumber,
   Options
 } from '../components/PartnerFields';
@@ -492,12 +492,15 @@ function Editor({
                       )
                     }
                   />
-                  <Coordinates
+                  <LocationField
                     prefix={`area-${i}`}
+                    text={a.label}
+                    radius={Number(a.radius)}
+                    onChange={value => setAreas(v => v.map((x,j) => j === i ? {...x, lat: String(value.point.latitude), lng: String(value.point.longitude)} : x))}
                     lat={a.lat}
                     lng={a.lng}
                     disabled={blocked}
-                    change={(key, text) =>
+                    changeCoordinate={(key, text) =>
                       setAreas((v) =>
                         v.map((x, j) => (j === i ? { ...x, [key]: text } : x))
                       )
@@ -570,12 +573,14 @@ function Editor({
                       )
                     }
                   />
-                  <Coordinates
+                  <LocationField
                     prefix={`location-${i}`}
+                    text={l.text}
+                    onChange={value => setLocations(v => v.map((x,j) => j === i ? {...x, text: value.text, lat: String(value.point.latitude), lng: String(value.point.longitude)} : x))}
                     lat={l.lat}
                     lng={l.lng}
                     disabled={blocked}
-                    change={(key, text) =>
+                    changeCoordinate={(key, text) =>
                       setLocations((v) =>
                         v.map((x, j) => (j === i ? { ...x, [key]: text } : x))
                       )
