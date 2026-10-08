@@ -383,7 +383,9 @@
     "operation_id": "getInvoice",
     "contract_case": "CT-getInvoice",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-086"
+    ],
     "status": "Chưa chạy"
   },
   {
@@ -440,7 +442,8 @@
     "scenario_ids": [
       "QA-029",
       "QA-035",
-      "QA-037"
+      "QA-037",
+      "QA-088"
     ],
     "status": "Chưa chạy"
   },
@@ -834,7 +837,8 @@
     "contract_case": "CT-completeUpload",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-052"
+      "QA-052",
+      "QA-087"
     ],
     "status": "Chưa chạy"
   },

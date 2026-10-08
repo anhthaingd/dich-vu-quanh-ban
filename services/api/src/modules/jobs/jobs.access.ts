@@ -39,5 +39,7 @@ export function allowedActions(a: JobAccess): string[] {
         if (a.assigns)
             actions.push('assignments');
     }
+    if (a.job.state === 'awaiting_settlement' && a.assigns) actions.push('assignments');
+    if (a.assigned && ['accepted','awaiting_settlement'].includes(a.job.state)) actions.push('invoice');
     return actions;
 }

@@ -1,3 +1,5 @@
+import {AssetsModule} from './modules/assets/assets.module.js';
+import { InvoicesModule } from './modules/invoices/invoices.module.js';
 import { JobsModule } from './modules/jobs/jobs.module.js';
 import { ChatModule } from './modules/chat/chat.module.js';
 import { LocationsModule } from './modules/locations/locations.module.js';
@@ -19,7 +21,7 @@ export class AppModule {
     return {
       module: AppModule,
       imports: [LocationsModule.register(settings.geoapifyKey), LoggingModule.register(log), DatabaseModule.register(settings, database, log), CatalogModule.register(settings.cursorSecret), HealthModule,
-        ...(settings.authSecret ? [AuthModule.register(settings.authSecret), AccountsModule.register(settings.cursorSecret), PartnersModule.register(settings.cursorSecret), JobsModule.register(settings.cursorSecret), ChatModule.register(settings.cursorSecret)] : [])],
+        ...(settings.authSecret ? [AuthModule.register(settings.authSecret), AccountsModule.register(settings.cursorSecret), InvoicesModule.register(settings.cursorSecret), AssetsModule.register(settings.authSecret,settings.localAssets), PartnersModule.register(settings.cursorSecret), JobsModule.register(settings.cursorSecret), ChatModule.register(settings.cursorSecret)] : [])],
     };
   }
 }

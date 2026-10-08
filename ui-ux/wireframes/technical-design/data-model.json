@@ -920,6 +920,12 @@
         "integer",
         "NOT NULL DEFAULT 1 CHECK(version>0)",
         "Version CAS"
+      ],
+      [
+        "uploaded_checksum",
+        "text",
+        "",
+        "P0-3 adapter local/test: SHA-256 bytes đã nhận; chống thay ảnh khi retry"
       ]
     ],
     "checks": "CHECK(bytes>=0), CHECK(status IN ('pending','ready','rejected'))",

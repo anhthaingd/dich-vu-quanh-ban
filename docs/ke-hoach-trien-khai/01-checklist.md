@@ -1,5 +1,7 @@
 # Checklist chức năng và bằng chứng
 
+**P0-3 · 07/10:** đã nối ảnh kết quả local/test → hóa đơn → giữ phí/point → quyết toán/hai dấu → ví/lịch sử. [B06-01 — hóa đơn và quyết toán test](bao-cao/B06-01-hoa-don-va-quyet-toan-test.md). Web hai tài khoản và native Android/iOS đạt phạm vi báo cáo; trình chọn ảnh native chưa kiểm. Chưa commit/push, CI/UAT/production/tiền thật.
+
 **Sửa thiếu sót tìm dịch vụ · 07/10:** bổ sung chọn ngành → nhóm → kỹ năng ngay trên màn tìm, xóa kết quả cũ khi đổi bộ lọc. Đây là sửa khớp spec; xem [B03-05](bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md). Chủ dự án đã yêu cầu commit/push MAP-03 + P0-2 và bản sửa này.
 
 **Đợt mới 07/10 — MAP-03 + P0-2:** đã bỏ nhập tọa độ thủ công; đã nối yêu cầu/nhận việc và chat văn bản qua API trong phạm vi DEMO local/test đã duyệt. Xem [B03-03](bao-cao/B03-03-bo-nhap-toa-do.md) và [B03-04](bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md). Web hai tài khoản và native Android/iOS đạt phạm vi ghi trong báo cáo; code đã push `293b073`; [CI 37604427549](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37604427549) đạt cả 3 job (app/build, API/PostGIS, web E2E); chưa UAT. OTP và WebSocket Pending. Bước nghiệp vụ kế tiếp là P0-3 với tiền test.
@@ -142,25 +144,27 @@ Nguồn: [spec](../../ui-ux/specs/activity-batch.md), [backlog](../technical-des
 | [ ] | B05-02 | Outbox/inbox, device push, cài đặt và deep link | Provider/cost cần chốt; tắt push vẫn có inbox; chỉ đến đúng người có quyền hiện hành |
 | [ ] | B05-03 | Lịch, nhắc 24h/1h và đổi lịch | Không nhắc lịch cũ; múi giờ nghiệp vụ không đổi theo ngôn ngữ |
 
-## B06 — Hóa đơn — chưa có code sản phẩm
+## B06 — Hóa đơn — P0-3 local/test
 
 Nguồn: [spec](../../ui-ux/specs/activity-batch.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F10/F07; QA-020,026…028.
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B06-01 | Ảnh kết quả, nháp hóa đơn công/vật tư | Ảnh phải ready khi gửi; người thực hiện gửi trực tiếp, không thêm duyệt quản lý |
-| [ ] | B06-02 | Gửi/xem/yêu cầu sửa/xác nhận hóa đơn | Bản gửi bất biến, kiểm version; khóa xong không sửa số tiền; preview point mặc định 0 |
-| [ ] | B06-03 | Tích hợp dừng việc, hóa đơn 0 và trạng thái hoàn tất | Theo quy tắc đã chốt; xác nhận hóa đơn riêng chưa hoàn tất việc; tiền chỉ test khi B07 đạt |
+| [x] local/test¹ | B06-01 | Ảnh kết quả, nháp hóa đơn công/vật tư | Ảnh phải ready khi gửi; người thực hiện gửi trực tiếp, không thêm duyệt quản lý |
+| [x] local/test¹ | B06-02 | Gửi/xem/yêu cầu sửa/xác nhận hóa đơn | Bản gửi bất biến, kiểm version; khóa xong không sửa số tiền; preview point mặc định 0 |
+| [x] local/test¹ | B06-03 | Tích hợp dừng việc, hóa đơn 0 và trạng thái hoàn tất | Theo quy tắc đã chốt; xác nhận hóa đơn riêng chưa hoàn tất việc; tiền chỉ test khi B07 đạt |
 
-## B07 — Ví/point/quyết toán test — chưa có code sản phẩm
+## B07 — Ví/point/quyết toán — P0-3 local/test
 
 Nguồn: [spec](../../ui-ux/specs/finance-batch.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F11/F12; QA-029…037,043.
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B07-01 | Ledger/holds/formula version và projection | Bút toán cân bằng, số nguyên; dùng bộ mẫu spec, không suy công thức từ một ví dụ UI |
-| [ ] | B07-02 | Point, giữ phí và hai dấu thanh toán | Khách báo trả + thợ xác nhận nhận; một settlement; thưởng chưa quyết toán không tiêu được |
-| [ ] | B07-03 | Ví/lịch sử và cạnh tranh/crash recovery | Nhiều việc song song; âm ví chỉ phục vụ phí; cash trực tiếp không hạch toán thành tiền platform |
+| [x] local/test¹ | B07-01 | Ledger/holds/formula version và projection | Bút toán cân bằng, số nguyên; dùng bộ mẫu spec, không suy công thức từ một ví dụ UI |
+| [x] local/test¹ | B07-02 | Point, giữ phí và hai dấu thanh toán | Khách báo trả + thợ xác nhận nhận; một settlement; thưởng chưa quyết toán không tiêu được |
+| [x] local/test¹ | B07-03 | Ví/lịch sử và cạnh tranh/crash recovery | Nhiều việc song song; âm ví chỉ phục vụ phí; cash trực tiếp không hạch toán thành tiền platform |
+
+¹ B06/B07: đánh dấu phần P0-3 trong B06-01, không gồm provider ảnh production, native picker, admin/Q02, giao diện ví/ngân hàng đầy đủ hoặc UAT.
 
 ## B08 — Ngân hàng/nạp/rút sandbox — chưa có code sản phẩm
 

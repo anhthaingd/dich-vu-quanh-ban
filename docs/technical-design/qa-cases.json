@@ -1018,5 +1018,41 @@
     "level": "Unit/Integration/E2E",
     "priority": "P0",
     "status": "Bằng chứng B03-03/B03-04; chưa UAT"
+  },
+  {
+    "id": "QA-086",
+    "group": "Hóa đơn / ảnh / tiền test",
+    "requirement": "P0-3",
+    "operation": "getInvoice",
+    "setup": "DB và tài khoản DEMO/test cô lập",
+    "steps": "Gửi ảnh/ghi chú, yêu cầu sửa, lưu nháp mới rồi gửi lại",
+    "expected": "Khách thấy bản gửi gần nhất, ghi chú/lý do đúng; không lộ draft hoặc ví partner",
+    "level": "Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng B06-01 trong repo; chưa UAT"
+  },
+  {
+    "id": "QA-087",
+    "group": "Hóa đơn / ảnh / tiền test",
+    "requirement": "P0-3",
+    "operation": "completeUpload",
+    "setup": "DB và tài khoản DEMO/test cô lập",
+    "steps": "JPEG/PNG/WebP thật/giả, giới hạn bytes, retry, URL ký, thu hồi phiên/quyền",
+    "expected": "Chỉ ảnh đã giải mã thành công ready; URL có quyền; không lưu metadata ảnh trong bản phục vụ",
+    "level": "Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng B06-01 trong repo; chưa UAT"
+  },
+  {
+    "id": "QA-088",
+    "group": "Hóa đơn / ảnh / tiền test",
+    "requirement": "P0-3",
+    "operation": "settleInvoice",
+    "setup": "DB và tài khoản DEMO/test cô lập",
+    "steps": "Hai hóa đơn dùng cùng point, retry confirm/settle, lỗi outbox, hóa đơn 0",
+    "expected": "Không vượt số dư, một settlement, ledger cân bằng và rollback toàn bộ; hai dấu tách biệt",
+    "level": "Integration/E2E",
+    "priority": "P0",
+    "status": "Bằng chứng B06-01 trong repo; chưa UAT"
   }
 ]

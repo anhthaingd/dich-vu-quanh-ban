@@ -17,7 +17,7 @@ export class JobsService {
     private async read(db: PoolClient, a: JobAccess) {
         const j = a.job;
         const skills = (await db.query('SELECT skill_id,schema_version,answers FROM job_skills WHERE job_id=$1 ORDER BY created_at,id', [j.id])).rows;
-        return { id: j.id, customer_id: j.customer_id, partner_id: j.partner_id, state: j.state, version: j.version, schedule_version: j.schedule_version, scheduled_at: iso(j.scheduled_at), skills, address: j.address_snapshot, assigned_member_id: a.assigned_member_id, invoice_id: null, allowed_actions: allowedActions(a), service_mode: j.service_mode, time_mode: j.time_mode, location_id: j.location_id, note: j.note, eta: iso(j.eta) };
+        return { id: j.id, customer_id: j.customer_id, partner_id: j.partner_id, state: j.state, version: j.version, schedule_version: j.schedule_version, scheduled_at: iso(j.scheduled_at), skills, address: j.address_snapshot, assigned_member_id: a.assigned_member_id, invoice_id: (await db.query('SELECT id FROM invoices WHERE job_id=$1', [j.id])).rows[0]?.id ?? null, allowed_actions: allowedActions(a), service_mode: j.service_mode, time_mode: j.time_mode, location_id: j.location_id, note: j.note, eta: iso(j.eta) };
     }
     private async eligible(db: PoolClient, input: JobCreate, customer: string, accepting = true) {
         const { rows: [p] } = await db.query('SELECT * FROM partners WHERE id=$1 AND archived_at IS NULL FOR UPDATE', [input.partner_id]);

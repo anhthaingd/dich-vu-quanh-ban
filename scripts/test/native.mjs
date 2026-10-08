@@ -1,9 +1,12 @@
+import sharp from 'sharp';
+import {AssetsService} from '../../services/api/dist/src/modules/assets/assets.service.js';
+import {InvoicesService} from '../../services/api/dist/src/modules/invoices/invoices.service.js';
 import { JobsService } from '../../services/api/dist/src/modules/jobs/jobs.service.js';
 import { ChatService } from '../../services/api/dist/src/modules/chat/chat.service.js';
 import { GeoapifyProvider } from '../../services/api/dist/src/integrations/maps/geoapify.js';
 import { spawn, spawnSync } from 'node:child_process';
 import { createWriteStream, existsSync } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { homedir } from 'node:os';
@@ -27,7 +30,7 @@ import { requireTestDatabase } from './native-options.mjs';
 const platform = process.argv[2];
 if (!['android', 'ios'].includes(platform)) throw Error('Use android or ios');
 const flow = process.argv[3] ?? 'catalog';
-if (!['catalog', 'auth', 'i18n', 'i18n-layout', 'shell', 'profile', 'accounts', 'partners', 'jobs', 'search-service'].includes(flow)) throw Error('Use catalog, auth, i18n, i18n-layout shell, profile, accounts, partners, jobs or search-service flow');
+if (!['catalog', 'auth', 'i18n', 'i18n-layout', 'shell', 'profile', 'accounts', 'partners', 'jobs', 'invoices', 'search-service'].includes(flow)) throw Error('Use catalog, auth, i18n, i18n-layout shell, profile, accounts, partners, jobs or search-service flow');
 const directory = resolve('test-results/native', platform, flow === 'catalog' ? '.' : flow);
 await mkdir(directory, { recursive: true });
 const run = (cmd, args) => spawnSync(cmd, args, { encoding: 'utf8', timeout: 30000, env: { ...process.env, MAESTRO_CLI_NO_ANALYTICS: '1' } });
@@ -95,7 +98,7 @@ const listen = (server, port = 0, host = '127.0.0.1') => new Promise((done, reje
 const close = server => new Promise((done, reject) => server.close(error => error ? reject(error) : done()));
 const devLink = port => `exp+dich-vu-quanh-ban://expo-development-client/?url=${encodeURIComponent(`http://${platform === 'ios' ? 'localhost' : host}:${port}`)}`;
 try {
-  if (platform === 'android' && ['profile','accounts','partners','jobs'].includes(flow)) {
+  if (platform === 'android' && ['profile','accounts','partners','jobs','invoices'].includes(flow)) {
     // Gboard's stylus tutorial can intercept Maestro typing in name fields.
     originalHandwriting = check('adb', ['-s', device, 'shell', 'settings', 'get', 'secure', 'stylus_handwriting_enabled']).trim();
     check('adb', ['-s', device, 'shell', 'settings', 'put', 'secure', 'stylus_handwriting_enabled', '0']);
@@ -111,7 +114,8 @@ try {
   await admin.query(`CREATE SCHEMA ${schema}`); created = true;
   await migrate(pool); await seed(pool);
   const active = (await pool.query('SELECT id FROM categories WHERE active=true')).rows.map(row => row.id);
-  app = await createApp({ databaseUrl: url, cursorSecret: randomUUID().repeat(2), authSecret: randomUUID().repeat(2), port: 0, host: '127.0.0.1' }, pool, new AppLog(apiLog, 'info', 'test'));
+  const localAssets={directory:resolve('.local',schema+'-assets'),origin:'http://127.0.0.1'};
+  app = await createApp({ localAssets, databaseUrl: url, cursorSecret: randomUUID().repeat(2), authSecret: randomUUID().repeat(2), port: 0, host: '127.0.0.1' }, pool, new AppLog(apiLog, 'info', 'test'));
   if (['accounts', 'partners', 'jobs'].includes(flow)) {
     app.get(GeoapifyProvider).lookup = async (action, input) => {
       const point = action === 'reverse' ? input.point : flow === 'partners' ? {latitude:21.0285,longitude:105.8542} : {latitude:10.77,longitude:106.7};
@@ -121,6 +125,7 @@ try {
   }
   await app.listen(0, '127.0.0.1');
   const apiPort = app.getHttpServer().address().port;
+  localAssets.origin='http://127.0.0.1:'+apiPort;
   if (platform === 'android') {
     for (const port of [metroPort, apiPort]) {
       check('adb', ['-s', device, 'reverse', '--no-rebind', `tcp:${port}`, `tcp:${port}`]);
@@ -131,7 +136,7 @@ try {
   const original = service.list.bind(service);
   const key = randomUUID();
   const testEmail = `native-${randomUUID()}@example.test`;
-  if (['profile','accounts','partners','jobs'].includes(flow)) await app.get(AuthService).register(testEmail, 'native-test-only-password', 'Native profile');
+  if (['profile','accounts','partners','jobs','invoices'].includes(flow)) await app.get(AuthService).register(testEmail, 'native-test-only-password', 'Native profile');
   if (flow === 'partners') {
     const auth = app.get(AuthService);
     const session = await auth.login(testEmail, 'native-test-only-password');
@@ -142,7 +147,8 @@ try {
     p = await partners.edit(header,p.id,{action:'skills',expected_version:p.version,skills:[{skill_id:stableId('socket_replacement'),modes:['at_customer'],reference_labor:'0',inspection_fee:null,travel_fee:null}]},randomUUID());
     await partners.edit(header,p.id,{action:'service-areas',expected_version:p.version,areas:[{label:'Hanoi demo',center:{latitude:21.0285,longitude:105.8542},radius_m:5000,boundary_geojson:null}]},randomUUID());
   }
-  if (flow === 'jobs') {
+  let invoiceJob,invoiceCustomer;
+  if (flow === 'jobs' || flow === 'invoices') {
     const auth=app.get(AuthService), session=await auth.login(testEmail,'native-test-only-password');
     const customer=await auth.register(`customer-${randomUUID()}@example.test`,'native-test-only-password','DEMO khách thuê');
     for(const user of [session.user,customer.user])await pool.query("INSERT INTO identities(user_id,provider,subject,verified_at) VALUES($1,'phone',$2,now())",[user.id,`native:${user.id}`]);
@@ -153,6 +159,15 @@ try {
     p=await partners.edit(header,p.id,{action:'publication',expected_version:p.version,publication_status:'published'},randomUUID());
     p=await partners.edit(header,p.id,{action:'availability',expected_version:p.version,accepting_jobs:true},randomUUID());
     const j=await app.get(JobsService).create(customerHeader,{partner_id:p.id,skills:[{skill_id:stableId('socket_replacement'),schema_version:1,answers:{}}],service_mode:'at_customer',location_id:null,address:{text:'DEMO Hà Nội - địa chỉ kiểm thử',point:{latitude:21.0285,longitude:105.8542}},time_mode:'now',scheduled_at:null,note:'DEMO thay ổ cắm điện'},randomUUID());
+    if(flow==='invoices'){
+      const accepted=await app.get(JobsService).change(header,j.id,'accept',{expected_version:j.version,eta:new Date(Date.now()+3600000).toISOString()},randomUUID());
+      const photo=await sharp({create:{width:640,height:360,channels:3,background:'#dce9e5'}}).composite([{input:Buffer.from('<svg width="640" height="360"><text x="70" y="180" font-size="36" fill="#16233b">DEMO - Work result</text></svg>')}]).png().toBuffer();
+      const assetService=app.get(AssetsService),grant=await assetService.grant(header,{purpose:'result',mime:'image/png',bytes:photo.length},randomUUID());
+      const uploaded=await fetch(grant.upload_url,{method:'PUT',headers:grant.required_headers,body:photo});if(!uploaded.ok)throw Error('Native asset fixture upload failed');
+      const asset=await assetService.complete(header,grant.asset_id,randomUUID(),{expected_version:1});
+      await app.get(InvoicesService).save(header,j.id,{expected_version:1,labor:'200000',materials:'100000',note:'DEMO ket qua cong viec',result_asset_ids:[asset.id],industry_details:{}},randomUUID());
+      invoiceJob=accepted.id;invoiceCustomer=customerHeader;
+    }
     const room=await app.get(ChatService).open(customerHeader,{partner_id:p.id},randomUUID());
     await app.get(ChatService).send(customerHeader,room.id,{client_message_id:randomUUID(),body:'DEMO khách: tôi đang chờ tại cửa.',job_id:j.id},randomUUID());
   }
@@ -163,7 +178,8 @@ try {
   control = createServer(async (req, res) => {
     try {
       const mode = req.url?.slice(`/${key}/`.length);
-      if (req.method !== 'POST' || !req.url?.startsWith(`/${key}/`) || !['ok', 'error', 'empty'].includes(mode)) { res.writeHead(404).end(); return; }
+      if (req.method !== 'POST' || !req.url?.startsWith(`/${key}/`) || !['ok', 'error', 'empty', ...(flow==='invoices'?['invoice-confirm']:[])].includes(mode)) { res.writeHead(404).end(); return; }
+      if(mode==='invoice-confirm'){const invoices=app.get(InvoicesService),i=await invoices.get(invoiceCustomer,invoiceJob);await invoices.change(invoiceCustomer,i.id,'confirm',{expected_version:i.version,version_id:i.version_id,points_used:'0'},randomUUID());res.writeHead(200).end('ok');return;}
       service.list = mode === 'error' ? async () => { throw Error('native-test-failure'); } : original;
       await pool.query('UPDATE categories SET active = (id = ANY($1::uuid[]))', [mode === 'empty' ? [] : active]);
       res.writeHead(200).end('ok');
@@ -196,7 +212,7 @@ try {
     maestroProcess.once('close', code => { clearTimeout(timeout); done(code ?? 1); });
   });
   if (aborted || result !== 0) throw Error(`Maestro failed (${result}); inspect ${directory}`);
-  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'search-service' ? ['guest-industry-group-skill-selection','cancel-preserves-service','clear-service-filter'] : flow === 'jobs' ? ['provider-job-list','accept-with-eta','private-chat-send-read',...(platform==='android'?['locale-switch']:[])] : flow === 'partners' ? ['manage-draft-profile', 'publish-and-enable', 'address-picker-distance-search', 'public-profile', 'locale-switch'] : flow === 'accounts' ? ['address-create-edit-default-archive', 'locale-draft-retention', 'address-cold-start', 'revoke-all-other-and-current-sessions', 'return-after-login'] : flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery', 'account-return-to-category', 'catalog-root', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
+  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'invoices' ? ['result-image-from-local-api','edit-and-send-invoice','customer-confirm-via-test-control','worker-confirm-receipt'] : flow === 'search-service' ? ['guest-industry-group-skill-selection','cancel-preserves-service','clear-service-filter'] : flow === 'jobs' ? ['provider-job-list','accept-with-eta','private-chat-send-read',...(platform==='android'?['locale-switch']:[])] : flow === 'partners' ? ['manage-draft-profile', 'publish-and-enable', 'address-picker-distance-search', 'public-profile', 'locale-switch'] : flow === 'accounts' ? ['address-create-edit-default-archive', 'locale-draft-retention', 'address-cold-start', 'revoke-all-other-and-current-sessions', 'return-after-login'] : flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery', 'account-return-to-category', 'catalog-root', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
 } catch (error) {
   outcome = { status: 'FAIL', platform, device, reason: error.message };
   console.error(error.message); process.exitCode = 1;
@@ -240,7 +256,7 @@ try {
         try { await pool.end(); }
         finally {
           try { if (created) await admin.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`); }
-          finally { await admin.end(); apiLog.end(); metroLog.end(); }
+          finally { await admin.end(); await rm(resolve('.local',schema+'-assets'),{recursive:true,force:true}); apiLog.end(); metroLog.end(); }
         }
       }
     }

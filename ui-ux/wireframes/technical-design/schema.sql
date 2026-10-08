@@ -222,6 +222,7 @@ CREATE TABLE assets (
   bytes bigint NOT NULL,
   status text NOT NULL,
   checksum text ,
+  uploaded_checksum text, -- P0-3 local/test upload bytes hash
   created_at timestamptz NOT NULL DEFAULT now(),
   CHECK(bytes>=0), CHECK(status IN ('pending','ready','rejected'))
 );

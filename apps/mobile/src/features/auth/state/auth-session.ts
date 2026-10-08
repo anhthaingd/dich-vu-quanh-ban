@@ -1,3 +1,5 @@
+import type { InvoicesApi } from '../../invoices/api/invoices-api';
+import type { InvoiceDraft,InvoiceAction,InvoiceChange } from '../../invoices/models';
 import type { JobsApi } from '../../jobs/api/jobs-api';
 import type { JobCreate,JobAction,JobChange } from '../../jobs/models';
 import type { ChatApi } from '../../chat/api/chat-api';
@@ -15,7 +17,7 @@ export class AuthSession {
   private session: Session | null = null;
   private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
   private readonly listeners = new Set<() => void>();
-  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi) {}
+  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi) {}
   getSnapshot = () => this.snapshot;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   private update(values: Partial<Snapshot>) { this.snapshot = { ...this.snapshot, ...values }; this.listeners.forEach(fn => fn()); }
@@ -110,6 +112,15 @@ export class AuthSession {
     }
     return user;
   }
+  private invoicesApi(){if(!this.invoices)throw new ApiError('CONFIG');return this.invoices;}
+  getInvoice=(owner:string,job:string)=>this.accountOperation(owner,t=>this.invoicesApi().get(t,job));
+  saveInvoice=(owner:string,job:string,input:InvoiceDraft,key:string)=>this.accountOperation(owner,t=>this.invoicesApi().save(t,job,input,key));
+  changeInvoice=(owner:string,id:string,action:InvoiceAction,input:InvoiceChange,key:string)=>this.accountOperation(owner,t=>this.invoicesApi().change(t,id,action,input,key));
+  getPoints=(owner:string)=>this.accountOperation(owner,t=>this.invoicesApi().points(t));
+  getLedger=(owner:string,partner?:string,cursor?:string)=>this.accountOperation(owner,t=>this.invoicesApi().ledger(t,partner,cursor));
+  getWallet=(owner:string,partner:string)=>this.accountOperation(owner,t=>this.invoicesApi().wallet(t,partner));
+  uploadResult=(owner:string,blob:Blob,key:string)=>this.accountOperation(owner,t=>this.invoicesApi().upload(t,blob,key));
+  getAsset=(owner:string,id:string)=>this.accountOperation(owner,t=>this.invoicesApi().asset(t,id));
   private jobsApi(){if(!this.jobs)throw new ApiError('CONFIG');return this.jobs;}
   private chatApi(){if(!this.chat)throw new ApiError('CONFIG');return this.chat;}
   createJob=(owner:string,input:JobCreate,key:string)=>this.accountOperation(owner,t=>this.jobsApi().create(t,input,key));

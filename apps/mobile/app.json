@@ -45,6 +45,14 @@
           "isAndroidBackgroundLocationEnabled": false,
           "isAndroidForegroundServiceEnabled": false
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Chọn ảnh kết quả công việc để gửi cùng hóa đơn.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
       ]
     ]
   }

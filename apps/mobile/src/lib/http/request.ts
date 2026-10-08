@@ -34,11 +34,11 @@ export async function requestJson(url: string, request: typeof fetch, signal?: A
       if (!response.ok) {
         const codes: Record<number, ApiErrorCode> = { 400: 'VALIDATION', 401: 'UNAUTHENTICATED', 403: 'FORBIDDEN', 404: 'NOT_FOUND', 429: 'RATE_LIMITED', 500: 'INTERNAL', 503: 'SERVICE_UNAVAILABLE', 504: 'TIMEOUT' };
         let code = codes[status] ?? 'HTTP';
-        if (status === 409) {
+        if (status === 409 || status === 422) {
           try {
             const body: unknown = await response.json();
             const conflict = body && typeof body === 'object' && 'code' in body ? body.code : null;
-            if (conflict === 'STATE_CONFLICT' || conflict === 'VERSION_CONFLICT' || conflict === 'IDEMPOTENCY_MISMATCH') code = conflict;
+            if (conflict === 'STATE_CONFLICT' || conflict === 'VERSION_CONFLICT' || conflict === 'IDEMPOTENCY_MISMATCH' || conflict === 'INSUFFICIENT_POINTS' || conflict === 'PARTNER_FUNDING_REQUIRED') code = conflict;
           } catch { /* Unknown error bodies stay generic and never enter logs. */ }
         }
         const retry = Number(response.headers?.get('retry-after'));

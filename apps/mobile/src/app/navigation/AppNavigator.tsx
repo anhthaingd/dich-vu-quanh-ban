@@ -1,3 +1,4 @@
+import {InvoiceScreen} from '../../features/invoices/screens/InvoiceScreen';
 import {ConversationScreen} from '../../features/chat/screens/ConversationScreen';
 import {ConversationsScreen} from '../../features/chat/screens/ConversationsScreen';
 import {JobDetailScreen} from '../../features/jobs/screens/JobDetailScreen';
@@ -32,6 +33,7 @@ export function AppNavigator() {
       <Stack.Screen name="PartnerProfile" component={PartnerProfileScreen} />
       <Stack.Screen name="Jobs" component={JobsScreen} />
       <Stack.Screen name="JobCreate" component={JobCreateScreen} />
+      <Stack.Screen name="Invoice" component={InvoiceScreen} />
       <Stack.Screen name="JobDetail" component={JobDetailScreen} />
       <Stack.Screen name="Conversations" component={ConversationsScreen} />
       <Stack.Screen name="Conversation" component={ConversationScreen} />

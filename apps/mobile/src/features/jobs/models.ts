@@ -30,7 +30,7 @@ export type Job = {
     address: JobCreate['address'];
     assigned_member_id: string | null;
     invoice_id: string | null;
-    allowed_actions: JobAction[];
+    allowed_actions: (JobAction | 'invoice')[];
     service_mode: Mode;
     time_mode: 'now' | 'scheduled';
     location_id: string | null;

@@ -470,7 +470,7 @@
     "auth": "Đúng khách / người có quyền việc",
     "request": null,
     "response": "Invoice",
-    "rule": ""
+    "rule": " P0-3/API v0.1.10: Invoice.note và revision_reason theo phiên bản/quyền hiện hành; không trả bản nháp cho khách."
   },
   {
     "id": "saveInvoiceDraft",
@@ -481,7 +481,7 @@
     "auth": "Người thực hiện hiện tại",
     "request": "InvoiceDraft",
     "response": "Invoice",
-    "rule": "Nháp mới expected_version=1, job chưa có invoice tạo atomically; lưu nháp không giữ tiền/point."
+    "rule": "Nháp mới expected_version=1, job chưa có invoice tạo atomically; lưu nháp không giữ tiền/point. P0-3/API v0.1.10: Invoice.note và revision_reason theo phiên bản/quyền hiện hành; không trả bản nháp cho khách."
   },
   {
     "id": "sendInvoice",
@@ -492,7 +492,7 @@
     "auth": "Người thực hiện hiện tại",
     "request": "InvoiceSend",
     "response": "Invoice",
-    "rule": ">=1 ảnh ready, L/M nguyên không âm, không duyệt quản lý; phiên bản mới point mặc định 0."
+    "rule": ">=1 ảnh ready, L/M nguyên không âm, không duyệt quản lý; phiên bản mới point mặc định 0. P0-3/API v0.1.10: Invoice.note và revision_reason theo phiên bản/quyền hiện hành; không trả bản nháp cho khách."
   },
   {
     "id": "requestInvoiceRevision",
@@ -503,7 +503,7 @@
     "auth": "Đúng khách",
     "request": "ReasonInput",
     "response": "Invoice",
-    "rule": "Chỉ sent; cạnh tranh confirm khóa cùng invoice."
+    "rule": "Chỉ sent; cạnh tranh confirm khóa cùng invoice. P0-3/API v0.1.10: Invoice.note và revision_reason theo phiên bản/quyền hiện hành; không trả bản nháp cho khách."
   },
   {
     "id": "confirmInvoice",
@@ -514,7 +514,7 @@
     "auth": "Đúng khách",
     "request": "InvoiceConfirm",
     "response": "Invoice",
-    "rule": "Khóa invoice→accounts thứ tự UUID. R/F giữ nguyên tử; thiếu ví trả PARTNER_FUNDING_REQUIRED không có số dư/nợ/shortfall trong error khách."
+    "rule": "Khóa invoice→accounts thứ tự UUID. R/F giữ nguyên tử; thiếu ví trả PARTNER_FUNDING_REQUIRED không có số dư/nợ/shortfall trong error khách. P0-3/API v0.1.10: Invoice.note và revision_reason theo phiên bản/quyền hiện hành; không trả bản nháp cho khách."
   },
   {
     "id": "reportPayment",
@@ -525,7 +525,7 @@
     "auth": "Đúng khách",
     "request": "PaymentReport",
     "response": "Invoice",
-    "rule": "Cho phép locked hoặc settled; chỉ ghi dấu, không quyết toán. Toàn point/0đ vẫn cần; không yêu cầu tiền thêm."
+    "rule": "Cho phép locked hoặc settled; chỉ ghi dấu, không quyết toán. Toàn point/0đ vẫn cần; không yêu cầu tiền thêm. P0-3/API v0.1.10: Invoice.note và revision_reason theo phiên bản/quyền hiện hành; không trả bản nháp cho khách."
   },
   {
     "id": "settleInvoice",
@@ -536,7 +536,7 @@
     "auth": "Người thực hiện hiện tại",
     "request": "WorkerReceipt",
     "response": "Settlement",
-    "rule": "Khóa và unique settlement; ghi worker receipt. Không bắt khách phải báo trước; đánh giá chờ cả hai dấu. Replay không ghi lần hai."
+    "rule": "Khóa và unique settlement; ghi worker receipt. Không bắt khách phải báo trước; đánh giá chờ cả hai dấu. Replay không ghi lần hai. P0-3/API v0.1.10: Invoice.note và revision_reason theo phiên bản/quyền hiện hành; không trả bản nháp cho khách."
   },
   {
     "id": "getWallet",

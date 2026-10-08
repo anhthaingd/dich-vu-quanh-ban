@@ -36,8 +36,10 @@ export const test = base.extend({
       });
       await new Promise(r => server.listen(0, '127.0.0.1', r));
       const webUrl = `http://127.0.0.1:${server.address().port}`;
-      app = await createApp({ databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), authSecret: 'isolated-web-auth-secret-'.repeat(3), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
+      const localAssets = {directory: directory + '-assets', origin: 'http://127.0.0.1'};
+      app = await createApp({localAssets, databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), authSecret: 'isolated-web-auth-secret-'.repeat(3), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
       await app.listen(0, '127.0.0.1');
+      localAssets.origin = await app.getUrl();
       const apiUrl = await app.getUrl() + '/v1';
       if (!(await fetch(apiUrl + '/ready')).ok) throw Error('API readiness failed');
       execFileSync('npm', ['exec','-w','apps/mobile','--','expo','export','--clear','--platform','web','--output-dir',directory], { stdio: 'pipe', env: { ...process.env, CI: '1', EXPO_NO_TELEMETRY: '1', EXPO_NO_DOTENV: '1', EXPO_PUBLIC_GEOAPIFY_MAPS_KEY: 'test-only', EXPO_PUBLIC_API_URL: apiUrl } });
@@ -53,7 +55,7 @@ export const test = base.extend({
         }); } finally {
           try { await base.step('Close test web server', async () => { server?.closeAllConnections(); await new Promise(r => server ? server.close(r) : r()); }); } finally {
             try { await base.step('Close test DB pool', async () => { await pool.end(); }); } finally {
-              try { if (created) await admin.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`); } finally { await admin.end(); await rm(directory, { recursive: true, force: true }); }
+              try { if (created) await admin.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`); } finally { await admin.end(); await rm(directory, { recursive: true, force: true }); await rm(directory+'-assets', {recursive:true,force:true}); }
             }
           }
         }
