@@ -1,6 +1,6 @@
 # B06-01 — Ảnh kết quả, hóa đơn và quyết toán bằng tiền test
 
-P0-3 · B02-02 (ảnh kết quả), B06-01/02/03, B07-01/02/03 trong phạm vi dưới đây · 07/10/2026. Code đang sửa trong repo, chưa commit/push; chưa CI từ xa, chưa UAT (chủ dự án dùng và nghiệm thu). [Checklist](../01-checklist.md) · [Mục lục](../README.md).
+P0-3 · B02-02 (ảnh kết quả), B06-01/02/03, B07-01/02/03 trong phạm vi dưới đây · 07/10/2026. Code đã push `d4828e2` ngày 08/10/2026; [CI từ xa đạt cả 3 job](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37713859771). Chưa UAT (chủ dự án dùng và nghiệm thu). [Checklist](../01-checklist.md) · [Mục lục](../README.md).
 
 ## 1. Bạn đã dùng được những gì?
 
@@ -120,7 +120,7 @@ Android emulator/iOS simulator đạt mở ảnh từ API local, sửa/gửi, nh
 | Android | Flow invoices đạt, development APK build/cài đạt | `DEVICE_ID=emulator-5554 npm run test:native -- android invoices` |
 | iOS | Flow invoices đạt, development build/cài đạt | `DEVICE_ID=<simulator UUID> npm run test:native -- ios invoices` |
 | API + Expo export Android/iOS/web | Đạt | `npm run build` |
-| GitHub CI / UAT / production | Chưa chạy / chưa duyệt | Không dùng CI của P0-2 làm bằng chứng cho P0-3 |
+| GitHub CI / UAT / production | CI P0-3 đạt ngày 08/10; UAT/production chưa duyệt | [Run 37713859771](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37713859771), commit `d4828e2`, 3/3 job đạt |
 
 Log cục bộ không commit nằm ở `.local/p0-3/`; native có `test-results/native/{ios,android}/invoices/{result.json,junit.xml,api.jsonl,metro.log}`. Các thư mục này có thể bị lượt chạy sau thay thế; ảnh báo cáo lưu trong Git. Fixture tạo schema test riêng và xóa sau chạy, không đổi dữ liệu thật.
 
@@ -136,10 +136,10 @@ Chủ dự án đã duyệt `Invoice.note`, `Invoice.revision_reason` và kho �
 
 Kho ảnh local chưa có dọn ảnh mồ côi, backup/phân tán, quét nội dung hoặc provider production; chỉ bật ngoài production. Giới hạn thử là 10 MiB/ảnh, JPEG/PNG/WebP, 25 triệu pixel, URL 10 phút; hết hạn thì tải lại màn để xin URL đọc mới. Chưa kiểm thư viện ảnh native/HEIC. Chưa có nạp/rút/ngân hàng, xử lý giữ treo Q02, admin hoàn tất thay, review UI, worker phát thông báo hoặc WebSocket. Không coi nền ví và lịch sử quyết toán ở gói này là hoàn tất B08/B09 hay giao diện ví/ngân hàng đầy đủ.
 
-Bước sau theo bảng ưu tiên là P1-1 đội ngũ/phân công đầy đủ; chỉ triển khai khi được giao. Gói này chưa commit/push, chưa triển khai production hoặc tiền thật.
+Bước sau theo bảng ưu tiên là P1-1 đội ngũ/phân công đầy đủ; chỉ triển khai khi được giao. Gói này đã commit/push `d4828e2`; chưa triển khai production hoặc tiền thật.
 
 ## Kiểm trước push — 08/10/2026
 
 Chủ dự án đã yêu cầu commit/push P0-3. Bổ sung 14 ca tự động ở [InvoiceScreen.test.tsx](../../../apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx) và [invoices-api.test.ts](../../../apps/mobile/src/features/invoices/api/invoices-api.test.ts): kiểm point vượt giới hạn, lỗi thiếu phí/point, giữ nguyên mã thử lại, lưu nháp trước khi gửi, hai dấu thanh toán, thu hồi quyền, lịch sử phân trang và ảnh upload thử lại. Đây là kiểm với dữ liệu/mô-đun giả lập, không thay bằng chứng trình chọn ảnh native thật. Không đổi code nghiệp vụ hoặc ngưỡng coverage.
 
-Lượt coverage mobile trước push đạt 40 suite / 193 ca; core 100% dòng / 94,35% nhánh, app 87,02% dòng / 80,72% nhánh. Lượt coverage API trước push đạt 82/82 ca; core 100% dòng / 93,13% nhánh, app 92,74% dòng / 85,83% nhánh. Lint, typecheck và tooling đạt. Bằng chứng local: `.local/p0-3/push-*.log`; trạng thái push/CI được cập nhật sau khi có kết quả remote.
+Lượt coverage mobile trước push đạt 40 suite / 193 ca; core 100% dòng / 94,35% nhánh, app 87,02% dòng / 80,72% nhánh. Lượt coverage API trước push đạt 82/82 ca; core 100% dòng / 93,13% nhánh, app 92,74% dòng / 85,83% nhánh. Lint, typecheck và tooling đạt. Bằng chứng local: `.local/p0-3/push-*.log`; code đã push `d4828e2` và [CI 37713859771](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37713859771) đạt cả 3 job. Bản ghi trạng thái tài liệu được push riêng với `[skip ci]`; không thay mã sản phẩm đã kiểm.
