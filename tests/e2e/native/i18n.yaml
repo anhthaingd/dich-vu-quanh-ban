@@ -13,9 +13,9 @@ appId: vn.dichvuquanhban.app
       id: nav-account
     timeout: 60000
 - tapOn:
-    id: locale-vi
-- tapOn:
     id: nav-account
+- tapOn:
+    id: locale-vi
 - extendedWaitUntil:
     visible:
       id: auth-email
@@ -57,25 +57,22 @@ appId: vn.dichvuquanhban.app
 - takeScreenshot: localized-error
 - tapOn:
     id: nav-back
-- scrollUntilVisible:
-    element: "電気・水道"
-    direction: DOWN
+- tapOn:
+    id: search-service-open
 - tapOn: "電気・水道"
 - assertVisible: "家庭の電気工事"
-- scrollUntilVisible:
-    element:
-      id: locale-en
-    direction: UP
+- tapOn:
+    id: service-cancel
+- tapOn:
+    id: nav-account
 - tapOn:
     id: locale-en
-- extendedWaitUntil:
-    visible: "Electrical & plumbing"
-    timeout: 15000
-- assertVisible: "Home electrical work"
+- tapOn:
+    id: nav-back
+- tapOn:
+    id: search-service-open
+- tapOn: "Electrical & plumbing"
 - tapOn: "Home electrical work"
-- scrollUntilVisible:
-    element: "Socket & switch replacement"
-    direction: DOWN
 - assertVisible: "Socket & switch replacement"
 - takeScreenshot: catalog-localized
 - runScript:
@@ -83,36 +80,30 @@ appId: vn.dichvuquanhban.app
     env:
       MODE: error
 - tapOn:
-    id: nav-back
-- scrollUntilVisible:
-    element: "Unable to load services.*"
-    direction: DOWN
+    id: service-parent
 - assertVisible: "Unable to load services.*"
 - runScript:
     file: set-mode.js
     env:
       MODE: ok
 - tapOn: "Try again"
-- scrollUntilVisible:
-    element:
-      id: locale-ja
-    direction: UP
+- tapOn:
+    id: service-cancel
+- tapOn:
+    id: nav-account
 - tapOn:
     id: locale-ja
 - stopApp
 - openLink: ${DEV_URL}
 - extendedWaitUntil:
-    visible: "どんなサービスをお探しですか？"
+    visible: "暮らしの困りごとに.*"
     timeout: 60000
-- scrollUntilVisible:
-    element: "電気・水道"
-    direction: DOWN
 - assertVisible: "電気・水道"
 - takeScreenshot: restored-japanese
-- scrollUntilVisible:
-    element:
-      id: locale-vi
-    direction: UP
+- tapOn:
+    id: nav-account
 - tapOn:
     id: locale-vi
-- assertVisible: "Bạn cần dịch vụ gì?"
+- tapOn:
+    id: nav-back
+- assertVisible: "Việc nhà có người lo.*"

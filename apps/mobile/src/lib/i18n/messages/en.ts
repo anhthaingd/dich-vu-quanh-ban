@@ -1,5 +1,6 @@
 import type { MessageDictionary } from './vi';
 export const en = {
+  home: {"eyebrow": "HANOI · SKILLED PEOPLE NEAR YOU", "headline": "Let someone handle it.", "headlineAccent": "Choose the right person.", "intro": "Find the skills you need. Talk first, decide later.", "placeholder": "Plumbing, air conditioner cleaning…", "area": "Search area", "chooseArea": "Choose an area", "all": "All", "notifications": "Notifications", "unavailable": "Not available yet", "filters": "Filters", "radius": "Within %{km} km", "results": "%{count} options nearby", "resultsMore": "%{count}+ options nearby", "start": "Choose an area to find someone nearby", "startHint": "Choose a category or service, then tap search.", "priceLabel": "Indicative labor price", "noReviews": "No reviews yet", "reviews": "%{stars} (%{count} reviews)", "searchServices": "Search the service catalog", "searchCatalogHint": "Choose a catalog service to find providers.", "selected": "Selected: %{name}", "priceHint": "Provider prices are indicative. Agree on costs before work begins.", "nearest": "Sorted by distance", "apply": "Apply", "customRadius": "Custom radius"},
   invoice: {
     payHintWorker: "The customer pays you directly. Confirm only after receiving the full invoice amount.",
     pointWallet: "Your points",

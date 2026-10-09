@@ -1,5 +1,10 @@
 # Kế hoạch triển khai và học code
 
+**Bổ sung icon ngành · 08/10:** đã gắn 10 icon Lucide riêng theo mã ngành; Tất cả giữ ô lưới. Typecheck/lint và 8 test liên quan đạt; ảnh và giới hạn kiểm native tại [B00-06, mục 8](bao-cao/B00-06-trang-chinh-theo-storybook.md#8-bổ-sung-icon-theo-ngành--08102026). Chưa commit/push/CI/UAT.
+
+**Sửa giao diện trang chính · 08/10:** đã thay trang danh mục cũ bằng bố cục Storybook Mobile, font/icon cùng nguồn, tìm dịch vụ và khu vực ngay trang chính, tab Công việc/Tin nhắn thật. [B00-06](bao-cao/B00-06-trang-chinh-theo-storybook.md) có ảnh Android/iOS và giới hạn khác bản mock. Local đạt 196 mobile test, 14 bài web đã kiểm qua các lượt, native cả hai nền tảng; chưa push/CI/UAT. Thông báo vẫn chưa triển khai.
+
+
 **P0-3 · 07/10:** đã nối ảnh kết quả local/test → hóa đơn → giữ phí/point → quyết toán/hai dấu → ví/lịch sử. [B06-01 — hóa đơn và quyết toán test](bao-cao/B06-01-hoa-don-va-quyet-toan-test.md). Web hai tài khoản và native Android/iOS đạt phạm vi báo cáo; trình chọn ảnh native chưa kiểm. **Đã push `d4828e2` ngày 08/10; [CI đạt cả 3 job](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37713859771)** (app/build, API/PostGIS, web E2E). Chưa UAT/production/tiền thật.
 
 **Sửa thiếu sót tìm dịch vụ · 07/10:** bổ sung chọn ngành → nhóm → kỹ năng ngay trên màn tìm, xóa kết quả cũ khi đổi bộ lọc. Đây là sửa khớp spec; xem [B03-05](bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md). Chủ dự án đã yêu cầu commit/push MAP-03 + P0-2 và bản sửa này.
@@ -33,6 +38,7 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 
 | Lát bàn giao | Báo cáo | Phạm vi thực tế |
 |---|---|---|
+| Trang chính theo Storybook | [B00-06](bao-cao/B00-06-trang-chinh-theo-storybook.md) | Trang tìm dịch vụ, font/icon, nhóm ngành, điều hướng khách; ảnh Android/iOS; local đã kiểm, Thông báo chưa triển khai |
 | Nền tảng + danh mục | [B00-01](bao-cao/B00-01-nen-tang-danh-muc.md) | App/API/DB, UI chung, navigation, log/test; không đóng toàn bộ B00 |
 | Nền đa ngôn ngữ + lựa chọn local | [I18N-01/02](bao-cao/I18N-01-nen-da-ngon-ngu.md) | VI/EN/JA cho các màn hiện có, mã lỗi, lưu locale; chưa dịch dữ liệu DB hoặc đồng bộ tài khoản |
 | Khung giao diện cho chức năng hiện có | [B00-05](bao-cao/B00-05-khung-giao-dien.md) | Đạt local/native: avatar/header, danh mục, tài khoản; B00-05 còn khung các vai trò/nghiệp vụ khác |

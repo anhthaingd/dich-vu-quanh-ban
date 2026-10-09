@@ -3,13 +3,14 @@ import { CatalogService } from '../../../services/api/dist/src/modules/catalog/c
 test('catalog journey, offline/retry and empty state use real API/database', async ({ page, context, environment }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto(environment.webUrl);
+  await page.getByTestId('search-service-open').click();
   await page.getByRole('button', { name: 'Điện nước', exact: true }).click();
   await page.getByRole('button', { name: 'Điện dân dụng', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Điện dân dụng', exact: true })).toBeVisible();
+  await expect(page.getByTestId('service-category-apply')).toContainText('Điện dân dụng');
   // Native stack retains hidden parent screens, which can contain this skill.
   await expect(page.getByText('Thay ổ cắm / công tắc', { exact: true }).filter({ visible: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
-  await context.setOffline(true); await page.getByRole('button', { name: 'Quay lại' }).click();
+  await context.setOffline(true); await page.getByTestId('service-parent').click();
   await expect(page.getByRole('alert')).toBeVisible(); await context.setOffline(false);
   await page.getByRole('button', { name: 'Thử lại' }).click();
   await expect(page.getByRole('button', { name: 'Điện dân dụng', exact: true })).toBeVisible();

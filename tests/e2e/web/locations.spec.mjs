@@ -3,7 +3,7 @@ test('choose location, cancel, reject GPS, preserve description and save coordin
  const point={latitude:21.0254,longitude:105.8465};
  await page.route('https://maps.geoapify.com/**',route=>route.fulfill({json:{version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'background-color':'#e8efe9'}}]}}));
  await page.route('**/v1/locations/*',route=>route.fulfill({json:route.request().url().endsWith('/reverse')?{address:{id:'r',text:'Public map fixture',point,precision:'approximate'},attribution:'fixture'}:{items:[{id:'1',text:'1 Hỏa Lò, Hà Nội',point,precision:'address'}],attribution:'fixture'}}));
- await page.goto(environment.webUrl);await page.getByTestId('search-open').click();await page.getByTestId('search-pick-location').click();
+ await page.goto(environment.webUrl);await page.getByTestId('search-pick-location').click();
  await expect(page.getByTestId('location-confirm')).toBeDisabled();
  await page.getByTestId('location-query').fill('1 Hỏa Lò');await page.getByTestId('location-result-0').click();
  await page.getByTestId('location-description').fill('1 Hỏa Lò, cổng chính');await page.getByTestId('location-confirm').click();

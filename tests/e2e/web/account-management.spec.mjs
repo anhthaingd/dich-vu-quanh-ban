@@ -19,7 +19,9 @@ test('address book and session management work with real DB, lost response and r
   await expect(page.getByTestId('address-default-badge')).toHaveCount(1);expect(attempts[0]).toEqual(attempts[1]);
   await page.unroute('**/v1/me/addresses');
   await page.getByTestId('address-add').click();await fill('Work','Street two');await page.getByTestId('address-save').click();
-  await page.getByTestId('address-make-default').click();await expect(page.getByTestId('address-default-badge')).toHaveCount(1);
+  await page.getByTestId('address-make-default').click();
+  await expect.poll(async () => (await environment.pool.query("SELECT label FROM saved_addresses WHERE is_default")).rows[0]?.label).toBe('Work');
+  await expect(page.getByTestId('address-default-badge')).toHaveCount(1);
   let rows=(await environment.pool.query('SELECT id,label,is_default,version FROM saved_addresses ORDER BY label')).rows;expect(rows.map(x=>[x.label,x.is_default])).toEqual([['Home',false],['Work',true]]);
   const home=page.getByTestId('address-'+rows[0].id);await home.getByTestId('address-edit').click();await page.getByTestId('address-text').fill('My draft');
   await environment.pool.query('UPDATE saved_addresses SET version=version+1 WHERE id=$1',[rows[0].id]);

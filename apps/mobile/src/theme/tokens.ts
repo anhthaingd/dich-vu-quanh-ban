@@ -1,5 +1,4 @@
-// Native values from ui-ux/specs/design-system.md. Use the platform system
-// font until product fonts are bundled; never fetch fonts at startup.
+// Native values from ui-ux/specs/design-system.md. Product fonts are bundled locally.
 export const theme = {
   colors: {
     primary: '#2457D6', primarySoft: '#EFF3FB', text: '#16233B', muted: '#52617A', background: '#F4F7FC',

@@ -26,7 +26,7 @@ const navigationTheme = { ...DefaultTheme, colors: { ...DefaultTheme.colors,
 export function AppNavigator() {
   return <NavigationContainer theme={navigationTheme}>
     <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}>
-      <Stack.Screen name="CatalogHome" component={CatalogScreen} />
+      <Stack.Screen name="CatalogHome" component={SearchScreen} />
       <Stack.Screen name="CatalogCategory" component={CatalogScreen} getId={({ params }) => params.categoryId} />
       <Stack.Screen name="Partners" component={PartnersScreen} />
       <Stack.Screen name="PartnerEditor" component={PartnerEditorScreen} />

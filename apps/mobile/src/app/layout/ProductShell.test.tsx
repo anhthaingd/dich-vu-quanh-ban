@@ -14,7 +14,7 @@ test('avatar follows the current session and resets after logout without adding 
   const auth = mount();
   await screen.findByRole('button', { name: 'Điện nước' });
   expect(screen.getByTestId('account-initial')).toHaveTextContent('?');
-  expect(screen.getAllByRole('tab')).toHaveLength(1);
+  expect(screen.getAllByRole('tab')).toHaveLength(4);
   expect(screen.getByRole('tab', { name: 'Tìm dịch vụ', selected: true })).toBeVisible();
   await act(async () => auth.manager.login(credentials));
   expect(screen.getByTestId('account-initial')).toHaveTextContent('N');
@@ -26,18 +26,20 @@ test('avatar follows the current session and resets after logout without adding 
   await screen.findByRole('button', { name: 'Điện nước' });
   expect(screen.getByTestId('account-initial')).toHaveTextContent('?');
 });
-test('opening account from a category preserves its route, and catalog destination returns to root', async () => {
+test('home keeps service selection after account, and protected tabs have real destinations', async () => {
   mount();
   fireEvent.press(await screen.findByRole('button', { name: 'Điện nước' }));
-  await screen.findByText('Chưa có dịch vụ đang hoạt động.');
   fireEvent.press(screen.getByTestId('nav-account'));
   await screen.findByTestId('auth-email');
   fireEvent.press(screen.getByTestId('nav-back'));
-  expect(await screen.findByRole('header', { name: 'Điện nước' })).toBeVisible();
+  expect(await screen.findByTestId('search-service-selected')).toHaveTextContent('Điện nước');
+  expect(screen.getByTestId('nav-notifications')).toBeDisabled();
+  fireEvent.press(screen.getByTestId('nav-jobs'));
+  expect(await screen.findByTestId('account-continue-login')).toBeVisible();
+  expect(screen.getByRole('tab', {name:'Công việc',selected:true})).toBeVisible();
+  fireEvent.press(screen.getByTestId('nav-messages'));
+  expect(await screen.findByRole('tab', {name:'Tin nhắn',selected:true})).toBeVisible();
   fireEvent.press(screen.getByTestId('nav-catalog'));
-  expect(await screen.findByRole('header', { name: 'Bạn cần dịch vụ gì?' })).toBeVisible();
-  await screen.findByRole('button', { name: 'Điện nước' });
-  expect(screen.queryByTestId('nav-back')).toBeNull();
-  fireEvent.press(screen.getByTestId('nav-catalog'));
+  expect(await screen.findByRole('header', {name:/Việc nhà có người lo/})).toBeVisible();
   expect(screen.queryByTestId('nav-back')).toBeNull();
 });

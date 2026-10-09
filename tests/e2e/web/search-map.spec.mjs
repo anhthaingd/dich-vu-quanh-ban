@@ -16,7 +16,7 @@ test('public result pins open profiles, coincident providers stay reachable, pri
  }
  const a=await provider('DEMO Public A',true),b=await provider('DEMO Public B',true),privateOnly=await provider('DEMO no public point',false);
  await page.route('https://maps.geoapify.com/**',r=>r.fulfill({json:{version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'background-color':'#e8efe9'}}]}}));
- await page.goto(environment.webUrl);await page.getByTestId('search-open').click();await chooseLocation(page,'search',{latitude:21.0285,longitude:105.8542});await page.getByTestId('search-submit').click();
+ await page.goto(environment.webUrl);await chooseLocation(page,'search',{latitude:21.0285,longitude:105.8542});await page.getByTestId('search-submit').click();
  await page.getByTestId('search-view-map').click();const pin=page.getByRole('button',{name:/DEMO Public A, DEMO Public B|DEMO Public B, DEMO Public A/});await expect(pin).toHaveText('2×');await pin.click();
  await expect(page.getByTestId('map-selected-'+a.id)).toBeVisible();await expect(page.getByTestId('map-selected-'+b.id)).toBeVisible();await expect(page.getByTestId('search-result-'+privateOnly.id)).toBeVisible();await expect(page.getByText('PRIVATE_CANARY')).toHaveCount(0);
  await page.getByTestId('map-selected-'+a.id).getByRole('button',{name:'Xem hồ sơ',exact:true}).click();await expect(page.getByText('DEMO Public A',{exact:true}).filter({visible:true})).toBeVisible();

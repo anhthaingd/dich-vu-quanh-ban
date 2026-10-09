@@ -1,5 +1,10 @@
 # Checklist chức năng và bằng chứng
 
+**Bổ sung icon ngành · 08/10:** đã gắn 10 icon Lucide riêng theo mã ngành; Tất cả giữ ô lưới. Typecheck/lint và 8 test liên quan đạt; ảnh và giới hạn kiểm native tại [B00-06, mục 8](bao-cao/B00-06-trang-chinh-theo-storybook.md#8-bổ-sung-icon-theo-ngành--08102026). Chưa commit/push/CI/UAT.
+
+**Sửa giao diện trang chính · 08/10:** đã thay trang danh mục cũ bằng bố cục Storybook Mobile, font/icon cùng nguồn, tìm dịch vụ và khu vực ngay trang chính, tab Công việc/Tin nhắn thật. [B00-06](bao-cao/B00-06-trang-chinh-theo-storybook.md) có ảnh Android/iOS và giới hạn khác bản mock. Local đạt 196 mobile test, 14 bài web đã kiểm qua các lượt, native cả hai nền tảng; chưa push/CI/UAT. Thông báo vẫn chưa triển khai.
+
+
 **P0-3 · 07/10:** đã nối ảnh kết quả local/test → hóa đơn → giữ phí/point → quyết toán/hai dấu → ví/lịch sử. [B06-01 — hóa đơn và quyết toán test](bao-cao/B06-01-hoa-don-va-quyet-toan-test.md). Web hai tài khoản và native Android/iOS đạt phạm vi báo cáo; trình chọn ảnh native chưa kiểm. **Đã push `d4828e2` ngày 08/10; [CI đạt cả 3 job](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37713859771)** (app/build, API/PostGIS, web E2E). Chưa UAT/production/tiền thật.
 
 **Sửa thiếu sót tìm dịch vụ · 07/10:** bổ sung chọn ngành → nhóm → kỹ năng ngay trên màn tìm, xóa kết quả cũ khi đổi bộ lọc. Đây là sửa khớp spec; xem [B03-05](bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md). Chủ dự án đã yêu cầu commit/push MAP-03 + P0-2 và bản sửa này.
@@ -72,7 +77,7 @@ Nguồn: [spec](../technical-design/04-backlog.md), [backlog](../technical-desig
 | [x] | B00-02 | Theme, UI chung và native stack | Button/Input/Card/Feedback; Back, blur/cancel và resume được kiểm; xem [báo cáo](bao-cao/B00-01-nen-tang-danh-muc.md) |
 | [x] | B00-03 | Log/test phương án A và CI | Correlation, lọc dữ liệu nhạy cảm, unit/integration/web, coverage gate; CI 50d184a đạt; xem [báo cáo](bao-cao/B00-01-nen-tang-danh-muc.md) |
 | [x] | B00-04 | Development build + E2E danh mục Android/iOS | Binary có SecureStore; danh mục và auth chạy trên hai máy ảo; xem [báo cáo](bao-cao/B00-01-nen-tang-danh-muc.md) |
-| [ ] | B00-05 | Shell sản phẩm đúng UI-16, routing và các điểm vào thật | **Một phần: khung khách hiện có đạt local/native** — header/avatar, danh mục, tài khoản, Tìm dịch vụ. [Báo cáo](bao-cao/B00-05-khung-giao-dien.md). Khung partner/DN và điểm vào nghiệp vụ khác nối theo chức năng thật; chưa đóng toàn dòng |
+| [ ] | B00-05 | Shell sản phẩm đúng UI-16, routing và các điểm vào thật | **Một phần: đã sửa trang chính theo Storybook ngày 08/10** — tìm kiếm/khu vực, font/icon, hai hàng ngành, tab Công việc/Tin nhắn; [B00-06](bao-cao/B00-06-trang-chinh-theo-storybook.md) có ảnh và kiểm local/native. Thông báo chưa triển khai. [Báo cáo](bao-cao/B00-05-khung-giao-dien.md). Khung partner/DN và điểm vào nghiệp vụ khác nối theo chức năng thật; chưa đóng toàn dòng |
 | [ ] | B00-06 | Admin workspace tối thiểu khi bắt đầu có tác vụ vận hành | Manifest/build/test/auth/quyền thật; không suy ra từ folder apps/admin |
 
 ## I18N — Nền đa ngôn ngữ — duy trì trong từng gói chức năng

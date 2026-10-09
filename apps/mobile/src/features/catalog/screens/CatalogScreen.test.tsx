@@ -3,7 +3,13 @@ import { AuthProvider } from '../../../app/providers/AuthProvider';
 import { authFixture } from '../../../../test/helpers/auth';
 import { BackHandler } from 'react-native';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
-import { AppNavigator } from '../../../app/navigation/AppNavigator';
+import { CatalogScreen as CatalogPage } from './CatalogScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../../app/navigation/routes';
+const Stack = createNativeStackNavigator<RootStackParamList>();
+// Exercise the retained category browser independently of the new discovery home.
+function AppNavigator() { return <NavigationContainer><Stack.Navigator screenOptions={{headerShown:false}}><Stack.Screen name="CatalogHome" component={CatalogPage}/><Stack.Screen name="CatalogCategory" component={CatalogPage} getId={({params})=>params.categoryId}/></Stack.Navigator></NavigationContainer>; }
 import { AppProviders } from '../../../app/providers/AppProviders';
 import type { CatalogApi, Category } from '../models/catalog.types';
 function CatalogScreen({ api }: { api: CatalogApi }) {

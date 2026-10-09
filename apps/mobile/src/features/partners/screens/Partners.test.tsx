@@ -254,7 +254,6 @@ test('conflict preserves draft until explicit reload, access loss removes privat
 });
 test('unverified account cannot create provider and anonymous search opens public profile', async () => {
   const f = fixture(null);
-  fireEvent.press(screen.getByTestId('search-open'));
   fireEvent.press(screen.getByTestId('search-submit'));
   expect(f.partners.search).not.toHaveBeenCalled();
   await choosePlace('search');

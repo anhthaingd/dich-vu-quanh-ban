@@ -48,3 +48,36 @@ test('locale changes preserve IDs and ignore an old response',async()=>{
  await act(async()=>resolve([{...skill,name:'STALE'}]));
  expect(screen.queryByText('STALE')).toBeNull();expect(onChange).not.toHaveBeenCalled();
 });
+
+test('discovery categories use real IDs, selected service stays visible and all clears both filters',async()=>{
+ const onChange=jest.fn(),catalog=api();
+ const view=render(<AppProviders api={catalog}><ServiceFilter value={{categoryId:'group',skillId:'socket'}} onChange={onChange} locationControl={<></>}/></AppProviders>);
+ expect((await screen.findByTestId('home-category-industry')).props.accessibilityState).toEqual({selected:true});
+ await screen.findByText('Thay ổ cắm');
+ fireEvent.press(screen.getByTestId('home-category-industry'));
+ expect(onChange).toHaveBeenLastCalledWith({categoryId:'industry'});
+ view.rerender(<AppProviders api={catalog}><ServiceFilter value={{categoryId:'industry'}} onChange={onChange} locationControl={<></>}/></AppProviders>);
+ fireEvent.press(screen.getByTestId('home-category-all'));
+ expect(onChange).toHaveBeenLastCalledWith({});
+});
+test('catalog text lookup matches unaccented names and sends the selected skill ID',async()=>{
+ const onChange=jest.fn(),catalog=api();
+ render(<AppProviders api={catalog}><ServiceFilter value={{}} onChange={onChange}/></AppProviders>);
+ fireEvent.press(screen.getByTestId('search-service-open'));
+ fireEvent.changeText(screen.getByTestId('service-query'),'O CAM');
+ fireEvent.press(await screen.findByTestId('service-match-socket'));
+ expect(onChange).toHaveBeenCalledWith({categoryId:'group',skillId:'socket'});
+ expect(screen.queryByTestId('service-query')).toBeNull();
+});
+test('text lookup has retry, empty state and never selects a service on failure',async()=>{
+ const onChange=jest.fn(),catalog=api();
+ jest.mocked(catalog.skills).mockRejectedValueOnce(new Error('offline'));
+ render(<AppProviders api={catalog}><ServiceFilter value={{}} onChange={onChange}/></AppProviders>);
+ fireEvent.press(screen.getByTestId('search-service-open'));
+ fireEvent.changeText(screen.getByTestId('service-query'),'ổ cắm');
+ fireEvent.press(await screen.findByRole('button',{name:'Thử lại'}));
+ await screen.findByTestId('service-match-socket');
+ fireEvent.changeText(screen.getByTestId('service-query'),'does not exist');
+ expect(await screen.findByText('Chưa có dịch vụ đang hoạt động.')).toBeTruthy();
+ expect(onChange).not.toHaveBeenCalled();
+});

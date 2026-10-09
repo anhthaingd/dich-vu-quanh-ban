@@ -1,26 +1,29 @@
 appId: vn.dichvuquanhban.app
 ---
-- runFlow: catalog.yaml
+- runFlow: search-service.yaml
 - takeScreenshot: shell-home-vi
-- tapOn: "Điện nước"
 - tapOn:
     id: nav-account
 - assertVisible:
     id: auth-email
 - takeScreenshot: shell-account
 - tapOn:
-    id: nav-back
-- assertVisible: "Điện dân dụng"
-- tapOn:
-    id: nav-catalog
-- assertVisible: "Bạn cần dịch vụ gì?"
-- tapOn:
     id: locale-en
-- assertVisible: "What service do you need?"
+- tapOn:
+    id: nav-back
+- assertVisible: "Let someone handle it.*"
 - takeScreenshot: shell-home-en
 - tapOn:
+    id: nav-account
+- tapOn:
     id: locale-ja
-- assertVisible: "どんなサービスをお探しですか？"
+- tapOn:
+    id: nav-back
+- assertVisible: "暮らしの困りごとに.*"
 - takeScreenshot: shell-home-ja
 - tapOn:
+    id: nav-account
+- tapOn:
     id: locale-vi
+- tapOn:
+    id: nav-back

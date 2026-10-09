@@ -39,33 +39,28 @@ test('VI → JA → EN retains form, translates a visible error without another 
   expect(f.manager.getSnapshot().user).toEqual(session.user);
   expect(f.api.logout).not.toHaveBeenCalled();
 });
-test('locale changes retain category route, refetch DB names and translate retry', async () => {
+test('locale changes preserve the selected category and translate a catalog failure', async () => {
   const { locale, api } = mount();
   fireEvent.press(await screen.findByRole('button', { name: 'Điện nước' }));
-  await screen.findByText('Chưa có dịch vụ đang hoạt động.');
-  const calls = api.categories.mock.calls.length;
   await act(async () => locale.select('en'));
-  expect(screen.getByRole('header', { name: 'Điện nước' })).toBeVisible();
-  expect(screen.getByText('No active services yet.')).toBeVisible();
-  expect(api.categories).toHaveBeenCalledTimes(calls + 2);
+  expect(screen.getByTestId('search-service-selected')).toHaveTextContent('Điện nước');
+  expect(api.categories).toHaveBeenCalledWith(undefined, expect.anything(), 'en');
   api.categories.mockRejectedValueOnce(new Error('network'));
-  fireEvent.press(screen.getByTestId('nav-back'));
-  await screen.findByRole('alert');
-  api.categories.mockRejectedValueOnce(new Error('still offline'));
   await act(async () => locale.select('ja'));
-  expect(screen.getByRole('alert')).toHaveTextContent(/サービスを読み込めません/);
+  expect(await screen.findByRole('alert')).toHaveTextContent(/サービスを読み込めません/);
   fireEvent.press(screen.getByRole('button', { name: '再試行' }));
-  expect(await screen.findByRole('button', { name: 'Điện nước' })).toBeVisible();
-  expect(screen.getByText('サービスを見る →')).toBeVisible();
+  expect(await screen.findByTestId('home-category-industry')).toBeVisible();
+  expect(screen.getByTestId('search-service-selected')).toHaveTextContent('Điện nước');
 });
 test('language write failure is visible, preserves selection and can be retried', async () => {
   const { store } = mount();
+  fireEvent.press(screen.getByTestId('nav-account'));
   await waitFor(() => expect(screen.getByTestId('locale-en')).toBeEnabled());
   store.write.mockRejectedValueOnce(Error('private'));
   fireEvent.press(screen.getByTestId('locale-en'));
   expect(await screen.findByRole('alert')).toHaveTextContent(/Chưa lưu được ngôn ngữ/);
   expect(screen.getByRole('button', { name: 'Tiếng Việt', selected: true })).toBeVisible();
   fireEvent.press(screen.getByTestId('locale-en'));
-  await screen.findByRole('header', { name: 'What service do you need?' });
+  await screen.findByRole('header', { name: 'Account' });
   expect(screen.queryByRole('alert')).toBeNull();
 });

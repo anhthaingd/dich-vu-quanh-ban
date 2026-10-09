@@ -17,7 +17,7 @@ test('two accounts request all service modes, accept ETA, retry safely, chat, re
  const context=await browser.newContext({viewport:{width:390,height:844}}),providerPage=await context.newPage();
  try{
  await signIn(providerPage,'DEMO-provider@example.test');
- await page.getByTestId('nav-back').click();await page.getByTestId('search-open').click();await chooseLocation(page,'search',point);await page.getByTestId('search-submit').click();await page.getByRole('button',{name:'Xem hồ sơ',exact:true}).click();
+ await page.getByTestId('nav-back').click();await chooseLocation(page,'search',point);await page.getByTestId('search-submit').click();await page.getByRole('button',{name:'Xem hồ sơ',exact:true}).click();
  await page.getByTestId('profile-chat').click();await page.getByTestId('chat-body').fill('DEMO hỏi trước khi thuê');await page.getByTestId('chat-send').click();await expect(page.getByText('DEMO hỏi trước khi thuê',{exact:true})).toBeVisible();await page.getByRole('button',{name:'Quay lại',exact:true}).click();
  for(const mode of ['at_customer','at_shop','custom']){
  await page.getByTestId('profile-hire').click();await page.getByTestId('job-skill-'+skill).click();await page.getByTestId('job-mode-'+mode).click();

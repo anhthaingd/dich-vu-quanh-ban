@@ -10,12 +10,29 @@ appId: vn.dichvuquanhban.app
     optional: true
 - extendedWaitUntil:
     visible:
-      id: search-open
+      id: nav-account
     timeout: 60000
+- tapOn:
+    id: nav-account
 - tapOn:
     id: locale-vi
 - tapOn:
-    id: search-open
+    id: nav-back
+- extendedWaitUntil:
+    visible: "Điện nước"
+    timeout: 15000
+- takeScreenshot: home-storybook
+- tapOn:
+    id: nav-jobs
+- assertVisible:
+    id: account-continue-login
+- takeScreenshot: home-jobs
+- tapOn:
+    id: nav-messages
+- assertVisible:
+    id: account-continue-login
+- tapOn:
+    id: nav-catalog
 - tapOn:
     id: search-service-open
 - tapOn: "Điện nước"
@@ -35,4 +52,21 @@ appId: vn.dichvuquanhban.app
     id: search-service-open
 - tapOn:
     id: service-all
-- assertVisible: "Tất cả dịch vụ"
+- assertVisible: "Sửa vòi nước, vệ sinh điều hòa…"
+- scrollUntilVisible:
+    element:
+      id: search-filters-open
+    direction: DOWN
+- tapOn:
+    id: search-filters-open
+- assertVisible:
+    id: search-radius
+- tapOn:
+    id: search-filters-apply
+- tapOn:
+    id: search-pick-location
+- assertVisible:
+    id: location-search
+- takeScreenshot: home-location-picker
+- tapOn:
+    id: location-cancel

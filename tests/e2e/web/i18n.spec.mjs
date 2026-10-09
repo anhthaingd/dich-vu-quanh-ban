@@ -24,12 +24,14 @@ test('language changes keep form/session/category, translate errors and persist 
   await expect(page.getByRole('alert')).toContainText('Unable to authenticate');
   await page.getByRole('button', { name: 'Back', exact: true }).click();
   await page.getByRole('button', { name: 'Electrical & plumbing', exact: true }).click();
+  await page.getByTestId('nav-account').click();
   await page.getByRole('button', { name: '日本語', exact: true }).click();
-  await expect(page.getByRole('heading', { name: '電気・水道', exact: true })).toBeVisible();
+  await page.getByTestId('nav-back').click();
+  await expect(page.getByTestId('search-service-selected')).toHaveText('電気・水道');
+  await page.getByTestId('search-service-open').click();
   await expect(page.getByRole('button', { name: '家庭の電気工事', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: '家庭の電気工事', exact: true }).getByText('サービスを見る →', { exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'どんなサービスをお探しですか？' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /暮らしの困りごとに/  })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
   expect(await page.evaluate(() => ({ ...globalThis.localStorage }))).toEqual({ 'dvqb.locale.v1': 'ja' });
   const horizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);

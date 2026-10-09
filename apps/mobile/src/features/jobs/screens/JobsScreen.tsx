@@ -13,7 +13,7 @@ import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
 import { JobFeedback } from '../components/JobFeedback';
 import { sessionReady } from '../state/session-ready';
 import type { Job } from '../models';
-export function JobsScreen({ navigation }: NativeStackScreenProps<RootStackParamList, 'Jobs'>) { return <AccountPage title="jobs.title" back={() => navigation.goBack()} login={() => navigation.navigate('Account', { returnTo: 'Jobs' })}>{owner => <List key={owner} owner={owner} open={id => navigation.navigate('JobDetail', { id })}/>}</AccountPage>; }
+export function JobsScreen({ navigation }: NativeStackScreenProps<RootStackParamList, 'Jobs'>) { return <AccountPage shell={{ activeTab: 'jobs', onAccount: () => navigation.navigate('Account'), onCatalog: () => navigation.popTo('CatalogHome'), onJobs: () => navigation.navigate('Jobs'), onMessages: () => navigation.navigate('Conversations') }} title="jobs.title" back={() => navigation.goBack()} login={() => navigation.navigate('Account', { returnTo: 'Jobs' })}>{owner => <List key={owner} owner={owner} open={id => navigation.navigate('JobDetail', { id })}/>}</AccountPage>; }
 function List({ owner, open }: {
     owner: string;
     open: (id: string) => void;

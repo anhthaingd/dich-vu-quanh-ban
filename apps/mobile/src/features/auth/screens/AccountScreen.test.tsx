@@ -21,7 +21,7 @@ test('register through real navigation, show unverified account and logout', asy
   fireEvent.press(screen.getByRole('button', { name: 'Đăng xuất' }));
   expect(await screen.findByRole('button', { name: 'Đăng ký' })).toBeVisible();
   fireEvent.press(screen.getByRole('button', { name: 'Quay lại' }));
-  expect(await screen.findByRole('header', { name: 'Bạn cần dịch vụ gì?' })).toBeVisible();
+  expect(await screen.findByRole('header', { name: /Việc nhà có người lo/ })).toBeVisible();
 });
 test('failed login retains email, clears password and lets user retry', async () => {
   const f = authFixture(); f.api.login.mockRejectedValueOnce(new ApiError('UNAUTHENTICATED')); mount(f);

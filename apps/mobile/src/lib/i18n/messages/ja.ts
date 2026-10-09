@@ -1,5 +1,6 @@
 import type { MessageDictionary } from './vi';
 export const ja = {
+  home: {"eyebrow": "ハノイ · 近くの頼れるサービス", "headline": "暮らしの困りごとに。", "headlineAccent": "あなたに合う人を。", "intro": "必要な技術を探して、まず相談。それから依頼。", "placeholder": "水栓修理、エアコン清掃など…", "area": "検索エリア", "chooseArea": "エリアを選ぶ", "all": "すべて", "notifications": "通知", "unavailable": "まだ利用できません", "filters": "絞り込み", "radius": "%{km} km以内", "results": "近くの候補 %{count} 件", "resultsMore": "近くの候補 %{count} 件以上", "start": "エリアを選んでサービスを探す", "startHint": "カテゴリまたはサービスを選び、検索を押してください。", "priceLabel": "参考作業料金", "noReviews": "レビューはまだありません", "reviews": "%{stars}（%{count}件のレビュー）", "searchServices": "サービス一覧から検索", "searchCatalogHint": "サービスを選んで提供者を検索してください。", "selected": "選択中：%{name}", "priceHint": "料金は提供者による参考価格です。作業前に費用を合意してください。", "nearest": "距離順に表示", "apply": "適用", "customRadius": "別の検索半径"},
   invoice: {
     payHintWorker: "お客様から直接受け取ります。請求額を全額受け取ってから確認してください。",
     pointWallet: "保有ポイント",

@@ -9,29 +9,23 @@ appId: vn.dichvuquanhban.app
     text: "Close"
     optional: true
 - extendedWaitUntil:
-    visible: "Bạn cần dịch vụ gì?"
+    visible:
+      id: nav-account
     timeout: 60000
-- scrollUntilVisible:
-    element: "Điện nước"
-    direction: DOWN
-    centerElement: true
+- tapOn:
+    id: nav-account
+- tapOn:
+    id: locale-vi
+- tapOn:
+    id: nav-back
+- tapOn:
+    id: search-service-open
 - tapOn: "Điện nước"
 - tapOn: "Điện dân dụng"
 - assertVisible: "Thay ổ cắm / công tắc"
 - takeScreenshot: skills
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - back
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - swipe:
-          start: "1%, 50%"
-          end: "90%, 50%"
-          duration: 500
+- tapOn:
+    id: service-parent
 - assertVisible: "Điện dân dụng"
 - pressKey: Home
 - launchApp:
@@ -42,7 +36,8 @@ appId: vn.dichvuquanhban.app
     file: set-mode.js
     env:
       MODE: error
-- tapOn: "Quay lại"
+- tapOn:
+    id: service-parent
 - assertVisible: "Không tải được danh mục.*"
 - takeScreenshot: error
 - runScript:
@@ -51,12 +46,17 @@ appId: vn.dichvuquanhban.app
       MODE: ok
 - tapOn: "Thử lại"
 - assertVisible: "Điện dân dụng"
+- tapOn:
+    id: service-cancel
 - runScript:
     file: set-mode.js
     env:
       MODE: empty
-- tapOn: "Quay lại"
-- assertVisible: "Chưa có dịch vụ đang hoạt động."
+- stopApp
+- openLink: ${DEV_URL}
+- extendedWaitUntil:
+    visible: "Chưa có dịch vụ đang hoạt động."
+    timeout: 30000
 - takeScreenshot: empty
 - runScript:
     file: set-mode.js

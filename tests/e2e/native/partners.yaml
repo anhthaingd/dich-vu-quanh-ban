@@ -13,9 +13,9 @@ appId: vn.dichvuquanhban.app
       id: nav-account
     timeout: 60000
 - tapOn:
-    id: locale-vi
-- tapOn:
     id: nav-account
+- tapOn:
+    id: locale-vi
 - scrollUntilVisible:
     element:
       id: auth-email
@@ -204,8 +204,6 @@ appId: vn.dichvuquanhban.app
     id: nav-back
 - tapOn:
     id: nav-back
-- tapOn:
-    id: search-open
 - tapOn:
     id: search-service-open
 - tapOn: "Điện nước"

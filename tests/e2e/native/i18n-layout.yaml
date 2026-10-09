@@ -54,31 +54,35 @@ appId: vn.dichvuquanhban.app
 - tapOn:
     id: locale-vi
 - tapOn:
-    id: nav-back
-- scrollUntilVisible:
-    element:
-      id: locale-en
-    direction: UP
-- tapOn:
     id: locale-en
+- tapOn:
+    id: nav-back
+- takeScreenshot: english-large-catalog
+- tapOn:
+    id: search-service-open
 - scrollUntilVisible:
     element: "Beauty \\(non-medical\\)"
     direction: DOWN
-- takeScreenshot: english-large-catalog
 - tapOn: "Beauty \\(non-medical\\)"
 - scrollUntilVisible:
     element: "Hair treatments & colouring"
     direction: DOWN
 - takeScreenshot: english-large-groups
-- scrollUntilVisible:
-    element:
-      id: locale-ja
-    direction: UP
+- tapOn:
+    id: service-cancel
+- tapOn:
+    id: nav-account
 - tapOn:
     id: locale-ja
-- extendedWaitUntil:
-    visible: "美容（医療行為を除く）"
-    timeout: 15000
+- tapOn:
+    id: nav-back
+- takeScreenshot: japanese-large-heading
+- tapOn:
+    id: search-service-open
+- scrollUntilVisible:
+    element: "美容（医療行為を除く）"
+    direction: DOWN
+- tapOn: "美容（医療行為を除く）"
 - scrollUntilVisible:
     element: "パーマ・ストレート・カラー"
     direction: DOWN
@@ -89,9 +93,9 @@ appId: vn.dichvuquanhban.app
     direction: DOWN
 - assertVisible: "ストレートパーマ"
 - takeScreenshot: japanese-large-skills
-- scrollUntilVisible:
-    element:
-      id: locale-vi
-    direction: UP
+- tapOn:
+    id: service-cancel
+- tapOn:
+    id: nav-account
 - tapOn:
     id: locale-vi
