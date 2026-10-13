@@ -29,7 +29,9 @@ function projectRecipes(root,id) {
     {suite:'api',cwd:resolve(root,'services/api'),command:['npm','exec','--','c8','--all','--src','src','--include','src/**/*.ts','--reporter=text','--reporter=json','--reporter=json-summary','--reporter=lcov','--reporter=html','--reports-dir','../../coverage/api',process.execPath,'--import','tsx','--test','--test-concurrency=1','--test-reporter='+resolve(root,'scripts/sdd/node-reporter.mjs'),'--test-reporter-destination='+dest+'/api.json','--test-reporter=junit','--test-reporter-destination='+resolve(root,'test-results/api/junit.xml'),...files.api.map(p=>p.replace('services/api/',''))],report:dest+'/api.json'},
     {...node('api-coverage','../../scripts/test/coverage-gate.mjs','src','../../coverage/api/coverage-final.json'),cwd:resolve(root,'services/api')},
     npm('build','run','build'),
-    {...npm('web','exec','--','playwright','test','--config','tests/e2e/web/playwright.config.mjs'),report:dest+'/web.json',copyReport:resolve(root,'test-results/web/results.json')},
+    // The full suite takes ~7 minutes on GitHub's Linux runner. Individual
+    // Playwright timeouts/retries remain unchanged; this bounds the whole suite.
+    {...npm('web','exec','--','playwright','test','--config','tests/e2e/web/playwright.config.mjs'),timeoutMs:600000,report:dest+'/web.json',copyReport:resolve(root,'test-results/web/results.json')},
     node('load','tests/performance/catalog.mjs'),
     npm('prototype','--prefix','ui-ux/prototype','run','build'),
     npm('storybook','--prefix','ui-ux/prototype','run','build-storybook'),
@@ -44,7 +46,7 @@ export async function recordEvidence(root,bundle,before,runs) {
 }
 function execute(recipe) {
   return new Promise(resolveResult=>{
-    execFile(recipe.command[0],recipe.command.slice(1),{cwd:recipe.cwd,env:{...process.env,CI:'1',NODE_ENV:'test',EXPO_NO_TELEMETRY:'1',...recipe.env},timeout:300000,maxBuffer:16*1024*1024},(error,stdout,stderr)=>resolveResult({exitCode:error ? (Number.isInteger(error.code)?error.code:2):0,stdout,stderr}));
+    execFile(recipe.command[0],recipe.command.slice(1),{cwd:recipe.cwd,env:{...process.env,CI:'1',NODE_ENV:'test',EXPO_NO_TELEMETRY:'1',...recipe.env},timeout:recipe.timeoutMs??300000,maxBuffer:16*1024*1024},(error,stdout,stderr)=>resolveResult({exitCode:error ? (Number.isInteger(error.code)?error.code:2):0,stdout,stderr}));
   });
 }
 export async function runChange(root,id) {

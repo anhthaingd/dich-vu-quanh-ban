@@ -13,6 +13,8 @@ export function argumentsFor(args,run=false) {
 export function printResult(result,phase) {
   for(const d of result.diagnostics) console.log(`${d.level==='error'?'LỖI':'LƯU Ý'} [${d.code}] ${d.message}`);
   console.log(`SDD ${phase}: ${result.exitCode===0?'ĐẠT':'CHƯA ĐẠT'}${phase==='prepare'?' — kiểm nguồn và liên kết, chưa chứng minh hành vi':''}`);
+  const inventory=result.bundle?.inventory;
+  if(inventory) console.log(`Phạm vi: ${inventory.criteria.length} tiêu chí; QA ${inventory.qa.filter(q=>q.status==='partial').length} một phần, ${inventory.qa.filter(q=>q.status==='unmapped').length} chưa ánh xạ. Không chứng nhận toàn bộ nghiệp vụ/native/UAT.`);
 }
 if(process.argv[1]===fileURLToPath(import.meta.url)) {
   try {

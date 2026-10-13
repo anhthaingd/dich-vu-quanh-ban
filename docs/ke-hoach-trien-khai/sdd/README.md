@@ -51,7 +51,7 @@ Danh sách route đọc bằng cú pháp TypeScript/Nest, gồm các action tron
 | `EVIDENCE`, `RESULT`, `STALE_EVIDENCE` | Mở report/log; chạy lại sau sửa, không dùng evidence cũ khi code hoặc HEAD đã đổi |
 | `NO_GIT`, `INPUT` | Checkout thiếu Git/baseline/file hoặc input sai; CI checkout đủ lịch sử |
 
-Mã thoát: 0 đạt mức đang kiểm, 1 vi phạm/test fail, 2 lỗi input/hệ thống. Lượt chạy xóa evidence cũ và khóa `run.lock`; fail giữ log để chẩn đoán. Chỉ xóa lock khi đã chắc tiến trình trước dừng. Không retry âm thầm hoặc hạ coverage threshold.
+Mã thoát: 0 đạt mức đang kiểm, 1 vi phạm/test fail, 2 lỗi input/hệ thống. Lượt chạy xóa evidence cũ và khóa `run.lock`; fail giữ log để chẩn đoán. Chỉ xóa lock khi đã chắc tiến trình trước dừng. Không retry âm thầm hoặc hạ coverage threshold. Toàn suite web có giới hạn 10 phút để đủ 14 hành trình trên CI; giới hạn từng test và retries=0 giữ nguyên.
 
 Gói [MAP-02](changes/SDD-01-MAP-02.json) còn dùng để chạy nhanh 7 tiêu chí riêng; không thay required check toàn dự án. Thêm gói mới cần recipe code đã review. `baseCommit` là mốc spec đã đối chiếu, không phải diff base PR tự động: khi có thay đổi spec được duyệt, review và cập nhật baseline riêng; không tự lấy HEAD để che drift.
 

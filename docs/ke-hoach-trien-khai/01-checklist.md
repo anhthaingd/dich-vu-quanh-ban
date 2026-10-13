@@ -9,7 +9,8 @@
 - [x] Bổ sung test MAP-02: tie-break created_at/id và phân trang qua UI với API/DB thật.
 - [x] Viết CI toàn dự án, giữ coverage/build/load, thêm prototype/Storybook.
 - [x] Local đạt toàn gói: 50 tooling, 196 mobile, 83 API, 14 web, coverage/build/load/prototype/Storybook và SDD verify. Mermaid đã render.
-- [ ] Remote CI và required check: kiểm trên commit sau push; cập nhật bằng chứng riêng trong B00-08.
+
+**Bằng chứng remote:** kiểm [Quality trên main](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/workflows/quality.yml?query=branch%3Amain) và [bảo vệ nhánh](https://github.com/anhthaingd/dich-vu-quanh-ban/settings/branches) khi bàn giao. Check phải là `SDD project` từ GitHub Actions trên đúng commit. Lịch sử lượt kiểm, lỗi timeout CI đầu và cách sửa ở B00-08; không dùng một ô đánh dấu trong tài liệu thay trạng thái GitHub.
 - [ ] Native/thiết bị thật/UAT và các nhánh nghiệp vụ còn thiếu; không nằm trong chứng nhận tự động này.
 
 ## Mốc SDD-01 local ban đầu ngày 13/10/2026
