@@ -1,0 +1,2195 @@
+{
+  "version": 1,
+  "criteria": [
+    {
+      "id": "MAP-02-AC-01",
+      "requirement": "MAP-02",
+      "description": "Ghim public active gần nhất trong bán kính; không dùng điểm private/tâm vùng",
+      "sources": [
+        "map02",
+        "ux-map02",
+        "QA-080",
+        "api-search",
+        "rtm-search"
+      ],
+      "code": [
+        "services/api/src/modules/search/search.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "map pins expose only nearest active public location in radius, without dropping providers lacking a pin"
+        }
+      ]
+    },
+    {
+      "id": "MAP-02-AC-02",
+      "requirement": "MAP-02",
+      "description": "Người không có ghim vẫn còn trong danh sách; ghim trùng mở được từng hồ sơ",
+      "sources": [
+        "map02",
+        "ux-map02",
+        "QA-081",
+        "api-search",
+        "rtm-search"
+      ],
+      "code": [
+        "apps/mobile/src/features/search/screens/SearchScreen.tsx",
+        "apps/mobile/src/features/search/components/results-map-model.ts"
+      ],
+      "tests": [
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/search-map.spec.mjs",
+          "name": "public result pins open profiles, coincident providers stay reachable, private-only providers remain listed"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/search/components/results-map-model.test.ts",
+          "name": "public pins include zero, omit missing points, group coincident providers and deduplicate identities"
+        }
+      ]
+    },
+    {
+      "id": "MAP-02-AC-03",
+      "requirement": "MAP-02",
+      "description": "Đổi điểm xóa kết quả và bỏ response cũ",
+      "sources": [
+        "map02",
+        "ux-map02",
+        "QA-081",
+        "api-search",
+        "rtm-search"
+      ],
+      "code": [
+        "apps/mobile/src/features/search/state/partner-search.ts",
+        "apps/mobile/src/features/search/screens/SearchScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/search/state/partner-search.test.ts",
+          "name": "reset removes map criteria and pins and ignores the old in-flight response"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/search/state/partner-search.test.ts",
+          "name": "late response cannot replace new location search even if transport ignores abort"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/search-map.spec.mjs",
+          "name": "public result pins open profiles, coincident providers stay reachable, private-only providers remain listed"
+        }
+      ]
+    },
+    {
+      "id": "MAP-02-AC-04",
+      "requirement": "MAP-02",
+      "description": "Phân trang giữ kết quả duy nhất; phát hiện vòng cursor; retry đọc dữ liệu",
+      "sources": [
+        "map02",
+        "ux-map02",
+        "QA-081",
+        "api-search",
+        "rtm-search"
+      ],
+      "code": [
+        "apps/mobile/src/features/search/state/partner-search.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/search/state/partner-search.test.ts",
+          "name": "deduplicates pages, retries read errors and rejects cursor loops"
+        }
+      ]
+    },
+    {
+      "id": "MAP-02-AC-05",
+      "requirement": "MAP-02",
+      "description": "Ghim trùng, cảnh báo còn trang, lỗi bản đồ và retry giữ dữ liệu",
+      "sources": [
+        "map02",
+        "ux-map02",
+        "QA-081",
+        "api-search",
+        "rtm-search"
+      ],
+      "code": [
+        "apps/mobile/src/features/search/components/SearchResultsMap.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/search/components/SearchResultsMap.test.tsx",
+          "name": "shared pin opens each profile; retry preserves results and paging warning; removed group clears selection"
+        }
+      ]
+    },
+    {
+      "id": "MAP-02-AC-06",
+      "requirement": "MAP-02",
+      "description": "Response tìm kiếm khớp schema hiện hành",
+      "sources": [
+        "map02",
+        "ux-map02",
+        "QA-080",
+        "api-search",
+        "rtm-search"
+      ],
+      "code": [
+        "services/api/src/modules/search/search.service.ts",
+        "apps/mobile/src/features/partners/api/partners-api.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "management, distance results and localized public profile match approved contracts; create replay checks current membership"
+        }
+      ]
+    },
+    {
+      "id": "AUTH-AC-01",
+      "requirement": "FR-AUTH-001",
+      "qa": [
+        "QA-002"
+      ],
+      "description": "Đăng ký/login email password tạo phiên, hash mật khẩu/refresh token, cờ xác minh false; không log secret",
+      "code": [
+        "services/api/src/modules/auth/auth.service.ts",
+        "services/api/src/modules/auth/password.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/auth.test.ts",
+          "name": "real registration/login/rotation/logout: hashes, unverified contact, revocation and safe logs"
+        }
+      ],
+      "gaps": "Không chứng minh OTP, email verification hoặc khôi phục mật khẩu",
+      "operations": [
+        "register",
+        "login",
+        "getMe"
+      ],
+      "sources": [
+        "QA-002"
+      ]
+    },
+    {
+      "id": "AUTH-AC-02",
+      "requirement": "FR-AUTH-008",
+      "qa": [
+        "QA-003"
+      ],
+      "description": "Rotation không kéo dài hạn phiên; reuse thu hồi family, family khác còn dùng; JWT sai/hết hạn bị chặn",
+      "code": [
+        "services/api/src/modules/auth/auth.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/auth.test.ts",
+          "name": "real registration/login/rotation/logout: hashes, unverified contact, revocation and safe logs"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/auth.test.ts",
+          "name": "concurrent refresh detects reuse and revokes only that family; expiry and signature cannot be bypassed"
+        }
+      ],
+      "gaps": "",
+      "operations": [
+        "refreshSession",
+        "logout"
+      ],
+      "sources": [
+        "QA-003"
+      ]
+    },
+    {
+      "id": "AUTH-AC-03",
+      "requirement": "FR-AUTH-001",
+      "qa": [
+        "QA-002"
+      ],
+      "description": "Nhánh password: lỗi login chung cho không tồn tại/sai/bị khóa; từ chối privilege injection và giới hạn thử",
+      "code": [
+        "services/api/src/modules/auth/auth.service.ts",
+        "services/api/src/modules/auth/auth.controller.ts",
+        "services/api/src/modules/auth/auth.input.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/auth.test.ts",
+          "name": "unknown/wrong/suspended accounts share safe login errors; duplicate registration is atomic"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/auth.test.ts",
+          "name": "auth rejects extra privilege fields, limits attempts and permits configured web preflight"
+        }
+      ],
+      "gaps": "QA-002 chỉ một phần: OTP và contact/IP distributed limit chưa chứng minh",
+      "operations": [],
+      "sources": [
+        "QA-002"
+      ]
+    },
+    {
+      "id": "AUTH-AC-04",
+      "requirement": "FR-AUTH-008",
+      "qa": [
+        "QA-003"
+      ],
+      "description": "Khôi phục offline giữ token để thử lại; phiên vô hiệu xóa; lỗi lưu credential không được báo login thành công",
+      "code": [
+        "apps/mobile/src/features/auth/state/auth-session.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/auth/state/auth-session.test.ts",
+          "name": "cold start rotates saved token; offline restore retains it and can be retried"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/auth/state/auth-session.test.ts",
+          "name": "invalid saved session is removed; unknown secure storage failure never becomes authenticated"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/auth/state/auth-session.test.ts",
+          "name": "storage write failure compensates login with logout and never exposes a successful session"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/auth/state/auth-session.test.ts",
+          "name": "revocation clears session, network errors keep it and offline logout does not pretend success"
+        }
+      ],
+      "gaps": "Jest mock không thay chứng minh Keychain trên thiết bị thật",
+      "operations": [],
+      "sources": [
+        "QA-003"
+      ]
+    },
+    {
+      "id": "ACCOUNT-AC-01",
+      "requirement": "B01-04",
+      "qa": [
+        "QA-070"
+      ],
+      "description": "Edit tên version và idempotency actor-scoped; hai sửa cạnh tranh chỉ một thắng; replay cũ không đảo DB",
+      "code": [
+        "services/api/src/modules/accounts/accounts.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/profile.test.ts",
+          "name": "profile uses real version, replay is atomic, key scope is actor and no private names enter logs"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/profile.test.ts",
+          "name": "two editors cannot overwrite, and old-key replay cannot revert a later edit"
+        }
+      ],
+      "gaps": "",
+      "operations": [
+        "editMe"
+      ],
+      "sources": [
+        "QA-070"
+      ]
+    },
+    {
+      "id": "ACCOUNT-AC-02",
+      "requirement": "B01-04",
+      "qa": [
+        "QA-070"
+      ],
+      "description": "Chặn owner/quyền giả, input xấu và phiên thu hồi kể cả replay",
+      "code": [
+        "services/api/src/modules/accounts/accounts.service.ts",
+        "services/api/src/modules/accounts/profile.input.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/profile.test.ts",
+          "name": "profile rejects forged owner/privileges, bad fields/keys and revoked/suspended sessions, including replay"
+        }
+      ],
+      "gaps": "Các test bổ sung rollback/revocation race trong cùng file nên giữ full suite",
+      "operations": [],
+      "sources": [
+        "QA-070"
+      ]
+    },
+    {
+      "id": "ACCOUNT-AC-03",
+      "requirement": "B01-04",
+      "qa": [
+        "QA-071"
+      ],
+      "description": "Mất response giữ nguyên key/payload; conflict giữ draft chờ reload rõ ràng",
+      "code": [
+        "apps/mobile/src/features/accounts/state/profile-editor.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/accounts/state/profile-editor.test.ts",
+          "name": "lost response retains exact payload/key and does not claim success or allow changing pending input"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/accounts/state/profile-editor.test.ts",
+          "name": "version conflict preserves draft, requires explicit reload and a new key before resaving"
+        }
+      ],
+      "gaps": "Không thay native persistence/UAT",
+      "operations": [],
+      "sources": [
+        "QA-071"
+      ]
+    },
+    {
+      "id": "ACCOUNT-AC-04",
+      "requirement": "B01-04A",
+      "qa": [
+        "QA-073"
+      ],
+      "description": "CRUD địa chỉ thuộc owner; duy nhất mặc định; archive/retry không tạo lại; lỗi ghi key rollback cả mặc định",
+      "code": [
+        "services/api/src/modules/accounts/addresses.service.ts",
+        "services/api/src/modules/accounts/account-transaction.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-management.test.ts",
+          "name": "address CRUD is owner-only, default switches atomically, retry and archive cannot duplicate or restore"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-management.test.ts",
+          "name": "failed key write rolls back address and default switch"
+        }
+      ],
+      "gaps": "",
+      "operations": [
+        "addAddress",
+        "editAddress",
+        "archiveAddress"
+      ],
+      "sources": [
+        "QA-073"
+      ]
+    },
+    {
+      "id": "ACCOUNT-AC-05",
+      "requirement": "B01-04A",
+      "qa": [
+        "QA-073"
+      ],
+      "description": "Cursor địa chỉ ký và gắn actor/endpoint, không có nội dung địa chỉ; reject input và phiên hết quyền",
+      "code": [
+        "services/api/src/modules/accounts/addresses.service.ts",
+        "services/api/src/modules/accounts/accounts.input.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-management.test.ts",
+          "name": "address page cursor is signed, actor/endpoint-scoped and contains no address; invalid fields rejected"
+        }
+      ],
+      "gaps": "",
+      "operations": [
+        "listAddresses"
+      ],
+      "sources": [
+        "QA-073"
+      ]
+    },
+    {
+      "id": "ACCOUNT-AC-06",
+      "requirement": "B01-04A",
+      "qa": [
+        "QA-072"
+      ],
+      "description": "Một family một dòng; revoke thắng refresh race; cross-account bị chặn; schema/pagination ổn định",
+      "code": [
+        "services/api/src/modules/accounts/sessions.service.ts",
+        "services/api/src/modules/accounts/account-transaction.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-management.test.ts",
+          "name": "sessions group rotations, revoke entire login family including racing refresh, hide other accounts and secrets"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-management.test.ts",
+          "name": "management responses match approved schemas and session pagination is stable through rotation"
+        }
+      ],
+      "gaps": "",
+      "operations": [
+        "listSessions",
+        "revokeSession"
+      ],
+      "sources": [
+        "QA-072"
+      ]
+    },
+    {
+      "id": "CATALOG-AC-01",
+      "requirement": "FR-CAT-001",
+      "qa": [
+        "QA-056",
+        "QA-063"
+      ],
+      "description": "Migration/seed lặp không nhân đôi hoặc ghi đè sửa; checksum lịch sử đổi bị chặn; seed lỗi rollback",
+      "code": [
+        "services/api/src/database/migrate.ts",
+        "services/api/src/database/seed.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "empty-schema migration, PostGIS, rerun migration/seed and preserve edited data"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "migration checksum rejects changed history without applying additional SQL"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "seed failure rolls back every preceding insert"
+        }
+      ],
+      "gaps": "Số dữ liệu cũ trong QA không còn đúng; test hiện 49/128/128. Không backup/restore production",
+      "operations": [],
+      "sources": [
+        "QA-056",
+        "QA-063"
+      ]
+    },
+    {
+      "id": "CATALOG-AC-02",
+      "requirement": "FR-CAT-002",
+      "qa": [
+        "QA-057"
+      ],
+      "description": "Danh mục N-N, lọc tổ tiên/nhóm/skill inactive; ràng buộc FK/unique/cycle/version thật",
+      "code": [
+        "services/api/src/modules/catalog/catalog.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "HTTP categories and skills read DB, support groups, shared skill and structured response"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "inactive ancestor/group/skill filtered at every endpoint; history retained"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "FK, duplicate mapping, blank name, invalid version and category cycle rejected"
+        }
+      ],
+      "gaps": "Chưa CRUD quản trị hoặc giữ snapshot jobs khi admin sửa danh mục",
+      "operations": [
+        "readiness"
+      ],
+      "sources": [
+        "QA-057"
+      ]
+    },
+    {
+      "id": "CATALOG-AC-03",
+      "requirement": "FR-CAT-001",
+      "qa": [
+        "QA-057"
+      ],
+      "description": "Phân trang không lặp và gắn endpoint/filter; input lỗi an toàn; response khớp OpenAPI",
+      "code": [
+        "services/api/src/modules/catalog/catalog.service.ts",
+        "services/api/src/modules/catalog/catalog.query.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "pagination visits exactly once and cursor cannot cross endpoint or filter"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "invalid input, unknown and inactive categories return safe results"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "implemented responses match canonical OpenAPI"
+        }
+      ],
+      "gaps": "",
+      "operations": [
+        "listCategories",
+        "listSkills"
+      ],
+      "sources": [
+        "QA-057"
+      ]
+    },
+    {
+      "id": "CATALOG-AC-04",
+      "requirement": "FR-CAT-001",
+      "qa": [
+        "QA-058"
+      ],
+      "description": "UI duyệt ngành/nhóm và back, loading/rỗng/lỗi/retry không thay sample data",
+      "code": [
+        "apps/mobile/src/features/catalog/screens/CatalogScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
+          "name": "loading → industry → group and skills → back"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
+          "name": "empty is visible"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
+          "name": "error has retry and never substitutes sample data"
+        }
+      ],
+      "gaps": "Test navigator riêng retained browser; không tự chứng nhận màn home Storybook mới",
+      "operations": [],
+      "sources": [
+        "QA-058"
+      ]
+    },
+    {
+      "id": "I18N-AC-01",
+      "requirement": "I18N-04",
+      "qa": [
+        "QA-067",
+        "QA-068"
+      ],
+      "description": "API VI/EN/JA fallback vi; cursor gắn locale; seed chỉ điền khóa dịch thiếu",
+      "code": [
+        "services/api/src/modules/catalog/catalog.service.ts",
+        "services/api/src/database/seed.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "localized real catalog covers every industry, paginates skills and falls back safely"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "locale validation and cursor isolation apply to both endpoints"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "seed fills missing translation keys without overwriting names, custom translations or disabled records"
+        }
+      ],
+      "gaps": "QA-068 số 60/140/141 lịch sử không còn đúng; chất lượng nội dung dịch chưa UAT",
+      "operations": [],
+      "sources": [
+        "QA-067",
+        "QA-068"
+      ]
+    },
+    {
+      "id": "I18N-AC-02",
+      "requirement": "I18N-04",
+      "qa": [
+        "QA-069"
+      ],
+      "description": "UI giữ ID khi đổi tiếng và bỏ response cũ; fallback notice cả title",
+      "code": [
+        "apps/mobile/src/features/catalog/screens/CatalogScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
+          "name": "localized names and title follow the same ID; stale locale replies cannot replace newer data"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
+          "name": "fallback notice is shown only for missing names, including the selected title"
+        }
+      ],
+      "gaps": "Chữ cỡ lớn/native không được chứng minh bằng Jest",
+      "operations": [],
+      "sources": [
+        "QA-069"
+      ]
+    },
+    {
+      "id": "I18N-AC-03",
+      "requirement": "I18N-04",
+      "qa": [
+        "QA-069"
+      ],
+      "description": "Nền dịch phục vụ danh mục I18N-04: Bộ dịch đủ key/biến nội suy; fallback/plural; VND và múi giờ Việt Nam; không phụ thuộc Intl.PluralRules trên Hermes",
+      "code": [
+        "apps/mobile/src/lib/i18n/index.ts",
+        "apps/mobile/src/lib/i18n/formatters.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/i18n/i18n.test.ts",
+          "name": "every locale has the same complete keys and interpolation variables"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/i18n/i18n.test.ts",
+          "name": "interpolation, English plurals, Japanese/Vietnamese and fallback work independently"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/i18n/i18n.test.ts",
+          "name": "formatters preserve VND and Vietnam time across all locales"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/i18n/i18n.test.ts",
+          "name": "translation works on Hermes runtimes without Intl.PluralRules"
+        }
+      ],
+      "gaps": "Không chứng nhận chất lượng bản dịch hoặc locale đồng bộ server; Đây là kiểm nền dịch, không chứng nhận hết QA-069/native.",
+      "operations": [],
+      "sources": [
+        "QA-069"
+      ]
+    },
+    {
+      "id": "SUPPLY-AC-01",
+      "requirement": "FR-PAR-001",
+      "qa": [
+        "QA-008",
+        "QA-074"
+      ],
+      "description": "Tạo partner draft + owner + ví 0 nguyên tử, phone_verified; replay không trùng, khác payload conflict",
+      "code": [
+        "services/api/src/modules/partners/partners.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "verified account creates draft + owner + empty wallet atomically; Me derives verification and memberships"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "create transaction rolls back membership and partner if wallet creation fails"
+        }
+      ],
+      "gaps": "",
+      "operations": [
+        "createPartner"
+      ],
+      "sources": [
+        "QA-008",
+        "QA-074"
+      ]
+    },
+    {
+      "id": "SUPPLY-AC-02",
+      "requirement": "P0-1",
+      "qa": [
+        "QA-074"
+      ],
+      "description": "Công bố cần skill và location theo từng mode; không tự bật availability; draft tắt nhận việc",
+      "code": [
+        "services/api/src/modules/partners/partners.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "publication requires eligible skills and location for every mode, does not turn on availability"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "competing writes use shared version; invalid published edit rolls back; draft turns off work"
+        }
+      ],
+      "gaps": "",
+      "operations": [
+        "setPublication",
+        "setAvailability"
+      ],
+      "sources": [
+        "QA-074"
+      ]
+    },
+    {
+      "id": "SUPPLY-AC-03",
+      "requirement": "P0-1",
+      "qa": [
+        "QA-074"
+      ],
+      "description": "Owner hoặc grant profile.manage hiện hành; replay kiểm lại quyền; shared version và invalid published edit rollback",
+      "code": [
+        "services/api/src/modules/partners/partners.service.ts",
+        "services/api/src/modules/accounts/account-transaction.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "only owner or active profile.manage grant can read/write; replay rechecks grants and sessions"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "competing writes use shared version; invalid published edit rolls back; draft turns off work"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "management, distance results and localized public profile match approved contracts; create replay checks current membership"
+        }
+      ],
+      "gaps": "Không coi đây là kiểm đầy đủ quản trị đội ngũ/mời nhân viên",
+      "operations": [],
+      "sources": [
+        "QA-074"
+      ]
+    },
+    {
+      "id": "SEARCH-AC-01",
+      "requirement": "FR-SEARCH-003",
+      "qa": [
+        "QA-011",
+        "QA-075"
+      ],
+      "description": "Lọc trước distance ranking, dedupe partner, cursor gắn filters; ngừng nhận việc/kiểm duyệt bị loại",
+      "code": [
+        "services/api/src/modules/search/search.service.ts",
+        "services/api/src/modules/search/search.query.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "search filters first, computes PostGIS distance, deduplicates and binds signed cursor to all filters"
+        }
+      ],
+      "gaps": "Chỉ distance trên tập ổn định; recommended/rating chưa triển khai",
+      "operations": [
+        "searchPartners"
+      ],
+      "sources": [
+        "QA-011",
+        "QA-075"
+      ]
+    },
+    {
+      "id": "SEARCH-AC-02",
+      "requirement": "FR-SEARCH-002",
+      "qa": [
+        "QA-010",
+        "QA-075"
+      ],
+      "description": "Vùng tròn bao phủ khách VÀ tâm trong radius; đúng skill/mode/category; ẩn cây inactive",
+      "code": [
+        "services/api/src/modules/search/search.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "service area coverage AND search radius, exact skill/mode/category matching, inactive hierarchy"
+        }
+      ],
+      "gaps": "Không polygon hoặc tự mở radius; không claim đầy QA-010",
+      "operations": [],
+      "sources": [
+        "QA-010",
+        "QA-075"
+      ]
+    },
+    {
+      "id": "SEARCH-AC-03",
+      "requirement": "FR-SEARCH-004",
+      "qa": [
+        "QA-012",
+        "QA-075"
+      ],
+      "description": "Public profile whitelist, guest không contact, private location/vùng/ví/giấy tờ ẩn; owner không hire",
+      "code": [
+        "services/api/src/modules/partners/partners.service.ts",
+        "services/api/src/modules/partners/partners.read.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "public profile whitelists fields, private locations/contact hidden; authenticated own profile cannot hire"
+        }
+      ],
+      "gaps": "",
+      "operations": [
+        "getPartner"
+      ],
+      "sources": [
+        "QA-012",
+        "QA-075"
+      ]
+    },
+    {
+      "id": "SEARCH-AC-04",
+      "requirement": "P0-1",
+      "qa": [
+        "QA-075"
+      ],
+      "description": "Bộ chọn dịch vụ gửi đúng skill_id, đổi dịch vụ xóa kết quả cũ, lọc thực qua API/DB",
+      "code": [
+        "apps/mobile/src/features/search/components/ServiceFilter.tsx",
+        "apps/mobile/src/features/search/screens/SearchScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
+          "name": "catalog text lookup matches unaccented names and sends the selected skill ID"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/search-service.spec.mjs",
+          "name": "direct search selects a service, excludes another trade and clears old results when the service changes"
+        }
+      ],
+      "gaps": "Text matching unaccented là client catalog lookup, không phải server full-text ranking",
+      "operations": [],
+      "sources": [
+        "QA-075"
+      ]
+    },
+    {
+      "id": "LOCATION-AC-01",
+      "requirement": "MAP-01",
+      "qa": [
+        "QA-076"
+      ],
+      "description": "Nhập query hủy lựa chọn; chỉ confirm khi có điểm; cancel không sửa caller; bỏ response autocomplete cũ",
+      "code": [
+        "apps/mobile/src/features/location/state/location-draft.ts",
+        "apps/mobile/src/features/location/components/LocationField.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/location/components/LocationField.test.tsx",
+          "name": "confirm requires a selected point; changing query invalidates it; cancel never mutates caller"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/location/state/location-draft.test.ts",
+          "name": "late autocomplete cannot overwrite a newer query or a pin"
+        }
+      ],
+      "gaps": "",
+      "operations": [],
+      "sources": [
+        "QA-076"
+      ]
+    },
+    {
+      "id": "LOCATION-AC-02",
+      "requirement": "MAP-01",
+      "qa": [
+        "QA-077"
+      ],
+      "description": "Reverse giữ điểm, lỗi cho nhập mô tả; GPS từ chối vẫn tìm địa chỉ; GPS chậm không ghi đè",
+      "code": [
+        "apps/mobile/src/features/location/state/location-draft.ts",
+        "apps/mobile/src/features/location/components/LocationField.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/location/state/location-draft.test.ts",
+          "name": "late reverse cannot overwrite a moved pin or an edited description"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/location/state/location-draft.test.ts",
+          "name": "empty reverse and errors preserve exact point for manual description, invalid points are ignored"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/location/components/LocationField.test.tsx",
+          "name": "denied GPS allows address search without requesting a position"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/location/components/LocationField.test.tsx",
+          "name": "GPS arriving after another address choice cannot overwrite that choice"
+        }
+      ],
+      "gaps": "GPS/provider mock; không thay độ chính xác live/device",
+      "operations": [],
+      "sources": [
+        "QA-077"
+      ]
+    },
+    {
+      "id": "LOCATION-AC-03",
+      "requirement": "MAP-01",
+      "qa": [
+        "QA-078"
+      ],
+      "description": "HTTP validate, bearer, thiếu provider/429/504, no-store/retry-after không lộ query; schema provider chuẩn hóa",
+      "code": [
+        "services/api/src/modules/locations/locations.controller.ts",
+        "services/api/src/modules/locations/locations.input.ts",
+        "services/api/src/integrations/maps/geoapify.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/locations.test.ts",
+          "name": "location HTTP validates, disables missing provider, preserves envelope, throttles and never logs private query"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/locations.test.ts",
+          "name": "normalized provider results match the canonical location OpenAPI schemas"
+        }
+      ],
+      "gaps": "Test fixture không chứng nhận chất lượng hay quota live provider",
+      "operations": [
+        "locationAutocomplete",
+        "locationGeocode",
+        "locationReverse"
+      ],
+      "sources": [
+        "QA-078"
+      ]
+    },
+    {
+      "id": "LOCATION-AC-04",
+      "requirement": "MAP-03",
+      "qa": [
+        "QA-079",
+        "QA-082"
+      ],
+      "description": "Web picker tìm/sổ địa chỉ không ô nâng cao tọa độ; giữ mô tả/cancel; lưu point thật vào DB",
+      "code": [
+        "apps/mobile/src/features/location/components/LocationField.tsx",
+        "apps/mobile/src/features/search/screens/SearchScreen.tsx",
+        "apps/mobile/src/features/accounts/screens/AddressesScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/locations.spec.mjs",
+          "name": "choose location, cancel, reject GPS, preserve description and save coordinates to DB"
+        }
+      ],
+      "gaps": "QA-079/082 chỉ nhánh search+addresses; chưa đủ assertion không ô tọa độ ở shop/area/job trong ca này",
+      "operations": [],
+      "sources": [
+        "QA-079",
+        "QA-082"
+      ]
+    },
+    {
+      "id": "INFRA-AC-01",
+      "requirement": "LOGTEST-DESIGN-01",
+      "qa": [
+        "QA-061"
+      ],
+      "description": "25 request có ID riêng/header-body-log khớp và đúng một completion; abort một terminal; không canary",
+      "code": [
+        "services/api/src/logging/logger.ts",
+        "services/api/src/bootstrap.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/logging.test.ts",
+          "name": "parallel HTTP requests have one completion, matching IDs, safe errors and no canary leak"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/logging.test.ts",
+          "name": "client abort produces exactly one terminal event"
+        }
+      ],
+      "gaps": "Không chứng minh SLA hay tải production",
+      "operations": [],
+      "sources": [
+        "QA-061"
+      ]
+    },
+    {
+      "id": "INFRA-AC-02",
+      "requirement": "LOGTEST-DESIGN-01",
+      "qa": [
+        "QA-062"
+      ],
+      "description": "HTTP client timeout/cancel/schema error giữ correlation, không lộ URL/secret; mutation timeout không tự replay",
+      "code": [
+        "apps/mobile/src/lib/http/request.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/http/request.test.ts",
+          "name": "timeout bounds requests even when transport ignores abort"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/http/request.test.ts",
+          "name": "caller cancellation is debug and removes timer/listener"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/http/request.test.ts",
+          "name": "schema validation failure preserves correlation in diagnostics"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/http/request.test.ts",
+          "name": "JSON mutation preserves authorization, overrides caller correlation ID and never logs secrets"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/http/request.test.ts",
+          "name": "a timed out mutation is cancelled without automatic replay"
+        }
+      ],
+      "gaps": "",
+      "operations": [],
+      "sources": [
+        "QA-062"
+      ]
+    },
+    {
+      "id": "INFRA-AC-03",
+      "requirement": "LOGTEST-DESIGN-01",
+      "qa": [
+        "QA-062"
+      ],
+      "description": "Diagnostic ring 200 event, mỗi record dưới 2KB, whitelist metadata và sink lỗi không crash",
+      "code": [
+        "apps/mobile/src/lib/logging/logger.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/logging/logger.test.ts",
+          "name": "ring holds last 200 sanitized JSONL records below 2KB"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/logging/logger.test.ts",
+          "name": "rejects invalid metadata and ignores sink failure"
+        }
+      ],
+      "gaps": "",
+      "operations": [],
+      "sources": [
+        "QA-062"
+      ]
+    },
+    {
+      "id": "INFRA-AC-04",
+      "requirement": "FR-CAT-001",
+      "qa": [
+        "QA-057"
+      ],
+      "description": "DB offline trả 503 an toàn, liveness vẫn sống",
+      "code": [
+        "services/api/src/bootstrap.ts",
+        "services/api/src/database/operation.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/catalog.test.ts",
+          "name": "DB unavailable yields 503 with no details; liveness stays alive"
+        }
+      ],
+      "gaps": "Không thay readiness/K8s deployment thật",
+      "operations": [
+        "liveness",
+        "readiness"
+      ],
+      "sources": [
+        "QA-057"
+      ]
+    },
+    {
+      "id": "JOB-AC-01",
+      "requirement": "FR-JOB-001; P0-2",
+      "qa": [
+        "QA-017",
+        "QA-083"
+      ],
+      "description": "Tạo việc đủ ba nơi phục vụ, chuẩn Job; cửa hàng dùng địa chỉ công khai do server đọc; chặn phone chưa xác minh, owner tự thuê, sai vùng/schema/ngày",
+      "code": [
+        "services/api/src/modules/jobs/jobs.service.ts",
+        "services/api/src/modules/jobs/jobs.access.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/jobs-chat.test.ts",
+          "name": "all three modes, public profile contract, phone guard, self hire, current schema and geographic eligibility"
+        }
+      ],
+      "unproven": "Chưa đủ tự thuê mọi thành viên doanh nghiệp, tập nhiều kỹ năng, mọi boundary địa lý/lịch; không suy ra toàn QA-017 đạt.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chưa đủ tự thuê mọi thành viên doanh nghiệp, tập nhiều kỹ năng, mọi boundary địa lý/lịch; không suy ra toàn QA-017 đạt.",
+      "sources": [
+        "QA-017",
+        "QA-083"
+      ]
+    },
+    {
+      "id": "JOB-AC-02",
+      "requirement": "FR-JOB-002; P0-2",
+      "qa": [
+        "QA-018",
+        "QA-083",
+        "QA-084"
+      ],
+      "description": "Tạo và nhận retry cùng key không trùng; khác body 409; nhận ngay bắt buộc ETA và phone verified",
+      "code": [
+        "services/api/src/modules/jobs/jobs.service.ts",
+        "services/api/src/modules/jobs/jobs.access.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/jobs-chat.test.ts",
+          "name": "create and accept replay exactly once, stale/concurrent writes conflict, ETA persists and agreed costs retain accepted state"
+        }
+      ],
+      "unproven": "Không chạy race accept-vs-withdraw đúng vector QA-018; test race thực là hai lần đổi lịch.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Không chạy race accept-vs-withdraw đúng vector QA-018; test race thực là hai lần đổi lịch.",
+      "sources": [
+        "QA-018",
+        "QA-083",
+        "QA-084"
+      ],
+      "operations": [
+        "getJob"
+      ]
+    },
+    {
+      "id": "JOB-AC-03",
+      "requirement": "FR-JOB-003; FR-JOB-004; FR-JOB-005; P0-2",
+      "qa": [
+        "QA-019",
+        "QA-020",
+        "QA-084"
+      ],
+      "description": "Hai sửa cùng version có một thắng; tăng schedule_version và một lịch sử; stop có phí giữ accepted, không phí stopped",
+      "code": [
+        "services/api/src/modules/jobs/jobs.service.ts",
+        "services/api/src/modules/jobs/jobs.access.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/jobs-chat.test.ts",
+          "name": "create and accept replay exactly once, stale/concurrent writes conflict, ETA persists and agreed costs retain accepted state"
+        }
+      ],
+      "unproven": "Chưa có worker nhắc 24h/1h, test cho thời gian trôi không tự đóng; không đóng QA-019.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chưa có worker nhắc 24h/1h, test cho thời gian trôi không tự đóng; không đóng QA-019.",
+      "sources": [
+        "QA-019",
+        "QA-020",
+        "QA-084"
+      ]
+    },
+    {
+      "id": "JOB-AC-04",
+      "requirement": "FR-JOB-002; P0-2",
+      "qa": [
+        "QA-018",
+        "QA-084"
+      ],
+      "description": "Hẹn trước nhận không cần ETA; từ chối/rút và cursor ràng buộc actor/phạm vi; replay bị chặn sau thu hồi grant",
+      "code": [
+        "services/api/src/modules/jobs/jobs.service.ts",
+        "services/api/src/modules/jobs/jobs.access.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/jobs-chat.test.ts",
+          "name": "scheduled jobs, decline and withdraw, bound pagination, revoked grant invalidates cached acceptance"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-018",
+        "QA-084"
+      ],
+      "operations": [
+        "listJobs",
+        "declineJob",
+        "withdrawJob"
+      ]
+    },
+    {
+      "id": "ORG-AC-01",
+      "requirement": "FR-ORG-001; FR-CHAT-004; FR-ORG-003; FR-ORG-006; FR-CHAT-004; P0-2",
+      "qa": [
+        "QA-014",
+        "QA-015",
+        "QA-022",
+        "QA-084"
+      ],
+      "description": "Phân công cấp quyền đúng việc; quản lý không đọc phòng riêng; đổi người mất quyền việc nhưng còn phòng riêng cũ",
+      "code": [
+        "services/api/src/modules/jobs/jobs.service.ts",
+        "services/api/src/modules/jobs/jobs.access.ts",
+        "services/api/src/modules/chat/chat.service.ts",
+        "services/api/src/modules/chat/chat.store.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/jobs-chat.test.ts",
+          "name": "assignment gives worker only own job and direct chat; reassignment preserves history but removes job access"
+        }
+      ],
+      "unproven": "Chưa test invoice/settle của người cũ đang mở tab, room reuse khi thuê lại hoặc tin assignment exactly-once; chưa mời/nhận/quản trị đội ngũ đầy đủ.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chưa test invoice/settle của người cũ đang mở tab, room reuse khi thuê lại hoặc tin assignment exactly-once; chưa mời/nhận/quản trị đội ngũ đầy đủ.",
+      "sources": [
+        "QA-014",
+        "QA-015",
+        "QA-022",
+        "QA-084"
+      ],
+      "operations": [
+        "listJobs",
+        "getJob",
+        "listConversations"
+      ]
+    },
+    {
+      "id": "CHAT-AC-01",
+      "requirement": "FR-CHAT-005; P0-2",
+      "qa": [
+        "QA-023",
+        "QA-085"
+      ],
+      "description": "Tin retry theo cả request key và client_message_id chỉ một tin; khác nội dung hoặc room xung đột; sequence liên tục",
+      "code": [
+        "services/api/src/modules/chat/chat.service.ts",
+        "services/api/src/modules/chat/chat.store.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/jobs-chat.test.ts",
+          "name": "chat sequences, dedupe, recovery pages, monotonic reads, cross-room/client mismatch and outsider denial"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-023",
+        "QA-085"
+      ]
+    },
+    {
+      "id": "CHAT-AC-02",
+      "requirement": "FR-CHAT-004; FR-CHAT-005; P0-2",
+      "qa": [
+        "QA-022",
+        "QA-023",
+        "QA-085"
+      ],
+      "description": "Khôi phục tin sau sequence với pagination; cursor khác mốc 400; read watermark không lùi; outsider 404",
+      "code": [
+        "services/api/src/modules/chat/chat.service.ts",
+        "services/api/src/modules/chat/chat.store.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/jobs-chat.test.ts",
+          "name": "chat sequences, dedupe, recovery pages, monotonic reads, cross-room/client mismatch and outsider denial"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-022",
+        "QA-023",
+        "QA-085"
+      ],
+      "operations": [
+        "listConversations",
+        "readConversation"
+      ]
+    },
+    {
+      "id": "CHAT-AC-03",
+      "requirement": "FR-CHAT-005; P0-2",
+      "qa": [
+        "QA-023",
+        "QA-085"
+      ],
+      "description": "Lỗi outbox rollback cả tin/sequence; cùng request có thể phục hồi sau sửa lỗi",
+      "code": [
+        "services/api/src/modules/chat/chat.service.ts",
+        "services/api/src/modules/chat/chat.store.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/jobs-chat.test.ts",
+          "name": "outbox failure rolls back message and sequence; same request can recover"
+        }
+      ],
+      "unproven": "Không phải crash process/worker hoặc WebSocket delivery.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Không phải crash process/worker hoặc WebSocket delivery.",
+      "sources": [
+        "QA-023",
+        "QA-085"
+      ]
+    },
+    {
+      "id": "JOB-AC-05",
+      "requirement": "P0-2",
+      "qa": [
+        "QA-083",
+        "QA-085"
+      ],
+      "description": "Client kiểm biên Job/Conversation/Message, auth, version/key, encode cursor và read ACK",
+      "code": [
+        "apps/mobile/src/features/jobs/api/jobs-api.ts",
+        "apps/mobile/src/features/chat/api/chat-api.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/api/work-api.test.ts",
+          "name": "job and chat response boundaries reject corrupt state, location, sequence and actor fields"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/api/work-api.test.ts",
+          "name": "job API authenticates, encodes pagination and retains idempotency/version on actions"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/api/work-api.test.ts",
+          "name": "chat API sends client message ID and read watermark; rejects mismatched read ACK"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-083",
+        "QA-085"
+      ],
+      "operations": [
+        "listMembers"
+      ]
+    },
+    {
+      "id": "JOB-AC-06",
+      "requirement": "P0-2",
+      "qa": [
+        "QA-083",
+        "QA-084"
+      ],
+      "description": "Retry mơ hồ giữ request/key; xung đột đã biết mở sửa; ngày lịch Việt Nam không tự cuộn ngày sai",
+      "code": [
+        "apps/mobile/src/features/jobs/state/mutation.ts",
+        "apps/mobile/src/features/jobs/state/appointment.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/state/mutation.test.ts",
+          "name": "uncertain retry preserves original request and key; known conflict permits a new draft"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/state/mutation.test.ts",
+          "name": "Vietnam appointment validates calendar instead of rolling dates"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-083",
+        "QA-084"
+      ]
+    },
+    {
+      "id": "JOB-AC-07",
+      "requirement": "P0-2",
+      "qa": [
+        "QA-083",
+        "QA-084"
+      ],
+      "description": "Danh sách chuyển scope, phân trang, lỗi/retry và mở việc/chat; mất quyền che dữ liệu",
+      "code": [
+        "apps/mobile/src/features/jobs/screens/JobDetailScreen.tsx",
+        "apps/mobile/src/features/jobs/state/mutation.ts",
+        "apps/mobile/src/features/jobs/screens/JobsScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "job list switches scope, paginates, recovers an error and opens details and related chat"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "profile load retry and revoked job permission hide inaccessible data"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-083",
+        "QA-084"
+      ]
+    },
+    {
+      "id": "JOB-AC-08",
+      "requirement": "P0-2",
+      "qa": [
+        "QA-084"
+      ],
+      "description": "Xung đột giữ lý do, tải version mới; lỗi mạng retry đúng key/version",
+      "code": [
+        "apps/mobile/src/features/jobs/screens/JobDetailScreen.tsx",
+        "apps/mobile/src/features/jobs/state/mutation.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "conflict preserves reason, reloads version, and uncertain retry retains its mutation key"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-084"
+      ]
+    },
+    {
+      "id": "CHAT-AC-04",
+      "requirement": "FR-CHAT-005; P0-2",
+      "qa": [
+        "QA-023",
+        "QA-085"
+      ],
+      "description": "Màn chat ghép không trùng, đánh dấu đọc, retry một lần gửi và xóa dữ liệu khi mất quyền; foreground lấy sau watermark",
+      "code": [
+        "apps/mobile/src/features/chat/screens/ConversationScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "chat merges pages, reads watermark, retries exactly one send and clears data on revoked access"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "foreground refresh waits for account verification and fetches after the read watermark"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-023",
+        "QA-085"
+      ]
+    },
+    {
+      "id": "JOB-AC-09",
+      "requirement": "FR-JOB-001; FR-JOB-002; FR-JOB-005; FR-CHAT-001; FR-CHAT-006; FR-CHAT-005; P0-2",
+      "qa": [
+        "QA-017",
+        "QA-018",
+        "QA-020",
+        "QA-021",
+        "QA-023",
+        "QA-083",
+        "QA-084",
+        "QA-085"
+      ],
+      "description": "Web hai tài khoản: chat trước thuê, ba mode, retry mất response, nhận ETA, đổi lịch/dừng và DB không trùng",
+      "code": [
+        "services/api/src/modules/jobs/jobs.service.ts",
+        "services/api/src/modules/jobs/jobs.access.ts",
+        "services/api/src/modules/chat/chat.service.ts",
+        "services/api/src/modules/chat/chat.store.ts",
+        "apps/mobile/src/features/jobs/screens/JobDetailScreen.tsx",
+        "apps/mobile/src/features/jobs/state/mutation.ts"
+      ],
+      "tests": [
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/jobs-chat.spec.mjs",
+          "name": "two accounts request all service modes, accept ETA, retry safely, chat, reschedule and stop"
+        }
+      ],
+      "unproven": "Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket.",
+      "sources": [
+        "QA-017",
+        "QA-018",
+        "QA-020",
+        "QA-021",
+        "QA-023",
+        "QA-083",
+        "QA-084",
+        "QA-085"
+      ]
+    },
+    {
+      "id": "INV-AC-01",
+      "requirement": "FR-INV-001; FR-INV-003; FR-INV-004; P0-3",
+      "qa": [
+        "QA-026",
+        "QA-028",
+        "QA-086"
+      ],
+      "description": "Draft ban đầu riêng tư; chỉ thợ được giao gửi; sent version/ảnh bất biến ở DB; outsider không đọc",
+      "code": [
+        "services/api/src/modules/invoices/invoices.service.ts",
+        "services/api/src/modules/invoices/ledger.ts",
+        "services/api/migrations/008_invoices_ledger.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/invoices.test.ts",
+          "name": "invoice version, worker ACL, immutable sent data, settlement first and two payment marks"
+        }
+      ],
+      "unproven": "Thợ trong test là solo owner, chưa toàn vector công ty hai thợ QA-016; pending/foreign result assets chưa có assert trực tiếp trong test này.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Thợ trong test là solo owner, chưa toàn vector công ty hai thợ QA-016; pending/foreign result assets chưa có assert trực tiếp trong test này.",
+      "sources": [
+        "QA-026",
+        "QA-028",
+        "QA-086"
+      ]
+    },
+    {
+      "id": "INV-AC-02",
+      "requirement": "FR-FEE-001; FR-POINT-003; FR-INV-006; FR-INV-007; Q01; P0-3",
+      "qa": [
+        "QA-029",
+        "QA-035",
+        "QA-036",
+        "QA-088"
+      ],
+      "description": "Settlement retry đồng thời đúng một bộ tiền; tiền và point cân bằng riêng; khóa chặn stop; hai dấu độc lập",
+      "code": [
+        "services/api/src/modules/invoices/invoices.service.ts",
+        "services/api/src/modules/invoices/ledger.ts",
+        "services/api/migrations/008_invoices_ledger.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/invoices.test.ts",
+          "name": "invoice version, worker ACL, immutable sent data, settlement first and two payment marks"
+        }
+      ],
+      "unproven": "Chưa complete-on-behalf hoặc process crash; job.state chuyển completed ngay settlement trong code/test, eligibility vẫn chờ hai dấu.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chưa complete-on-behalf hoặc process crash; job.state chuyển completed ngay settlement trong code/test, eligibility vẫn chờ hai dấu.",
+      "sources": [
+        "QA-029",
+        "QA-035",
+        "QA-036",
+        "QA-088"
+      ],
+      "operations": [
+        "getJob",
+        "getWallet",
+        "getPoints"
+      ]
+    },
+    {
+      "id": "INV-AC-03",
+      "requirement": "FR-INV-001; FR-INV-003; FR-INV-004",
+      "qa": [
+        "QA-026",
+        "QA-028"
+      ],
+      "description": "Yêu cầu sửa và confirm race một thắng; revision không giữ tiền; gửi thiếu ảnh bị chặn",
+      "code": [
+        "services/api/src/modules/invoices/invoices.service.ts",
+        "services/api/src/modules/invoices/ledger.ts",
+        "services/api/migrations/008_invoices_ledger.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/invoices.test.ts",
+          "name": "revision and confirmation race has one winner, no holds on revision; stale versions fail"
+        }
+      ],
+      "unproven": "Nhánh revision dùng if nên assertions no-hold/missing-image chỉ chạy khi revision thắng, không deterministic phủ cả hai outcome; cần test độc lập nếu muốn chứng nhận riêng các nhánh.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Nhánh revision dùng if nên assertions no-hold/missing-image chỉ chạy khi revision thắng, không deterministic phủ cả hai outcome; cần test độc lập nếu muốn chứng nhận riêng các nhánh.",
+      "sources": [
+        "QA-026",
+        "QA-028"
+      ],
+      "operations": [
+        "requestInvoiceRevision"
+      ]
+    },
+    {
+      "id": "INV-AC-04",
+      "requirement": "FR-POINT-001; FR-WAL-003; FR-INV-008; Q01; P0-3",
+      "qa": [
+        "QA-030",
+        "QA-037",
+        "QA-088"
+      ],
+      "description": "Không đủ phí/point trả mã đúng, không lộ balance và không giữ tiền; hóa đơn 0 không có entries 0",
+      "code": [
+        "services/api/src/modules/invoices/invoices.service.ts",
+        "services/api/src/modules/invoices/ledger.ts",
+        "services/api/migrations/008_invoices_ledger.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/invoices.test.ts",
+          "name": "insufficient funds and points disclose no partner balance; zero invoice posts no zero entries"
+        }
+      ],
+      "unproven": "Vector QA-030 cụ thể ví -90000/phí30000/point100000 chưa thử; QA-031 biên credit và mọi holds chưa kiểm.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Vector QA-030 cụ thể ví -90000/phí30000/point100000 chưa thử; QA-031 biên credit và mọi holds chưa kiểm.",
+      "sources": [
+        "QA-030",
+        "QA-037",
+        "QA-088"
+      ]
+    },
+    {
+      "id": "INV-AC-05",
+      "requirement": "FR-POINT-001; FR-INV-006; P0-3",
+      "qa": [
+        "QA-032",
+        "QA-035",
+        "QA-088"
+      ],
+      "description": "Hai hóa đơn tranh point một thắng; outbox lỗi rollback settlement, giữ hold để retry đúng key",
+      "code": [
+        "services/api/src/modules/invoices/invoices.service.ts",
+        "services/api/src/modules/invoices/ledger.ts",
+        "services/api/migrations/008_invoices_ledger.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/invoices.test.ts",
+          "name": "two invoices compete for the same point balance; failure rolls back holds and settlement retry"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-032",
+        "QA-035",
+        "QA-088"
+      ],
+      "operations": [
+        "getWallet",
+        "getPoints"
+      ]
+    },
+    {
+      "id": "INV-AC-06",
+      "requirement": "FR-WAL-001; P0-3",
+      "qa": [
+        "QA-043",
+        "QA-088"
+      ],
+      "description": "Lịch sử point phân trang, cursor actor khác 400, khách không đọc ledger partner",
+      "code": [
+        "services/api/src/modules/invoices/invoices.service.ts",
+        "services/api/src/modules/invoices/ledger.ts",
+        "services/api/migrations/008_invoices_ledger.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/invoices.test.ts",
+          "name": "two invoices compete for the same point balance; failure rolls back holds and settlement retry"
+        }
+      ],
+      "unproven": "Chưa assert backend list partner ledger thành công/phân trang và wallet ACL đầy đủ; web có positive ledger partner.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chưa assert backend list partner ledger thành công/phân trang và wallet ACL đầy đủ; web có positive ledger partner.",
+      "sources": [
+        "QA-043",
+        "QA-088"
+      ],
+      "operations": [
+        "getPointLedger"
+      ]
+    },
+    {
+      "id": "INV-AC-07",
+      "requirement": "FR-INV-003; FR-INV-004; FR-WAL-001; P0-3",
+      "qa": [
+        "QA-028",
+        "QA-043",
+        "QA-086"
+      ],
+      "description": "Nháp sửa không lộ khách; khách thấy bản gửi trước/lý do; không chuyển ảnh sent; sổ cộng dựng lại số dư, cấm mở lại hold/late posting",
+      "code": [
+        "services/api/src/modules/invoices/invoices.service.ts",
+        "services/api/src/modules/invoices/ledger.ts",
+        "services/api/migrations/008_invoices_ledger.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/invoices.test.ts",
+          "name": "revision drafts stay private; sent assets cannot be moved; journal balances rebuild projection"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-028",
+        "QA-043",
+        "QA-086"
+      ],
+      "operations": [
+        "requestInvoiceRevision"
+      ]
+    },
+    {
+      "id": "INV-AC-08",
+      "requirement": "FR-JOB-005; P0-3",
+      "qa": [
+        "QA-020",
+        "QA-088"
+      ],
+      "description": "Stop có phí tiếp tục hóa đơn; stopped không phí không confirm/revise và không tạo hold",
+      "code": [
+        "services/api/src/modules/jobs/jobs.service.ts",
+        "services/api/src/modules/jobs/jobs.access.ts",
+        "services/api/src/modules/invoices/invoices.service.ts",
+        "services/api/src/modules/invoices/ledger.ts",
+        "services/api/migrations/008_invoices_ledger.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/invoices.test.ts",
+          "name": "stop with agreed charges continues invoice; no-charge stopped job cannot confirm or reserve money"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-020",
+        "QA-088"
+      ],
+      "operations": [
+        "requestInvoiceRevision"
+      ]
+    },
+    {
+      "id": "MONEY-AC-01",
+      "requirement": "FR-INV-002; FR-FEE-001; FR-POINT-003; FR-INV-008; Q01",
+      "qa": [
+        "QA-027",
+        "QA-029",
+        "QA-037"
+      ],
+      "description": "Công thức phí/tiền trả/thưởng đúng vector 100000/50000/50000 và số nguyên vượt Number; chặn âm/point vượt tổng",
+      "code": [
+        "services/api/src/modules/invoices/money.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/invoice-money.test.ts",
+          "name": "approved invoice formula vectors and integers beyond Number precision"
+        }
+      ],
+      "unproven": "Unit không chứng minh đủ HTTP/DB âm/lẻ/NaN/Infinity của QA-027; toàn point test formula chứ chưa đủ settlement hai dấu.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Unit không chứng minh đủ HTTP/DB âm/lẻ/NaN/Infinity của QA-027; toàn point test formula chứ chưa đủ settlement hai dấu.",
+      "sources": [
+        "QA-027",
+        "QA-029",
+        "QA-037"
+      ]
+    },
+    {
+      "id": "ASSET-AC-01",
+      "requirement": "FR-INV-001; P0-3",
+      "qa": [
+        "QA-052",
+        "QA-087"
+      ],
+      "description": "Upload PNG kiểm bytes, grant replay, ảnh giả bị chặn; ảnh thật tải lại đúng pixel; người khác không đọc; URL giả/session logout 404",
+      "code": [
+        "services/api/src/modules/assets/assets.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/assets.test.ts",
+          "name": "local image upload verifies bytes, rejects fake images, checks ACL and signed URL session revocation"
+        }
+      ],
+      "unproven": "Chưa assertions JPEG/WebP, strip metadata, quá10MiB/25Mpx, quota, revoked assignment, expiry; chưa production scan/provider.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chưa assertions JPEG/WebP, strip metadata, quá10MiB/25Mpx, quota, revoked assignment, expiry; chưa production scan/provider.",
+      "sources": [
+        "QA-052",
+        "QA-087"
+      ],
+      "operations": [
+        "createUpload",
+        "getAsset"
+      ]
+    },
+    {
+      "id": "INV-AC-09",
+      "requirement": "FR-INV-002; P0-3",
+      "qa": [
+        "QA-027",
+        "QA-086",
+        "QA-088"
+      ],
+      "description": "Client invoice kiểm tiền/version/trạng thái/private shape; encode ID và giữ key, envelope chỉ worker",
+      "code": [
+        "apps/mobile/src/features/invoices/api/invoices-api.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/api/invoices-api.test.ts",
+          "name": "invoice response rejects invalid money, version, flags and private schema corruption"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/api/invoices-api.test.ts",
+          "name": "invoice methods encode resources, preserve operation keys and validate settlement envelope"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-027",
+        "QA-086",
+        "QA-088"
+      ]
+    },
+    {
+      "id": "INV-AC-10",
+      "requirement": "FR-WAL-001; P0-3",
+      "qa": [
+        "QA-043",
+        "QA-086"
+      ],
+      "description": "Client ví/point/ledger kiểm số có dấu/ngày/cursor và asset status",
+      "code": [
+        "apps/mobile/src/features/invoices/api/invoices-api.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/api/invoices-api.test.ts",
+          "name": "wallet, point and ledger boundaries validate signed balances, dates and page cursors"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-043",
+        "QA-086"
+      ],
+      "operations": [
+        "getAsset"
+      ]
+    },
+    {
+      "id": "ASSET-AC-02",
+      "requirement": "P0-3",
+      "qa": [
+        "QA-087"
+      ],
+      "description": "Client retry asset ready không upload lại; pending cùng key; URL grant hết hạn không upload",
+      "code": [
+        "apps/mobile/src/features/invoices/api/invoices-api.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/api/invoices-api.test.ts",
+          "name": "upload retry discovers ready asset without re-uploading; pending upload completes under same key"
+        }
+      ],
+      "unproven": "Client fixture; không bằng chứng expiry server hoặc picker native.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Client fixture; không bằng chứng expiry server hoặc picker native.",
+      "sources": [
+        "QA-087"
+      ]
+    },
+    {
+      "id": "INV-AC-11",
+      "requirement": "FR-INV-003; FR-INV-004; FR-INV-007; Q01; P0-3",
+      "qa": [
+        "QA-028",
+        "QA-036",
+        "QA-088"
+      ],
+      "description": "Khách không dùng quá point/tổng, mất confirm giữ nguyên operation; báo thanh toán sau locked",
+      "code": [
+        "apps/mobile/src/features/invoices/screens/InvoiceScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+          "name": "customer validates point limit, retains a lost confirmation operation, then reports payment"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-028",
+        "QA-036",
+        "QA-088"
+      ]
+    },
+    {
+      "id": "INV-AC-12",
+      "requirement": "FR-INV-003; FR-INV-004; P0-3",
+      "qa": [
+        "QA-028",
+        "QA-086"
+      ],
+      "description": "Yêu cầu sửa cần lý do đã trim; sent version mới reset lựa chọn point về 0",
+      "code": [
+        "apps/mobile/src/features/invoices/screens/InvoiceScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+          "name": "customer revision trims reason and new sent version resets point selection"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-028",
+        "QA-086"
+      ]
+    },
+    {
+      "id": "INV-AC-13",
+      "requirement": "FR-INV-001; P0-3",
+      "qa": [
+        "QA-026",
+        "QA-088"
+      ],
+      "description": "Thợ upload ready, giữ nháp đã lưu khi send mất response; checkbox nhận đủ mới settle",
+      "code": [
+        "apps/mobile/src/features/invoices/screens/InvoiceScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+          "name": "worker uploads ready image, keeps saved draft through lost send and confirms receipt only after checkbox"
+        }
+      ],
+      "unproven": "Mock image picker; không native file picker thật.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Mock image picker; không native file picker thật.",
+      "sources": [
+        "QA-026",
+        "QA-088"
+      ]
+    },
+    {
+      "id": "INV-AC-14",
+      "requirement": "FR-INV-008; Q01; FR-WAL-001; P0-3",
+      "qa": [
+        "QA-037",
+        "QA-043",
+        "QA-086",
+        "QA-088"
+      ],
+      "description": "Hóa đơn 0 và hai dấu hiện hoàn tất; lịch sử ghép không trùng; mất quyền xóa private, worker không wallet vẫn draft được",
+      "code": [
+        "apps/mobile/src/features/invoices/screens/InvoiceScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+          "name": "zero invoice and two marks show completion; history pagination deduplicates entries"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+          "name": "missing invoice waits; permission loss removes private content; non-wallet worker can still draft"
+        }
+      ],
+      "unproven": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT.",
+      "sources": [
+        "QA-037",
+        "QA-043",
+        "QA-086",
+        "QA-088"
+      ]
+    },
+    {
+      "id": "INV-AC-15",
+      "requirement": "FR-INV-001; FR-INV-003; FR-INV-004; FR-FEE-001; FR-POINT-003; FR-INV-007; Q01; FR-WAL-001; P0-3",
+      "qa": [
+        "QA-026",
+        "QA-028",
+        "QA-029",
+        "QA-036",
+        "QA-043",
+        "QA-086",
+        "QA-087",
+        "QA-088"
+      ],
+      "description": "Web hai tài khoản chọn ảnh, revision, dùng point, mất confirm/retry, thợ nhận trước khách và một settlement đúng số dư",
+      "code": [
+        "services/api/src/modules/invoices/invoices.service.ts",
+        "services/api/src/modules/invoices/ledger.ts",
+        "services/api/migrations/008_invoices_ledger.sql",
+        "services/api/src/modules/assets/assets.service.ts",
+        "apps/mobile/src/features/invoices/screens/InvoiceScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/invoices.spec.mjs",
+          "name": "invoice: photo, revision, points, lost confirm response and two payment marks"
+        }
+      ],
+      "unproven": "Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật.",
+      "sources": [
+        "QA-026",
+        "QA-028",
+        "QA-029",
+        "QA-036",
+        "QA-043",
+        "QA-086",
+        "QA-087",
+        "QA-088"
+      ],
+      "operations": [
+        "getWallet",
+        "getPoints"
+      ]
+    },
+    {
+      "id": "MAP-02-AC-07",
+      "requirement": "MAP-02",
+      "sources": [
+        "QA-080",
+        "QA-081"
+      ],
+      "code": [
+        "services/api/src/modules/search/search.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "equal-distance pins and paginated partners use created_at then id deterministically"
+        }
+      ],
+      "description": "Vị trí ghim và phân trang partner đồng khoảng cách được sắp created_at rồi id.",
+      "gaps": "Dữ liệu ổn định; không chứng minh mọi mutation đồng thời khi phân trang."
+    }
+  ]
+}

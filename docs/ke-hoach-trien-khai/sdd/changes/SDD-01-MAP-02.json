@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "SDD-01-MAP-02",
+  "type": "implementation",
+  "objective": "Gói MAP-02 có 7 tiêu chí, gồm thứ tự ghim đồng khoảng cách và phân trang thật; không thay nghiệp vụ.",
+  "decision": "Chủ dự án duyệt thiết kế 13/10/2026 và yêu cầu triển khai bộ kiểm SDD trong hội thoại hiện tại.",
+  "baseCommit": "8c25c32b30ae32c4e29153f2eb34c8d08569b006",
+  "sources": [
+    "map02",
+    "ux-map02",
+    "QA-080",
+    "QA-081",
+    "rtm-search",
+    "api-search"
+  ],
+  "criteria": [
+    "MAP-02-AC-01",
+    "MAP-02-AC-02",
+    "MAP-02-AC-03",
+    "MAP-02-AC-04",
+    "MAP-02-AC-05",
+    "MAP-02-AC-06",
+    "MAP-02-AC-07"
+  ],
+  "domains": [
+    "MAP-02"
+  ],
+  "scope": [
+    "apps/mobile/src/features/search/",
+    "apps/mobile/src/features/partners/api/",
+    "services/api/src/modules/search/",
+    "services/api/src/modules/partners/",
+    "services/api/test/integration/partners.test.ts",
+    "tests/e2e/web/search-map.spec.mjs"
+  ],
+  "fingerprintPaths": [
+    "apps/mobile/src/",
+    "apps/mobile/test/",
+    "apps/mobile/index.ts",
+    "apps/mobile/app.json",
+    "apps/mobile/package.json",
+    "apps/mobile/tsconfig.json",
+    "services/api/src/",
+    "services/api/test/",
+    "services/api/migrations/",
+    "services/api/package.json",
+    "services/api/tsconfig.json",
+    "tests/e2e/web/",
+    "scripts/build/",
+    "scripts/test/sdd-check.test.mjs",
+    "package.json",
+    "package-lock.json",
+    "infra/compose.yaml",
+    ".nvmrc",
+    "tsconfig.base.json",
+    "services/api/seeds/",
+    "apps/mobile/assets/",
+    "apps/mobile/plugins/"
+  ],
+  "outOfScope": [
+    "Không chứng nhận mọi tổ hợp QA-080/081: dữ liệu thay đổi đồng thời khi phân trang chưa có ca riêng.",
+    "Native, live provider, UAT và độ giống giao diện không được chứng nhận bằng unit/web.",
+    "Gói tập trung MAP-02; kiểm toàn dự án và CI dùng SDD-PROJECT."
+  ]
+}

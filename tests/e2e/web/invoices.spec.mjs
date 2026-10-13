@@ -16,7 +16,7 @@ test('invoice: photo, revision, points, lost confirm response and two payment ma
  const signIn=async(tab,name)=>{await tab.goto(environment.webUrl);await tab.getByTestId('nav-account').click();await tab.getByTestId('auth-email').fill(name+'@example.test');await tab.getByTestId('auth-password').fill(password);await tab.getByTestId('auth-submit').click();await tab.getByTestId('jobs-open').click();};
  const context=await browser.newContext({viewport:{width:390,height:844}}),client=await context.newPage();
  const capture=async(tab,id,path)=>{await tab.setViewportSize({width:390,height:2000});await tab.getByTestId(id).screenshot({path});await tab.setViewportSize({width:390,height:844});};
- const directory='docs/ke-hoach-trien-khai/bao-cao/anh/B06-01';await mkdir(directory,{recursive:true});
+ const directory='test-results/web/report-screenshots/B06-01';await mkdir(directory,{recursive:true});
  try{
  await signIn(page,'DEMO-worker');await page.getByTestId('jobs-partner-'+partner).click();await page.getByTestId('job-open-'+job).click();await page.getByTestId('job-invoice').click();await expect(page.getByTestId('invoice-editor')).toBeVisible();
  const bytes=await sharp({create:{width:640,height:360,channels:3,background:'#dce9e5'}}).composite([{input:Buffer.from('<svg width="640" height="360"><text x="70" y="180" font-size="36" fill="#16233b">DEMO - Work result</text><text x="70" y="230" font-size="22" fill="#2457d6">Test image, not customer data</text></svg>')}]).png().toBuffer();

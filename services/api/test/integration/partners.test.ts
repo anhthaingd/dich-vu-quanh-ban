@@ -104,6 +104,29 @@ test('map pins expose only nearest active public location in radius, without dro
   assert.equal((await call(query())).body.items[0].map_location,null);
 });
 
+test('equal-distance pins and paginated partners use created_at then id deterministically',async()=>{
+  const a=await ready('Tie A'),b=await ready('Tie B'),c=await ready('Tie C');
+  await f.pool.query("UPDATE partners SET created_at='2020-01-02T00:00:00Z' WHERE id=ANY($1::uuid[])",[[a.id,b.id]]);
+  await f.pool.query("UPDATE partners SET created_at='2020-01-01T00:00:00Z' WHERE id=$1",[c.id]);
+  for(const [id,text,date] of [
+    ['00000000-0000-4000-8000-000000000001','Later date','2020-01-02'],
+    ['00000000-0000-4000-8000-000000000002','Earlier date and ID','2020-01-01'],
+    ['00000000-0000-4000-8000-000000000003','Earlier date but later ID','2020-01-01'],
+  ]) await f.pool.query('INSERT INTO partner_locations(id,partner_id,address_text,point,public,created_at) VALUES($1,$2,$3,ST_SetSRID(ST_MakePoint($4,$5),4326)::geography,true,$6)',[id,c.id,text,point.longitude,point.latitude,date]);
+  const ids:string[]=[];let cursor:string|null=null;
+  for(let page=0;page<3;page++) {
+    const response=await call(query('&limit=1'+(cursor?'&cursor='+encodeURIComponent(cursor):'')),'GET',undefined,null);
+    assert.equal(response.status,200);assert.equal(response.body.items.length,1);
+    const item=response.body.items[0];ids.push(item.id);assert.equal(item.distance_m,0);
+    if(page===0)assert.equal(item.map_location.text,'Earlier date and ID');
+    cursor=response.body.next_cursor;
+    assert.equal(cursor===null,page===2);
+  }
+  assert.deepEqual(ids,[c.id,...[a.id,b.id].sort()]);
+  await f.pool.query("UPDATE partner_locations SET created_at='2019-01-01T00:00:00Z' WHERE id='00000000-0000-4000-8000-000000000003'");
+  assert.equal((await call(query('&limit=1'))).body.items[0].map_location.text,'Earlier date but later ID');
+});
+
 test("verified account creates draft + owner + empty wallet atomically; Me derives verification and memberships", async () => {
   const key = randomUUID(),
     input = {

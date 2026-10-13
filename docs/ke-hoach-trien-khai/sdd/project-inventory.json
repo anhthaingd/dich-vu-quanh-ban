@@ -1,0 +1,5285 @@
+{
+  "version": 1,
+  "meaning": "Inventory đầy đủ không đồng nghĩa kiểm thử nghiệp vụ đầy đủ. Partial/unmapped là giới hạn đang công khai, không được gọi là QA đã đạt.",
+  "requiredSteps": [
+    "lint",
+    "typecheck",
+    "tooling",
+    "mobile",
+    "mobile-coverage",
+    "api",
+    "api-coverage",
+    "build",
+    "web",
+    "load",
+    "prototype",
+    "storybook"
+  ],
+  "files": [
+    {
+      "path": ".editorconfig",
+      "kind": "tooling"
+    },
+    {
+      "path": ".github/workflows/quality.yml",
+      "kind": "infra"
+    },
+    {
+      "path": ".gitignore",
+      "kind": "tooling"
+    },
+    {
+      "path": ".npmrc",
+      "kind": "tooling"
+    },
+    {
+      "path": ".nvmrc",
+      "kind": "tooling"
+    },
+    {
+      "path": "AGENTS.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "README.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "apps/admin/src/app/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/admin/src/components/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/admin/src/features/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/admin/src/lib/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/.env.example",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/app.json",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/fonts/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/assets/fonts/BeVietnamPro-Bold.ttf",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/fonts/BeVietnamPro-Regular.ttf",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/fonts/BeVietnamPro-SemiBold.ttf",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/fonts/OFL.txt",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/fonts/README.md",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/AirVent.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/ArrowUpRight.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Bell.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Briefcase.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Car.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/ChevronDown.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/LICENSE",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Laptop.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/LayoutGrid.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Map.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/MapPin.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/MessageCircle.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Navigation.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/PawPrint.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Router.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Scissors.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Search.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/SlidersHorizontal.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/SprayCan.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Truck.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/WashingMachine.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/Wrench.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/images/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/index.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/package.json",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/plugins/with-debug-http.cjs",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/app/App.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/app/App.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/app/layout/ProductShell.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/app/layout/ProductShell.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/app/navigation/AppNavigator.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/app/navigation/account-return.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/app/navigation/routes.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/app/providers/AppProviders.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/app/providers/AuthProvider.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/app/providers/LocaleProvider.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/AppText.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/Button.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/Card.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/Feedback.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/Icon.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/Input.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/Screen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/controls.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/api/accounts-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/api/accounts-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/components/AccountPage.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/components/AccountPage.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/components/CollectionStatus.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/components/LanguageSettings.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/components/LanguageSettings.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/screens/AccountManagement.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/screens/AddressesScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/screens/ProfileScreen.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/screens/ProfileScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/screens/SessionsScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/state/account-collection.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/state/account-collection.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/state/profile-editor.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/state/profile-editor.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/state/session-revocation.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/accounts/state/session-revocation.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/auth/api/auth-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/auth/api/auth-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/auth/models/auth.types.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/auth/screens/AccountScreen.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/auth/screens/AccountScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/auth/state/auth-session.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/auth/state/auth-session.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/auth/state/token-storage.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/auth/state/token-storage.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/catalog/api/catalog-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/catalog/api/catalog-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/catalog/models/catalog.types.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/catalog/screens/CatalogScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/chat/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/chat/api/chat-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/chat/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/chat/screens/ConversationScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/chat/screens/ConversationsScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/invoices/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/invoices/api/invoices-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/invoices/api/invoices-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/invoices/format-amount.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/invoices/format-amount.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/invoices/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/invoices/screens/InvoiceScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/api/jobs-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/api/work-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/components/JobFeedback.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/screens/JobCreateScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/screens/JobDetailScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/screens/JobsScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/state/appointment.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/state/mutation.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/state/mutation.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/state/session-ready.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/api/locations-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/location/api/locations-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/components/LocationAttribution.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/components/LocationField.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/location/components/LocationField.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/components/LocationMap.native.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/components/LocationMap.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/components/LocationMap.web.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/components/PublicLocation.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/components/map-css.d.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/components/map-model.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/state/location-draft.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/location/state/location-draft.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/organizations/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/api/partners-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/api/partners-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/components/PartnerFields.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/screens/PartnerEditorScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/screens/PartnerProfileScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/screens/Partners.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/screens/PartnersScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/state/partner-editor.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/state/partner-editor.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/points/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/search/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/ResultsMap.native.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/ResultsMap.native.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/ResultsMap.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/ResultsMap.web.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/SearchResultsMap.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/SearchResultsMap.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/ServiceFilter.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/results-map-model.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/results-map-model.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/search/screens/SearchScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/search/state/partner-search.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/search/state/partner-search.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/support/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/wallet/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/lib/http/api-error.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/http/request.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/lib/http/request.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/i18n/formatters.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/i18n/i18n.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/lib/i18n/index.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/i18n/locale-state.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/lib/i18n/locale-state.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/i18n/locale-storage.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/lib/i18n/locale-storage.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/i18n/messages/en.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/i18n/messages/ja.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/i18n/messages/vi.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/logging/logger.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/lib/logging/logger.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/storage/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/theme/tokens.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/test/helpers/auth.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/test/helpers/invoices.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/test/helpers/setup.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/test/helpers/work.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/tsconfig.json",
+      "kind": "product"
+    },
+    {
+      "path": "apps/ui",
+      "kind": "compatibility"
+    },
+    {
+      "path": "apps/web/src/app/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/web/src/components/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/web/src/features/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/web/src/lib/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "docs/UI-comparison-v0.1.zip",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/UI-comparison-v0.2.zip",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/design-audit-v0.21",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/handoff/CODEX-IMPLEMENTATION-PROMPT.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/huong-dan-mobile/01-chuan-bi-may.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/02-android.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/03-ios.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/04-chay-app.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/05-mcp.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/06-kiem-thu-log.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/07-ke-hoach-khung-app.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/08-xu-ly-loi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/README.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/huong-dan-mobile-v1.0.zip",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/huong-dan-mobile-v1.1.zip",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/huong-dan-mobile-v1.2.zip",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/huong-dan-mobile-v1.3.zip",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/implementation/ADR-001-foundation.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/implementation/dot-1.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/implementation/evidence/catalog-empty.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/implementation/evidence/catalog-error.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/implementation/evidence/catalog-root.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/implementation/evidence/catalog-skills.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/implementation/logging-testing.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/implementation/project-structure.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/01-checklist.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/02-quy-trinh-va-cau-truc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/03-thu-tu-trien-khai.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/README.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-01-nen-tang-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-05-khung-giao-dien.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-06-trang-chinh-theo-storybook.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-07-bo-kiem-sdd-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-08-sdd-toan-du-an.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-04-ho-so-ten-hien-thi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-04-phien-va-dia-chi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-ra-soat-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-thay-du-lieu-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-01-chon-dia-diem-va-ban-do.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-03-bo-nhap-toa-do.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B06-01-hoa-don-va-quyet-toan-test.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-01-nen-da-ngon-ngu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-04-danh-muc-da-ngon-ngu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/MAU-BAO-CAO.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-06/android-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-06/android-industry-icons.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-06/android-jobs-guest.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-06/android-location-picker.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-06/ios-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-06/ios-industry-icons-scrolled.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-06/ios-industry-icons-selected.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-06/ios-industry-icons.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-06/ios-service-picker.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-06/storybook-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-areas.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-create.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-list.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-locations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-paused.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-profile-edit.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-public.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-published.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-search-form.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-search-results.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-skills.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-areas.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-create.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-list.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-locations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-paused.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-profile-edit.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-public.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-published.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-search-form.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-search-results.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-skills.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-01/android-live-pin.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-01/ios-gps-unavailable.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-01/ios-live-pin.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-01/ios-live-suggestions.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-01/web-area-circle.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-01/web-gps-denied-test.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-01/web-live-pin.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-01/web-live-suggestions.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-01/web-saved-address-test.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-01/web-shop-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-02/android-map.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-02/android-profile.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-02/android-selected.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-02/ios-map.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-02/ios-profile.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-02/ios-selected.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-02/web-map.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-02/web-selected.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-03/android-search.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-03/ios-search.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/android-chat-received.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/android-chat-sent.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/android-job-accepted.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/ios-chat-received.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/ios-chat-sent.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/ios-job-accepted.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/web-chat.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/web-create.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/web-job.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/web-list.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-04/web-rooms.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-05/android-filtered-results.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-05/android-service-selected.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-05/ios-service-picker.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-05/ios-service-selected.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-05/web-filtered-results.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-05/web-selected-service.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B03-05/web-service-picker.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/android-invoice-editor.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/android-invoice-payment.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/android-invoice-received.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/ios-invoice-editor.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/ios-invoice-payment.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/ios-invoice-received.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/web-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/web-customer-review.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/web-editor.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/web-payment.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/web-worker-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B03-01-geoapify-30-dia-chi.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/B01-04-ho-so-ten-hien-thi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/I18N-04-dich-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/MAP-01-ban-do-mien-phi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/MAP-02-ban-do-ket-qua-tim-kiem.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P0-01-nguon-cung-va-tim-dich-vu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/SDD-01-quy-trinh-ai-bam-spec.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/ke-hoach-trien-khai-v1.0.zip",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/sdd/README.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/sdd/changes/SDD-01-MAP-02.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/sdd/changes/SDD-PROJECT.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/sdd/project-inventory.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/sdd/source-map.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/sdd/traceability.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/project-control/So-quan-ly-tai-lieu.xlsx",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/project-docs/01-danh-muc-ho-so.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/02-user-flow.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/03-screen-flow.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/04-sequence-diagrams.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture-source-v0.1.1.zip",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture-source-v0.1.zip",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture-v0.1.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture.html",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture/05-tong-quan-thiet-ke.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture/06-trang-thai.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture/07-phan-quyen.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture/08-kien-truc-ADR.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture/09-ERD-so-tai-chinh.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture/10-sequence-API.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture/11-quyet-dinh-va-kiem-chung.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture/README.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/architecture/architecture.json",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/flows.json",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/project-docs/project-docs.html",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/specs/2026-09-28-logging-testing-design.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/01-data-design.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/02-api-realtime.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/03-qa-plan.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/04-backlog.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/README.md",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/backlog.json",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/data-model.json",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/openapi.json",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/operations.json",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/qa-cases.csv",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/qa-cases.json",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/realtime.json",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/rtm.json",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/schema.sql",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/technical-design-v0.1.1.zip",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/technical-design-v0.1.zip",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/technical-design.html",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/ui-brainstorm",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/ui-comparison",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/ux-coverage-v0.12.html",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/ux-next-organization.md",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/ux-scope-current.md",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/wireframe-v0.1",
+      "kind": "compatibility"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "infra/ci/github-actions.yml",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/compose.yaml",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/observability/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "package-lock.json",
+      "kind": "tooling"
+    },
+    {
+      "path": "package.json",
+      "kind": "tooling"
+    },
+    {
+      "path": "packages/api-client/src/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "packages/contracts/src/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "packages/design-tokens/src/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "packages/domain/src/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "scripts/build/api.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/build/clean-api.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/dev/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "scripts/diagnostics/export.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/diagnostics/export.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/sdd/check.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/sdd/core.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/sdd/node-reporter.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/sdd/project.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/sdd/run.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/test/coverage-gate.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/coverage-gate.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/native-config.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/native-options.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/native-options.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/native.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/sdd-check.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/sdd-project.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/ui/export-native-icons.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "services/api/.env.example",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/001_catalog.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/002_accounts.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/003_catalog_translations.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/004_profile_idempotency.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/005_saved_addresses.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/006_partners.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/007_jobs_chat.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/008_invoices_ledger.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/package.json",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/seeds/catalog-sources.json",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/seeds/catalog.json",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/app.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/bootstrap.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/common/guards/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/common/http/cursor.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/common/http/http-exception.filter.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/common/http/request-context.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/config/environment.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/database/cli.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/database/database.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/database/demo-options.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/database/demo-partners.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/database/migrate.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/database/operation.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/database/seed.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/health/health.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/health/health.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/integrations/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/integrations/maps/geoapify.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/logging/events.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/logging/logger.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/logging/logging.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/logging/output.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/logging/sanitize.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/main.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/accounts/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/accounts/account-transaction.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/accounts/accounts.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/accounts/accounts.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/accounts/accounts.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/accounts/accounts.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/accounts/addresses.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/accounts/profile.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/accounts/sessions.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/assets/assets.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/assets/assets.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/assets/assets.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/auth/auth.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/auth/auth.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/auth/auth.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/auth/auth.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/auth/password.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/catalog/catalog.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/catalog/catalog.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/catalog/catalog.query.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/catalog/catalog.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/chat/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/chat/chat.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/chat/chat.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/chat/chat.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/chat/chat.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/chat/chat.store.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/invoices/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/invoices/invoices.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/invoices/invoices.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/invoices/invoices.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/invoices/invoices.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/invoices/ledger.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/invoices/money.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/jobs/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/jobs/jobs.access.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/jobs/jobs.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/jobs/jobs.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/jobs/jobs.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/jobs/jobs.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/jobs/members.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/locations/locations.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/locations/locations.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/locations/locations.limit.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/locations/locations.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/notifications/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/organizations/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/partners/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/partners/partners.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/partners/partners.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/partners/partners.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/partners/partners.read.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/partners/partners.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/points/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/search/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/search/search.query.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/search/search.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/support/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/wallet/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "services/api/test/helpers/database.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/helpers/logs.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/account-management.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/assets.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/auth.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/catalog.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/invoices.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/jobs-chat.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/lifecycle.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/locations.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/logging.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/partners.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/profile.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/catalog-config.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/catalog-seed.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/demo-options.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/invoice-money.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/locations.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/logging.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/output.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/tsconfig.json",
+      "kind": "product"
+    },
+    {
+      "path": "tests/e2e/native/accounts.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/auth.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/catalog.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/dismiss-password-prompt.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/i18n-layout.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/i18n.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/invoice-confirm.js",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/invoices.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/jobs.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/partners.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/profile.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/search-service.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/set-mode.js",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/shell.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/account-management.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/account-security.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/auth.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/catalog.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/failure-probe.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/fixtures.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/i18n.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/invoices.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/jobs-chat.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/location-helper.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/locations.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/partners.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/playwright.config.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/profile.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/search-map.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/search-service.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/shell.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/performance/catalog.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "kind": "tooling"
+    },
+    {
+      "path": "ui-ux/README.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/design-audit-v0.21/counts.json",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/design-audit-v0.21/fix-status-v0.22.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/design-audit-v0.21/index.html",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/design-audit-v0.21/report.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/design-audit-v0.21/traceability.csv",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/design-audit-v0.21/traceability.json",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/figma/README.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/figma/button.png",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/figma/figma-state.json",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/figma/foundations.png",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/penpot/tim-tho-desktop.svg",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/penpot/tim-tho-mobile.svg",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/ux-coverage-v0.12.html",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/ux-next-organization.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.10.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.11.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.12.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.13.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.14.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.15.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.16.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.17.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.18.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.19.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.3.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.3a.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.4.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.5.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.5a.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.6.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.7.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.8.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-UX-v0.9.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-comparison-v0.1.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-comparison-v0.2.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/prototype/.storybook/main.js",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/.storybook/preview.js",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/index.html",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/package-lock.json",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/package.json",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/App.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/App.stories.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/Journey.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/Membership.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/Partner.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/ProfileEditor.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/SkillPicker.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/Team.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/WorkArt.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/AccountHub.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/Addresses.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/Auth.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/Common.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/Onboarding.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/Security.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/account.css",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/model.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/model.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/activity/Communications.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/activity/JobExtras.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/activity/NotificationBell.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/activity/activity.css",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/activity/model.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/activity/model.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/admin/AdminConsole.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/admin/CatalogContext.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/admin/admin.css",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/admin/model.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/admin/model.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/finance/AdminFinance.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/finance/WalletPanel.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/finance/finance.css",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/finance/model.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/finance/model.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/flow-guards.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/flow-guards.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/grants.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/grants.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/journey-model.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/journey-model.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/journey.css",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/main.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/neighborhood.css",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/partner-model.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/partner-model.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/partner.css",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/skill-catalog.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/style.css",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/support/AdminOperations.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/support/SupportDesk.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/support/model.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/support/model.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/support/support.css",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/team-model.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/team-model.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/vite.config.js",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/research/README.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/research/penpot",
+      "kind": "compatibility"
+    },
+    {
+      "path": "ui-ux/research/promotions-v0.1.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/research/promotions.html",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/research/react",
+      "kind": "compatibility"
+    },
+    {
+      "path": "ui-ux/research/research.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/research/ui-direction-v0.2.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/specs/account-batch.md",
+      "kind": "spec"
+    },
+    {
+      "path": "ui-ux/specs/activity-batch.md",
+      "kind": "spec"
+    },
+    {
+      "path": "ui-ux/specs/admin-operations.md",
+      "kind": "spec"
+    },
+    {
+      "path": "ui-ux/specs/customer-journey.md",
+      "kind": "spec"
+    },
+    {
+      "path": "ui-ux/specs/design-system.md",
+      "kind": "spec"
+    },
+    {
+      "path": "ui-ux/specs/finance-batch.md",
+      "kind": "spec"
+    },
+    {
+      "path": "ui-ux/specs/flow-review.md",
+      "kind": "spec"
+    },
+    {
+      "path": "ui-ux/specs/partner-journey.md",
+      "kind": "spec"
+    },
+    {
+      "path": "ui-ux/specs/support-moderation.md",
+      "kind": "spec"
+    },
+    {
+      "path": "ui-ux/specs/ux-scope-current.md",
+      "kind": "spec"
+    },
+    {
+      "path": "ui-ux/wireframes/architecture.html",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/audit.html",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/fix-status.html",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/implementation",
+      "kind": "compatibility"
+    },
+    {
+      "path": "ui-ux/wireframes/index.html",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/project-docs",
+      "kind": "compatibility"
+    },
+    {
+      "path": "ui-ux/wireframes/project-docs.html",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/promotions.html",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design.html",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/01-data-design.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/02-api-realtime.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/03-qa-plan.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/04-backlog.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/README.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/backlog.json",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/data-model.json",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/openapi.json",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/operations.json",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/qa-cases.csv",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/qa-cases.json",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/realtime.json",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/rtm.json",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/schema.sql",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/wireframes/technical-design/technical-design.html",
+      "kind": "reference"
+    }
+  ],
+  "tests": {
+    "mobile": [
+      "apps/mobile/src/app/App.test.tsx",
+      "apps/mobile/src/app/layout/ProductShell.test.tsx",
+      "apps/mobile/src/app/navigation/account-return.test.tsx",
+      "apps/mobile/src/components/ui/controls.test.tsx",
+      "apps/mobile/src/features/accounts/api/accounts-api.test.ts",
+      "apps/mobile/src/features/accounts/components/AccountPage.test.tsx",
+      "apps/mobile/src/features/accounts/components/LanguageSettings.test.tsx",
+      "apps/mobile/src/features/accounts/screens/AccountManagement.test.tsx",
+      "apps/mobile/src/features/accounts/screens/ProfileScreen.test.tsx",
+      "apps/mobile/src/features/accounts/state/account-collection.test.ts",
+      "apps/mobile/src/features/accounts/state/profile-editor.test.ts",
+      "apps/mobile/src/features/accounts/state/session-revocation.test.ts",
+      "apps/mobile/src/features/auth/api/auth-api.test.ts",
+      "apps/mobile/src/features/auth/screens/AccountScreen.test.tsx",
+      "apps/mobile/src/features/auth/state/auth-session.test.ts",
+      "apps/mobile/src/features/auth/state/token-storage.test.ts",
+      "apps/mobile/src/features/catalog/api/catalog-api.test.ts",
+      "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
+      "apps/mobile/src/features/invoices/api/invoices-api.test.ts",
+      "apps/mobile/src/features/invoices/format-amount.test.ts",
+      "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+      "apps/mobile/src/features/jobs/api/work-api.test.ts",
+      "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+      "apps/mobile/src/features/jobs/state/mutation.test.ts",
+      "apps/mobile/src/features/location/api/locations-api.test.ts",
+      "apps/mobile/src/features/location/components/LocationField.test.tsx",
+      "apps/mobile/src/features/location/state/location-draft.test.ts",
+      "apps/mobile/src/features/partners/api/partners-api.test.ts",
+      "apps/mobile/src/features/partners/screens/Partners.test.tsx",
+      "apps/mobile/src/features/partners/state/partner-editor.test.ts",
+      "apps/mobile/src/features/search/components/ResultsMap.native.test.tsx",
+      "apps/mobile/src/features/search/components/SearchResultsMap.test.tsx",
+      "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
+      "apps/mobile/src/features/search/components/results-map-model.test.ts",
+      "apps/mobile/src/features/search/state/partner-search.test.ts",
+      "apps/mobile/src/lib/http/request.test.ts",
+      "apps/mobile/src/lib/i18n/i18n.test.ts",
+      "apps/mobile/src/lib/i18n/locale-state.test.ts",
+      "apps/mobile/src/lib/i18n/locale-storage.test.ts",
+      "apps/mobile/src/lib/logging/logger.test.ts"
+    ],
+    "api": [
+      "services/api/test/integration/account-management.test.ts",
+      "services/api/test/integration/assets.test.ts",
+      "services/api/test/integration/auth.test.ts",
+      "services/api/test/integration/catalog.test.ts",
+      "services/api/test/integration/invoices.test.ts",
+      "services/api/test/integration/jobs-chat.test.ts",
+      "services/api/test/integration/lifecycle.test.ts",
+      "services/api/test/integration/locations.test.ts",
+      "services/api/test/integration/logging.test.ts",
+      "services/api/test/integration/partners.test.ts",
+      "services/api/test/integration/profile.test.ts",
+      "services/api/test/unit/catalog-config.test.ts",
+      "services/api/test/unit/catalog-seed.test.ts",
+      "services/api/test/unit/demo-options.test.ts",
+      "services/api/test/unit/invoice-money.test.ts",
+      "services/api/test/unit/locations.test.ts",
+      "services/api/test/unit/logging.test.ts",
+      "services/api/test/unit/output.test.ts"
+    ],
+    "web": [
+      "tests/e2e/web/account-management.spec.mjs",
+      "tests/e2e/web/account-security.spec.mjs",
+      "tests/e2e/web/auth.spec.mjs",
+      "tests/e2e/web/catalog.spec.mjs",
+      "tests/e2e/web/i18n.spec.mjs",
+      "tests/e2e/web/invoices.spec.mjs",
+      "tests/e2e/web/jobs-chat.spec.mjs",
+      "tests/e2e/web/locations.spec.mjs",
+      "tests/e2e/web/partners.spec.mjs",
+      "tests/e2e/web/profile.spec.mjs",
+      "tests/e2e/web/search-map.spec.mjs",
+      "tests/e2e/web/search-service.spec.mjs",
+      "tests/e2e/web/shell.spec.mjs"
+    ],
+    "tooling": [
+      "scripts/diagnostics/export.test.mjs",
+      "scripts/test/coverage-gate.test.mjs",
+      "scripts/test/native-options.test.mjs",
+      "scripts/test/sdd-check.test.mjs",
+      "scripts/test/sdd-project.test.mjs"
+    ]
+  },
+  "criteria": [
+    "MAP-02-AC-01",
+    "MAP-02-AC-02",
+    "MAP-02-AC-03",
+    "MAP-02-AC-04",
+    "MAP-02-AC-05",
+    "MAP-02-AC-06",
+    "AUTH-AC-01",
+    "AUTH-AC-02",
+    "AUTH-AC-03",
+    "AUTH-AC-04",
+    "ACCOUNT-AC-01",
+    "ACCOUNT-AC-02",
+    "ACCOUNT-AC-03",
+    "ACCOUNT-AC-04",
+    "ACCOUNT-AC-05",
+    "ACCOUNT-AC-06",
+    "CATALOG-AC-01",
+    "CATALOG-AC-02",
+    "CATALOG-AC-03",
+    "CATALOG-AC-04",
+    "I18N-AC-01",
+    "I18N-AC-02",
+    "I18N-AC-03",
+    "SUPPLY-AC-01",
+    "SUPPLY-AC-02",
+    "SUPPLY-AC-03",
+    "SEARCH-AC-01",
+    "SEARCH-AC-02",
+    "SEARCH-AC-03",
+    "SEARCH-AC-04",
+    "LOCATION-AC-01",
+    "LOCATION-AC-02",
+    "LOCATION-AC-03",
+    "LOCATION-AC-04",
+    "INFRA-AC-01",
+    "INFRA-AC-02",
+    "INFRA-AC-03",
+    "INFRA-AC-04",
+    "JOB-AC-01",
+    "JOB-AC-02",
+    "JOB-AC-03",
+    "JOB-AC-04",
+    "ORG-AC-01",
+    "CHAT-AC-01",
+    "CHAT-AC-02",
+    "CHAT-AC-03",
+    "JOB-AC-05",
+    "JOB-AC-06",
+    "JOB-AC-07",
+    "JOB-AC-08",
+    "CHAT-AC-04",
+    "JOB-AC-09",
+    "INV-AC-01",
+    "INV-AC-02",
+    "INV-AC-03",
+    "INV-AC-04",
+    "INV-AC-05",
+    "INV-AC-06",
+    "INV-AC-07",
+    "INV-AC-08",
+    "MONEY-AC-01",
+    "ASSET-AC-01",
+    "INV-AC-09",
+    "INV-AC-10",
+    "ASSET-AC-02",
+    "INV-AC-11",
+    "INV-AC-12",
+    "INV-AC-13",
+    "INV-AC-14",
+    "INV-AC-15",
+    "MAP-02-AC-07"
+  ],
+  "qa": [
+    {
+      "id": "QA-001",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-002",
+      "status": "partial",
+      "criteria": [
+        "AUTH-AC-01",
+        "AUTH-AC-03"
+      ],
+      "reason": "Không chứng minh OTP, email verification hoặc khôi phục mật khẩu | QA-002 chỉ một phần: OTP và contact/IP distributed limit chưa chứng minh"
+    },
+    {
+      "id": "QA-003",
+      "status": "partial",
+      "criteria": [
+        "AUTH-AC-02",
+        "AUTH-AC-04"
+      ],
+      "reason": "Jest mock không thay chứng minh Keychain trên thiết bị thật"
+    },
+    {
+      "id": "QA-004",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-005",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-006",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-007",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-008",
+      "status": "partial",
+      "criteria": [
+        "SUPPLY-AC-01"
+      ],
+      "reason": "Chỉ chứng minh assertions của tiêu chí liên kết; chưa đánh giá toàn bộ tổ hợp QA, native và UAT."
+    },
+    {
+      "id": "QA-009",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-010",
+      "status": "partial",
+      "criteria": [
+        "SEARCH-AC-02"
+      ],
+      "reason": "Không polygon hoặc tự mở radius; không claim đầy QA-010"
+    },
+    {
+      "id": "QA-011",
+      "status": "partial",
+      "criteria": [
+        "SEARCH-AC-01"
+      ],
+      "reason": "Chỉ distance trên tập ổn định; recommended/rating chưa triển khai"
+    },
+    {
+      "id": "QA-012",
+      "status": "partial",
+      "criteria": [
+        "SEARCH-AC-03"
+      ],
+      "reason": "Chỉ chứng minh assertions của tiêu chí liên kết; chưa đánh giá toàn bộ tổ hợp QA, native và UAT."
+    },
+    {
+      "id": "QA-013",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-014",
+      "status": "partial",
+      "criteria": [
+        "ORG-AC-01"
+      ],
+      "reason": "Chưa test invoice/settle của người cũ đang mở tab, room reuse khi thuê lại hoặc tin assignment exactly-once; chưa mời/nhận/quản trị đội ngũ đầy đủ."
+    },
+    {
+      "id": "QA-015",
+      "status": "partial",
+      "criteria": [
+        "ORG-AC-01"
+      ],
+      "reason": "Chưa test invoice/settle của người cũ đang mở tab, room reuse khi thuê lại hoặc tin assignment exactly-once; chưa mời/nhận/quản trị đội ngũ đầy đủ."
+    },
+    {
+      "id": "QA-016",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-017",
+      "status": "partial",
+      "criteria": [
+        "JOB-AC-01",
+        "JOB-AC-09"
+      ],
+      "reason": "Chưa đủ tự thuê mọi thành viên doanh nghiệp, tập nhiều kỹ năng, mọi boundary địa lý/lịch; không suy ra toàn QA-017 đạt. | Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket."
+    },
+    {
+      "id": "QA-018",
+      "status": "partial",
+      "criteria": [
+        "JOB-AC-02",
+        "JOB-AC-04",
+        "JOB-AC-09"
+      ],
+      "reason": "Không chạy race accept-vs-withdraw đúng vector QA-018; test race thực là hai lần đổi lịch. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket."
+    },
+    {
+      "id": "QA-019",
+      "status": "partial",
+      "criteria": [
+        "JOB-AC-03"
+      ],
+      "reason": "Chưa có worker nhắc 24h/1h, test cho thời gian trôi không tự đóng; không đóng QA-019."
+    },
+    {
+      "id": "QA-020",
+      "status": "partial",
+      "criteria": [
+        "JOB-AC-03",
+        "JOB-AC-09",
+        "INV-AC-08"
+      ],
+      "reason": "Chưa có worker nhắc 24h/1h, test cho thời gian trôi không tự đóng; không đóng QA-019. | Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT."
+    },
+    {
+      "id": "QA-021",
+      "status": "partial",
+      "criteria": [
+        "JOB-AC-09"
+      ],
+      "reason": "Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket."
+    },
+    {
+      "id": "QA-022",
+      "status": "partial",
+      "criteria": [
+        "ORG-AC-01",
+        "CHAT-AC-02"
+      ],
+      "reason": "Chưa test invoice/settle của người cũ đang mở tab, room reuse khi thuê lại hoặc tin assignment exactly-once; chưa mời/nhận/quản trị đội ngũ đầy đủ. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT."
+    },
+    {
+      "id": "QA-023",
+      "status": "partial",
+      "criteria": [
+        "CHAT-AC-01",
+        "CHAT-AC-02",
+        "CHAT-AC-03",
+        "CHAT-AC-04",
+        "JOB-AC-09"
+      ],
+      "reason": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Không phải crash process/worker hoặc WebSocket delivery. | Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket."
+    },
+    {
+      "id": "QA-024",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-025",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-026",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-01",
+        "INV-AC-03",
+        "INV-AC-13",
+        "INV-AC-15"
+      ],
+      "reason": "Thợ trong test là solo owner, chưa toàn vector công ty hai thợ QA-016; pending/foreign result assets chưa có assert trực tiếp trong test này. | Nhánh revision dùng if nên assertions no-hold/missing-image chỉ chạy khi revision thắng, không deterministic phủ cả hai outcome; cần test độc lập nếu muốn chứng nhận riêng các nhánh. | Mock image picker; không native file picker thật. | Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật."
+    },
+    {
+      "id": "QA-027",
+      "status": "partial",
+      "criteria": [
+        "MONEY-AC-01",
+        "INV-AC-09"
+      ],
+      "reason": "Unit không chứng minh đủ HTTP/DB âm/lẻ/NaN/Infinity của QA-027; toàn point test formula chứ chưa đủ settlement hai dấu. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT."
+    },
+    {
+      "id": "QA-028",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-01",
+        "INV-AC-03",
+        "INV-AC-07",
+        "INV-AC-11",
+        "INV-AC-12",
+        "INV-AC-15"
+      ],
+      "reason": "Thợ trong test là solo owner, chưa toàn vector công ty hai thợ QA-016; pending/foreign result assets chưa có assert trực tiếp trong test này. | Nhánh revision dùng if nên assertions no-hold/missing-image chỉ chạy khi revision thắng, không deterministic phủ cả hai outcome; cần test độc lập nếu muốn chứng nhận riêng các nhánh. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật."
+    },
+    {
+      "id": "QA-029",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-02",
+        "MONEY-AC-01",
+        "INV-AC-15"
+      ],
+      "reason": "Chưa complete-on-behalf hoặc process crash; job.state chuyển completed ngay settlement trong code/test, eligibility vẫn chờ hai dấu. | Unit không chứng minh đủ HTTP/DB âm/lẻ/NaN/Infinity của QA-027; toàn point test formula chứ chưa đủ settlement hai dấu. | Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật."
+    },
+    {
+      "id": "QA-030",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-04"
+      ],
+      "reason": "Vector QA-030 cụ thể ví -90000/phí30000/point100000 chưa thử; QA-031 biên credit và mọi holds chưa kiểm."
+    },
+    {
+      "id": "QA-031",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-032",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-05"
+      ],
+      "reason": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT."
+    },
+    {
+      "id": "QA-033",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-034",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-035",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-02",
+        "INV-AC-05"
+      ],
+      "reason": "Chưa complete-on-behalf hoặc process crash; job.state chuyển completed ngay settlement trong code/test, eligibility vẫn chờ hai dấu. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT."
+    },
+    {
+      "id": "QA-036",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-02",
+        "INV-AC-11",
+        "INV-AC-15"
+      ],
+      "reason": "Chưa complete-on-behalf hoặc process crash; job.state chuyển completed ngay settlement trong code/test, eligibility vẫn chờ hai dấu. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật."
+    },
+    {
+      "id": "QA-037",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-04",
+        "MONEY-AC-01",
+        "INV-AC-14"
+      ],
+      "reason": "Vector QA-030 cụ thể ví -90000/phí30000/point100000 chưa thử; QA-031 biên credit và mọi holds chưa kiểm. | Unit không chứng minh đủ HTTP/DB âm/lẻ/NaN/Infinity của QA-027; toàn point test formula chứ chưa đủ settlement hai dấu. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT."
+    },
+    {
+      "id": "QA-038",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-039",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-040",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-041",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-042",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-043",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-06",
+        "INV-AC-07",
+        "INV-AC-10",
+        "INV-AC-14",
+        "INV-AC-15"
+      ],
+      "reason": "Chưa assert backend list partner ledger thành công/phân trang và wallet ACL đầy đủ; web có positive ledger partner. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật."
+    },
+    {
+      "id": "QA-044",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-045",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-046",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-047",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-048",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-049",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-050",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-051",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-052",
+      "status": "partial",
+      "criteria": [
+        "ASSET-AC-01"
+      ],
+      "reason": "Chưa assertions JPEG/WebP, strip metadata, quá10MiB/25Mpx, quota, revoked assignment, expiry; chưa production scan/provider."
+    },
+    {
+      "id": "QA-053",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-054",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-055",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-056",
+      "status": "partial",
+      "criteria": [
+        "CATALOG-AC-01"
+      ],
+      "reason": "Số dữ liệu cũ trong QA không còn đúng; test hiện 49/128/128. Không backup/restore production"
+    },
+    {
+      "id": "QA-057",
+      "status": "partial",
+      "criteria": [
+        "CATALOG-AC-02",
+        "CATALOG-AC-03",
+        "INFRA-AC-04"
+      ],
+      "reason": "Chưa CRUD quản trị hoặc giữ snapshot jobs khi admin sửa danh mục | Không thay readiness/K8s deployment thật"
+    },
+    {
+      "id": "QA-058",
+      "status": "partial",
+      "criteria": [
+        "CATALOG-AC-04"
+      ],
+      "reason": "Test navigator riêng retained browser; không tự chứng nhận màn home Storybook mới"
+    },
+    {
+      "id": "QA-059",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-060",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-061",
+      "status": "partial",
+      "criteria": [
+        "INFRA-AC-01"
+      ],
+      "reason": "Không chứng minh SLA hay tải production"
+    },
+    {
+      "id": "QA-062",
+      "status": "partial",
+      "criteria": [
+        "INFRA-AC-02",
+        "INFRA-AC-03"
+      ],
+      "reason": "Chỉ chứng minh assertions của tiêu chí liên kết; chưa đánh giá toàn bộ tổ hợp QA, native và UAT."
+    },
+    {
+      "id": "QA-063",
+      "status": "partial",
+      "criteria": [
+        "CATALOG-AC-01"
+      ],
+      "reason": "Số dữ liệu cũ trong QA không còn đúng; test hiện 49/128/128. Không backup/restore production"
+    },
+    {
+      "id": "QA-064",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-065",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-066",
+      "status": "unmapped",
+      "criteria": [],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+    },
+    {
+      "id": "QA-067",
+      "status": "partial",
+      "criteria": [
+        "I18N-AC-01"
+      ],
+      "reason": "QA-068 số 60/140/141 lịch sử không còn đúng; chất lượng nội dung dịch chưa UAT"
+    },
+    {
+      "id": "QA-068",
+      "status": "partial",
+      "criteria": [
+        "I18N-AC-01"
+      ],
+      "reason": "QA-068 số 60/140/141 lịch sử không còn đúng; chất lượng nội dung dịch chưa UAT"
+    },
+    {
+      "id": "QA-069",
+      "status": "partial",
+      "criteria": [
+        "I18N-AC-02",
+        "I18N-AC-03"
+      ],
+      "reason": "Chữ cỡ lớn/native không được chứng minh bằng Jest | Không chứng nhận chất lượng bản dịch hoặc locale đồng bộ server; Đây là kiểm nền dịch, không chứng nhận hết QA-069/native."
+    },
+    {
+      "id": "QA-070",
+      "status": "partial",
+      "criteria": [
+        "ACCOUNT-AC-01",
+        "ACCOUNT-AC-02"
+      ],
+      "reason": "Các test bổ sung rollback/revocation race trong cùng file nên giữ full suite"
+    },
+    {
+      "id": "QA-071",
+      "status": "partial",
+      "criteria": [
+        "ACCOUNT-AC-03"
+      ],
+      "reason": "Không thay native persistence/UAT"
+    },
+    {
+      "id": "QA-072",
+      "status": "partial",
+      "criteria": [
+        "ACCOUNT-AC-06"
+      ],
+      "reason": "Chỉ chứng minh assertions của tiêu chí liên kết; chưa đánh giá toàn bộ tổ hợp QA, native và UAT."
+    },
+    {
+      "id": "QA-073",
+      "status": "partial",
+      "criteria": [
+        "ACCOUNT-AC-04",
+        "ACCOUNT-AC-05"
+      ],
+      "reason": "Chỉ chứng minh assertions của tiêu chí liên kết; chưa đánh giá toàn bộ tổ hợp QA, native và UAT."
+    },
+    {
+      "id": "QA-074",
+      "status": "partial",
+      "criteria": [
+        "SUPPLY-AC-01",
+        "SUPPLY-AC-02",
+        "SUPPLY-AC-03"
+      ],
+      "reason": "Không coi đây là kiểm đầy đủ quản trị đội ngũ/mời nhân viên"
+    },
+    {
+      "id": "QA-075",
+      "status": "partial",
+      "criteria": [
+        "SEARCH-AC-01",
+        "SEARCH-AC-02",
+        "SEARCH-AC-03",
+        "SEARCH-AC-04"
+      ],
+      "reason": "Chỉ distance trên tập ổn định; recommended/rating chưa triển khai | Không polygon hoặc tự mở radius; không claim đầy QA-010 | Text matching unaccented là client catalog lookup, không phải server full-text ranking"
+    },
+    {
+      "id": "QA-076",
+      "status": "partial",
+      "criteria": [
+        "LOCATION-AC-01"
+      ],
+      "reason": "Chỉ chứng minh assertions của tiêu chí liên kết; chưa đánh giá toàn bộ tổ hợp QA, native và UAT."
+    },
+    {
+      "id": "QA-077",
+      "status": "partial",
+      "criteria": [
+        "LOCATION-AC-02"
+      ],
+      "reason": "GPS/provider mock; không thay độ chính xác live/device"
+    },
+    {
+      "id": "QA-078",
+      "status": "partial",
+      "criteria": [
+        "LOCATION-AC-03"
+      ],
+      "reason": "Test fixture không chứng nhận chất lượng hay quota live provider"
+    },
+    {
+      "id": "QA-079",
+      "status": "partial",
+      "criteria": [
+        "LOCATION-AC-04"
+      ],
+      "reason": "QA-079/082 chỉ nhánh search+addresses; chưa đủ assertion không ô tọa độ ở shop/area/job trong ca này"
+    },
+    {
+      "id": "QA-080",
+      "status": "partial",
+      "criteria": [
+        "MAP-02-AC-01",
+        "MAP-02-AC-06",
+        "MAP-02-AC-07"
+      ],
+      "reason": "Dữ liệu ổn định; không chứng minh mọi mutation đồng thời khi phân trang."
+    },
+    {
+      "id": "QA-081",
+      "status": "partial",
+      "criteria": [
+        "MAP-02-AC-02",
+        "MAP-02-AC-03",
+        "MAP-02-AC-04",
+        "MAP-02-AC-05",
+        "MAP-02-AC-07"
+      ],
+      "reason": "Dữ liệu ổn định; không chứng minh mọi mutation đồng thời khi phân trang."
+    },
+    {
+      "id": "QA-082",
+      "status": "partial",
+      "criteria": [
+        "LOCATION-AC-04"
+      ],
+      "reason": "QA-079/082 chỉ nhánh search+addresses; chưa đủ assertion không ô tọa độ ở shop/area/job trong ca này"
+    },
+    {
+      "id": "QA-083",
+      "status": "partial",
+      "criteria": [
+        "JOB-AC-01",
+        "JOB-AC-02",
+        "JOB-AC-05",
+        "JOB-AC-06",
+        "JOB-AC-07",
+        "JOB-AC-09"
+      ],
+      "reason": "Chưa đủ tự thuê mọi thành viên doanh nghiệp, tập nhiều kỹ năng, mọi boundary địa lý/lịch; không suy ra toàn QA-017 đạt. | Không chạy race accept-vs-withdraw đúng vector QA-018; test race thực là hai lần đổi lịch. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket."
+    },
+    {
+      "id": "QA-084",
+      "status": "partial",
+      "criteria": [
+        "JOB-AC-02",
+        "JOB-AC-03",
+        "JOB-AC-04",
+        "ORG-AC-01",
+        "JOB-AC-06",
+        "JOB-AC-07",
+        "JOB-AC-08",
+        "JOB-AC-09"
+      ],
+      "reason": "Không chạy race accept-vs-withdraw đúng vector QA-018; test race thực là hai lần đổi lịch. | Chưa có worker nhắc 24h/1h, test cho thời gian trôi không tự đóng; không đóng QA-019. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Chưa test invoice/settle của người cũ đang mở tab, room reuse khi thuê lại hoặc tin assignment exactly-once; chưa mời/nhận/quản trị đội ngũ đầy đủ. | Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket."
+    },
+    {
+      "id": "QA-085",
+      "status": "partial",
+      "criteria": [
+        "CHAT-AC-01",
+        "CHAT-AC-02",
+        "CHAT-AC-03",
+        "JOB-AC-05",
+        "CHAT-AC-04",
+        "JOB-AC-09"
+      ],
+      "reason": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Không phải crash process/worker hoặc WebSocket delivery. | Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket."
+    },
+    {
+      "id": "QA-086",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-01",
+        "INV-AC-07",
+        "INV-AC-09",
+        "INV-AC-10",
+        "INV-AC-12",
+        "INV-AC-14",
+        "INV-AC-15"
+      ],
+      "reason": "Thợ trong test là solo owner, chưa toàn vector công ty hai thợ QA-016; pending/foreign result assets chưa có assert trực tiếp trong test này. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật."
+    },
+    {
+      "id": "QA-087",
+      "status": "partial",
+      "criteria": [
+        "ASSET-AC-01",
+        "ASSET-AC-02",
+        "INV-AC-15"
+      ],
+      "reason": "Chưa assertions JPEG/WebP, strip metadata, quá10MiB/25Mpx, quota, revoked assignment, expiry; chưa production scan/provider. | Client fixture; không bằng chứng expiry server hoặc picker native. | Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật."
+    },
+    {
+      "id": "QA-088",
+      "status": "partial",
+      "criteria": [
+        "INV-AC-02",
+        "INV-AC-04",
+        "INV-AC-05",
+        "INV-AC-06",
+        "INV-AC-08",
+        "INV-AC-09",
+        "INV-AC-11",
+        "INV-AC-13",
+        "INV-AC-14",
+        "INV-AC-15"
+      ],
+      "reason": "Chưa complete-on-behalf hoặc process crash; job.state chuyển completed ngay settlement trong code/test, eligibility vẫn chờ hai dấu. | Vector QA-030 cụ thể ví -90000/phí30000/point100000 chưa thử; QA-031 biên credit và mọi holds chưa kiểm. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Chưa assert backend list partner ledger thành công/phân trang và wallet ACL đầy đủ; web có positive ledger partner. | Mock image picker; không native file picker thật. | Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật."
+    }
+  ],
+  "operations": [
+    {
+      "id": "register",
+      "method": "POST",
+      "path": "/auth/register",
+      "status": "implemented",
+      "criteria": [
+        "AUTH-AC-01",
+        "ACCOUNT-AC-01",
+        "ACCOUNT-AC-02"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "login",
+      "method": "POST",
+      "path": "/auth/login",
+      "status": "implemented",
+      "criteria": [
+        "AUTH-AC-01",
+        "AUTH-AC-03",
+        "ACCOUNT-AC-01",
+        "ACCOUNT-AC-02"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "requestOtp",
+      "method": "POST",
+      "path": "/auth/challenges",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "verifyOtp",
+      "method": "POST",
+      "path": "/auth/challenges/verify",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "resetPassword",
+      "method": "POST",
+      "path": "/auth/password/reset",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "refreshSession",
+      "method": "POST",
+      "path": "/auth/refresh",
+      "status": "implemented",
+      "criteria": [
+        "AUTH-AC-02",
+        "AUTH-AC-04"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "logout",
+      "method": "POST",
+      "path": "/auth/logout",
+      "status": "implemented",
+      "criteria": [
+        "AUTH-AC-02"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "getMe",
+      "method": "GET",
+      "path": "/me",
+      "status": "implemented",
+      "criteria": [
+        "AUTH-AC-01",
+        "ACCOUNT-AC-01",
+        "ACCOUNT-AC-02",
+        "ACCOUNT-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "editMe",
+      "method": "PATCH",
+      "path": "/me",
+      "status": "implemented",
+      "criteria": [
+        "ACCOUNT-AC-01",
+        "ACCOUNT-AC-02",
+        "ACCOUNT-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "listSessions",
+      "method": "GET",
+      "path": "/me/sessions",
+      "status": "implemented",
+      "criteria": [
+        "ACCOUNT-AC-06"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "revokeSession",
+      "method": "POST",
+      "path": "/me/sessions/{id}/revoke",
+      "status": "implemented",
+      "criteria": [
+        "ACCOUNT-AC-06"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "requestDeletion",
+      "method": "POST",
+      "path": "/me/deletion-request",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "listAddresses",
+      "method": "GET",
+      "path": "/me/addresses",
+      "status": "implemented",
+      "criteria": [
+        "ACCOUNT-AC-04",
+        "ACCOUNT-AC-05"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "addAddress",
+      "method": "POST",
+      "path": "/me/addresses",
+      "status": "implemented",
+      "criteria": [
+        "ACCOUNT-AC-04",
+        "ACCOUNT-AC-05"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "editAddress",
+      "method": "PUT",
+      "path": "/me/addresses/{id}",
+      "status": "implemented",
+      "criteria": [
+        "ACCOUNT-AC-04",
+        "ACCOUNT-AC-05"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "archiveAddress",
+      "method": "POST",
+      "path": "/me/addresses/{id}/archive",
+      "status": "implemented",
+      "criteria": [
+        "ACCOUNT-AC-04",
+        "ACCOUNT-AC-05"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "listCategories",
+      "method": "GET",
+      "path": "/categories",
+      "status": "implemented",
+      "criteria": [
+        "CATALOG-AC-01",
+        "CATALOG-AC-02",
+        "CATALOG-AC-03",
+        "CATALOG-AC-04",
+        "I18N-AC-01",
+        "I18N-AC-02",
+        "I18N-AC-03",
+        "INFRA-AC-01",
+        "INFRA-AC-02",
+        "INFRA-AC-03",
+        "INFRA-AC-04"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "listSkills",
+      "method": "GET",
+      "path": "/skills",
+      "status": "implemented",
+      "criteria": [
+        "CATALOG-AC-01",
+        "CATALOG-AC-02",
+        "CATALOG-AC-03",
+        "CATALOG-AC-04",
+        "I18N-AC-01",
+        "I18N-AC-02",
+        "I18N-AC-03",
+        "INFRA-AC-04"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "searchPartners",
+      "method": "GET",
+      "path": "/partners",
+      "status": "implemented",
+      "criteria": [
+        "MAP-02-AC-01",
+        "MAP-02-AC-02",
+        "MAP-02-AC-03",
+        "MAP-02-AC-04",
+        "MAP-02-AC-05",
+        "MAP-02-AC-06",
+        "SEARCH-AC-01",
+        "SEARCH-AC-02",
+        "SEARCH-AC-03",
+        "SEARCH-AC-04",
+        "LOCATION-AC-04",
+        "MAP-02-AC-07"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "createPartner",
+      "method": "POST",
+      "path": "/partners",
+      "status": "implemented",
+      "criteria": [
+        "SUPPLY-AC-01",
+        "SUPPLY-AC-02",
+        "SUPPLY-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "getPartner",
+      "method": "GET",
+      "path": "/partners/{id}",
+      "status": "implemented",
+      "criteria": [
+        "SEARCH-AC-01",
+        "SEARCH-AC-02",
+        "SEARCH-AC-03",
+        "SEARCH-AC-04"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "editPartner",
+      "method": "PUT",
+      "path": "/partners/{id}/profile",
+      "status": "implemented",
+      "criteria": [
+        "SUPPLY-AC-01",
+        "SUPPLY-AC-02",
+        "SUPPLY-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "setAvailability",
+      "method": "PUT",
+      "path": "/partners/{id}/availability",
+      "status": "implemented",
+      "criteria": [
+        "SUPPLY-AC-01",
+        "SUPPLY-AC-02",
+        "SUPPLY-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "setSkills",
+      "method": "PUT",
+      "path": "/partners/{id}/skills",
+      "status": "implemented",
+      "criteria": [
+        "SUPPLY-AC-01",
+        "SUPPLY-AC-02",
+        "SUPPLY-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "setAreas",
+      "method": "PUT",
+      "path": "/partners/{id}/service-areas",
+      "status": "implemented",
+      "criteria": [
+        "SUPPLY-AC-01",
+        "SUPPLY-AC-02",
+        "SUPPLY-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "setLocations",
+      "method": "PUT",
+      "path": "/partners/{id}/locations",
+      "status": "implemented",
+      "criteria": [
+        "SUPPLY-AC-01",
+        "SUPPLY-AC-02",
+        "SUPPLY-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "submitVerification",
+      "method": "POST",
+      "path": "/partners/{id}/verification",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "listMembers",
+      "method": "GET",
+      "path": "/partners/{id}/members",
+      "status": "implemented",
+      "criteria": [
+        "JOB-AC-05"
+      ],
+      "reason": "Mới có client mock kiểm URL/cursor/response; chưa có API integration trực tiếp."
+    },
+    {
+      "id": "inviteMember",
+      "method": "POST",
+      "path": "/partners/{id}/invitations",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "acceptInvitation",
+      "method": "POST",
+      "path": "/invitations/accept",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "editGrants",
+      "method": "PUT",
+      "path": "/memberships/{id}/grants",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "deactivateMember",
+      "method": "POST",
+      "path": "/memberships/{id}/deactivate",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "setCallContact",
+      "method": "PUT",
+      "path": "/partners/{id}/call-contact",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "createJob",
+      "method": "POST",
+      "path": "/jobs",
+      "status": "implemented",
+      "criteria": [
+        "JOB-AC-01",
+        "JOB-AC-02",
+        "JOB-AC-05",
+        "JOB-AC-06",
+        "JOB-AC-07",
+        "JOB-AC-09"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "listJobs",
+      "method": "GET",
+      "path": "/jobs",
+      "status": "implemented",
+      "criteria": [
+        "JOB-AC-04",
+        "ORG-AC-01"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "getJob",
+      "method": "GET",
+      "path": "/jobs/{id}",
+      "status": "implemented",
+      "criteria": [
+        "ORG-AC-01",
+        "JOB-AC-02",
+        "INV-AC-02"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "acceptJob",
+      "method": "POST",
+      "path": "/jobs/{id}/accept",
+      "status": "implemented",
+      "criteria": [
+        "JOB-AC-02",
+        "JOB-AC-03",
+        "JOB-AC-04",
+        "ORG-AC-01",
+        "JOB-AC-06",
+        "JOB-AC-07",
+        "JOB-AC-08",
+        "JOB-AC-09"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "declineJob",
+      "method": "POST",
+      "path": "/jobs/{id}/decline",
+      "status": "implemented",
+      "criteria": [
+        "JOB-AC-04"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "withdrawJob",
+      "method": "POST",
+      "path": "/jobs/{id}/withdraw",
+      "status": "implemented",
+      "criteria": [
+        "JOB-AC-04"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "assignJob",
+      "method": "POST",
+      "path": "/jobs/{id}/assignments",
+      "status": "implemented",
+      "criteria": [
+        "ORG-AC-01"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "rescheduleJob",
+      "method": "POST",
+      "path": "/jobs/{id}/reschedule",
+      "status": "implemented",
+      "criteria": [
+        "JOB-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "stopJob",
+      "method": "POST",
+      "path": "/jobs/{id}/stop",
+      "status": "implemented",
+      "criteria": [
+        "JOB-AC-03",
+        "JOB-AC-09",
+        "INV-AC-08"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "getInvoice",
+      "method": "GET",
+      "path": "/jobs/{id}/invoice",
+      "status": "implemented",
+      "criteria": [
+        "INV-AC-01",
+        "INV-AC-07",
+        "INV-AC-09",
+        "INV-AC-10",
+        "INV-AC-12",
+        "INV-AC-14",
+        "INV-AC-15"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "saveInvoiceDraft",
+      "method": "PUT",
+      "path": "/jobs/{id}/invoice-draft",
+      "status": "implemented",
+      "criteria": [
+        "MONEY-AC-01",
+        "INV-AC-09"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "sendInvoice",
+      "method": "POST",
+      "path": "/invoices/{id}/send",
+      "status": "implemented",
+      "criteria": [
+        "INV-AC-01",
+        "INV-AC-03",
+        "INV-AC-13",
+        "INV-AC-15"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "requestInvoiceRevision",
+      "method": "POST",
+      "path": "/invoices/{id}/revision-requests",
+      "status": "implemented",
+      "criteria": [
+        "INV-AC-03",
+        "INV-AC-07",
+        "INV-AC-08"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "confirmInvoice",
+      "method": "POST",
+      "path": "/invoices/{id}/confirm",
+      "status": "implemented",
+      "criteria": [
+        "INV-AC-01",
+        "INV-AC-03",
+        "INV-AC-04",
+        "INV-AC-05",
+        "INV-AC-07",
+        "INV-AC-11",
+        "INV-AC-12",
+        "INV-AC-15"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "reportPayment",
+      "method": "POST",
+      "path": "/invoices/{id}/payment-reported",
+      "status": "implemented",
+      "criteria": [
+        "INV-AC-02",
+        "INV-AC-11",
+        "INV-AC-15"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "settleInvoice",
+      "method": "POST",
+      "path": "/invoices/{id}/settle",
+      "status": "implemented",
+      "criteria": [
+        "INV-AC-02",
+        "INV-AC-04",
+        "INV-AC-05",
+        "INV-AC-06",
+        "INV-AC-08",
+        "MONEY-AC-01",
+        "INV-AC-09",
+        "INV-AC-11",
+        "INV-AC-13",
+        "INV-AC-14",
+        "INV-AC-15"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "getWallet",
+      "method": "GET",
+      "path": "/partners/{id}/wallet",
+      "status": "implemented",
+      "criteria": [
+        "INV-AC-02",
+        "INV-AC-05",
+        "INV-AC-15"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "getLedger",
+      "method": "GET",
+      "path": "/partners/{id}/ledger",
+      "status": "implemented",
+      "criteria": [
+        "INV-AC-06",
+        "INV-AC-07",
+        "INV-AC-10",
+        "INV-AC-14",
+        "INV-AC-15"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "getPoints",
+      "method": "GET",
+      "path": "/me/points",
+      "status": "implemented",
+      "criteria": [
+        "INV-AC-02",
+        "INV-AC-05",
+        "INV-AC-15"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "getPointLedger",
+      "method": "GET",
+      "path": "/me/points/ledger",
+      "status": "implemented",
+      "criteria": [
+        "INV-AC-06"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "createTopup",
+      "method": "POST",
+      "path": "/topups",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "createPayout",
+      "method": "POST",
+      "path": "/payouts",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "getPayout",
+      "method": "GET",
+      "path": "/payouts/{id}",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "getBank",
+      "method": "GET",
+      "path": "/partners/{id}/bank",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "setBank",
+      "method": "PUT",
+      "path": "/partners/{id}/bank",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "openConversation",
+      "method": "POST",
+      "path": "/conversations",
+      "status": "implemented",
+      "criteria": [
+        "JOB-AC-09"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "listConversations",
+      "method": "GET",
+      "path": "/conversations",
+      "status": "implemented",
+      "criteria": [
+        "ORG-AC-01",
+        "CHAT-AC-02"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "listMessages",
+      "method": "GET",
+      "path": "/conversations/{id}/messages",
+      "status": "implemented",
+      "criteria": [
+        "ORG-AC-01",
+        "CHAT-AC-02"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "sendMessage",
+      "method": "POST",
+      "path": "/conversations/{id}/messages",
+      "status": "implemented",
+      "criteria": [
+        "CHAT-AC-01",
+        "CHAT-AC-02",
+        "CHAT-AC-03",
+        "JOB-AC-05",
+        "CHAT-AC-04",
+        "JOB-AC-09"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "readConversation",
+      "method": "PUT",
+      "path": "/conversations/{id}/read",
+      "status": "implemented",
+      "criteria": [
+        "CHAT-AC-02"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "startCall",
+      "method": "POST",
+      "path": "/calls",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "actOnCall",
+      "method": "POST",
+      "path": "/calls/{id}/actions",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "listPartnerReviews",
+      "method": "GET",
+      "path": "/partners/{id}/reviews",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "getJobReviews",
+      "method": "GET",
+      "path": "/jobs/{id}/reviews",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "createReview",
+      "method": "POST",
+      "path": "/jobs/{id}/reviews",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "editReview",
+      "method": "PATCH",
+      "path": "/reviews/{id}",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "toggleOwnReview",
+      "method": "POST",
+      "path": "/reviews/{id}/visibility",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "replyReview",
+      "method": "PUT",
+      "path": "/reviews/{id}/reply",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "createReport",
+      "method": "POST",
+      "path": "/reports",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "listReports",
+      "method": "GET",
+      "path": "/reports",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "getReport",
+      "method": "GET",
+      "path": "/reports/{id}",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "addReportUpdate",
+      "method": "POST",
+      "path": "/reports/{id}/updates",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "adminReports",
+      "method": "GET",
+      "path": "/admin/reports",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "decideReport",
+      "method": "POST",
+      "path": "/admin/reports/{id}/decision",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "previewCompletion",
+      "method": "GET",
+      "path": "/admin/reports/{id}/completion-preview",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "completeOnBehalf",
+      "method": "POST",
+      "path": "/admin/reports/{id}/complete-on-behalf",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "adminListTopups",
+      "method": "GET",
+      "path": "/admin/topups",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "adminDecideTopups",
+      "method": "POST",
+      "path": "/admin/topups/{id}/decision",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "adminListPayouts",
+      "method": "GET",
+      "path": "/admin/payouts",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "adminDecidePayouts",
+      "method": "POST",
+      "path": "/admin/payouts/{id}/decision",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "queueBank",
+      "method": "GET",
+      "path": "/admin/bank-accounts",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "decideBank",
+      "method": "POST",
+      "path": "/admin/bank-accounts/{id}/decision",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "queueVerification",
+      "method": "GET",
+      "path": "/admin/verifications",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "decideVerification",
+      "method": "POST",
+      "path": "/admin/verifications/{id}/decision",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "queuePartner",
+      "method": "GET",
+      "path": "/admin/partners",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "decidePartner",
+      "method": "POST",
+      "path": "/admin/partners/{id}/decision",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "queueUser",
+      "method": "GET",
+      "path": "/admin/users",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "decideUser",
+      "method": "POST",
+      "path": "/admin/users/{id}/decision",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "queueReview",
+      "method": "GET",
+      "path": "/admin/reviews",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "decideReview",
+      "method": "POST",
+      "path": "/admin/reviews/{id}/decision",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "editCategory",
+      "method": "PUT",
+      "path": "/admin/categories/{id}",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "editSkill",
+      "method": "PUT",
+      "path": "/admin/skills/{id}",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "getAudit",
+      "method": "GET",
+      "path": "/admin/audit",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "getMetrics",
+      "method": "GET",
+      "path": "/admin/metrics",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "adminInvoices",
+      "method": "GET",
+      "path": "/admin/invoices",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "createUpload",
+      "method": "POST",
+      "path": "/assets/upload-grants",
+      "status": "implemented",
+      "criteria": [
+        "ASSET-AC-01"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "completeUpload",
+      "method": "POST",
+      "path": "/assets/{id}/complete",
+      "status": "implemented",
+      "criteria": [
+        "ASSET-AC-01",
+        "ASSET-AC-02",
+        "INV-AC-15"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "getAsset",
+      "method": "GET",
+      "path": "/assets/{id}",
+      "status": "implemented",
+      "criteria": [
+        "ASSET-AC-01",
+        "INV-AC-10"
+      ],
+      "reason": "API outsider 404 và client mock response; chưa có positive GET owner integration riêng."
+    },
+    {
+      "id": "getSettings",
+      "method": "GET",
+      "path": "/me/notification-settings",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "setSettings",
+      "method": "PUT",
+      "path": "/me/notification-settings",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "registerDevice",
+      "method": "POST",
+      "path": "/me/devices",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "listNotifications",
+      "method": "GET",
+      "path": "/me/notifications",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "readNotification",
+      "method": "POST",
+      "path": "/me/notifications/{id}/read",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "getOperation",
+      "method": "GET",
+      "path": "/operations/{key}",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "changeIdentity",
+      "method": "POST",
+      "path": "/me/identity-change",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "confirmIdentityChange",
+      "method": "POST",
+      "path": "/me/identity-change/confirm",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "openRecovery",
+      "method": "POST",
+      "path": "/auth/recovery-reports",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "decideRecovery",
+      "method": "POST",
+      "path": "/admin/recovery-reports/{id}/decision",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "deactivatePartner",
+      "method": "POST",
+      "path": "/partners/{id}/deactivation",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "leavePartner",
+      "method": "POST",
+      "path": "/memberships/{id}/leave",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "editAdminGrants",
+      "method": "POST",
+      "path": "/admin/users/{id}/grants",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "createCategory",
+      "method": "POST",
+      "path": "/admin/categories",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "createSkill",
+      "method": "POST",
+      "path": "/admin/skills",
+      "status": "specified-not-implemented",
+      "criteria": [],
+      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+    },
+    {
+      "id": "liveness",
+      "method": "GET",
+      "path": "/health",
+      "status": "implemented",
+      "criteria": [
+        "INFRA-AC-04"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "readiness",
+      "method": "GET",
+      "path": "/ready",
+      "status": "implemented",
+      "criteria": [
+        "INFRA-AC-04",
+        "CATALOG-AC-02"
+      ],
+      "reason": "Các assertions liên kết đã được đối chiếu với operation; chỉ chứng minh nhánh mô tả, không toàn contract."
+    },
+    {
+      "id": "getPartnerManagement",
+      "method": "GET",
+      "path": "/partners/{id}/management",
+      "status": "implemented",
+      "criteria": [
+        "SUPPLY-AC-01",
+        "SUPPLY-AC-02",
+        "SUPPLY-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "setPublication",
+      "method": "PUT",
+      "path": "/partners/{id}/publication",
+      "status": "implemented",
+      "criteria": [
+        "SUPPLY-AC-01",
+        "SUPPLY-AC-02",
+        "SUPPLY-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "locationAutocomplete",
+      "method": "POST",
+      "path": "/locations/autocomplete",
+      "status": "implemented",
+      "criteria": [
+        "LOCATION-AC-01",
+        "LOCATION-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "locationGeocode",
+      "method": "POST",
+      "path": "/locations/geocode",
+      "status": "implemented",
+      "criteria": [
+        "LOCATION-AC-01",
+        "LOCATION-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "locationReverse",
+      "method": "POST",
+      "path": "/locations/reverse",
+      "status": "implemented",
+      "criteria": [
+        "LOCATION-AC-02",
+        "LOCATION-AC-03"
+      ],
+      "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    }
+  ],
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "file": "services/api/src/health/health.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/ready",
+      "file": "services/api/src/health/health.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/me",
+      "file": "services/api/src/modules/accounts/accounts.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/me/sessions",
+      "file": "services/api/src/modules/accounts/accounts.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/me/sessions/{id}/revoke",
+      "file": "services/api/src/modules/accounts/accounts.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/me/addresses",
+      "file": "services/api/src/modules/accounts/accounts.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/me/addresses",
+      "file": "services/api/src/modules/accounts/accounts.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/me/addresses/{id}",
+      "file": "services/api/src/modules/accounts/accounts.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/me/addresses/{id}/archive",
+      "file": "services/api/src/modules/accounts/accounts.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/assets/upload-grants",
+      "file": "services/api/src/modules/assets/assets.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/assets/{id}/upload",
+      "file": "services/api/src/modules/assets/assets.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/assets/{id}/complete",
+      "file": "services/api/src/modules/assets/assets.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/assets/{id}/content",
+      "file": "services/api/src/modules/assets/assets.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/assets/{id}",
+      "file": "services/api/src/modules/assets/assets.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/register",
+      "file": "services/api/src/modules/auth/auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "file": "services/api/src/modules/auth/auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh",
+      "file": "services/api/src/modules/auth/auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/logout",
+      "file": "services/api/src/modules/auth/auth.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/me",
+      "file": "services/api/src/modules/auth/auth.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/categories",
+      "file": "services/api/src/modules/catalog/catalog.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/skills",
+      "file": "services/api/src/modules/catalog/catalog.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/conversations",
+      "file": "services/api/src/modules/chat/chat.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/conversations",
+      "file": "services/api/src/modules/chat/chat.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/conversations/{id}/messages",
+      "file": "services/api/src/modules/chat/chat.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/conversations/{id}/messages",
+      "file": "services/api/src/modules/chat/chat.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/conversations/{id}/read",
+      "file": "services/api/src/modules/chat/chat.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/jobs/{id}/invoice",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/jobs/{id}/invoice-draft",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/invoices/{id}/send",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/invoices/{id}/revision-requests",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/invoices/{id}/confirm",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/invoices/{id}/payment-reported",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/invoices/{id}/settle",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/me/points",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/wallet",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/me/points/ledger",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/ledger",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/jobs",
+      "file": "services/api/src/modules/jobs/jobs.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/jobs",
+      "file": "services/api/src/modules/jobs/jobs.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/jobs/{id}",
+      "file": "services/api/src/modules/jobs/jobs.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/jobs/{id}/accept",
+      "file": "services/api/src/modules/jobs/jobs.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/jobs/{id}/reschedule",
+      "file": "services/api/src/modules/jobs/jobs.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/jobs/{id}/decline",
+      "file": "services/api/src/modules/jobs/jobs.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/jobs/{id}/withdraw",
+      "file": "services/api/src/modules/jobs/jobs.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/jobs/{id}/stop",
+      "file": "services/api/src/modules/jobs/jobs.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/jobs/{id}/assignments",
+      "file": "services/api/src/modules/jobs/jobs.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/members",
+      "file": "services/api/src/modules/jobs/members.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/locations/autocomplete",
+      "file": "services/api/src/modules/locations/locations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/locations/geocode",
+      "file": "services/api/src/modules/locations/locations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/locations/reverse",
+      "file": "services/api/src/modules/locations/locations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/management",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/partners",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/partners/{id}/profile",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/partners/{id}/skills",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/partners/{id}/service-areas",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/partners/{id}/locations",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/partners/{id}/publication",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/partners/{id}/availability",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    }
+  ],
+  "contractGaps": [
+    {
+      "method": "PUT",
+      "path": "/assets/{id}/upload",
+      "file": "services/api/src/modules/assets/assets.controller.ts",
+      "reason": "Adapter ảnh local/test chưa có operation OpenAPI; không nâng thành contract production."
+    },
+    {
+      "method": "GET",
+      "path": "/assets/{id}/content",
+      "file": "services/api/src/modules/assets/assets.controller.ts",
+      "reason": "Adapter ảnh local/test chưa có operation OpenAPI; không nâng thành contract production."
+    }
+  ],
+  "knownGaps": [
+    "QA-013 invitations/rights/expiry",
+    "QA-014 room reuse and exactly-one assignment system message",
+    "QA-015 revoked invoice/settle after reassignment",
+    "QA-016 shop/company two-worker invoice bypass manager",
+    "QA-017 all active memberships self-hire and multi-skill eligibility",
+    "QA-018 exact accept-vs-withdraw race",
+    "QA-019 reminders 24h/1h and non-auto-close time passage",
+    "QA-021 concurrent open/reuse after completed",
+    "QA-024 calling provider",
+    "QA-025 settings/push/lock screen",
+    "QA-027 all malformed input and DB integer boundaries",
+    "QA-030 exact negative wallet vector",
+    "QA-031 credit boundary with withdrawal holds",
+    "QA-033 concurrent payout/fee holds",
+    "QA-034/038/039 admin completion/locked overdue holds Q02",
+    "QA-040/041/042 banking/topup/payout",
+    "QA-044/045/046 reviews APIs/visibility",
+    "QA-047/048/049 support/admin moderation/catalog management",
+    "QA-050 notifications worker",
+    "QA-051 getOperation endpoint",
+    "QA-052/087 full image security vectors, metadata/size/quota/provider",
+    "QA status strings stale for QA-013..052; source historical status must not replace runtime evidence.",
+    "Checklist B05 title says no product code but later P0-2 section confirms HTTP chat; retain distinction, not full B05.",
+    "Financial test fixtures insert balances directly for scenarios, not real bank flows.",
+    "listMembers is implemented but integration test currently does not explicitly call it; mobile request boundary test and UI mocked list cover client only.",
+    "Source read observed jobs completed at settlement before customer payment mark; review_eligible waits both marks. Do not claim completed-state requires both marks without reconciling spec.",
+    "QA-068 có số lượng catalog lịch sử khác seed hiện hành; SDD không tự sửa nguồn.",
+    "Native và UAT chưa chạy trong CI này; Storybook build không chứng minh app khớp thiết kế.",
+    "Danh sách requirement độc lập ngoài qa-cases.json chưa được trích đầy đủ từ DOCX/Excel; QA/API là nguồn kiểm kê máy đọc hiện tại."
+  ]
+}

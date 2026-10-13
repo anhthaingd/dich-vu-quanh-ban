@@ -1,0 +1,1050 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": "map02",
+      "path": "docs/technical-design/README.md",
+      "sha256": "ff8ad11bd7d08498842a5204dd9e4667af0df92be2bfb02f17d5c59801b46745",
+      "heading": "## MAP-02 — bản đồ kết quả, API v0.1.8"
+    },
+    {
+      "id": "ux-map02",
+      "path": "ui-ux/specs/ux-scope-current.md",
+      "sha256": "80054b987cf4e5784df327b5aea2617af7b7c4471feb2e1b9a8418eb2f6b0329",
+      "heading": "## MAP-02 — bản đồ kết quả, API v0.1.8"
+    },
+    {
+      "id": "rtm-search",
+      "path": "docs/technical-design/rtm.json",
+      "sha256": "ba2d24044df4777f01125fd9b59236df53300a680d552fa920fd92d2cf472815",
+      "pointer": "/18",
+      "expected": {
+        "operation_id": "searchPartners",
+        "contract_case": "CT-searchPartners"
+      }
+    },
+    {
+      "id": "api-search",
+      "path": "docs/technical-design/openapi.json",
+      "sha256": "633ae6718f2de82856d50b097a591ccc4d87a3d3acc375c50c13541eb1a03826",
+      "pointer": "/paths/~1partners/get",
+      "expected": {
+        "operationId": "searchPartners"
+      }
+    },
+    {
+      "id": "QA-001",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/0",
+      "expected": {
+        "id": "QA-001",
+        "requirement": "FR-AUTH-001",
+        "operation": "verifyOtp"
+      }
+    },
+    {
+      "id": "QA-002",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/1",
+      "expected": {
+        "id": "QA-002",
+        "requirement": "FR-AUTH-001",
+        "operation": "login"
+      }
+    },
+    {
+      "id": "QA-003",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/2",
+      "expected": {
+        "id": "QA-003",
+        "requirement": "FR-AUTH-008",
+        "operation": "refreshSession"
+      }
+    },
+    {
+      "id": "QA-004",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/3",
+      "expected": {
+        "id": "QA-004",
+        "requirement": "FR-AUTH-005; FR-AUTH-006",
+        "operation": "confirmIdentityChange"
+      }
+    },
+    {
+      "id": "QA-005",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/4",
+      "expected": {
+        "id": "QA-005",
+        "requirement": "FR-AUTH-007; FR-ADM-024",
+        "operation": "decideRecovery"
+      }
+    },
+    {
+      "id": "QA-006",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/5",
+      "expected": {
+        "id": "QA-006",
+        "requirement": "FR-AUTH-003; FR-ADM-025",
+        "operation": "requestDeletion"
+      }
+    },
+    {
+      "id": "QA-007",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/6",
+      "expected": {
+        "id": "QA-007",
+        "requirement": "FR-CAT-001; FR-CAT-002",
+        "operation": "createSkill"
+      }
+    },
+    {
+      "id": "QA-008",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/7",
+      "expected": {
+        "id": "QA-008",
+        "requirement": "FR-PAR-001",
+        "operation": "createPartner"
+      }
+    },
+    {
+      "id": "QA-009",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/8",
+      "expected": {
+        "id": "QA-009",
+        "requirement": "FR-PAR-003",
+        "operation": "setAvailability"
+      }
+    },
+    {
+      "id": "QA-010",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/9",
+      "expected": {
+        "id": "QA-010",
+        "requirement": "FR-PAR-005; FR-SEARCH-002",
+        "operation": "searchPartners"
+      }
+    },
+    {
+      "id": "QA-011",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/10",
+      "expected": {
+        "id": "QA-011",
+        "requirement": "FR-SEARCH-003; FR-SEARCH-005",
+        "operation": "searchPartners"
+      }
+    },
+    {
+      "id": "QA-012",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/11",
+      "expected": {
+        "id": "QA-012",
+        "requirement": "FR-SEARCH-004",
+        "operation": "getPartner"
+      }
+    },
+    {
+      "id": "QA-013",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/12",
+      "expected": {
+        "id": "QA-013",
+        "requirement": "FR-ORG-004; FR-ORG-005",
+        "operation": "inviteMember"
+      }
+    },
+    {
+      "id": "QA-014",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/13",
+      "expected": {
+        "id": "QA-014",
+        "requirement": "FR-ORG-001; FR-CHAT-004",
+        "operation": "assignJob"
+      }
+    },
+    {
+      "id": "QA-015",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/14",
+      "expected": {
+        "id": "QA-015",
+        "requirement": "FR-ORG-003; FR-ORG-006",
+        "operation": "assignJob"
+      }
+    },
+    {
+      "id": "QA-016",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/15",
+      "expected": {
+        "id": "QA-016",
+        "requirement": "FR-ORG-002",
+        "operation": "sendInvoice"
+      }
+    },
+    {
+      "id": "QA-017",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/16",
+      "expected": {
+        "id": "QA-017",
+        "requirement": "FR-JOB-001",
+        "operation": "createJob"
+      }
+    },
+    {
+      "id": "QA-018",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/17",
+      "expected": {
+        "id": "QA-018",
+        "requirement": "FR-JOB-002",
+        "operation": "acceptJob"
+      }
+    },
+    {
+      "id": "QA-019",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/18",
+      "expected": {
+        "id": "QA-019",
+        "requirement": "FR-JOB-003; FR-JOB-004",
+        "operation": "rescheduleJob"
+      }
+    },
+    {
+      "id": "QA-020",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/19",
+      "expected": {
+        "id": "QA-020",
+        "requirement": "FR-JOB-005",
+        "operation": "stopJob"
+      }
+    },
+    {
+      "id": "QA-021",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/20",
+      "expected": {
+        "id": "QA-021",
+        "requirement": "FR-CHAT-001; FR-CHAT-006",
+        "operation": "openConversation"
+      }
+    },
+    {
+      "id": "QA-022",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/21",
+      "expected": {
+        "id": "QA-022",
+        "requirement": "FR-CHAT-004",
+        "operation": "listMessages"
+      }
+    },
+    {
+      "id": "QA-023",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/22",
+      "expected": {
+        "id": "QA-023",
+        "requirement": "FR-CHAT-005",
+        "operation": "sendMessage"
+      }
+    },
+    {
+      "id": "QA-024",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/23",
+      "expected": {
+        "id": "QA-024",
+        "requirement": "FR-CALL-001",
+        "operation": "startCall"
+      }
+    },
+    {
+      "id": "QA-025",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/24",
+      "expected": {
+        "id": "QA-025",
+        "requirement": "FR-NOT-002; FR-NOT-003",
+        "operation": "setSettings"
+      }
+    },
+    {
+      "id": "QA-026",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/25",
+      "expected": {
+        "id": "QA-026",
+        "requirement": "FR-INV-001",
+        "operation": "sendInvoice"
+      }
+    },
+    {
+      "id": "QA-027",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/26",
+      "expected": {
+        "id": "QA-027",
+        "requirement": "FR-INV-002",
+        "operation": "saveInvoiceDraft"
+      }
+    },
+    {
+      "id": "QA-028",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/27",
+      "expected": {
+        "id": "QA-028",
+        "requirement": "FR-INV-003; FR-INV-004",
+        "operation": "confirmInvoice"
+      }
+    },
+    {
+      "id": "QA-029",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/28",
+      "expected": {
+        "id": "QA-029",
+        "requirement": "FR-FEE-001; FR-POINT-003",
+        "operation": "settleInvoice"
+      }
+    },
+    {
+      "id": "QA-030",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/29",
+      "expected": {
+        "id": "QA-030",
+        "requirement": "FR-POINT-001; FR-WAL-003",
+        "operation": "confirmInvoice"
+      }
+    },
+    {
+      "id": "QA-031",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/30",
+      "expected": {
+        "id": "QA-031",
+        "requirement": "FR-WAL-002",
+        "operation": "confirmInvoice"
+      }
+    },
+    {
+      "id": "QA-032",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/31",
+      "expected": {
+        "id": "QA-032",
+        "requirement": "FR-POINT-001",
+        "operation": "confirmInvoice"
+      }
+    },
+    {
+      "id": "QA-033",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/32",
+      "expected": {
+        "id": "QA-033",
+        "requirement": "FR-WAL-002; FR-WAL-005",
+        "operation": "createPayout"
+      }
+    },
+    {
+      "id": "QA-034",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/33",
+      "expected": {
+        "id": "QA-034",
+        "requirement": "FR-INV-006; FR-ADM-012",
+        "operation": "completeOnBehalf"
+      }
+    },
+    {
+      "id": "QA-035",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/34",
+      "expected": {
+        "id": "QA-035",
+        "requirement": "FR-INV-006",
+        "operation": "settleInvoice"
+      }
+    },
+    {
+      "id": "QA-036",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/35",
+      "expected": {
+        "id": "QA-036",
+        "requirement": "FR-INV-007; Q01",
+        "operation": "reportPayment"
+      }
+    },
+    {
+      "id": "QA-037",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/36",
+      "expected": {
+        "id": "QA-037",
+        "requirement": "FR-INV-008; Q01",
+        "operation": "settleInvoice"
+      }
+    },
+    {
+      "id": "QA-038",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/37",
+      "expected": {
+        "id": "QA-038",
+        "requirement": "FR-INV-005; Q02",
+        "operation": "adminInvoices"
+      }
+    },
+    {
+      "id": "QA-039",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/38",
+      "expected": {
+        "id": "QA-039",
+        "requirement": "FR-ADM-012",
+        "operation": "completeOnBehalf"
+      }
+    },
+    {
+      "id": "QA-040",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/39",
+      "expected": {
+        "id": "QA-040",
+        "requirement": "FR-WAL-004",
+        "operation": "adminDecideTopups"
+      }
+    },
+    {
+      "id": "QA-041",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/40",
+      "expected": {
+        "id": "QA-041",
+        "requirement": "FR-WAL-005",
+        "operation": "adminDecidePayouts"
+      }
+    },
+    {
+      "id": "QA-042",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/41",
+      "expected": {
+        "id": "QA-042",
+        "requirement": "FR-WAL-005",
+        "operation": "createPayout"
+      }
+    },
+    {
+      "id": "QA-043",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/42",
+      "expected": {
+        "id": "QA-043",
+        "requirement": "FR-WAL-001",
+        "operation": "getLedger"
+      }
+    },
+    {
+      "id": "QA-044",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/43",
+      "expected": {
+        "id": "QA-044",
+        "requirement": "FR-REV-001; FR-REV-004; Q01",
+        "operation": "createReview"
+      }
+    },
+    {
+      "id": "QA-045",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/44",
+      "expected": {
+        "id": "QA-045",
+        "requirement": "FR-REV-005; FR-REV-006",
+        "operation": "toggleOwnReview"
+      }
+    },
+    {
+      "id": "QA-046",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/45",
+      "expected": {
+        "id": "QA-046",
+        "requirement": "FR-REV-007",
+        "operation": "getJobReviews"
+      }
+    },
+    {
+      "id": "QA-047",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/46",
+      "expected": {
+        "id": "QA-047",
+        "requirement": "FR-SUP-001; FR-ADM-012",
+        "operation": "decideReport"
+      }
+    },
+    {
+      "id": "QA-048",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/47",
+      "expected": {
+        "id": "QA-048",
+        "requirement": "FR-ADM-024",
+        "operation": "decideUser"
+      }
+    },
+    {
+      "id": "QA-049",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/48",
+      "expected": {
+        "id": "QA-049",
+        "requirement": "FR-CAT-002",
+        "operation": "editSkill"
+      }
+    },
+    {
+      "id": "QA-050",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/49",
+      "expected": {
+        "id": "QA-050",
+        "requirement": "FR-NOT-001",
+        "operation": "listNotifications"
+      }
+    },
+    {
+      "id": "QA-051",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/50",
+      "expected": {
+        "id": "QA-051",
+        "requirement": "FR-INV-006",
+        "operation": "getOperation"
+      }
+    },
+    {
+      "id": "QA-052",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/51",
+      "expected": {
+        "id": "QA-052",
+        "requirement": "FR-INV-001",
+        "operation": "completeUpload"
+      }
+    },
+    {
+      "id": "QA-053",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/52",
+      "expected": {
+        "id": "QA-053",
+        "requirement": "FR-SEARCH-001",
+        "operation": "searchPartners"
+      }
+    },
+    {
+      "id": "QA-054",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/53",
+      "expected": {
+        "id": "QA-054",
+        "requirement": "FR-UX-001",
+        "operation": "getMe"
+      }
+    },
+    {
+      "id": "QA-055",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/54",
+      "expected": {
+        "id": "QA-055",
+        "requirement": "Q03",
+        "operation": "getJob"
+      }
+    },
+    {
+      "id": "QA-056",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/55",
+      "expected": {
+        "id": "QA-056",
+        "requirement": "FR-CAT-001; FR-CAT-002",
+        "operation": "listCategories"
+      }
+    },
+    {
+      "id": "QA-057",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/56",
+      "expected": {
+        "id": "QA-057",
+        "requirement": "FR-CAT-001; FR-CAT-002",
+        "operation": "listCategories; listSkills"
+      }
+    },
+    {
+      "id": "QA-058",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/57",
+      "expected": {
+        "id": "QA-058",
+        "requirement": "FR-CAT-001; FR-UX-001",
+        "operation": "listCategories; listSkills"
+      }
+    },
+    {
+      "id": "QA-059",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/58",
+      "expected": {
+        "id": "QA-059",
+        "requirement": "FR-CAT-001; FR-CAT-002",
+        "operation": "listCategories; listSkills"
+      }
+    },
+    {
+      "id": "QA-060",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/59",
+      "expected": {
+        "id": "QA-060",
+        "requirement": "FR-CAT-001; FR-UX-001",
+        "operation": "listCategories; listSkills"
+      }
+    },
+    {
+      "id": "QA-061",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/60",
+      "expected": {
+        "id": "QA-061",
+        "requirement": "LOGTEST-DESIGN-01",
+        "operation": "listCategories"
+      }
+    },
+    {
+      "id": "QA-062",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/61",
+      "expected": {
+        "id": "QA-062",
+        "requirement": "LOGTEST-DESIGN-01",
+        "operation": "listCategories"
+      }
+    },
+    {
+      "id": "QA-063",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/62",
+      "expected": {
+        "id": "QA-063",
+        "requirement": "LOGTEST-DESIGN-01",
+        "operation": "listSkills"
+      }
+    },
+    {
+      "id": "QA-064",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/63",
+      "expected": {
+        "id": "QA-064",
+        "requirement": "LOGTEST-DESIGN-01",
+        "operation": "liveness"
+      }
+    },
+    {
+      "id": "QA-065",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/64",
+      "expected": {
+        "id": "QA-065",
+        "requirement": "LOGTEST-DESIGN-01",
+        "operation": "listCategories"
+      }
+    },
+    {
+      "id": "QA-066",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/65",
+      "expected": {
+        "id": "QA-066",
+        "requirement": "LOGTEST-DESIGN-01",
+        "operation": "listCategories"
+      }
+    },
+    {
+      "id": "QA-067",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/66",
+      "expected": {
+        "id": "QA-067",
+        "requirement": "I18N-04; FR-CAT-001/002",
+        "operation": "listCategories, listSkills"
+      }
+    },
+    {
+      "id": "QA-068",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/67",
+      "expected": {
+        "id": "QA-068",
+        "requirement": "I18N-04; FR-CAT-001/002",
+        "operation": "listCategories, listSkills"
+      }
+    },
+    {
+      "id": "QA-069",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/68",
+      "expected": {
+        "id": "QA-069",
+        "requirement": "I18N-04; FR-CAT-001/002",
+        "operation": "listCategories, listSkills"
+      }
+    },
+    {
+      "id": "QA-070",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/69",
+      "expected": {
+        "id": "QA-070",
+        "requirement": "B01-04; F01",
+        "operation": "getMe, editMe, register, login, refresh"
+      }
+    },
+    {
+      "id": "QA-071",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/70",
+      "expected": {
+        "id": "QA-071",
+        "requirement": "B01-04; F01",
+        "operation": "getMe, editMe"
+      }
+    },
+    {
+      "id": "QA-072",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/71",
+      "expected": {
+        "id": "QA-072",
+        "requirement": "B01-04A",
+        "operation": "listSessions/revokeSession"
+      }
+    },
+    {
+      "id": "QA-073",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/72",
+      "expected": {
+        "id": "QA-073",
+        "requirement": "B01-04A",
+        "operation": "listAddresses/addAddress/editAddress/archiveAddress"
+      }
+    },
+    {
+      "id": "QA-074",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/73",
+      "expected": {
+        "id": "QA-074",
+        "requirement": "P0-1",
+        "operation": "createPartner/getPartnerManagement/editPartner/setSkills/setAreas/setLocations/setPublication/setAvailability"
+      }
+    },
+    {
+      "id": "QA-075",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/74",
+      "expected": {
+        "id": "QA-075",
+        "requirement": "P0-1",
+        "operation": "searchPartners/getPartner"
+      }
+    },
+    {
+      "id": "QA-076",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/75",
+      "expected": {
+        "id": "QA-076",
+        "requirement": "MAP-01",
+        "operation": "locationAutocomplete/locationGeocode"
+      }
+    },
+    {
+      "id": "QA-077",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/76",
+      "expected": {
+        "id": "QA-077",
+        "requirement": "MAP-01",
+        "operation": "locationReverse"
+      }
+    },
+    {
+      "id": "QA-078",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/77",
+      "expected": {
+        "id": "QA-078",
+        "requirement": "MAP-01",
+        "operation": "locationAutocomplete/locationGeocode/locationReverse"
+      }
+    },
+    {
+      "id": "QA-079",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/78",
+      "expected": {
+        "id": "QA-079",
+        "requirement": "MAP-01",
+        "operation": "createAddress/updateAddress/updateServiceAreas/updateLocations"
+      }
+    },
+    {
+      "id": "QA-080",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/79",
+      "expected": {
+        "id": "QA-080",
+        "requirement": "MAP-02",
+        "operation": "searchPartners"
+      }
+    },
+    {
+      "id": "QA-081",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/80",
+      "expected": {
+        "id": "QA-081",
+        "requirement": "MAP-02",
+        "operation": "searchPartners"
+      }
+    },
+    {
+      "id": "QA-082",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/81",
+      "expected": {
+        "id": "QA-082",
+        "requirement": "MAP-03",
+        "operation": "searchPartners"
+      }
+    },
+    {
+      "id": "QA-083",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/82",
+      "expected": {
+        "id": "QA-083",
+        "requirement": "P0-2",
+        "operation": "createJob"
+      }
+    },
+    {
+      "id": "QA-084",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/83",
+      "expected": {
+        "id": "QA-084",
+        "requirement": "P0-2",
+        "operation": "acceptJob"
+      }
+    },
+    {
+      "id": "QA-085",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/84",
+      "expected": {
+        "id": "QA-085",
+        "requirement": "P0-2",
+        "operation": "sendMessage"
+      }
+    },
+    {
+      "id": "QA-086",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/85",
+      "expected": {
+        "id": "QA-086",
+        "requirement": "P0-3",
+        "operation": "getInvoice"
+      }
+    },
+    {
+      "id": "QA-087",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/86",
+      "expected": {
+        "id": "QA-087",
+        "requirement": "P0-3",
+        "operation": "completeUpload"
+      }
+    },
+    {
+      "id": "QA-088",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "24eeea238a6b8fcb27a642f3e47c5a69b85662b6bef35df2fc4e4ce41806c6fd",
+      "pointer": "/87",
+      "expected": {
+        "id": "QA-088",
+        "requirement": "P0-3",
+        "operation": "settleInvoice"
+      }
+    },
+    {
+      "id": "api-project",
+      "path": "docs/technical-design/openapi.json",
+      "sha256": "633ae6718f2de82856d50b097a591ccc4d87a3d3acc375c50c13541eb1a03826",
+      "pointer": "/info",
+      "expected": {
+        "version": "0.1.10"
+      }
+    }
+  ],
+  "domains": [
+    {
+      "id": "MAP-02",
+      "paths": [
+        "apps/mobile/src/features/search/",
+        "apps/mobile/src/features/partners/api/",
+        "services/api/src/modules/search/",
+        "services/api/src/modules/partners/",
+        "services/api/test/integration/partners.test.ts",
+        "tests/e2e/web/search-map.spec.mjs"
+      ]
+    },
+    {
+      "id": "PROJECT",
+      "paths": [
+        "apps/",
+        "services/",
+        "packages/",
+        "scripts/",
+        "tests/",
+        "infra/",
+        ".github/",
+        "docs/",
+        "ui-ux/",
+        "package.json",
+        "package-lock.json",
+        "AGENTS.md",
+        "README.md",
+        ".npmrc",
+        ".nvmrc",
+        ".editorconfig",
+        ".gitignore",
+        "tsconfig.base.json",
+        "eslint.config.mjs"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # Kế hoạch triển khai và học code
 
+**SDD toàn dự án · 13/10:** mở rộng danh mục toàn repo, 88 QA, 123 operation API và 71 criterion có test; gói `SDD-PROJECT` dùng cho CI, có build prototype/Storybook và giữ coverage/load gate. Các mục partial/unmapped giữ nguyên. [Cách dùng](sdd/README.md) · [B00-08 — báo cáo mở rộng](bao-cao/B00-08-sdd-toan-du-an.md) · [Thiết kế SDD-01](de-xuat/SDD-01-quy-trinh-ai-bam-spec.md). Kết quả local/CI và giới hạn ghi trong B00-08; không suy ra native/UAT đã đạt.
+
 **Bổ sung icon ngành · 08/10:** đã gắn 10 icon Lucide riêng theo mã ngành; Tất cả giữ ô lưới. Typecheck/lint và 8 test liên quan đạt; ảnh và giới hạn kiểm native tại [B00-06, mục 8](bao-cao/B00-06-trang-chinh-theo-storybook.md#8-bổ-sung-icon-theo-ngành--08102026). Chưa commit/push/CI/UAT.
 
 **Sửa giao diện trang chính · 08/10:** đã thay trang danh mục cũ bằng bố cục Storybook Mobile, font/icon cùng nguồn, tìm dịch vụ và khu vực ngay trang chính, tab Công việc/Tin nhắn thật. [B00-06](bao-cao/B00-06-trang-chinh-theo-storybook.md) có ảnh Android/iOS và giới hạn khác bản mock. Local đạt 196 mobile test, 14 bài web đã kiểm qua các lượt, native cả hai nền tảng; chưa push/CI/UAT. Thông báo vẫn chưa triển khai.
@@ -38,6 +40,8 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 
 | Lát bàn giao | Báo cáo | Phạm vi thực tế |
 |---|---|---|
+| SDD toàn dự án | [B00-08](bao-cao/B00-08-sdd-toan-du-an.md) | Danh mục toàn repo, 71 criterion, QA/API còn thiếu, CI và ví dụ MAP-02 |
+| Bộ kiểm SDD local ban đầu | [B00-07](bao-cao/B00-07-bo-kiem-sdd-local.md) | Nguồn → 6 tiêu chí MAP-02 → code/test → bằng chứng; kiểm prepare/verify; chưa nối CI hoặc mở rộng miền khác |
 | Trang chính theo Storybook | [B00-06](bao-cao/B00-06-trang-chinh-theo-storybook.md) | Trang tìm dịch vụ, font/icon, nhóm ngành, điều hướng khách; ảnh Android/iOS; local đã kiểm, Thông báo chưa triển khai |
 | Nền tảng + danh mục | [B00-01](bao-cao/B00-01-nen-tang-danh-muc.md) | App/API/DB, UI chung, navigation, log/test; không đóng toàn bộ B00 |
 | Nền đa ngôn ngữ + lựa chọn local | [I18N-01/02](bao-cao/I18N-01-nen-da-ngon-ngu.md) | VI/EN/JA cho các màn hiện có, mã lỗi, lưu locale; chưa dịch dữ liệu DB hoặc đồng bộ tài khoản |

@@ -1,5 +1,30 @@
 # Checklist chức năng và bằng chứng
 
+## SDD toàn dự án ngày 13/10/2026
+
+Đợt mở rộng được giao trực tiếp: [B00-08](bao-cao/B00-08-sdd-toan-du-an.md) · [Cách dùng](sdd/README.md).
+
+- [x] Đăng ký toàn repo, 88 QA, 123 operation, 71 criterion và các phần partial/unmapped.
+- [x] Bộ kiểm phát hiện thiếu file/QA/API/criterion, đọc route/action thật và gắn evidence với phiên bản.
+- [x] Bổ sung test MAP-02: tie-break created_at/id và phân trang qua UI với API/DB thật.
+- [x] Viết CI toàn dự án, giữ coverage/build/load, thêm prototype/Storybook.
+- [x] Local đạt toàn gói: 50 tooling, 196 mobile, 83 API, 14 web, coverage/build/load/prototype/Storybook và SDD verify. Mermaid đã render.
+- [ ] Remote CI và required check: kiểm trên commit sau push; cập nhật bằng chứng riêng trong B00-08.
+- [ ] Native/thiết bị thật/UAT và các nhánh nghiệp vụ còn thiếu; không nằm trong chứng nhận tự động này.
+
+## Mốc SDD-01 local ban đầu ngày 13/10/2026
+
+Đợt công cụ theo yêu cầu trực tiếp của chủ dự án; không đổi ưu tiên nghiệp vụ. [Hướng dẫn](sdd/README.md) · [B00-07](bao-cao/B00-07-bo-kiem-sdd-local.md).
+
+- [x] Nguồn MAP-02/QA-080/081/OpenAPI/UX → 6 tiêu chí mẫu → code/test; ghi rõ nhánh chưa được chứng nhận.
+- [x] Kiểm prepare/verify, nguồn đổi, mất liên kết, phạm vi và bằng chứng cũ/fail/skip; 28 test riêng, tổng 31 tooling và lint đạt local.
+- [x] Thu report thật: 7 mobile, 2 API/PostGIS và 1 web; verify đạt trên working tree. Thử bỏ điều kiện public trong bản sao tạm bị test riêng tư bắt đúng.
+- [x] Hướng dẫn AGENTS/quy trình, báo cáo học code và Mermaid parse/render.
+- [x] Chuyển kế hoạch CI/required checks sang đợt mở rộng B00-08 phía trên.
+- [x] Chuyển mở rộng MAP-02/jobs/chat/invoice sang B00-08; các giới hạn native/UAT vẫn giữ.
+
+## Các mốc chức năng trước đó
+
 **Bổ sung icon ngành · 08/10:** đã gắn 10 icon Lucide riêng theo mã ngành; Tất cả giữ ô lưới. Typecheck/lint và 8 test liên quan đạt; ảnh và giới hạn kiểm native tại [B00-06, mục 8](bao-cao/B00-06-trang-chinh-theo-storybook.md#8-bổ-sung-icon-theo-ngành--08102026). Chưa commit/push/CI/UAT.
 
 **Sửa giao diện trang chính · 08/10:** đã thay trang danh mục cũ bằng bố cục Storybook Mobile, font/icon cùng nguồn, tìm dịch vụ và khu vực ngay trang chính, tab Công việc/Tin nhắn thật. [B00-06](bao-cao/B00-06-trang-chinh-theo-storybook.md) có ảnh Android/iOS và giới hạn khác bản mock. Local đạt 196 mobile test, 14 bài web đã kiểm qua các lượt, native cả hai nền tảng; chưa push/CI/UAT. Thông báo vẫn chưa triển khai.

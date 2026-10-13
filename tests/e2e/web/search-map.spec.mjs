@@ -16,8 +16,14 @@ test('public result pins open profiles, coincident providers stay reachable, pri
  }
  const a=await provider('DEMO Public A',true),b=await provider('DEMO Public B',true),privateOnly=await provider('DEMO no public point',false);
  await page.route('https://maps.geoapify.com/**',r=>r.fulfill({json:{version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'background-color':'#e8efe9'}}]}}));
+ // Exercise real DB/API cursor pages with a small page size; do not mock results.
+ await page.route('**/v1/partners?**',r=>{const url=new URL(r.request().url());url.searchParams.set('limit','1');return r.continue({url:url.href});});
  await page.goto(environment.webUrl);await chooseLocation(page,'search',{latitude:21.0285,longitude:105.8542});await page.getByTestId('search-submit').click();
- await page.getByTestId('search-view-map').click();const pin=page.getByRole('button',{name:/DEMO Public A, DEMO Public B|DEMO Public B, DEMO Public A/});await expect(pin).toHaveText('2×');await pin.click();
+ await expect(page.getByTestId('search-result-'+a.id)).toBeVisible();await expect(page.getByTestId('search-result-'+b.id)).toHaveCount(0);
+ await page.getByTestId('search-view-map').click();
+ await page.getByTestId('search-more').click();await expect(page.getByRole('button',{name:/DEMO Public A, DEMO Public B|DEMO Public B, DEMO Public A/})).toHaveText('2×');
+ await page.getByTestId('search-more').click();await expect(page.getByTestId('search-result-'+privateOnly.id)).toBeVisible();await expect(page.getByTestId('search-more')).toHaveCount(0);
+ const pin=page.getByRole('button',{name:/DEMO Public A, DEMO Public B|DEMO Public B, DEMO Public A/});await expect(pin).toHaveText('2×');await pin.click();
  await expect(page.getByTestId('map-selected-'+a.id)).toBeVisible();await expect(page.getByTestId('map-selected-'+b.id)).toBeVisible();await expect(page.getByTestId('search-result-'+privateOnly.id)).toBeVisible();await expect(page.getByText('PRIVATE_CANARY')).toHaveCount(0);
  await page.getByTestId('map-selected-'+a.id).getByRole('button',{name:'Xem hồ sơ',exact:true}).click();await expect(page.getByText('DEMO Public A',{exact:true}).filter({visible:true})).toBeVisible();
  await page.getByRole('button',{name:'Quay lại',exact:true}).click();await page.getByTestId('search-view-list').click();await expect(page.getByTestId('search-result-'+a.id)).toBeVisible();

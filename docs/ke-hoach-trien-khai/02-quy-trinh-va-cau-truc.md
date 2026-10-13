@@ -91,6 +91,12 @@ Chủ dự án đã giao triển khai thì không hỏi lại từng bước k�
 
 ## Điều kiện ghi hoàn thành
 
+### Kiểm SDD toàn dự án
+
+Theo yêu cầu 13/10/2026, mở [hướng dẫn SDD](sdd/README.md), đọc nguồn và criterion liên quan rồi chạy `npm run sdd:check -- --change SDD-PROJECT --phase prepare`. Sau thực hiện, `sdd:run` thu report thật và `--phase verify` kiểm đúng phiên bản. CI dùng cùng gói; check bắt buộc tên `SDD project`. MAP-02 còn là gói kiểm nhanh riêng.
+
+File/QA/API/criterion mới phải được đăng ký với phạm vi, test và giới hạn. Nguồn đổi phải đọc lại; không sửa hash/test/spec để che lỗi. Inventory đầy đủ không thay review nghiệp vụ, native/UAT hay yêu cầu đồng bộ khi spec đổi. [B00-08](bao-cao/B00-08-sdd-toan-du-an.md) giải thích luồng và giới hạn. Các điều kiện hoàn thành chung tiếp tục áp dụng.
+
 - Có đường chạy thực từ UI qua API/DB nếu chức năng cần backend; mock chỉ dùng để kiểm lớp riêng.
 - Các tiêu chí của lát và kiểm thử quan trọng đạt; phần bị chặn không đổi thành “không áp dụng” để lấy trạng thái xanh.
 - Báo cáo có commit hoặc ghi rõ working tree chưa commit, ngày chạy, môi trường, lệnh, kết quả và chỗ lưu artifact.
