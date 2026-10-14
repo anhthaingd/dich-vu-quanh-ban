@@ -2190,6 +2190,259 @@
       ],
       "description": "Vị trí ghim và phân trang partner đồng khoảng cách được sắp created_at rồi id.",
       "gaps": "Dữ liệu ổn định; không chứng minh mọi mutation đồng thời khi phân trang."
+    },
+    {
+      "id": "P1-01-AC-01",
+      "requirement": "P1-01",
+      "qa": [
+        "QA-089"
+      ],
+      "description": "OTP verifies only its contact and family; wrong attempts persist, expiration, resend and quotas survive service restart",
+      "code": [
+        "services/api/src/modules/auth/challenges.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/organizations.test.ts",
+          "name": "OTP verifies only its contact and family; wrong attempts persist, expiration, resend and quotas survive service restart"
+        }
+      ],
+      "sources": [
+        "QA-089",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Chỉ local/test; không provider thật, production hoặc UAT. Bao phủ đúng assertions của bài kiểm, không toàn bộ QA."
+    },
+    {
+      "id": "P1-01-AC-02",
+      "requirement": "P1-01",
+      "qa": [
+        "QA-089"
+      ],
+      "description": "phone linking cannot steal an identity or replace the existing number; email never opens phone guard",
+      "code": [
+        "services/api/src/modules/auth/challenges.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/organizations.test.ts",
+          "name": "phone linking cannot steal an identity or replace the existing number; email never opens phone guard"
+        }
+      ],
+      "sources": [
+        "QA-089",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Chỉ local/test; không provider thật, production hoặc UAT. Bao phủ đúng assertions của bài kiểm, không toàn bộ QA."
+    },
+    {
+      "id": "P1-01-AC-03",
+      "requirement": "P1-01",
+      "qa": [
+        "QA-090"
+      ],
+      "description": "invitation binds verified recipient, consumes once, scopes pagination and preserves membership ID after leaving",
+      "code": [
+        "services/api/src/modules/organizations/organizations.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/organizations.test.ts",
+          "name": "invitation binds verified recipient, consumes once, scopes pagination and preserves membership ID after leaving"
+        }
+      ],
+      "sources": [
+        "QA-090",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Chỉ local/test; không provider thật, production hoặc UAT. Bao phủ đúng assertions của bài kiểm, không toàn bộ QA."
+    },
+    {
+      "id": "P1-01-AC-04",
+      "requirement": "P1-01",
+      "qa": [
+        "QA-090"
+      ],
+      "description": "resend replaces token, revoke races with acceptance, inviter grant is rechecked",
+      "code": [
+        "services/api/src/modules/organizations/organizations.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/organizations.test.ts",
+          "name": "resend replaces token, revoke races with acceptance, inviter grant is rechecked"
+        }
+      ],
+      "sources": [
+        "QA-090",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Chỉ local/test; không provider thật, production hoặc UAT. Bao phủ đúng assertions của bài kiểm, không toàn bộ QA."
+    },
+    {
+      "id": "P1-01-AC-05",
+      "requirement": "P1-01",
+      "qa": [
+        "QA-091"
+      ],
+      "description": "grant changes require fresh single-use family grant, reason and bounded permissions; retry checks current access",
+      "code": [
+        "services/api/src/modules/organizations/organizations.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/organizations.test.ts",
+          "name": "grant changes require fresh single-use family grant, reason and bounded permissions; retry checks current access"
+        }
+      ],
+      "sources": [
+        "QA-091",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Chỉ local/test; không provider thật, production hoặc UAT. Bao phủ đúng assertions của bài kiểm, không toàn bộ QA."
+    },
+    {
+      "id": "P1-01-AC-06",
+      "requirement": "P1-01",
+      "qa": [
+        "QA-092"
+      ],
+      "description": "departure resets call contact and unassigns work, discards only unsent drafts and preserves private chat",
+      "code": [
+        "services/api/src/modules/organizations/organizations.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/organizations.test.ts",
+          "name": "departure resets call contact and unassigns work, discards only unsent drafts and preserves private chat"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/organizations.test.ts",
+          "name": "departure preserves locked and settled invoices and historical assignee while discarding draft-only invoices"
+        }
+      ],
+      "sources": [
+        "QA-092",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Chỉ local/test; không provider thật, production hoặc UAT. Bao phủ đúng assertions của bài kiểm, không toàn bộ QA."
+    },
+    {
+      "id": "P1-01-AC-07",
+      "requirement": "P1-01",
+      "qa": [
+        "QA-093"
+      ],
+      "description": "delivery queue retries unknown failures, survives restart and suppresses expired/replaced messages",
+      "code": [
+        "services/api/src/integrations/local-messages.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/organizations.test.ts",
+          "name": "delivery queue retries unknown failures, survives restart and suppresses expired/replaced messages"
+        }
+      ],
+      "sources": [
+        "QA-093",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Chỉ local/test; không provider thật, production hoặc UAT. Bao phủ đúng assertions của bài kiểm, không toàn bộ QA."
+    },
+    {
+      "id": "P1-01-AC-08",
+      "requirement": "P1-01",
+      "qa": [
+        "QA-091"
+      ],
+      "description": "reauth expiration and family revocation block grants without consuming another family",
+      "code": [
+        "services/api/src/modules/auth/challenges.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/organizations.test.ts",
+          "name": "reauth expiration and family revocation block grants without consuming another family"
+        }
+      ],
+      "sources": [
+        "QA-091",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Chỉ local/test; không provider thật, production hoặc UAT. Bao phủ đúng assertions của bài kiểm, không toàn bộ QA."
+    },
+    {
+      "id": "P1-01-AC-09",
+      "requirement": "P1-01",
+      "qa": [
+        "QA-089",
+        "QA-090",
+        "QA-091",
+        "QA-092"
+      ],
+      "description": "App team: OTP, retry key, quyền, xóa dữ liệu khi mất quyền và hành trình hai tài khoản",
+      "sources": [
+        "QA-089",
+        "QA-090",
+        "QA-091",
+        "QA-092",
+        "api-project"
+      ],
+      "code": [
+        "apps/mobile/src/features/organizations/screens/TeamScreen.tsx",
+        "apps/mobile/src/features/organizations/screens/OrganizationsScreen.tsx",
+        "apps/mobile/src/features/organizations/screens/VerifyContactScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
+          "name": "local verification masks the code, enforces resend delay, clears secrets and refreshes account flags"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
+          "name": "invitation acceptance retains mutation key on network failure and membership departure needs confirmation"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
+          "name": "team follows member and invitation tabs, reauthenticates before grants and previews removal"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
+          "name": "team clears private lists when access is revoked on reload"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/organizations/api/organizations-api.test.ts",
+          "name": "team adapter protects response boundary, sends scoped secrets only in bodies and retains mutation keys"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/organizations.spec.mjs",
+          "name": "team: local verification, invitation, permissions and departure across two accounts"
+        }
+      ],
+      "gaps": "Native riêng báo cáo B04-01; CI không chạy native. Không UAT."
     }
   ]
 }

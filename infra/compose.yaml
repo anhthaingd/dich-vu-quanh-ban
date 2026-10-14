@@ -1,5 +1,11 @@
 name: dvqb-foundation
 services:
+  mailpit:
+    image: axllent/mailpit:v1.27.4
+    profiles: ["p1-local"]
+    ports: ["127.0.0.1:8025:8025", "127.0.0.1:1025:1025"]
+    environment:
+      MP_MAX_MESSAGES: 100
   db:
     image: postgis/postgis:17-3.5@sha256:01a6a70e41e6c4467c8f55f6063555ed72db2d6662cd0d571040d42eadaeb6f6
     platform: linux/amd64

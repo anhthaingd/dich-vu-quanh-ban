@@ -1,5 +1,17 @@
 # Checklist chức năng và bằng chứng
 
+## P1-01 A/B — 13/10/2026
+
+- [x] Chủ dự án duyệt verify-only local Mailpit/SMS mô phỏng và contract đội ngũ/reauth. API v0.1.11, migration009; không mở login/recover/MFA/provider thật.
+- [x] DB/API/app: lời mời/list/resend/revoke/accept, memberships của mình, cấp quyền có lý do/mật khẩu, preview/gỡ/tự rời, đọc/reset đầu mối và bỏ nháp khi bàn giao.
+- [x] API P1: 9 integration với PostGIS, response OpenAPI, 2 unit; mobile 4 màn + 1 API boundary; web hai tài khoản.
+- [x] iOS simulator: mời qua Mailpit, xem thành viên, cấp jobs.assign bằng mật khẩu; kiểm lại DB. Android emulator: xác minh email từ Mailpit, nhận lời, preview/Hủy/xác nhận tự rời. Chỉ máy ảo, không thiết bị thật.
+- [x] Báo cáo [B04-01](bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md)/[B04-02](bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md), ảnh DEMO và Mermaid render; spec/mirror/ZIP/Drive theo phạm vi, sổ v1.49.
+- [x] Các suite SDD-PROJECT đã chạy đạt: lint/typecheck/tooling/mobile/API/coverage/build/web/load/prototype/Storybook. Giữ 80 tiêu chí, 93 QA/130 operation, 59 partial/34 unmapped. Bằng chứng đúng fingerprint bộ file bàn giao là `test-results/sdd/SDD-PROJECT/result.json` và lệnh `--phase verify`; lượt trước đổi tài liệu bị checker từ chối, không dùng thay evidence cuối.
+- [ ] Commit/push, remote CI cho code mới, UAT, thiết bị vật lý, provider thật/production.
+
+Các mục OTP Pending trước ngày 13/10 là lịch sử; chỉ phần verify local được mở lại. Không đánh dấu toàn B01/B04 xong.
+
 ## SDD toàn dự án ngày 13/10/2026
 
 Đợt mở rộng được giao trực tiếp: [B00-08](bao-cao/B00-08-sdd-toan-du-an.md) · [Cách dùng](sdd/README.md).
@@ -124,7 +136,7 @@ Nguồn: [spec](../../ui-ux/specs/account-batch.md), [backlog](../technical-desi
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
 | [x] | B01-01 | Email/mật khẩu + phiên local | Đăng ký/login, SecureStore, access 15 phút, phiên tối đa 30 ngày, rotation/replay/logout; email chưa xác minh; xem [báo cáo](bao-cao/B01-01-email-mat-khau.md) |
-| [ ] | B01-02 | OTP điện thoại và xác minh email | **Pending — chủ dự án yêu cầu hoãn ngày 01/10/2026 vì cân nhắc chi phí**, gồm cả local; chỉ mở lại khi được yêu cầu. Provider/chính sách mã chưa duyệt; không cấp verified từ client |
+| [~] | B01-02 | OTP điện thoại và xác minh email | P1-01 đã mở verify local bằng Mailpit/SMS mô phỏng; không verified từ client. OTP login/recover/provider thật còn Pending; xem B04-01 |
 | [ ] | B01-03 | Quên/đổi mật khẩu, liên kết/đổi định danh | Chứng minh kênh mới; giữ kênh cũ đến commit; revoke phiên theo spec |
 | [ ] | B01-04 | Hồ sơ tài khoản, quản lý phiên và địa chỉ | get/editMe, list/revokeSessions; địa chỉ mặc định; snapshot việc cũ bất biến. **Một phần:** đã implement lát sửa tên có version/idempotency; [báo cáo](bao-cao/B01-04-ho-so-ten-hien-thi.md). Đã có list/thu hồi từng phiên và địa chỉ thêm/sửa/gỡ/mặc định, [báo cáo gói](bao-cao/B01-04-phien-va-dia-chi.md). Gói đã push `4a98dc0`/CI đạt. Đã code [thu hồi các phiên khác](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) bằng API từng phiên; Android/iOS và kiểm lỗi/thử lại đã đạt. Còn nối địa chỉ tìm/thuê và kiểm snapshot jobs; phần bổ sung đã push `a823d0e`, [CI 37428334396](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37428334396) đạt cả 3 jobs, chưa UAT |
 | [ ] | B01-05 | Guard và quyền nền, fresh auth/MFA admin | Đổi UI vai không cấp quyền; từ chối cross-user/tenant; phương thức MFA cần chọn |
@@ -156,13 +168,15 @@ Nguồn: [spec](../../ui-ux/specs/customer-journey.md), [backlog](../technical-d
 | [ ] | B03-03 | Danh sách/chi tiết việc, nhận/từ chối/rút | Kiểm version/cạnh tranh; làm ngay có ETA, không thêm bước bắt đầu |
 | [ ] | B03-04 | Đổi lịch/dừng việc và liên hệ trước thuê | Đổi lịch chỉ giờ hẹn, không tự đóng việc; chat trước thuê hoàn tất tích hợp khi B05 đạt |
 
-## B04 — Doanh nghiệp và phân công — chưa có code sản phẩm
+## B04 — Doanh nghiệp và phân công — đã có một phần phân công trong P0-2
+
+**13/10:** P1-01 A/B đã duyệt và triển khai local/test; xem hai báo cáo B04 ở đầu checklist. Full B04/production/UAT vẫn chưa đóng.
 
 Nguồn: [spec](../../ui-ux/specs/partner-journey.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F08; QA-013…016.
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B04-01 | Membership: mời/nhận/gửi lại/rời/cấp quyền | Lời mời 7 ngày theo spec; một quản lý có thể kiêm quyền; không rò tenant |
+| [~] | B04-01 | Membership: mời/nhận/gửi lại/rời/cấp quyền | Đã có P1-01 local/test và native theo hai báo cáo B04; chưa UAT/provider thật/toàn B04 |
 | [ ] | B04-02 | Phân công/đổi nhân viên/đầu mối gọi | Một assignment hiệu lực; người cũ mất quyền việc; giữ chat riêng; chưa mở chuyển chủ/đóng DN |
 
 ## B05 — Chat, lịch và thông báo — chưa có code sản phẩm

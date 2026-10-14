@@ -1,3 +1,4 @@
+import type {OrganizationsApi} from '../../organizations/api/organizations-api';
 import type { InvoicesApi } from '../../invoices/api/invoices-api';
 import type { InvoiceDraft,InvoiceAction,InvoiceChange } from '../../invoices/models';
 import type { JobsApi } from '../../jobs/api/jobs-api';
@@ -17,7 +18,7 @@ export class AuthSession {
   private session: Session | null = null;
   private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
   private readonly listeners = new Set<() => void>();
-  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi) {}
+  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi) {}
   getSnapshot = () => this.snapshot;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   private update(values: Partial<Snapshot>) { this.snapshot = { ...this.snapshot, ...values }; this.listeners.forEach(fn => fn()); }
@@ -112,6 +113,21 @@ export class AuthSession {
     }
     return user;
   }
+  private teamApi(){if(!this.organizations)throw new ApiError('CONFIG');return this.organizations;}
+  myMemberships=(o:string,c?:string)=>this.accountOperation(o,t=>this.teamApi().memberships(t,c));
+  teamInvitations=(o:string,p:string,c?:string)=>this.accountOperation(o,t=>this.teamApi().invitations(t,p,c));
+  inviteMember=(o:string,p:string,contact:string,k:string)=>this.accountOperation(o,t=>this.teamApi().invite(t,p,contact,k));
+  acceptInvitation=(o:string,token:string,k:string)=>this.accountOperation(o,t=>this.teamApi().accept(t,token,k));
+  changeInvitation=(o:string,id:string,a:'resend'|'revoke',v:number,r:string,k:string)=>this.accountOperation(o,t=>this.teamApi().invitationChange(t,id,a,v,r,k));
+  departurePreview=(o:string,id:string,c?:string)=>this.accountOperation(o,t=>this.teamApi().preview(t,id,c));
+  leaveTeam=(o:string,id:string,v:number,r:string,k:string)=>this.accountOperation(o,t=>this.teamApi().leave(t,id,v,r,k));
+  removeMember=(o:string,id:string,v:number,r:string,k:string)=>this.accountOperation(o,t=>this.teamApi().remove(t,id,v,r,k));
+  reauthenticate=(o:string,password:string)=>this.accountOperation(o,t=>this.teamApi().reauth(t,password));
+  editMemberGrants=(o:string,id:string,v:number,p:string[],r:string,g:string,k:string)=>this.accountOperation(o,t=>this.teamApi().grants(t,id,v,p,r,g,k));
+  teamContact=(o:string,p:string)=>this.accountOperation(o,t=>this.teamApi().contact(t,p));
+  setTeamContact=(o:string,p:string,id:string|null,v:number,k:string)=>this.accountOperation(o,t=>this.teamApi().setContact(t,p,id,v,k));
+  requestChallenge=(o:string,contact:string)=>this.accountOperation(o,t=>this.teamApi().challenge(t,contact));
+  verifyChallenge=(o:string,id:string,code:string)=>this.accountOperation(o,t=>this.teamApi().verify(t,id,code));
   private invoicesApi(){if(!this.invoices)throw new ApiError('CONFIG');return this.invoices;}
   getInvoice=(owner:string,job:string)=>this.accountOperation(owner,t=>this.invoicesApi().get(t,job));
   saveInvoice=(owner:string,job:string,input:InvoiceDraft,key:string)=>this.accountOperation(owner,t=>this.invoicesApi().save(t,job,input,key));

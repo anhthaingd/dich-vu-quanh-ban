@@ -104,70 +104,82 @@
   {
     "name": "auth_challenges",
     "group": "Tài khoản",
-    "purpose": "OTP và khôi phục; không lưu OTP thô.",
+    "purpose": "P1-01 A/B: OTP verify-only, gắn user/family; HMAC mã, không login/recover",
     "columns": [
       [
         "id",
         "uuid",
         "PRIMARY KEY DEFAULT gen_random_uuid()",
-        "Khóa ổn định"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
-        "identity_id",
+        "user_id",
         "uuid",
-        "REFERENCES identities(id)",
-        "Có thể null khi đăng ký"
+        "NOT NULL REFERENCES users(id)",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
-        "subject_hash",
+        "provider",
         "text",
-        "NOT NULL",
-        "Không log liên hệ thô"
+        "NOT NULL CHECK(provider IN ('email','phone'))",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
-        "purpose",
+        "contact_hash",
         "text",
         "NOT NULL",
-        "login / verify / recover"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
-        "secret_hash",
+        "contact_cipher",
         "text",
         "NOT NULL",
-        "OTP hash có secret server"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "code_hash",
+        "text",
+        "NOT NULL",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "family_id",
+        "uuid",
+        "NOT NULL",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "expires_at",
         "timestamptz",
         "NOT NULL",
-        "TTL cấu hình"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "attempts",
         "integer",
-        "NOT NULL DEFAULT 0",
-        "Kiểm giới hạn trong transaction"
+        "NOT NULL DEFAULT 0 CHECK(attempts BETWEEN 0 AND 5)",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "consumed_at",
         "timestamptz",
         "",
-        "Một lần"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "invalidated_at",
+        "timestamptz",
+        "",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "created_at",
         "timestamptz",
-        "NOT NULL DEFAULT now()",
-        "UTC"
-      ],
-      [
-        "context",
-        "jsonb",
-        "NOT NULL DEFAULT '{}'::jsonb",
-        "Ngữ cảnh và chủ thể challenge; không lưu bí mật rõ"
+        "NOT NULL DEFAULT clock_timestamp()",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ]
     ],
-    "checks": "CHECK(attempts>=0)",
+    "checks": "",
     "indexes": ""
   },
   {
@@ -476,67 +488,97 @@
   {
     "name": "member_invitations",
     "group": "Nguồn cung",
-    "purpose": "Mời người vào doanh nghiệp, nhận lời bằng tài khoản đã xác minh.",
+    "purpose": "P1-01 A/B: Mời 7 ngày, liên hệ mã hóa, token HMAC, quyền mặc định rỗng",
     "columns": [
       [
         "id",
         "uuid",
         "PRIMARY KEY DEFAULT gen_random_uuid()",
-        "Khóa ổn định"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "partner_id",
         "uuid",
         "NOT NULL REFERENCES partners(id)",
-        "Doanh nghiệp"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
-        "inviter_id",
+        "invited_by",
         "uuid",
         "NOT NULL REFERENCES users(id)",
-        "Người mời"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "provider",
+        "text",
+        "NOT NULL CHECK(provider IN ('email','phone'))",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "contact_hash",
         "text",
         "NOT NULL",
-        "Đối chiếu liên hệ đã xác minh"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "contact_cipher",
+        "text",
+        "NOT NULL",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "contact_masked",
+        "text",
+        "NOT NULL",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "token_hash",
         "text",
         "NOT NULL UNIQUE",
-        "Không lưu token thô"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "permissions",
-        "jsonb",
-        "NOT NULL",
-        "Mảng quyền được cấp hợp lệ"
+        "text[]",
+        "NOT NULL DEFAULT '{}'",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "status",
+        "text",
+        "NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','accepted','expired','revoked','replaced'))",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "expires_at",
         "timestamptz",
         "NOT NULL",
-        "Cấu hình kỹ thuật"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "version",
+        "integer",
+        "NOT NULL DEFAULT 1",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "replacement_id",
+        "uuid",
+        "REFERENCES member_invitations(id)",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "accepted_by",
         "uuid",
         "REFERENCES users(id)",
-        "Một lần"
-      ],
-      [
-        "revoked_at",
-        "timestamptz",
-        "",
-        "Hủy mời"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "created_at",
         "timestamptz",
-        "NOT NULL DEFAULT now()",
-        "UTC"
+        "NOT NULL DEFAULT clock_timestamp()",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ]
     ],
     "checks": "",
@@ -545,31 +587,19 @@
   {
     "name": "partner_contacts",
     "group": "Nguồn cung",
-    "purpose": "Đầu mối nhận gọi của doanh nghiệp.",
+    "purpose": "P1-01 A/B: Đầu mối null là cửa hàng; version chung partner",
     "columns": [
-      [
-        "id",
-        "uuid",
-        "PRIMARY KEY DEFAULT gen_random_uuid()",
-        "Khóa ổn định"
-      ],
       [
         "partner_id",
         "uuid",
-        "NOT NULL UNIQUE REFERENCES partners(id)",
-        "Một đầu mối mặc định"
+        "PRIMARY KEY REFERENCES partners(id)",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "membership_id",
         "uuid",
-        "NOT NULL",
-        "Phải active và cùng tenant"
-      ],
-      [
-        "created_at",
-        "timestamptz",
-        "NOT NULL DEFAULT now()",
-        "UTC"
+        "",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ]
     ],
     "checks": "FOREIGN KEY(membership_id,partner_id) REFERENCES memberships(id,partner_id)",
@@ -2989,61 +3019,61 @@
   {
     "name": "audit_events",
     "group": "Hạ tầng",
-    "purpose": "Audit append-only; không OTP/token/nội dung chat.",
+    "purpose": "P1-01 A/B: Audit bất biến; không bí mật/chat",
     "columns": [
       [
         "id",
         "uuid",
         "PRIMARY KEY DEFAULT gen_random_uuid()",
-        "Khóa ổn định"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "actor_id",
         "uuid",
-        "REFERENCES users(id)",
-        "Actor hoặc hệ thống"
+        "NOT NULL REFERENCES users(id)",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "partner_id",
+        "uuid",
+        "REFERENCES partners(id)",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "action",
         "text",
         "NOT NULL",
-        "Hành động"
-      ],
-      [
-        "resource_type",
-        "text",
-        "NOT NULL",
-        "Loại"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "resource_id",
         "uuid",
         "NOT NULL",
-        "ID"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
-        "correlation_id",
+        "request_id",
         "uuid",
-        "NOT NULL",
-        "Trace"
+        "",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "reason",
         "text",
-        "",
-        "Lý do admin"
+        "NOT NULL DEFAULT ''",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
-        "changes_redacted",
+        "details",
         "jsonb",
         "NOT NULL DEFAULT '{}'",
-        "Before/after đã loại dữ liệu nhạy cảm"
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ],
       [
         "created_at",
         "timestamptz",
-        "NOT NULL DEFAULT now()",
-        "UTC"
+        "NOT NULL DEFAULT clock_timestamp()",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
       ]
     ],
     "checks": "",
@@ -3144,6 +3174,171 @@
       ]
     ],
     "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "auth_rate_events",
+    "group": "Tài khoản",
+    "purpose": "P1-01 A/B: Hạn mức tồn tại qua restart",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "actor_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "contact_hash",
+        "text",
+        "NOT NULL",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "ip_hash",
+        "text",
+        "NOT NULL",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "purpose",
+        "text",
+        "NOT NULL",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT clock_timestamp()",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "reauth_grants",
+    "group": "Tài khoản",
+    "purpose": "P1-01 A/B: Xác thực lại mật khẩu, một lần, hạn 5 phút",
+    "columns": [
+      [
+        "grant_hash",
+        "text",
+        "PRIMARY KEY",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL REFERENCES users(id)",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "family_id",
+        "uuid",
+        "NOT NULL",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "scope",
+        "text",
+        "NOT NULL CHECK(scope='membership.grants')",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "expires_at",
+        "timestamptz",
+        "NOT NULL",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "consumed_at",
+        "timestamptz",
+        "",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT clock_timestamp()",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ]
+    ],
+    "checks": "",
+    "indexes": ""
+  },
+  {
+    "name": "local_deliveries",
+    "group": "Hạ tầng",
+    "purpose": "P1-01 A/B: Hàng chờ mã hóa tạm, trạng thái giao riêng, retry giới hạn",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY DEFAULT gen_random_uuid()",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "challenge_id",
+        "uuid",
+        "REFERENCES auth_challenges(id)",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "invitation_id",
+        "uuid",
+        "REFERENCES member_invitations(id)",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "payload_cipher",
+        "text",
+        "",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "state",
+        "text",
+        "NOT NULL DEFAULT 'queued' CHECK(state IN ('queued','submitted','failed','unknown'))",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "attempts",
+        "integer",
+        "NOT NULL DEFAULT 0",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "lease_until",
+        "timestamptz",
+        "",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "expires_at",
+        "timestamptz",
+        "NOT NULL",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "next_attempt_at",
+        "timestamptz",
+        "NOT NULL DEFAULT clock_timestamp()",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ],
+      [
+        "created_at",
+        "timestamptz",
+        "NOT NULL DEFAULT clock_timestamp()",
+        "P1-01 A/B local/test; xem API v0.1.11 và migration 009"
+      ]
+    ],
+    "checks": "CHECK(num_nonnulls(challenge_id,invitation_id)=1)\nUNIQUE(challenge_id)\nUNIQUE(invitation_id)",
     "indexes": ""
   }
 ]

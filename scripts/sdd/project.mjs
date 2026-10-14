@@ -4,7 +4,7 @@ import {resolve} from 'node:path';
 import ts from 'typescript';
 
 // Local IDE files are not product inputs. Tracked files are NEVER excluded.
-const localOnly=p=>p.startsWith('apps/mobile/.idea/') || p==='docs/ke-hoach-trien-khai/de-xuat/P1-01-doi-ngu-va-xac-thuc-local.md';
+const localOnly=p=>p.startsWith('apps/mobile/.idea/');
 export const REQUIRED_STEPS=['lint','typecheck','tooling','mobile','mobile-coverage','api','api-coverage','build','web','load','prototype','storybook'];
 export function testInventory(files) {
   return {

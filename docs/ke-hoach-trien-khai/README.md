@@ -2,6 +2,8 @@
 
 **SDD toàn dự án · 13/10:** mở rộng danh mục toàn repo, 88 QA, 123 operation API và 71 criterion có test; gói `SDD-PROJECT` dùng cho CI, có build prototype/Storybook và giữ coverage/load gate. Các mục partial/unmapped giữ nguyên. [Cách dùng](sdd/README.md) · [B00-08 — báo cáo mở rộng](bao-cao/B00-08-sdd-toan-du-an.md) · [Thiết kế SDD-01](de-xuat/SDD-01-quy-trinh-ai-bam-spec.md). Kết quả local/CI và giới hạn ghi trong B00-08; không suy ra native/UAT đã đạt.
 
+**P1-1 · 13/10:** chủ dự án đã duyệt A/B của [P1-01](de-xuat/P1-01-doi-ngu-va-xac-thuc-local.md). Đã nối đội ngũ + OTP verify local qua Mailpit/SMS mô phỏng; [B04-01](bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md) và [B04-02](bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md) có luồng code/ảnh/bằng chứng. Chưa email/SMS thật, OTP login/recover, MFA, remote CI mới hoặc UAT. Các mốc OTP Pending trước 13/10 là lịch sử; phần ngoài verify local vẫn Pending.
+
 **Bổ sung icon ngành · 08/10:** đã gắn 10 icon Lucide riêng theo mã ngành; Tất cả giữ ô lưới. Typecheck/lint và 8 test liên quan đạt; ảnh và giới hạn kiểm native tại [B00-06, mục 8](bao-cao/B00-06-trang-chinh-theo-storybook.md#8-bổ-sung-icon-theo-ngành--08102026). Chưa commit/push/CI/UAT.
 
 **Sửa giao diện trang chính · 08/10:** đã thay trang danh mục cũ bằng bố cục Storybook Mobile, font/icon cùng nguồn, tìm dịch vụ và khu vực ngay trang chính, tab Công việc/Tin nhắn thật. [B00-06](bao-cao/B00-06-trang-chinh-theo-storybook.md) có ảnh Android/iOS và giới hạn khác bản mock. Local đạt 196 mobile test, 14 bài web đã kiểm qua các lượt, native cả hai nền tảng; chưa push/CI/UAT. Thông báo vẫn chưa triển khai.
@@ -38,6 +40,9 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 
 ## Báo cáo đã có
 
+- [B04-01 — Đội ngũ và xác thực local](bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md): mời, xác minh, nhận lời; ảnh iOS/Android.
+- [B04-02 — Quyền và bàn giao đội ngũ](bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md): xác thực lại, cấp/thu hồi quyền, đầu mối, gỡ/tự rời và hóa đơn/chat.
+
 | Lát bàn giao | Báo cáo | Phạm vi thực tế |
 |---|---|---|
 | SDD toàn dự án | [B00-08](bao-cao/B00-08-sdd-toan-du-an.md) | Danh mục toàn repo, 71 criterion, QA/API còn thiếu, CI và ví dụ MAP-02 |
@@ -72,7 +77,7 @@ Báo cáo con tiếp theo dùng mã `Bxx-nn` hoặc `I18N-nn`; thêm vào bảng
 - Đã có danh mục DB thật và lát email/mật khẩu local, UI dùng chung, native navigation, log/test.
 - CI của `50d184a` đã đạt: [Quality 36810424485](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/36810424485). Native được kiểm riêng trên máy phát triển, không chạy trong CI Ubuntu này.
 - I18N-01/02 đã đạt kỹ thuật local: 81 test mobile; 3 web hồi quy + 1 web i18n; native i18n/layout/auth đạt Android và iOS. Đã push ở `844e1d2`; [CI 37132800077](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37132800077) đạt cả 3 jobs. Chưa UAT. `AuthSession` giữ mã lỗi, UI dịch theo locale local; API `locale` vẫn chỉ nhận `vi`.
-- **B01-02 OTP/xác minh: Pending** theo yêu cầu chủ dự án ngày 01/10/2026 vì cần cân nhắc chi phí. Hoãn cả bản local và gửi thật; chỉ mở lại khi chủ dự án yêu cầu. Không còn là lát tự động bắt đầu tiếp theo. I18N-03 vẫn cần chốt; I18N-04 được duyệt ngày 05/10; B00-05 đã bàn giao lát khung khách ngày 04/10/2026: 83 mobile, 5 web, 3 tooling và shell/auth/layout cả Android/iOS đạt; typecheck/lint/build đạt. Chủ dự án xác nhận bản hiện tại và yêu cầu push ngày 05/10; chưa UAT toàn app; khung các vai trò/nghiệp vụ còn lại vẫn mở.
+- **B01-02: mở lại verify local theo P1-01 A/B ngày 13/10; gửi thật, OTP login/recover và MFA vẫn Pending.** Quyết định này thay việc hoãn cả local ngày 01/10. I18N-03 vẫn cần chốt; I18N-04 được duyệt ngày 05/10; B00-05 đã bàn giao lát khung khách ngày 04/10/2026: 83 mobile, 5 web, 3 tooling và shell/auth/layout cả Android/iOS đạt; typecheck/lint/build đạt. Chủ dự án xác nhận bản hiện tại và yêu cầu push ngày 05/10; chưa UAT toàn app; khung các vai trò/nghiệp vụ còn lại vẫn mở.
 - Chưa có nghiệm thu UAT toàn app, tài khoản/partner/công việc/chat/tài chính đầy đủ hoặc phát hành.
 
 - B00-05 đã push ở `c120062` ngày 05/10/2026; [CI 37262885727](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37262885727) đã đạt cả 3 jobs (API/PostGIS, static/mobile, web E2E).

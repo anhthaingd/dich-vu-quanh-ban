@@ -27,10 +27,10 @@
     "path": "/auth/challenges",
     "group": "Tài khoản",
     "title": "Gửi OTP",
-    "auth": "Public, rate limit",
+    "auth": "Phiên đăng nhập; đúng liên hệ và session family",
     "request": "OtpRequest",
     "response": "Challenge",
-    "rule": "Anti-enumeration; TTL và quota ở cấu hình đã duyệt trước production."
+    "rule": "P1-01 local/test: chỉ verify. OTP 6 số, 5 phút, 5 lần sai; resend 60 giây; 5/giờ/liên hệ, 20/giờ/user, 100/giờ/IP. Chỉ DB DEMO/test và liên hệ cho phép. Email không cấp phone_verified."
   },
   {
     "id": "verifyOtp",
@@ -38,10 +38,10 @@
     "path": "/auth/challenges/verify",
     "group": "Tài khoản",
     "title": "Xác minh OTP",
-    "auth": "Public, challenge hợp lệ",
+    "auth": "Phiên đăng nhập; đúng liên hệ và session family",
     "request": "OtpVerify",
     "response": "ChallengeResult",
-    "rule": "Consume một lần; purpose recover không cấp quyền đổi email/phone ngoài challenge."
+    "rule": "P1-01 local/test: chỉ verify. OTP 6 số, 5 phút, 5 lần sai; resend 60 giây; 5/giờ/liên hệ, 20/giờ/user, 100/giờ/IP. Chỉ DB DEMO/test và liên hệ cho phép. Email không cấp phone_verified."
   },
   {
     "id": "resetPassword",
@@ -336,7 +336,7 @@
     "group": "Doanh nghiệp",
     "title": "Sửa quyền",
     "auth": "members.manage đúng partner",
-    "request": "GrantsEdit",
+    "request": "MembershipGrantsEdit",
     "response": "Member",
     "rule": "Audit trước/sau; không chuyển chủ trong đợt này."
   },
@@ -1351,5 +1351,82 @@
     "request": "LocationReverseInput",
     "response": "LocationReverse",
     "rule": "MAP-01 pilot local. Public lookup with per-IP or authenticated-account limits and a global limit. No history or shared persistent cache. No automatic selection. Reverse preserves requested coordinates. 429 has Retry-After. Does not save addresses; existing authenticated APIs retain ownership/version/idempotency checks."
+  },
+  {
+    "id": "listInvitations",
+    "method": "GET",
+    "path": "/partners/{id}/invitations",
+    "group": "Doanh nghiệp",
+    "title": "Danh sách lời mời",
+    "auth": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+    "request": "",
+    "response": "InvitationSummaryPage",
+    "rule": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
+  },
+  {
+    "id": "getCallContact",
+    "method": "GET",
+    "path": "/partners/{id}/call-contact",
+    "group": "Doanh nghiệp",
+    "title": "Đầu mối liên hệ",
+    "auth": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+    "request": "",
+    "response": "CallContact",
+    "rule": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
+  },
+  {
+    "id": "reauthenticate",
+    "method": "POST",
+    "path": "/auth/reauthenticate",
+    "group": "Tài khoản",
+    "title": "Xác thực lại cấp quyền",
+    "auth": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+    "request": "Reauthentication",
+    "response": "MembershipReauthGrant",
+    "rule": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
+  },
+  {
+    "id": "resendInvitation",
+    "method": "POST",
+    "path": "/invitations/{id}/resend",
+    "group": "Doanh nghiệp",
+    "title": "Gửi lại lời mời",
+    "auth": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+    "request": "InvitationResend",
+    "response": "InvitationSummary",
+    "rule": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
+  },
+  {
+    "id": "revokeInvitation",
+    "method": "POST",
+    "path": "/invitations/{id}/revoke",
+    "group": "Doanh nghiệp",
+    "title": "Thu hồi lời mời",
+    "auth": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+    "request": "ReasonInput",
+    "response": "InvitationSummary",
+    "rule": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
+  },
+  {
+    "id": "listMyMemberships",
+    "method": "GET",
+    "path": "/me/memberships",
+    "group": "Doanh nghiệp",
+    "title": "Đội ngũ của tôi",
+    "auth": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+    "request": "",
+    "response": "MyMembershipPage",
+    "rule": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
+  },
+  {
+    "id": "previewDeparture",
+    "method": "GET",
+    "path": "/memberships/{id}/departure-preview",
+    "group": "Doanh nghiệp",
+    "title": "Xem việc cần bàn giao",
+    "auth": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+    "request": "",
+    "response": "DeparturePreview",
+    "rule": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
   }
 ]

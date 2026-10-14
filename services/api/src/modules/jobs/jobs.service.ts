@@ -1,3 +1,4 @@
+import {discardUnsentDrafts} from '../invoices/invoice-handover.js';
 import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Ajv } from 'ajv';
 import type { Pool, PoolClient } from 'pg';
@@ -81,7 +82,7 @@ export class JobsService {
             if (!hasPermission(m, 'members.manage') && !hasPermission(m, 'jobs.assign'))
                 throw new ForbiddenException();
             const scope = `members:${id}:${user}`, start = this.cursor.decode(q.cursor, scope);
-            const { rows } = await db.query(`SELECT m.id,m.user_id,u.display_name,m.active,m.is_owner,m.version,m.created_at,ARRAY(SELECT permission FROM membership_grants g WHERE g.membership_id=m.id AND g.revoked_at IS NULL) AS permissions FROM memberships m JOIN users u ON u.id=m.user_id WHERE m.partner_id=$1 AND ($2::timestamptz IS NULL OR (m.created_at,m.id)>($2::timestamptz,$3::uuid)) ORDER BY m.created_at,m.id LIMIT $4`, [id, start?.created_at ?? null, start?.id ?? null, q.limit + 1]);
+            const { rows } = await db.query(`SELECT m.id,m.user_id,u.display_name,m.active,m.is_owner,m.version,date_trunc('milliseconds',m.created_at) AS created_at,ARRAY(SELECT permission FROM membership_grants g WHERE g.membership_id=m.id AND g.revoked_at IS NULL) AS permissions FROM memberships m JOIN users u ON u.id=m.user_id WHERE m.partner_id=$1 AND ($2::timestamptz IS NULL OR (date_trunc('milliseconds',m.created_at),m.id)>($2::timestamptz,$3::uuid)) ORDER BY date_trunc('milliseconds',m.created_at),m.id LIMIT $4`, [id, start?.created_at ?? null, start?.id ?? null, q.limit + 1]);
             const page = rows.slice(0, q.limit), last = page.at(-1);
             return { items: page.map(({ created_at, ...m }) => { void created_at; return m; }), next_cursor: rows.length > q.limit ? this.cursor.encode({ id: last.id, created_at: last.created_at.toISOString() }, scope) : null };
         });
@@ -154,6 +155,7 @@ export class JobsService {
                 const { rows: [m] } = await db.query("SELECT m.* FROM memberships m JOIN users u ON u.id=m.user_id WHERE m.id=$1 AND m.partner_id=$2 AND m.active AND u.status='active' FOR SHARE OF m", [input.membership_id, j.partner_id]);
                 if (!m || m.user_id === j.customer_id)
                     throw new BadRequestException();
+                if(a.assigned_member_id!==m.id)await discardUnsentDrafts(db,id);
                 await db.query('UPDATE assignments SET ended_at=now() WHERE job_id=$1 AND ended_at IS NULL', [id]);
                 const { rows: [assigned] } = await db.query('INSERT INTO assignments(job_id,partner_id,membership_id,assigned_by) VALUES($1,$2,$3,$4) RETURNING id', [id, j.partner_id, m.id, actor.user.id]);
                 const conversation = await directConversation(db, j.customer_id, m.user_id);

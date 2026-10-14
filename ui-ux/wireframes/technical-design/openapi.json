@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Dịch vụ quanh bạn — API thiết kế",
-    "version": "0.1.10",
-    "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local. B01-04 (06/10/2026): Me.version bat buoc >=1, PATCH /me sua ten theo expected_version va Idempotency-Key da duyet. MAP-01 (07/10/2026): thử MapLibre + Geoapify Free và bộ chọn 4 nơi theo yêu cầu triển khai; chưa billing/production. MAP-02 (07/10/2026): ghim địa điểm công khai trong kết quả; không công khai tâm vùng. P0-2: Job includes service mode, time mode, location ID, note and ETA. PartnerProfile includes public location IDs and skill service modes. HTTP chat pilot; OTP and WebSocket remain Pending. MAP-03/P0-2: bỏ nhập tọa độ; Job có chi tiết nơi/giờ/ETA; PartnerProfile có public_locations/service_modes; HTTP chat local/test, WebSocket Pending. P0-3: Invoice.note/revision_reason; adapter ảnh local/test đã duyệt, chưa production."
+    "version": "0.1.11",
+    "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local. B01-04 (06/10/2026): Me.version bat buoc >=1, PATCH /me sua ten theo expected_version va Idempotency-Key da duyet. MAP-01 (07/10/2026): thử MapLibre + Geoapify Free và bộ chọn 4 nơi theo yêu cầu triển khai; chưa billing/production. MAP-02 (07/10/2026): ghim địa điểm công khai trong kết quả; không công khai tâm vùng. P0-2: Job includes service mode, time mode, location ID, note and ETA. PartnerProfile includes public location IDs and skill service modes. HTTP chat pilot; OTP and WebSocket remain Pending. MAP-03/P0-2: bỏ nhập tọa độ; Job có chi tiết nơi/giờ/ETA; PartnerProfile có public_locations/service_modes; HTTP chat local/test, WebSocket Pending. P0-3: Invoice.note/revision_reason; adapter ảnh local/test đã duyệt, chưa production. P1-01: xác minh local/test và vòng đời đội ngũ được duyệt 13/10/2026; chưa gửi thật."
   },
   "servers": [
     {
@@ -282,8 +282,12 @@
           "Tài khoản"
         ],
         "summary": "Gửi OTP",
-        "description": "Quyền: Public, rate limit. Anti-enumeration; TTL và quota ở cấu hình đã duyệt trước production.",
-        "security": [],
+        "description": "P1-01 local/test: chỉ verify. OTP 6 số, 5 phút, 5 lần sai; resend 60 giây; 5/giờ/liên hệ, 20/giờ/user, 100/giờ/IP. Chỉ DB DEMO/test và liên hệ cho phép. Email không cấp phone_verified.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [],
         "responses": {
           "201": {
@@ -377,8 +381,8 @@
             }
           }
         },
-        "x-authorization": "Public, rate limit",
-        "x-rules": "Anti-enumeration; TTL và quota ở cấu hình đã duyệt trước production.",
+        "x-authorization": "Phiên đăng nhập; đúng liên hệ và session family",
+        "x-rules": "P1-01 local/test: chỉ verify. OTP 6 số, 5 phút, 5 lần sai; resend 60 giây; 5/giờ/liên hệ, 20/giờ/user, 100/giờ/IP. Chỉ DB DEMO/test và liên hệ cho phép. Email không cấp phone_verified.",
         "requestBody": {
           "required": true,
           "content": {
@@ -398,8 +402,12 @@
           "Tài khoản"
         ],
         "summary": "Xác minh OTP",
-        "description": "Quyền: Public, challenge hợp lệ. Consume một lần; purpose recover không cấp quyền đổi email/phone ngoài challenge.",
-        "security": [],
+        "description": "P1-01 local/test: chỉ verify. OTP 6 số, 5 phút, 5 lần sai; resend 60 giây; 5/giờ/liên hệ, 20/giờ/user, 100/giờ/IP. Chỉ DB DEMO/test và liên hệ cho phép. Email không cấp phone_verified.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -493,8 +501,8 @@
             }
           }
         },
-        "x-authorization": "Public, challenge hợp lệ",
-        "x-rules": "Consume một lần; purpose recover không cấp quyền đổi email/phone ngoài challenge.",
+        "x-authorization": "Phiên đăng nhập; đúng liên hệ và session family",
+        "x-rules": "P1-01 local/test: chỉ verify. OTP 6 số, 5 phút, 5 lần sai; resend 60 giây; 5/giờ/liên hệ, 20/giờ/user, 100/giờ/IP. Chỉ DB DEMO/test và liên hệ cho phép. Email không cấp phone_verified.",
         "requestBody": {
           "required": true,
           "content": {
@@ -4151,6 +4159,148 @@
             }
           }
         }
+      },
+      "get": {
+        "operationId": "listInvitations",
+        "tags": [
+          "Doanh nghiệp"
+        ],
+        "summary": "Danh sách lời mời",
+        "description": "P1-01 đã duyệt 13/10/2026. Quyền server, CAS/idempotency; không lộ bí mật.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationSummaryPage"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+        "x-rules": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
       }
     },
     "/invitations/accept": {
@@ -4417,7 +4567,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GrantsEdit"
+                "$ref": "#/components/schemas/MembershipGrantsEdit"
               }
             }
           }
@@ -4702,6 +4852,124 @@
             }
           }
         }
+      },
+      "get": {
+        "operationId": "getCallContact",
+        "tags": [
+          "Doanh nghiệp"
+        ],
+        "summary": "Đầu mối liên hệ",
+        "description": "P1-01 đã duyệt 13/10/2026. Quyền server, CAS/idempotency; không lộ bí mật.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallContact"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+        "x-rules": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
       }
     },
     "/jobs": {
@@ -16541,6 +16809,678 @@
           }
         }
       }
+    },
+    "/auth/reauthenticate": {
+      "post": {
+        "operationId": "reauthenticate",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "Xác thực lại cấp quyền",
+        "description": "P1-01 đã duyệt 13/10/2026. Quyền server, CAS/idempotency; không lộ bí mật.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipReauthGrant"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+        "x-rules": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reauthentication"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invitations/{id}/resend": {
+      "post": {
+        "operationId": "resendInvitation",
+        "tags": [
+          "Doanh nghiệp"
+        ],
+        "summary": "Gửi lại lời mời",
+        "description": "P1-01 đã duyệt 13/10/2026. Quyền server, CAS/idempotency; không lộ bí mật.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationSummary"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+        "x-rules": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationResend"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invitations/{id}/revoke": {
+      "post": {
+        "operationId": "revokeInvitation",
+        "tags": [
+          "Doanh nghiệp"
+        ],
+        "summary": "Thu hồi lời mời",
+        "description": "P1-01 đã duyệt 13/10/2026. Quyền server, CAS/idempotency; không lộ bí mật.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationSummary"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+        "x-rules": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/memberships": {
+      "get": {
+        "operationId": "listMyMemberships",
+        "tags": [
+          "Doanh nghiệp"
+        ],
+        "summary": "Đội ngũ của tôi",
+        "description": "P1-01 đã duyệt 13/10/2026. Quyền server, CAS/idempotency; không lộ bí mật.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyMembershipPage"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+        "x-rules": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
+      }
+    },
+    "/memberships/{id}/departure-preview": {
+      "get": {
+        "operationId": "previewDeparture",
+        "tags": [
+          "Doanh nghiệp"
+        ],
+        "summary": "Xem việc cần bàn giao",
+        "description": "P1-01 đã duyệt 13/10/2026. Quyền server, CAS/idempotency; không lộ bí mật.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeparturePreview"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Chính mình hoặc members.manage đúng doanh nghiệp theo thao tác",
+        "x-rules": "P1-01: đối chiếu quyền hiện hành trước retry; token không trả trong API quản trị."
+      }
     }
   },
   "components": {
@@ -16815,10 +17755,9 @@
           "purpose": {
             "type": "string",
             "enum": [
-              "login",
-              "verify",
-              "recover"
-            ]
+              "verify"
+            ],
+            "description": "P1-01 local/test. login/recover chưa mở."
           }
         },
         "required": [
@@ -16836,7 +17775,7 @@
           },
           "code": {
             "type": "string",
-            "description": "Không log; chỉ truyền qua TLS"
+            "pattern": "^[0-9]{6}$"
           }
         },
         "required": [
@@ -17594,9 +18533,11 @@
           },
           "permissions": {
             "type": "array",
+            "maxItems": 0,
             "items": {
               "type": "string"
-            }
+            },
+            "description": "P1-01 pilot chỉ mời người thực hiện; cấp quyền riêng có reauth."
           }
         },
         "required": [
@@ -17645,8 +18586,15 @@
             "minimum": 1
           },
           "membership_id": {
-            "type": "string",
-            "format": "uuid"
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -20231,18 +21179,7 @@
         }
       },
       "ChallengeResult": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/Session"
-          },
-          {
-            "$ref": "#/components/schemas/RecoveryGrant"
-          },
-          {
-            "$ref": "#/components/schemas/Ack"
-          }
-        ],
-        "description": "purpose login trả Session; recover trả RecoveryGrant; verify trả Ack và cập nhật identity của session đã liên kết challenge."
+        "$ref": "#/components/schemas/Ack"
       },
       "ReviewVisibility": {
         "type": "object",
@@ -20743,6 +21680,384 @@
         "required": [
           "address",
           "attribution"
+        ]
+      },
+      "MembershipGrantsEdit": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "permissions": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "jobs.accept",
+                "jobs.assign",
+                "jobs.manage",
+                "profile.manage",
+                "members.manage",
+                "wallet.read",
+                "wallet.topup",
+                "wallet.withdraw",
+                "bank.manage",
+                "reviews.respond",
+                "reviews.write"
+              ]
+            }
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "reauth_grant": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "expected_version",
+          "permissions",
+          "reason",
+          "reauth_grant"
+        ]
+      },
+      "Reauthentication": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
+      "MembershipReauthGrant": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "grant": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "grant",
+          "expires_at"
+        ]
+      },
+      "InvitationSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "partner_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "contact_masked": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "expired",
+              "revoked",
+              "replaced"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "replacement_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "delivery_state": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "submitted",
+              "failed",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "partner_id",
+          "contact_masked",
+          "permissions",
+          "status",
+          "created_at",
+          "expires_at",
+          "version",
+          "replacement_id",
+          "delivery_state"
+        ]
+      },
+      "MyMembership": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "partner_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "partner_name": {
+            "type": "string"
+          },
+          "partner_kind": {
+            "type": "string",
+            "enum": [
+              "solo",
+              "shop",
+              "company"
+            ]
+          },
+          "is_owner": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "left_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "partner_id",
+          "partner_name",
+          "partner_kind",
+          "is_owner",
+          "active",
+          "permissions",
+          "version",
+          "left_at"
+        ]
+      },
+      "DepartureJob": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "requested",
+              "accepted",
+              "awaiting_settlement",
+              "completed",
+              "declined",
+              "withdrawn",
+              "stopped"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "version"
+        ]
+      },
+      "DeparturePreview": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "membership_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartureJob"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "membership_version",
+          "total",
+          "items",
+          "next_cursor"
+        ]
+      },
+      "CallContact": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "partner_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "membership_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "partner_id",
+          "membership_id",
+          "version"
+        ]
+      },
+      "InvitationResend": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "expected_version"
+        ]
+      },
+      "InvitationSummaryPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvitationSummary"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "MyMembershipPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyMembership"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
         ]
       }
     }

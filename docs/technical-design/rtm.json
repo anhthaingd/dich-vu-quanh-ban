@@ -22,7 +22,9 @@
     "operation_id": "requestOtp",
     "contract_case": "CT-requestOtp",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-093"
+    ],
     "status": "Chưa chạy"
   },
   {
@@ -30,7 +32,8 @@
     "contract_case": "CT-verifyOtp",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-001"
+      "QA-001",
+      "QA-089"
     ],
     "status": "Chưa chạy"
   },
@@ -277,21 +280,27 @@
     "operation_id": "acceptInvitation",
     "contract_case": "CT-acceptInvitation",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-090"
+    ],
     "status": "Chưa chạy"
   },
   {
     "operation_id": "editGrants",
     "contract_case": "CT-editGrants",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-091"
+    ],
     "status": "Chưa chạy"
   },
   {
     "operation_id": "deactivateMember",
     "contract_case": "CT-deactivateMember",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-092"
+    ],
     "status": "Chưa chạy"
   },
   {
@@ -1035,5 +1044,54 @@
       "QA-079"
     ],
     "status": "Local kiểm theo B03-01; chưa remote CI/UAT"
+  },
+  {
+    "operation_id": "listInvitations",
+    "contract_case": "CT-listInvitations",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "getCallContact",
+    "contract_case": "CT-getCallContact",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "reauthenticate",
+    "contract_case": "CT-reauthenticate",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "resendInvitation",
+    "contract_case": "CT-resendInvitation",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "revokeInvitation",
+    "contract_case": "CT-revokeInvitation",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "listMyMemberships",
+    "contract_case": "CT-listMyMemberships",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
+  },
+  {
+    "operation_id": "previewDeparture",
+    "contract_case": "CT-previewDeparture",
+    "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
+    "scenario_ids": [],
+    "status": "Chưa chạy"
   }
 ]

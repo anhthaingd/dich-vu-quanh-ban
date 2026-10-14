@@ -1,3 +1,6 @@
+import {OrganizationsScreen} from '../../features/organizations/screens/OrganizationsScreen';
+import {TeamScreen} from '../../features/organizations/screens/TeamScreen';
+import {VerifyContactScreen} from '../../features/organizations/screens/VerifyContactScreen';
 import {InvoiceScreen} from '../../features/invoices/screens/InvoiceScreen';
 import {ConversationScreen} from '../../features/chat/screens/ConversationScreen';
 import {ConversationsScreen} from '../../features/chat/screens/ConversationsScreen';
@@ -38,6 +41,9 @@ export function AppNavigator() {
       <Stack.Screen name="Conversations" component={ConversationsScreen} />
       <Stack.Screen name="Conversation" component={ConversationScreen} />
       <Stack.Screen name="Search" component={SearchScreen} />
+      <Stack.Screen name="Organizations" component={OrganizationsScreen} />
+      <Stack.Screen name="Team" component={TeamScreen} />
+      <Stack.Screen name="VerifyContact" component={VerifyContactScreen} />
       <Stack.Screen name="Account" component={AccountScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Sessions" component={SessionsScreen} />

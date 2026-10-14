@@ -47,12 +47,14 @@
     "scope": [
       "Email/mật khẩu, điện thoại/OTP và phiên đăng nhập",
       "Liên kết định danh, khôi phục, xác thực tăng cường",
-      "Quyền admin và membership theo doanh nghiệp"
+      "Quyền admin và membership theo doanh nghiệp",
+      "P1-01 A/B 13/10/2026: OTP verify local Mailpit/SMS mô phỏng; đội ngũ/grants/reauth/bàn giao theo API v0.1.11. OTP login/recover/MFA/provider thật Pending."
     ],
     "acceptance": [
       "Đổi vai không cấp quyền; thu hồi token có hiệu lực",
       "Không lộ tài khoản tồn tại hoặc lưu OTP/token thô",
-      "Xóa tài khoản kiểm nghĩa vụ, giữ lịch sử tài chính"
+      "Xóa tài khoản kiểm nghĩa vụ, giữ lịch sử tài chính",
+      "QA-089–093; giữ giới hạn local/native/CI/UAT riêng; không trả bí mật trong API/audit/retry."
     ],
     "qa": [
       "QA-001",
@@ -60,7 +62,12 @@
       "QA-003",
       "QA-004",
       "QA-005",
-      "QA-006"
+      "QA-006",
+      "QA-089",
+      "QA-090",
+      "QA-091",
+      "QA-092",
+      "QA-093"
     ],
     "docs": [
       "PLAN-001",
@@ -149,18 +156,25 @@
     "scope": [
       "Mời thành viên7ngày, cấp quyền, rời doanh nghiệp",
       "Phân công, đổi nhân viên và đầu mối cuộc gọi",
-      "Một quản lý kiêm nhiều quyền; chuyển chủ vẫn pending"
+      "Một quản lý kiêm nhiều quyền; chuyển chủ vẫn pending",
+      "P1-01 A/B 13/10/2026: OTP verify local Mailpit/SMS mô phỏng; đội ngũ/grants/reauth/bàn giao theo API v0.1.11. OTP login/recover/MFA/provider thật Pending."
     ],
     "acceptance": [
       "Chặn truy cập sai doanh nghiệp",
       "Một assignment hiệu lực, lịch sử đầy đủ",
-      "Người cũ mất quyền công việc, giữ chat riêng"
+      "Người cũ mất quyền công việc, giữ chat riêng",
+      "QA-089–093; giữ giới hạn local/native/CI/UAT riêng; không trả bí mật trong API/audit/retry."
     ],
     "qa": [
       "QA-013",
       "QA-014",
       "QA-015",
-      "QA-016"
+      "QA-016",
+      "QA-089",
+      "QA-090",
+      "QA-091",
+      "QA-092",
+      "QA-093"
     ],
     "docs": [
       "PLAN-001",

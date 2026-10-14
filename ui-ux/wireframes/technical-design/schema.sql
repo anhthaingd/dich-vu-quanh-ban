@@ -31,16 +31,11 @@ CREATE TABLE identities (
 
 
 CREATE TABLE auth_challenges (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  identity_id uuid REFERENCES identities(id),
-  subject_hash text NOT NULL,
-  purpose text NOT NULL,
-  secret_hash text NOT NULL,
-  expires_at timestamptz NOT NULL,
-  attempts integer NOT NULL DEFAULT 0,
-  consumed_at timestamptz ,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  CHECK(attempts>=0)
+ id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL REFERENCES users(id),
+ provider text NOT NULL CHECK(provider IN ('email','phone')), contact_hash text NOT NULL,
+ contact_cipher text NOT NULL, code_hash text NOT NULL, family_id uuid NOT NULL,
+ expires_at timestamptz NOT NULL, attempts integer NOT NULL DEFAULT 0 CHECK(attempts BETWEEN 0 AND 5),
+ consumed_at timestamptz, invalidated_at timestamptz, created_at timestamptz NOT NULL DEFAULT clock_timestamp()
 );
 
 
@@ -113,25 +108,20 @@ CREATE TABLE membership_grants (
 CREATE UNIQUE INDEX active_grant ON membership_grants(membership_id,permission) WHERE revoked_at IS NULL;
 
 CREATE TABLE member_invitations (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  partner_id uuid NOT NULL REFERENCES partners(id),
-  inviter_id uuid NOT NULL REFERENCES users(id),
-  contact_hash text NOT NULL,
-  token_hash text NOT NULL UNIQUE,
-  permissions jsonb NOT NULL,
-  expires_at timestamptz NOT NULL,
-  accepted_by uuid REFERENCES users(id),
-  revoked_at timestamptz ,
-  created_at timestamptz NOT NULL DEFAULT now()
+ id uuid PRIMARY KEY DEFAULT gen_random_uuid(), partner_id uuid NOT NULL REFERENCES partners(id),
+ invited_by uuid NOT NULL REFERENCES users(id), provider text NOT NULL CHECK(provider IN ('email','phone')),
+ contact_hash text NOT NULL, contact_cipher text NOT NULL, contact_masked text NOT NULL,
+ token_hash text NOT NULL UNIQUE, permissions text[] NOT NULL DEFAULT '{}',
+ status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','accepted','expired','revoked','replaced')),
+ expires_at timestamptz NOT NULL, version integer NOT NULL DEFAULT 1,
+ replacement_id uuid REFERENCES member_invitations(id), accepted_by uuid REFERENCES users(id),
+ created_at timestamptz NOT NULL DEFAULT clock_timestamp()
 );
 
 
 CREATE TABLE partner_contacts (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  partner_id uuid NOT NULL UNIQUE REFERENCES partners(id),
-  membership_id uuid NOT NULL,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  FOREIGN KEY(membership_id,partner_id) REFERENCES memberships(id,partner_id)
+ partner_id uuid PRIMARY KEY REFERENCES partners(id), membership_id uuid,
+ FOREIGN KEY(membership_id,partner_id) REFERENCES memberships(id,partner_id)
 );
 
 
@@ -685,15 +675,10 @@ CREATE TABLE outbox_events (
 CREATE INDEX outbox_due ON outbox_events(next_attempt_at) WHERE processed_at IS NULL;
 
 CREATE TABLE audit_events (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  actor_id uuid REFERENCES users(id),
-  action text NOT NULL,
-  resource_type text NOT NULL,
-  resource_id uuid NOT NULL,
-  correlation_id uuid NOT NULL,
-  reason text ,
-  changes_redacted jsonb NOT NULL DEFAULT '{}',
-  created_at timestamptz NOT NULL DEFAULT now()
+ id uuid PRIMARY KEY DEFAULT gen_random_uuid(), actor_id uuid NOT NULL REFERENCES users(id),
+ partner_id uuid REFERENCES partners(id), action text NOT NULL, resource_id uuid NOT NULL,
+ request_id uuid, reason text NOT NULL DEFAULT '', details jsonb NOT NULL DEFAULT '{}',
+ created_at timestamptz NOT NULL DEFAULT clock_timestamp()
 );
 
 
@@ -739,7 +724,7 @@ CREATE TABLE skill_categories (
   created_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE(skill_id, category_id)
 );
-ALTER TABLE auth_challenges ADD COLUMN context jsonb NOT NULL DEFAULT '{}'::jsonb;
+-- P1-01: verify-only context is typed in auth_challenges; login/recovery remain pending.
 ALTER TABLE assets ADD COLUMN version integer NOT NULL DEFAULT 1 CHECK(version>0);
 ALTER TABLE call_sessions ADD COLUMN version integer NOT NULL DEFAULT 1 CHECK(version>0);
 CREATE TABLE recovery_requests (
@@ -756,4 +741,28 @@ CREATE TABLE recovery_requests (
 CREATE UNIQUE INDEX identities_one_contact ON identities(user_id,provider) WHERE provider IN ('phone','email');
 -- I18N-04, approved 2026-10-05. Runtime history is migrations/003_catalog_translations.sql.
 ALTER TABLE skills ADD COLUMN translations jsonb NOT NULL DEFAULT '{}' CHECK (jsonb_typeof(translations) = 'object');
+
+-- P1-01 local/test
+CREATE TABLE auth_rate_events (
+ id uuid PRIMARY KEY DEFAULT gen_random_uuid(), actor_id uuid NOT NULL REFERENCES users(id),
+ contact_hash text NOT NULL, ip_hash text NOT NULL, purpose text NOT NULL,
+ created_at timestamptz NOT NULL DEFAULT clock_timestamp()
+);
+
+-- P1-01 local/test
+CREATE TABLE reauth_grants (
+ grant_hash text PRIMARY KEY, user_id uuid NOT NULL REFERENCES users(id), family_id uuid NOT NULL,
+ scope text NOT NULL CHECK(scope='membership.grants'), expires_at timestamptz NOT NULL,
+ consumed_at timestamptz, created_at timestamptz NOT NULL DEFAULT clock_timestamp()
+);
+
+-- P1-01 local/test
+CREATE TABLE local_deliveries (
+ id uuid PRIMARY KEY DEFAULT gen_random_uuid(), challenge_id uuid REFERENCES auth_challenges(id),
+ invitation_id uuid REFERENCES member_invitations(id), payload_cipher text,
+ state text NOT NULL DEFAULT 'queued' CHECK(state IN ('queued','submitted','failed','unknown')),
+ attempts integer NOT NULL DEFAULT 0, lease_until timestamptz, expires_at timestamptz NOT NULL,
+ next_attempt_at timestamptz NOT NULL DEFAULT clock_timestamp(), created_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+ CHECK(num_nonnulls(challenge_id,invitation_id)=1), UNIQUE(challenge_id), UNIQUE(invitation_id)
+);
 COMMIT;

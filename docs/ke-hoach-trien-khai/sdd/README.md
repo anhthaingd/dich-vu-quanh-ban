@@ -1,6 +1,6 @@
 # SDD cho toàn dự án
 
-SDD nối yêu cầu đã chốt với code và kết quả kiểm thử. Gói mặc định [SDD-PROJECT](changes/SDD-PROJECT.json) kiểm kê toàn repository, 88 ca QA, 123 operation API và 71 tiêu chí hành vi. **Đầy đủ danh mục không có nghĩa toàn bộ sản phẩm đã đạt spec.** Mỗi QA hiện là `partial` (mới chứng minh các nhánh liên kết) hoặc `unmapped` (chưa có tiêu chí được review). Các chức năng Pending giữ nguyên.
+SDD nối yêu cầu đã chốt với code và kết quả kiểm thử. Gói mặc định [SDD-PROJECT](changes/SDD-PROJECT.json) kiểm kê toàn repository, 93 ca QA, 130 operation API và 80 tiêu chí hành vi. **Đầy đủ danh mục không có nghĩa toàn bộ sản phẩm đã đạt spec.** Mỗi QA hiện là `partial` (mới chứng minh các nhánh liên kết) hoặc `unmapped` (chưa có tiêu chí được review). Các chức năng Pending giữ nguyên.
 
 Thiết kế [SDD-01](../de-xuat/SDD-01-quy-trinh-ai-bam-spec.md) · Lát đầu [B00-07](../bao-cao/B00-07-bo-kiem-sdd-local.md) · Mở rộng [B00-08](../bao-cao/B00-08-sdd-toan-du-an.md).
 
@@ -33,7 +33,7 @@ Lần đầu cần `npm ci`, `npm ci --prefix ui-ux/prototype` và `npx playwrig
 | [changes/SDD-PROJECT.json](changes/SDD-PROJECT.json) | Căn cứ giao việc, baseline spec, phạm vi hồi quy toàn dự án |
 | `test-results/sdd/SDD-PROJECT/` | Evidence JSON, report gốc và log từng bước; không track Git, CI upload artifact 7 ngày |
 
-Inventory phân biệt sản phẩm, test, công cụ, hạ tầng, prototype, spec, tài liệu, tham khảo, placeholder và symlink tương thích. File mới ngoài danh sách sẽ làm kiểm tra thất bại. Nguồn kiểm kê lấy từ Git tracked và untracked không bị ignore; không quét node_modules hay artifact build. File tracked không bao giờ bị loại bởi ngoại lệ local. Hai ngoại lệ untracked hiện có: `.idea` của mobile và đề xuất P1-01 có sẵn ngoài phạm vi đợt này. Khi P1-01 được đưa vào Git, phải đăng ký inventory.
+Inventory phân biệt sản phẩm, test, công cụ, hạ tầng, prototype, spec, tài liệu, tham khảo, placeholder và symlink tương thích. File mới ngoài danh sách sẽ làm kiểm tra thất bại. Nguồn kiểm kê lấy từ Git tracked và untracked không bị ignore; không quét node_modules hay artifact build. File tracked không bao giờ bị loại bởi ngoại lệ local. Ngoại lệ untracked còn lại là `.idea` của mobile. P1-01 đã được duyệt A/B ngày 13/10 và đưa vào inventory cùng code/test/báo cáo.
 
 Dấu băm toàn dự án gồm toàn bộ file đó, kể cả workflow, config, test, runner, nguồn và tài liệu. Symlink được băm đích liên kết, không quét lại thư mục đích. Bằng chứng ghi HEAD và root máy tạo để đọc đúng đường dẫn khi tải artifact sang máy khác. Đây là đối chiếu phiên bản, không phải chữ ký chống người có quyền sửa cả checker lẫn report.
 
@@ -59,8 +59,8 @@ Criterion hiện dùng tên test literal đang bật. Jest hỗ trợ tên đầ
 
 ## Giới hạn
 
-- Đăng ký đủ 88 QA/123 operation không chứng nhận toàn bộ yêu cầu trong các tài liệu DOCX/Excel. Những yêu cầu chưa có QA máy đọc vẫn cần review tài liệu nghiệp vụ trước triển khai.
+- Đăng ký đủ 93 QA/130 operation không chứng nhận toàn bộ yêu cầu trong các tài liệu DOCX/Excel. Những yêu cầu chưa có QA máy đọc vẫn cần review tài liệu nghiệp vụ trước triển khai.
 - Không tự hiểu nghiệp vụ hoặc chứng minh quyết định đã được chủ dự án duyệt chỉ từ trường `decision`. Mọi lần giảm criterion, sửa hash hoặc đổi checker đều cần review diff.
 - Không chạy native trên thiết bị thật, provider live, UAT, production hay tiền thật. Build Expo/Storybook không chứng minh app giống thiết kế.
 - QA-068 có số lượng catalog lịch sử khác seed hiện hành; giữ gap, không tự sửa nguồn. Xem thêm `knownGaps` và từng criterion.
-- Không mở lại OTP, ngân hàng, gọi, thông báo, quản trị hoặc PROMO-02. CI/branch protection không tự duyệt triển khai sản phẩm.
+- P1-01 A/B đã duyệt riêng verify OTP local/test; không mở OTP login/recover/provider thật, ngân hàng, gọi, thông báo, quản trị hoặc PROMO-02. CI/branch protection không tự duyệt triển khai sản phẩm.

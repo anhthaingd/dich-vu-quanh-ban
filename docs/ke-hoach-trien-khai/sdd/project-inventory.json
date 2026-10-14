@@ -569,6 +569,38 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/mobile/src/features/organizations/api/organizations-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/organizations/api/organizations-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/organizations/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/organizations/screens/OrganizationsScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/organizations/screens/TeamFeedback.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/organizations/screens/TeamScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/organizations/screens/VerifyContactScreen.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/partners/.gitkeep",
       "kind": "placeholder"
     },
@@ -973,6 +1005,14 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B06-01-hoa-don-va-quyet-toan-test.md",
       "kind": "documentation"
     },
@@ -1277,6 +1317,34 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B04-01/android-membership.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B04-01/android-verified.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B04-01/ios-invitation.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B04-01/ios-invite-form.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B04-02/android-departure-preview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B04-02/android-left.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B04-02/ios-grants-saved.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/android-invoice-editor.png",
       "kind": "documentation"
     },
@@ -1342,6 +1410,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/de-xuat/P0-01-nguon-cung-va-tim-dich-vu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P1-01-doi-ngu-va-xac-thuc-local.md",
       "kind": "documentation"
     },
     {
@@ -1705,6 +1777,10 @@
       "kind": "product"
     },
     {
+      "path": "services/api/migrations/009_team_local_auth.sql",
+      "kind": "product"
+    },
+    {
       "path": "services/api/package.json",
       "kind": "product"
     },
@@ -1783,6 +1859,10 @@
     {
       "path": "services/api/src/integrations/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/integrations/local-messages.ts",
+      "kind": "product"
     },
     {
       "path": "services/api/src/integrations/maps/geoapify.ts",
@@ -1877,6 +1957,18 @@
       "kind": "product"
     },
     {
+      "path": "services/api/src/modules/auth/challenge.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/auth/challenges.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/auth/challenges.service.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/modules/auth/password.ts",
       "kind": "product"
     },
@@ -1923,6 +2015,10 @@
     {
       "path": "services/api/src/modules/invoices/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/invoices/invoice-handover.ts",
+      "kind": "product"
     },
     {
       "path": "services/api/src/modules/invoices/invoices.controller.ts",
@@ -2003,6 +2099,22 @@
     {
       "path": "services/api/src/modules/organizations/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/organizations/organizations.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/organizations/organizations.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/organizations/organizations.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/organizations/organizations.service.ts",
+      "kind": "product"
     },
     {
       "path": "services/api/src/modules/partners/.gitkeep",
@@ -2097,6 +2209,10 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/integration/organizations.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/integration/partners.test.ts",
       "kind": "test"
     },
@@ -2126,6 +2242,10 @@
     },
     {
       "path": "services/api/test/unit/logging.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/organizations.test.ts",
       "kind": "test"
     },
     {
@@ -2234,6 +2354,10 @@
     },
     {
       "path": "tests/e2e/web/locations.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/organizations.spec.mjs",
       "kind": "test"
     },
     {
@@ -2850,6 +2974,8 @@
       "apps/mobile/src/features/location/api/locations-api.test.ts",
       "apps/mobile/src/features/location/components/LocationField.test.tsx",
       "apps/mobile/src/features/location/state/location-draft.test.ts",
+      "apps/mobile/src/features/organizations/api/organizations-api.test.ts",
+      "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
       "apps/mobile/src/features/partners/api/partners-api.test.ts",
       "apps/mobile/src/features/partners/screens/Partners.test.tsx",
       "apps/mobile/src/features/partners/state/partner-editor.test.ts",
@@ -2874,6 +3000,7 @@
       "services/api/test/integration/lifecycle.test.ts",
       "services/api/test/integration/locations.test.ts",
       "services/api/test/integration/logging.test.ts",
+      "services/api/test/integration/organizations.test.ts",
       "services/api/test/integration/partners.test.ts",
       "services/api/test/integration/profile.test.ts",
       "services/api/test/unit/catalog-config.test.ts",
@@ -2882,6 +3009,7 @@
       "services/api/test/unit/invoice-money.test.ts",
       "services/api/test/unit/locations.test.ts",
       "services/api/test/unit/logging.test.ts",
+      "services/api/test/unit/organizations.test.ts",
       "services/api/test/unit/output.test.ts"
     ],
     "web": [
@@ -2893,6 +3021,7 @@
       "tests/e2e/web/invoices.spec.mjs",
       "tests/e2e/web/jobs-chat.spec.mjs",
       "tests/e2e/web/locations.spec.mjs",
+      "tests/e2e/web/organizations.spec.mjs",
       "tests/e2e/web/partners.spec.mjs",
       "tests/e2e/web/profile.spec.mjs",
       "tests/e2e/web/search-map.spec.mjs",
@@ -2978,7 +3107,16 @@
     "INV-AC-13",
     "INV-AC-14",
     "INV-AC-15",
-    "MAP-02-AC-07"
+    "MAP-02-AC-07",
+    "P1-01-AC-01",
+    "P1-01-AC-02",
+    "P1-01-AC-03",
+    "P1-01-AC-04",
+    "P1-01-AC-05",
+    "P1-01-AC-06",
+    "P1-01-AC-07",
+    "P1-01-AC-08",
+    "P1-01-AC-09"
   ],
   "qa": [
     {
@@ -3699,6 +3837,53 @@
         "INV-AC-15"
       ],
       "reason": "Chưa complete-on-behalf hoặc process crash; job.state chuyển completed ngay settlement trong code/test, eligibility vẫn chờ hai dấu. | Vector QA-030 cụ thể ví -90000/phí30000/point100000 chưa thử; QA-031 biên credit và mọi holds chưa kiểm. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Chưa assert backend list partner ledger thành công/phân trang và wallet ACL đầy đủ; web có positive ledger partner. | Mock image picker; không native file picker thật. | Ảnh PNG local test, UI web; không native picker, production/provider hoặc tiền thật."
+    },
+    {
+      "id": "QA-089",
+      "status": "partial",
+      "criteria": [
+        "P1-01-AC-01",
+        "P1-01-AC-02",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 local: chỉ các nhánh assertions được liên kết; không provider thật/production/UAT."
+    },
+    {
+      "id": "QA-090",
+      "status": "partial",
+      "criteria": [
+        "P1-01-AC-03",
+        "P1-01-AC-04",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 local: chỉ các nhánh assertions được liên kết; không provider thật/production/UAT."
+    },
+    {
+      "id": "QA-091",
+      "status": "partial",
+      "criteria": [
+        "P1-01-AC-05",
+        "P1-01-AC-08",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 local: chỉ các nhánh assertions được liên kết; không provider thật/production/UAT."
+    },
+    {
+      "id": "QA-092",
+      "status": "partial",
+      "criteria": [
+        "P1-01-AC-06",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 local: chỉ các nhánh assertions được liên kết; không provider thật/production/UAT."
+    },
+    {
+      "id": "QA-093",
+      "status": "partial",
+      "criteria": [
+        "P1-01-AC-07"
+      ],
+      "reason": "P1-01 local: chỉ các nhánh assertions được liên kết; không provider thật/production/UAT."
     }
   ],
   "operations": [
@@ -3731,17 +3916,26 @@
       "id": "requestOtp",
       "method": "POST",
       "path": "/auth/challenges",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-01",
+        "P1-01-AC-02",
+        "P1-01-AC-07",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
     },
     {
       "id": "verifyOtp",
       "method": "POST",
       "path": "/auth/challenges/verify",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-01",
+        "P1-01-AC-02",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
     },
     {
       "id": "resetPassword",
@@ -4034,41 +4228,81 @@
       "id": "inviteMember",
       "method": "POST",
       "path": "/partners/{id}/invitations",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-03",
+        "P1-01-AC-04",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
+    },
+    {
+      "id": "listInvitations",
+      "method": "GET",
+      "path": "/partners/{id}/invitations",
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-03",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
     },
     {
       "id": "acceptInvitation",
       "method": "POST",
       "path": "/invitations/accept",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-03",
+        "P1-01-AC-04",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
     },
     {
       "id": "editGrants",
       "method": "PUT",
       "path": "/memberships/{id}/grants",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-05",
+        "P1-01-AC-08",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
     },
     {
       "id": "deactivateMember",
       "method": "POST",
       "path": "/memberships/{id}/deactivate",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-06",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
     },
     {
       "id": "setCallContact",
       "method": "PUT",
       "path": "/partners/{id}/call-contact",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-06",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
+    },
+    {
+      "id": "getCallContact",
+      "method": "GET",
+      "path": "/partners/{id}/call-contact",
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-06",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
     },
     {
       "id": "createJob",
@@ -4828,9 +5062,13 @@
       "id": "leavePartner",
       "method": "POST",
       "path": "/memberships/{id}/leave",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-03",
+        "P1-01-AC-06",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
     },
     {
       "id": "editAdminGrants",
@@ -4933,6 +5171,62 @@
         "LOCATION-AC-03"
       ],
       "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
+    },
+    {
+      "id": "reauthenticate",
+      "method": "POST",
+      "path": "/auth/reauthenticate",
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-05",
+        "P1-01-AC-08",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
+    },
+    {
+      "id": "resendInvitation",
+      "method": "POST",
+      "path": "/invitations/{id}/resend",
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-04",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
+    },
+    {
+      "id": "revokeInvitation",
+      "method": "POST",
+      "path": "/invitations/{id}/revoke",
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-04",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
+    },
+    {
+      "id": "listMyMemberships",
+      "method": "GET",
+      "path": "/me/memberships",
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-03",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
+    },
+    {
+      "id": "previewDeparture",
+      "method": "GET",
+      "path": "/memberships/{id}/departure-preview",
+      "status": "implemented",
+      "criteria": [
+        "P1-01-AC-06",
+        "P1-01-AC-09"
+      ],
+      "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
     }
   ],
   "routes": [
@@ -5030,6 +5324,21 @@
       "method": "GET",
       "path": "/me",
       "file": "services/api/src/modules/auth/auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/challenges",
+      "file": "services/api/src/modules/auth/challenges.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/challenges/verify",
+      "file": "services/api/src/modules/auth/challenges.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/reauthenticate",
+      "file": "services/api/src/modules/auth/challenges.controller.ts"
     },
     {
       "method": "GET",
@@ -5187,6 +5496,66 @@
       "file": "services/api/src/modules/locations/locations.controller.ts"
     },
     {
+      "method": "POST",
+      "path": "/partners/{id}/invitations",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/invitations",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/invitations/{id}/resend",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/invitations/{id}/revoke",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/invitations/accept",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/me/memberships",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/memberships/{id}/grants",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/memberships/{id}/departure-preview",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/memberships/{id}/deactivate",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/memberships/{id}/leave",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/call-contact",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/partners/{id}/call-contact",
+      "file": "services/api/src/modules/organizations/organizations.controller.ts"
+    },
+    {
       "method": "GET",
       "path": "/partners",
       "file": "services/api/src/modules/partners/partners.controller.ts"
@@ -5276,7 +5645,7 @@
     "QA status strings stale for QA-013..052; source historical status must not replace runtime evidence.",
     "Checklist B05 title says no product code but later P0-2 section confirms HTTP chat; retain distinction, not full B05.",
     "Financial test fixtures insert balances directly for scenarios, not real bank flows.",
-    "listMembers is implemented but integration test currently does not explicitly call it; mobile request boundary test and UI mocked list cover client only.",
+    "listMembers: P1 web team loads the real paginated endpoint; dedicated cursor/race matrix remains partial.",
     "Source read observed jobs completed at settlement before customer payment mark; review_eligible waits both marks. Do not claim completed-state requires both marks without reconciling spec.",
     "QA-068 có số lượng catalog lịch sử khác seed hiện hành; SDD không tự sửa nguồn.",
     "Native và UAT chưa chạy trong CI này; Storybook build không chứng minh app khớp thiết kế.",

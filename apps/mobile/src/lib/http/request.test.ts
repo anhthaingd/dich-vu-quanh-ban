@@ -68,7 +68,7 @@ test.each([[401, 'UNAUTHENTICATED'], [403, 'FORBIDDEN'], [429, 'RATE_LIMITED']] 
     const json = jest.fn(async () => ({ message: 'SERVER_CANARY' }));
     const fetcher = jest.fn().mockResolvedValue({ ok: false, status, headers: { get: () => id }, json });
     await expect(requestJson('http://localhost', fetcher)).rejects.toMatchObject({ code, status });
-    expect(json).not.toHaveBeenCalled();
+    if(status===403)expect(json).toHaveBeenCalledTimes(1);else expect(json).not.toHaveBeenCalled();
     expect(fetcher).toHaveBeenCalledTimes(1);
   },
 );

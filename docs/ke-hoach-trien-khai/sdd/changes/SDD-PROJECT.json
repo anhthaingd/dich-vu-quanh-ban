@@ -2,9 +2,9 @@
   "version": 1,
   "id": "SDD-PROJECT",
   "profile": "project",
-  "type": "implementation",
-  "objective": "Kiểm kê toàn repository, truy vết các nhánh hiện có và kiểm chứng bằng test/coverage/build/CI; giữ nguyên nghiệp vụ.",
-  "decision": "Chủ dự án yêu cầu làm hết bước SDD đã đề xuất và phủ toàn dự án ngày 13/10/2026.",
+  "type": "spec-change",
+  "objective": "P1-01 A/B đã duyệt: xác minh local và đội ngũ, hồi quy toàn dự án; giữ Pending ngoài phạm vi.",
+  "decision": "Chủ dự án 13/10/2026: ok hãy làm như đề xuất P1-01 A/B. Contract v0.1.11, không provider thật/production. Giữ baseline để review diff; không thu hẹp 71 tiêu chí trước.",
   "baseCommit": "8c25c32b30ae32c4e29153f2eb34c8d08569b006",
   "sources": [
     "map02",
@@ -99,7 +99,12 @@
     "QA-086",
     "QA-087",
     "QA-088",
-    "api-project"
+    "api-project",
+    "QA-089",
+    "QA-090",
+    "QA-091",
+    "QA-092",
+    "QA-093"
   ],
   "criteria": [
     "MAP-02-AC-01",
@@ -172,7 +177,16 @@
     "INV-AC-13",
     "INV-AC-14",
     "INV-AC-15",
-    "MAP-02-AC-07"
+    "MAP-02-AC-07",
+    "P1-01-AC-01",
+    "P1-01-AC-02",
+    "P1-01-AC-03",
+    "P1-01-AC-04",
+    "P1-01-AC-05",
+    "P1-01-AC-06",
+    "P1-01-AC-07",
+    "P1-01-AC-08",
+    "P1-01-AC-09"
   ],
   "domains": [
     "PROJECT"

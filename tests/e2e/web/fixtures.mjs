@@ -11,8 +11,8 @@ import { AppLog } from '../../../services/api/dist/src/logging/logger.js';
 import { migrate } from '../../../services/api/dist/src/database/migrate.js';
 import { seed } from '../../../services/api/dist/src/database/seed.js';
 export const test = base.extend({
-  // eslint-disable-next-line no-empty-pattern -- Playwright requires destructured fixture dependencies.
-  environment: async ({}, use, testInfo) => {
+  teamLocal: [false, {option:true}],
+  environment: async ({teamLocal}, use, testInfo) => {
     const url = process.env.TEST_DATABASE_URL ?? 'postgresql://dvqb_test:test-only-password@127.0.0.1:55433/dvqb_test';
     if (new URL(url).pathname !== '/dvqb_test') throw Error('E2E requires dvqb_test');
     const schema = `web_${randomUUID().replaceAll('-', '')}`;
@@ -37,7 +37,8 @@ export const test = base.extend({
       await new Promise(r => server.listen(0, '127.0.0.1', r));
       const webUrl = `http://127.0.0.1:${server.address().port}`;
       const localAssets = {directory: directory + '-assets', origin: 'http://127.0.0.1'};
-      app = await createApp({localAssets, databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), authSecret: 'isolated-web-auth-secret-'.repeat(3), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
+      const localMessages = teamLocal ? {secret:'web-local-messages-secret-'.repeat(3),contacts:['owner@example.test','worker@example.test','+84900000001'],mailpit:'http://127.0.0.1:1',smsDirectory:directory+'-sms'} : undefined;
+      app = await createApp({localMessages,localAssets, databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), authSecret: 'isolated-web-auth-secret-'.repeat(3), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
       await app.listen(0, '127.0.0.1');
       localAssets.origin = await app.getUrl();
       const apiUrl = await app.getUrl() + '/v1';
@@ -55,7 +56,7 @@ export const test = base.extend({
         }); } finally {
           try { await base.step('Close test web server', async () => { server?.closeAllConnections(); await new Promise(r => server ? server.close(r) : r()); }); } finally {
             try { await base.step('Close test DB pool', async () => { await pool.end(); }); } finally {
-              try { if (created) await admin.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`); } finally { await admin.end(); await rm(directory, { recursive: true, force: true }); await rm(directory+'-assets', {recursive:true,force:true}); }
+              try { if (created) await admin.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`); } finally { await admin.end(); await rm(directory, { recursive: true, force: true }); await rm(directory+'-assets', {recursive:true,force:true}); await rm(directory+'-sms', {recursive:true,force:true}); }
             }
           }
         }

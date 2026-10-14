@@ -1054,5 +1054,65 @@
     "level": "Integration/E2E",
     "priority": "P0",
     "status": "Bằng chứng B06-01 trong repo; chưa UAT"
+  },
+  {
+    "id": "QA-089",
+    "group": "Đội ngũ / xác thực local",
+    "requirement": "P1-01",
+    "operation": "verifyOtp",
+    "setup": "DB dvqb_test hoặc dvqb_p1_demo; liên hệ DEMO cho phép",
+    "steps": "Xác minh đúng liên hệ, family; sai/hết hạn/gửi lại/rate limit",
+    "expected": "Email không mở phone guard; giới hạn DB không reset; không chiếm định danh",
+    "level": "Integration/E2E",
+    "priority": "P1",
+    "status": "Đang triển khai; chưa UAT"
+  },
+  {
+    "id": "QA-090",
+    "group": "Đội ngũ / xác thực local",
+    "requirement": "P1-01",
+    "operation": "acceptInvitation",
+    "setup": "DB dvqb_test hoặc dvqb_p1_demo; liên hệ DEMO cho phép",
+    "steps": "Mời/list/gửi lại/thu hồi/nhận, tài khoản khác và cạnh tranh",
+    "expected": "Token chỉ dùng một lần, liên hệ đã xác minh; grant người mời được kiểm lại; rejoin giữ ID, không khôi phục grant",
+    "level": "Integration/E2E",
+    "priority": "P1",
+    "status": "Đang triển khai; chưa UAT"
+  },
+  {
+    "id": "QA-091",
+    "group": "Đội ngũ / xác thực local",
+    "requirement": "P1-01",
+    "operation": "editGrants",
+    "setup": "DB dvqb_test hoặc dvqb_p1_demo; liên hệ DEMO cho phép",
+    "steps": "Grant mật khẩu ngắn hạn, quyền vượt mình, retry và thu hồi phiên",
+    "expected": "Không sửa owner/self; quyền ví cần wallet.read; bí mật không nằm trong audit/snapshot",
+    "level": "Integration/E2E",
+    "priority": "P1",
+    "status": "Đang triển khai; chưa UAT"
+  },
+  {
+    "id": "QA-092",
+    "group": "Đội ngũ / xác thực local",
+    "requirement": "P1-01",
+    "operation": "deactivateMember",
+    "setup": "DB dvqb_test hoặc dvqb_p1_demo; liên hệ DEMO cho phép",
+    "steps": "Preview/rời/gỡ và đổi người trong mọi trạng thái hóa đơn",
+    "expected": "Thu hồi quyền, reset đầu mối; chỉ bỏ nháp chưa gửi; giữ lịch sử, tiền, chat riêng",
+    "level": "Integration/E2E",
+    "priority": "P1",
+    "status": "Đang triển khai; chưa UAT"
+  },
+  {
+    "id": "QA-093",
+    "group": "Đội ngũ / xác thực local",
+    "requirement": "P1-01",
+    "operation": "requestOtp",
+    "setup": "DB dvqb_test hoặc dvqb_p1_demo; liên hệ DEMO cho phép",
+    "steps": "Gửi Mailpit/SMS local, timeout/restart/hết hạn",
+    "expected": "Hàng chờ mã hóa, không gửi mã hết hạn/thay thế; submitted không chứng minh hộp thư thật",
+    "level": "Integration/E2E",
+    "priority": "P1",
+    "status": "Đang triển khai; chưa UAT"
   }
 ]
