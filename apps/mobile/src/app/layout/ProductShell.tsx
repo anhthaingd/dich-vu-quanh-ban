@@ -19,9 +19,10 @@ export type ShellProps = PropsWithChildren<{
   activeTab?: 'catalog' | 'jobs' | 'messages' | 'notifications';
   discovery?: boolean;
   keyboardDismissMode?: ScrollViewProps['keyboardDismissMode'];
+  refreshControl?: ScrollViewProps['refreshControl'];
 }>;
 // UI-16: avatar opens account; notifications have their own tab.
-export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, onMessages, onNotifications, activeTab = 'catalog', discovery, keyboardDismissMode }: ShellProps) {
+export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, onMessages, onNotifications, activeTab = 'catalog', discovery, keyboardDismissMode, refreshControl }: ShellProps) {
   const { t } = useLocale();
   const unread=useNotifications().items.filter(n=>!n.read_at).length;
   const messages=useMessageUnread().unread;
@@ -59,7 +60,7 @@ export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, o
       <AppText style={[styles.destinationText, {color: activeTab === tab.id ? theme.colors.primary : '#78869E', fontWeight: activeTab === tab.id ? '700' : '400'}]}>{tab.label}</AppText>
     </Pressable>)}
   </View> : undefined;
-  return <Screen header={header} footer={footer} keyboardDismissMode={keyboardDismissMode}
+  return <Screen refreshControl={refreshControl} alwaysBounceVertical={refreshControl ? true : undefined} header={header} footer={footer} keyboardDismissMode={keyboardDismissMode}
     style={discovery ? styles.white : undefined} contentContainerStyle={discovery ? styles.discovery : undefined}>{children}</Screen>;
 }
 const styles = StyleSheet.create({

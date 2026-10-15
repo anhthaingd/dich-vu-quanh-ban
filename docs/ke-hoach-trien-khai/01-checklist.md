@@ -1,5 +1,24 @@
 # Checklist chức năng và bằng chứng
 
+## B05-05 — Tự cập nhật và kéo làm mới, 15/10/2026
+
+- [x] Bỏ nút tải lại thường trực ở danh sách phòng/chat/thông báo, thêm kéo xuống native và retry riêng khi lỗi.
+- [x] Giữ nội dung và bản nháp lúc tải nền/lỗi mạng, xóa nội dung khi mất quyền; 21 bài mobile liên quan và 2 hành trình web đạt.
+- [x] Android emulator/iOS simulator: kéo, vòng xoay, timeout với API DEMO, hồi phục; [ảnh và phạm vi](bao-cao/B05-05-cap-nhat-tu-dong-va-keo-lam-moi.md).
+- [x] Sửa vòng chờ khóa tài khoản khi hai bên đổi lịch: bài tái hiện thất bại trước sửa, 16 bài API tài khoản/auth/jobs đạt sau sửa; giữ một thành công/một xung đột.
+- SDD toàn repo: kết quả máy kiểm được lưu trong `test-results/sdd/SDD-PROJECT/evidence.json` của nội dung cuối; không dùng kết quả các đợt trước thay thế.
+- [ ] Commit/push, CI mới, thiết bị vật lý và UAT.
+
+
+## B05-04 — Lịch tổng hợp, 15/10/2026
+
+- [x] Chọn phần còn thiếu của P1-2 theo kế hoạch; dùng contract/jobs và quyền hiện hành, không đổi spec.
+- [x] Chế độ Danh sách/Lịch hẹn, tháng/ngày, giờ Việt Nam, giữ ngày khi tải lại, mở chi tiết và đổi lịch.
+- [x] 19 test mobile tập trung; 6 API/PostGIS; web 21 việc qua nhiều trang và hai tài khoản đạt.
+- [x] iOS simulator/Android emulator: mở lịch, chọn ngày và mở đúng chi tiết; ảnh DEMO và Mermaid đã kiểm trong [B05-04](bao-cao/B05-04-lich-tong-hop-cong-viec.md).
+- [x] SDD prepare 98 tiêu chí; giữ 65 QA partial/32 unmapped. Kết quả toàn gói của bộ file cuối lấy từ `test-results/sdd/SDD-PROJECT/result.json` và `sdd:check --phase verify`, không dùng lượt tập trung thay thế.
+- [ ] Commit/push, CI mới, UAT/thiết bị thật và provider push.
+
 ## P1-01 A/B — 13/10/2026
 
 - [x] Chủ dự án duyệt verify-only local Mailpit/SMS mô phỏng và contract đội ngũ/reauth. API v0.1.11, migration009; không mở login/recover/MFA/provider thật.
@@ -187,7 +206,7 @@ Nguồn: [spec](../../ui-ux/specs/activity-batch.md), [backlog](../technical-des
 |---|---|---|---|
 | [~] | B05-01 | Chat trước/sau thuê: mở phòng, lịch sử, gửi/đọc | Phòng theo cặp tài khoản; ACK sau commit, idempotency và reconnect; quản lý không đọc phòng riêng |
 | [~] | B05-02 | Outbox/inbox, device push, cài đặt và deep link | P1-02 đã có inbox, bốn công tắc, read/unread và mở đích có kiểm quyền; đã kiểm local/web/native. Chưa device push/provider/UAT |
-| [~] | B05-03 | Lịch, nhắc 24h/1h và đổi lịch | P1-02 worker 24h/1h, hủy mốc cũ khi đổi lịch/dừng; đã kiểm API. Chưa màn lịch tổng hợp/push thật/UAT |
+| [~] | B05-03 | Lịch, nhắc 24h/1h và đổi lịch | P1-02 worker 24h/1h, hủy mốc cũ khi đổi lịch/dừng; đã kiểm API. Màn lịch tổng hợp B05-04 đã nối API hiện hành, giờ Việt Nam/đủ trang/đổi phạm vi; [bằng chứng](bao-cao/B05-04-lich-tong-hop-cong-viec.md). Chưa push thật/UAT |
 
 ## B06 — Hóa đơn — P0-3 local/test
 

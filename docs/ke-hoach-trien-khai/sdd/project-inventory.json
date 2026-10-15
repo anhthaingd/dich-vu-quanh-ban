@@ -477,6 +477,10 @@
       "kind": "test"
     },
     {
+      "path": "apps/mobile/src/features/jobs/components/JobCalendar.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/jobs/components/JobFeedback.tsx",
       "kind": "product"
     },
@@ -502,6 +506,14 @@
     },
     {
       "path": "apps/mobile/src/features/jobs/state/appointment.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/state/calendar.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/jobs/state/calendar.ts",
       "kind": "product"
     },
     {
@@ -1065,6 +1077,14 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-04-lich-tong-hop-cong-viec.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-05-cap-nhat-tu-dong-va-keo-lam-moi.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B06-01-hoa-don-va-quyet-toan-test.md",
       "kind": "documentation"
     },
@@ -1446,6 +1466,50 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-03/ios-two-badges.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-04/android-appointment.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-04/android-calendar.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-04/ios-appointment.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-04/ios-calendar.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-05/android-notifications.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-05/android-refreshing.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-05/android-timeout.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-05/ios-messages.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-05/ios-notifications.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-05/ios-refreshing.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-05/ios-timeout.png",
       "kind": "documentation"
     },
     {
@@ -2489,6 +2553,10 @@
       "kind": "test"
     },
     {
+      "path": "tests/e2e/web/calendar.spec.mjs",
+      "kind": "test"
+    },
+    {
       "path": "tests/e2e/web/catalog.spec.mjs",
       "kind": "test"
     },
@@ -3147,6 +3215,7 @@
       "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
       "apps/mobile/src/features/jobs/api/work-api.test.ts",
       "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+      "apps/mobile/src/features/jobs/state/calendar.test.ts",
       "apps/mobile/src/features/jobs/state/mutation.test.ts",
       "apps/mobile/src/features/location/api/locations-api.test.ts",
       "apps/mobile/src/features/location/components/LocationField.test.tsx",
@@ -3198,6 +3267,7 @@
       "tests/e2e/web/account-management.spec.mjs",
       "tests/e2e/web/account-security.spec.mjs",
       "tests/e2e/web/auth.spec.mjs",
+      "tests/e2e/web/calendar.spec.mjs",
       "tests/e2e/web/catalog.spec.mjs",
       "tests/e2e/web/i18n.spec.mjs",
       "tests/e2e/web/invoices.spec.mjs",
@@ -3316,7 +3386,10 @@
     "RT-01A-AC-08",
     "MSG-01-AC-01",
     "MSG-01-AC-02",
-    "MSG-01-AC-03"
+    "MSG-01-AC-03",
+    "CAL-01-AC-01",
+    "CAL-01-AC-02",
+    "REFRESH-01-AC-01"
   ],
   "qa": [
     {
@@ -3457,9 +3530,11 @@
       "status": "partial",
       "criteria": [
         "JOB-AC-03",
-        "P1-02-AC-04"
+        "P1-02-AC-04",
+        "CAL-01-AC-01",
+        "CAL-01-AC-02"
       ],
-      "reason": "Chưa có worker nhắc 24h/1h, test cho thời gian trôi không tự đóng; không đóng QA-019. P1-02 adds tested local inbox/settings/reminder branches only; provider push remains unverified."
+      "reason": "Chưa có worker nhắc 24h/1h, test cho thời gian trôi không tự đóng; không đóng QA-019. P1-02 adds tested local inbox/settings/reminder branches only; provider push remains unverified. B05-04 bổ sung màn lịch dùng API hiện hành; giữ partial và các giới hạn cũ."
     },
     {
       "id": "QA-020",

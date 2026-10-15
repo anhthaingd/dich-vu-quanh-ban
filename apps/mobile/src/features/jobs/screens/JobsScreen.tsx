@@ -1,6 +1,9 @@
+import { View } from 'react-native';
+import { JobCalendar } from '../components/JobCalendar';
+import { businessDay, loadCalendarJobs } from '../state/calendar';
 import {useRealtimeRefresh} from '../../../app/providers/RealtimeProvider';
 import { formatBusinessDate } from '../../../lib/i18n/formatters';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../app/navigation/routes';
@@ -20,6 +23,9 @@ function List({ owner, open }: {
     open: (id: string) => void;
 }) {
     const { manager, state: auth } = useAuth(), { t, locale } = useLocale();
+    const generation = useRef(0);
+    const [calendar, setCalendar] = useState(false);
+    const [selected, setSelected] = useState(() => businessDay(new Date()));
     const [partner, setPartner] = useState<string | undefined>(), [partners, setPartners] = useState<{
         id: string;
         name: string;
@@ -27,8 +33,10 @@ function List({ owner, open }: {
     useRealtimeRefresh({error,busy,matches:s=>s.kind==='event'&&(s.event.type.startsWith('job.')||s.event.type.startsWith('invoice.')||s.event.type==='notification.created.v1'),refresh:()=>setAttempt(v=>v+1)});
     useFocusEffect(useCallback(() => {
         let active = true;
+        const epoch = ++generation.current;
         setBusy(true);
         setItems([]);
+        setNext(null);
         setError(null);
         void (async () => { await sessionReady(manager, owner); const me = await manager.loadProfile(owner); const choices = []; for (const id of me.partner_ids) {
             try {
@@ -38,27 +46,32 @@ function List({ owner, open }: {
             catch {
                 choices.push({ id, name: id.slice(0, 8) });
             }
-        } const page = await manager.listJobs(owner, partner); if (active) {
+        } if (!active) return;
+        const page = calendar
+          ? {items: await loadCalendarJobs(c => manager.listJobs(owner, partner, c), () => active && generation.current === epoch), next_cursor: null}
+          : await manager.listJobs(owner, partner);
+        if (active && page.items) {
             setPartners(choices);
             setItems(page.items);
             setNext(page.next_cursor);
         } })().catch(e => { if (active)
             setError(e instanceof ApiError ? e.code : 'NETWORK'); }).finally(() => { if (active)
             setBusy(false); });
-        return () => { active = false; };
-    }, [manager, owner, partner, attempt]));
+        return () => { active = false; generation.current++; };
+    }, [manager, owner, partner, attempt, calendar]));
     const more = async () => { if (!next || busy)
-        return; setBusy(true); try {
+        return; const epoch = generation.current; setBusy(true); try {
         const page = await manager.listJobs(owner, partner, next);
-        setItems(v => [...v, ...page.items]);
+        if (generation.current !== epoch) return;
+        setItems(v => [...new Map([...v, ...page.items].map(j => [j.id, j])).values()]);
         setNext(page.next_cursor);
         setError(null);
     }
     catch (e) {
-        setError(e instanceof ApiError ? e.code : 'NETWORK');
+        if (generation.current === epoch) setError(e instanceof ApiError ? e.code : 'NETWORK');
     }
     finally {
-        setBusy(false);
+        if (generation.current === epoch) setBusy(false);
     } };
-    return <><AppText tone="muted">{t('jobs.listIntro')}</AppText><Card><Button testID="jobs-customer" label={t('jobs.customerJobs')} variant={partner ? 'secondary' : 'primary'} disabled={busy} onPress={() => setPartner(undefined)}/>{partners.map(p => <Button key={p.id} testID={`jobs-partner-${p.id}`} label={t('jobs.partnerJobs', { name: p.name })} variant={partner === p.id ? 'primary' : 'secondary'} disabled={busy} onPress={() => setPartner(p.id)}/>)}</Card><Button testID="jobs-reload" label={t('accountTools.reload')} disabled={busy || auth.busy} onPress={() => setAttempt(v => v + 1)}/><JobFeedback error={error} retry={() => setAttempt(v => v + 1)}/>{busy && <AppText>{t('accountTools.loading')}</AppText>}{!busy && !error && !items.length && <AppText>{t('jobs.empty')}</AppText>}{items.map(j => <Card key={j.id}><AppText variant="section">{t(`jobs.${j.state}`)}</AppText><AppText>{j.address.text}</AppText><AppText>{j.note}</AppText>{j.scheduled_at && <AppText>{formatBusinessDate(new Date(j.scheduled_at), locale)}</AppText>}<Button testID={`job-open-${j.id}`} label={t('jobs.detail')} onPress={() => open(j.id)}/></Card>)}{next && <Button label={t('accountTools.more')} disabled={busy || auth.busy} onPress={() => void more()}/>}</>;
+    return <><View style={{flexDirection: 'row', gap: 8}}><View style={{flex: 1}}><Button testID="jobs-view-list" label={t('calendar.list')} variant={calendar ? 'secondary' : 'primary'} accessibilityState={{selected: !calendar}} disabled={busy} onPress={() => setCalendar(false)}/></View><View style={{flex: 1}}><Button testID="jobs-view-calendar" label={t('calendar.title')} variant={calendar ? 'primary' : 'secondary'} accessibilityState={{selected: calendar}} disabled={busy} onPress={() => setCalendar(true)}/></View></View><AppText tone="muted">{t('jobs.listIntro')}</AppText><Card><Button testID="jobs-customer" label={t('jobs.customerJobs')} variant={partner ? 'secondary' : 'primary'} disabled={busy} onPress={() => setPartner(undefined)}/>{partners.map(p => <Button key={p.id} testID={`jobs-partner-${p.id}`} label={t('jobs.partnerJobs', { name: p.name })} variant={partner === p.id ? 'primary' : 'secondary'} disabled={busy} onPress={() => setPartner(p.id)}/>)}</Card><Button testID="jobs-reload" label={t('accountTools.reload')} disabled={busy || auth.busy} onPress={() => setAttempt(v => v + 1)}/><JobFeedback error={error} retry={() => setAttempt(v => v + 1)}/>{busy && <AppText>{t('accountTools.loading')}</AppText>}{!calendar && !busy && !error && !items.length && <AppText>{t('jobs.empty')}</AppText>}{calendar ? !error && <JobCalendar loading={busy} items={items} open={open} selected={selected} setSelected={setSelected}/> : items.map(j => <Card key={j.id}><AppText variant="section">{t(`jobs.${j.state}`)}</AppText><AppText>{j.address.text}</AppText><AppText>{j.note}</AppText>{j.scheduled_at && <AppText>{formatBusinessDate(new Date(j.scheduled_at), locale)}</AppText>}<Button testID={`job-open-${j.id}`} label={t('jobs.detail')} onPress={() => open(j.id)}/></Card>)}{next && <Button label={t('accountTools.more')} disabled={busy || auth.busy} onPress={() => void more()}/>}</>;
 }

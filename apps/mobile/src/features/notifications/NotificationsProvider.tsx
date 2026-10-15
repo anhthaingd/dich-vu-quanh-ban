@@ -5,24 +5,24 @@ import {AppState} from 'react-native';
 import {useAuth} from '../../app/providers/AuthProvider';
 import {ApiError,type ApiErrorCode} from '../../lib/http/api-error';
 import type {Notice} from './api/notifications-api';
-type Inbox={items:Notice[];loading:boolean;error:ApiErrorCode|null;refresh:()=>Promise<void>;markRead:(ids:string[])=>Promise<void>};
-const Context=createContext<Inbox>({items:[],loading:false,error:null,refresh:async()=>{},markRead:async()=>{}});
+type Inbox={items:Notice[];loading:boolean;loaded:boolean;error:ApiErrorCode|null;refresh:()=>Promise<void>;markRead:(ids:string[])=>Promise<void>};
+const Context=createContext<Inbox>({items:[],loading:false,loaded:false,error:null,refresh:async()=>{},markRead:async()=>{}});
 export const useNotifications=()=>useContext(Context);
 export function NotificationsProvider({children}:PropsWithChildren){
   const realtime=useRealtime();
   const {manager,state}=useAuth(),owner=state.phase==='authenticated'?state.user?.id:undefined;
-  const [data,setData]=useState<{owner?:string;items:Notice[];loading:boolean;error:ApiErrorCode|null}>({items:[],loading:false,error:null});
+  const [data,setData]=useState<{owner?:string;items:Notice[];loading:boolean;loaded:boolean;error:ApiErrorCode|null}>({items:[],loading:false,loaded:false,error:null});
   const current=useRef(owner),running=useRef(false),last=useRef(0),dirty=useRef(false),generation=useRef(0),failures=useRef(0);current.current=owner;
   const refresh=useCallback(async()=>{
     if(!owner||running.current||manager.getSnapshot().busy)return;
-    const epoch=generation.current;dirty.current=false;running.current=true;setData(d=>({...d,owner,loading:true,error:null,items:d.owner===owner?d.items:[]}));
+    const epoch=generation.current;dirty.current=false;running.current=true;setData(d=>({...d,owner,loading:true,error:d.owner===owner?d.error:null,loaded:d.owner===owner?d.loaded:false,items:d.owner===owner?d.items:[]}));
     try{let cursor:string|undefined;const found=new Map<string,Notice>(),seen=new Set<string>();
       do{const page=await manager.listNotifications(owner,cursor);if(current.current!==owner||epoch!==generation.current)return;
         page.items.filter(n=>!n.kind.startsWith('conversation.')).forEach(n=>found.set(n.id,n));cursor=page.next_cursor??undefined;
         if(cursor&&seen.has(cursor))throw new ApiError('INVALID_RESPONSE');if(cursor)seen.add(cursor);
       }while(cursor);
-      if(current.current===owner&&epoch===generation.current){setData(previous=>({owner,items:[...found.values()].map(n=>({...n,read_at:n.read_at??(previous.owner===owner?previous.items.find(x=>x.id===n.id)?.read_at:null)??null})),loading:false,error:null}));last.current=Date.now();failures.current=0;}
-    }catch(e){if(current.current===owner&&epoch===generation.current){setData(d=>({...d,loading:false,error:e instanceof ApiError?e.code:'NETWORK'}));last.current=Date.now();failures.current=Math.min(4,failures.current+1);}}
+      if(current.current===owner&&epoch===generation.current){setData(previous=>({owner,items:[...found.values()].map(n=>({...n,read_at:n.read_at??(previous.owner===owner?previous.items.find(x=>x.id===n.id)?.read_at:null)??null})),loading:false,loaded:true,error:null}));last.current=Date.now();failures.current=0;}
+    }catch(e){if(current.current===owner&&epoch===generation.current){const code=e instanceof ApiError?e.code:'NETWORK';setData(d=>({...d,loading:false,error:code,items:['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)?[]:d.items}));last.current=Date.now();failures.current=Math.min(4,failures.current+1);}}
     finally{running.current=false;}
   },[manager,owner]);
   useEffect(()=>{generation.current++;last.current=0;failures.current=0;dirty.current=true;
@@ -39,6 +39,6 @@ export function NotificationsProvider({children}:PropsWithChildren){
       setData(d=>d.owner===owner?{...d,items:d.items.map(n=>n.id===id?{...n,read_at:n.read_at??new Date().toISOString()}:n)}:d);
     }
   },[manager,owner]);
-  const visible=data.owner===owner&&owner?data:{items:[],loading:false,error:null};
-  return <Context.Provider value={{items:visible.items,loading:visible.loading,error:visible.error,refresh,markRead}}>{children}</Context.Provider>;
+  const visible=data.owner===owner&&owner?data:{items:[],loading:false,loaded:false,error:null};
+  return <Context.Provider value={{items:visible.items,loading:visible.loading,loaded:visible.loaded,error:visible.error,refresh,markRead}}>{children}</Context.Provider>;
 }

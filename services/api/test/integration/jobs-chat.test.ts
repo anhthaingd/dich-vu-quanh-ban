@@ -80,6 +80,7 @@ test('assignment gives worker only own job and direct chat; reassignment preserv
  const text={client_message_id:randomUUID(),body:'Private worker message',job_id:j.id};assert.equal((await call(worker,`/conversations/${direct}/messages`,'POST',text)).status,201);
  const own=(await f.pool.query('SELECT id FROM memberships WHERE partner_id=$1 AND is_owner',[p.id])).rows[0];assert.equal((await change(owner,j,'assignments',{membership_id:own.id})).status,201);
  assert.equal((await call(worker,`/jobs/${j.id}`)).status,404);assert.equal((await call(worker,`/conversations/${direct}/messages`)).status,200);assert.deepEqual((await room(worker)).job_ids,[]);
+ assert.deepEqual((await call(worker,`/jobs?partner_id=${p.id}`)).body.items,[]);
  assert.equal((await call(worker,`/conversations/${direct}/messages`,'POST',{...text,client_message_id:randomUUID()})).status,404);
 });
 test('chat sequences, dedupe, recovery pages, monotonic reads, cross-room/client mismatch and outsider denial',async()=>{
@@ -102,4 +103,23 @@ test('outbox failure rolls back message and sequence; same request can recover',
  await f.pool.query("CREATE FUNCTION fail_event() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'test outbox failure'; END $$");await f.pool.query('CREATE TRIGGER fail_event BEFORE INSERT ON outbox_events FOR EACH ROW EXECUTE FUNCTION fail_event()');
  assert.equal((await call(customer,path,'POST',input,key)).status,500);assert.equal((await call(customer,path)).body.items.length,0);
  await f.pool.query('DROP TRIGGER fail_event ON outbox_events');const r=await call(customer,path,'POST',input,key);assert.equal(r.status,201);assert.equal(r.body.sequence,1);
+});
+
+test('two actors reschedule after acquiring their own locks without deadlocking the customer foreign key',async()=>{
+ const p=await ready();let j=await create(p);j=(await change(owner,j,'accept',{eta:future()})).body;
+ const blocker=await f.pool.connect();let attempts:Promise<Awaited<ReturnType<typeof change>>[]>|undefined;
+ try {
+  await blocker.query('BEGIN');await blocker.query('SELECT id FROM partners WHERE id=$1 FOR UPDATE',[p.id]);
+  const pid=(await blocker.query('SELECT pg_backend_pid() AS pid')).rows[0].pid;
+  const first=change(owner,j,'reschedule',{scheduled_at:future(),reason:'first'});
+  const firstDeadline=Date.now()+3000;
+  while(Date.now()<firstDeadline){if(Number((await f.pool.query('SELECT count(*) FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))',[pid])).rows[0].count))break;await new Promise(r=>setTimeout(r,10));}
+  attempts=Promise.all([first,change(customer,j,'reschedule',{scheduled_at:future(),reason:'second'})]);
+  // Both HTTP transactions must own their actor lock before releasing the shared resource.
+  const deadline=Date.now()+3000;let waiting=0;
+  while(Date.now()<deadline){waiting=Number((await f.pool.query('WITH RECURSIVE blocked(pid) AS (SELECT $1::int UNION SELECT a.pid FROM pg_stat_activity a JOIN blocked b ON b.pid=ANY(pg_blocking_pids(a.pid))) SELECT count(*)-1 AS count FROM blocked',[pid])).rows[0].count);if(waiting===2)break;await new Promise(r=>setTimeout(r,10));}
+  assert.equal(waiting,2,'both actors reached the resource lock');
+ } finally {await blocker.query('ROLLBACK');blocker.release();}
+ const results=await attempts!;assert.deepEqual(results.map(r=>r.status).sort(),[200,409]);
+ assert.equal((await f.pool.query('SELECT count(*) FROM schedule_history WHERE job_id=$1',[j.id])).rows[0].count,'1');
 });

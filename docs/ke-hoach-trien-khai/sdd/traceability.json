@@ -1228,13 +1228,19 @@
       "description": "Hai sửa cùng version có một thắng; tăng schedule_version và một lịch sử; stop có phí giữ accepted, không phí stopped",
       "code": [
         "services/api/src/modules/jobs/jobs.service.ts",
-        "services/api/src/modules/jobs/jobs.access.ts"
+        "services/api/src/modules/jobs/jobs.access.ts",
+        "services/api/src/modules/accounts/account-transaction.ts"
       ],
       "tests": [
         {
           "suite": "api",
           "file": "services/api/test/integration/jobs-chat.test.ts",
           "name": "create and accept replay exactly once, stale/concurrent writes conflict, ETA persists and agreed costs retain accepted state"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/jobs-chat.test.ts",
+          "name": "two actors reschedule after acquiring their own locks without deadlocking the customer foreign key"
         }
       ],
       "unproven": "Chưa có worker nhắc 24h/1h, test cho thời gian trôi không tự đóng; không đóng QA-019.",
@@ -2948,6 +2954,104 @@
         "rt01-contract"
       ],
       "gaps": "Local integration/UI assertions only. Native two-session evidence in B05-03; not device/provider/production/UAT or complete QA certification."
+    },
+    {
+      "id": "CAL-01-AC-01",
+      "requirement": "FR-JOB-003",
+      "qa": [
+        "QA-019"
+      ],
+      "sources": [
+        "QA-019"
+      ],
+      "description": "Lịch tổng hợp đủ trang, nhóm giờ Việt Nam, đúng tháng nhuận; không đổi trạng thái việc và bỏ kết quả quá hạn.",
+      "code": [
+        "apps/mobile/src/features/jobs/state/calendar.ts",
+        "apps/mobile/src/features/jobs/components/JobCalendar.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/state/calendar.test.ts",
+          "name": "calendar uses Hanoi midnight, leap days, Monday grid and stable time ordering without changing job states"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/state/calendar.test.ts",
+          "name": "calendar reads every page, keeps newer duplicates and rejects partial or looping results"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/state/calendar.test.ts",
+          "name": "calendar abandons a stale scope before loading another page or publishing data"
+        }
+      ],
+      "gaps": "Không chứng nhận device push, lịch quy mô lớn, ảnh chụp nguyên tử nhiều trang, native/UAT hoặc toàn bộ QA-019.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "CAL-01-AC-02",
+      "requirement": "FR-JOB-003",
+      "qa": [
+        "QA-019"
+      ],
+      "sources": [
+        "QA-019"
+      ],
+      "description": "Màn lịch giữ ngày sau tải lại, mất quyền xóa dữ liệu; việc trên trang sau và đổi lịch khách/partner qua DB thật.",
+      "code": [
+        "apps/mobile/src/features/jobs/screens/JobsScreen.tsx",
+        "services/api/src/modules/jobs/jobs.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "calendar loads all authorized pages, preserves selected day on refresh and hides data after access loss"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/calendar.spec.mjs",
+          "name": "calendar shows appointments beyond page one and reloads reschedules in customer and partner scopes"
+        }
+      ],
+      "gaps": "Không chứng nhận device push, lịch quy mô lớn, ảnh chụp nguyên tử nhiều trang, native/UAT hoặc toàn bộ QA-019.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "REFRESH-01-AC-01",
+      "requirement": "FR-CHAT-005; FR-NOT-002",
+      "qa": [
+        "QA-095",
+        "QA-025"
+      ],
+      "sources": [
+        "QA-095",
+        "QA-025",
+        "rt01-contract"
+      ],
+      "description": "Theo yêu cầu 15/10: kéo làm mới thay nút thường trực, giữ nội dung/bản nháp khi lỗi mạng, dừng vòng xoay và retry, xóa khi mất quyền.",
+      "code": [
+        "apps/mobile/src/features/accounts/components/AccountPage.tsx",
+        "apps/mobile/src/features/chat/screens/ConversationsScreen.tsx",
+        "apps/mobile/src/features/chat/screens/ConversationScreen.tsx",
+        "apps/mobile/src/features/notifications/NotificationsProvider.tsx",
+        "apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "pull refresh retains chat list and draft, stops on network error and recovers without permanent reload buttons"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/screens/Notifications.test.tsx",
+          "name": "pull refresh keeps notices visible, stops after failure, retries and clears denied data"
+        }
+      ],
+      "gaps": "Không chứng nhận offline storage, push ngoài app, thiết bị vật lý, UAT hoặc toàn bộ QA. Cử chỉ native cần bằng chứng riêng.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
     }
   ]
 }

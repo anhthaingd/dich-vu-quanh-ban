@@ -1,3 +1,4 @@
+import {ScrollView} from 'react-native';
 import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -17,6 +18,8 @@ const Stack=createNativeStackNavigator<RootStackParamList>();
 function mount(f:ReturnType<typeof workFixture>,initial: 'Jobs'|'JobDetail'|'JobCreate'|'Conversations'|'Conversation'='Jobs'){
  return render(<AppProviders api={{categories:jest.fn().mockResolvedValue([]),skills:jest.fn().mockResolvedValue([])}}><AuthProvider manager={f.manager}><NavigationContainer><Stack.Navigator initialRouteName={initial} screenOptions={{headerShown:false,animation:'none'}}><Stack.Screen name="Jobs" component={JobsScreen}/><Stack.Screen name="JobDetail" component={JobDetailScreen} initialParams={{id:'job'}}/><Stack.Screen name="JobCreate" component={JobCreateScreen} initialParams={{partnerId:'partner'}}/><Stack.Screen name="Conversations" component={ConversationsScreen} initialParams={{jobId:'job'}}/><Stack.Screen name="Conversation" component={ConversationScreen} initialParams={{id:'room',jobId:'job'}}/></Stack.Navigator></NavigationContainer></AuthProvider></AppProviders>);
 }
+async function refreshDone(){await waitFor(()=>expect(screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.accessibilityState.busy).toBe(false));}
+function pull(){act(()=>screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.onRefresh());}
 async function enabled(id:string){await waitFor(()=>expect(screen.getByTestId(id)).not.toBeDisabled());}
 test('job list switches scope, paginates, recovers an error and opens details and related chat',async()=>{
  const f=workFixture();f.jobs.list.mockResolvedValueOnce({items:[job],next_cursor:'next'}).mockResolvedValueOnce({items:[{...job,id:'job2'}],next_cursor:null});mount(f);
@@ -61,15 +64,53 @@ test('profile load retry and revoked job permission hide inaccessible data',asyn
 });
 test('room list filters job links across pages and reloads errors',async()=>{
  const f=workFixture();f.chat.list.mockResolvedValueOnce({items:[{...room,id:'other',job_ids:['other']}],next_cursor:'next'});mount(f,'Conversations');await screen.findByText('Chưa có cuộc trò chuyện trong trang này.');expect(screen.queryByTestId('conversation-open-other')).toBeNull();fireEvent.press(screen.getByText('Xem thêm'));await screen.findByTestId('conversation-open-room');
- f.chat.list.mockRejectedValueOnce(new ApiError('NETWORK'));fireEvent.press(screen.getByTestId('chat-list-reload'));await screen.findByRole('alert');fireEvent.press(screen.getByTestId('chat-list-reload'));await screen.findByTestId('conversation-open-room');
+ f.chat.list.mockRejectedValueOnce(new ApiError('NETWORK'));pull();await screen.findByRole('alert');expect(screen.getByTestId('conversation-open-room')).toBeTruthy();fireEvent.press(screen.getByTestId('refresh-retry'));await refreshDone();
 });
 test('chat merges pages, reads watermark, retries exactly one send and clears data on revoked access',async()=>{
  const f=workFixture();f.chat.messages.mockResolvedValueOnce({items:[message],next_cursor:'next'}).mockResolvedValueOnce({items:[message,{...message,id:'system',sequence:2,sender_id:null,body:'DEMO system'}],next_cursor:null});
- mount(f,'Conversation');await enabled('chat-reload');expect(screen.getAllByTestId('message-msg1')).toHaveLength(1);expect(f.chat.read).toHaveBeenCalledWith(expect.any(String),'room',2,expect.any(String));
- fireEvent.changeText(screen.getByTestId('chat-body'),'DEMO sent');f.chat.send.mockRejectedValueOnce(new ApiError('NETWORK'));fireEvent.press(screen.getByTestId('chat-send'));await screen.findByTestId('work-retry');expect(screen.getByTestId('chat-send')).toBeDisabled();fireEvent.press(screen.getByTestId('work-retry'));await screen.findByTestId('message-sent');await enabled('chat-reload');expect(f.chat.send.mock.calls[1]).toEqual(f.chat.send.mock.calls[0]);expect(screen.getByTestId('chat-body').props.value).toBe('');
- f.chat.messages.mockRejectedValueOnce(new ApiError('FORBIDDEN'));fireEvent.press(screen.getByTestId('chat-reload'));await screen.findByRole('alert');expect(screen.queryByTestId('message-msg1')).toBeNull();expect(screen.getByTestId('chat-send')).toBeDisabled();
+ mount(f,'Conversation');await refreshDone();expect(screen.getAllByTestId('message-msg1')).toHaveLength(1);expect(f.chat.read).toHaveBeenCalledWith(expect.any(String),'room',2,expect.any(String));
+ fireEvent.changeText(screen.getByTestId('chat-body'),'DEMO sent');f.chat.send.mockRejectedValueOnce(new ApiError('NETWORK'));fireEvent.press(screen.getByTestId('chat-send'));await screen.findByTestId('work-retry');expect(screen.getByTestId('chat-send')).toBeDisabled();fireEvent.press(screen.getByTestId('work-retry'));await screen.findByTestId('message-sent');await refreshDone();expect(f.chat.send.mock.calls[1]).toEqual(f.chat.send.mock.calls[0]);expect(screen.getByTestId('chat-body').props.value).toBe('');
+ f.chat.messages.mockRejectedValueOnce(new ApiError('FORBIDDEN'));pull();await screen.findByRole('alert');expect(screen.queryByTestId('message-msg1')).toBeNull();expect(screen.getByTestId('chat-send')).toBeDisabled();
 });
 test('foreground refresh waits for account verification and fetches after the read watermark',async()=>{
+ const original = AppState.addEventListener;
+ const implementation = jest.isMockFunction(original) ? original.getMockImplementation() : undefined;
  const listeners: ((state:AppStateStatus)=>void)[]=[];const spy=jest.spyOn(AppState,'addEventListener').mockImplementation((_event,callback)=>{listeners.push(callback);return {remove:jest.fn()};});
- try {const f=workFixture();mount(f,'Conversation');await enabled('chat-reload');await act(async()=>{listeners.forEach(fn=>fn('active'));});await enabled('chat-reload');expect(f.chat.messages).toHaveBeenLastCalledWith(expect.any(String),'room',1,undefined);}finally{spy.mockRestore();}
+ try {const f=workFixture();mount(f,'Conversation');await refreshDone();await act(async()=>{listeners.forEach(fn=>fn('active'));});await refreshDone();expect(f.chat.messages).toHaveBeenLastCalledWith(expect.any(String),'room',1,undefined);}finally{spy.mockRestore();if(implementation && jest.isMockFunction(original)) original.mockImplementation(implementation);}
+});
+
+test('calendar loads all authorized pages, preserves selected day on refresh and hides data after access loss',async()=>{
+ const f=workFixture();mount(f);await enabled('jobs-view-calendar');
+ const day=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+ const scheduled={...job,scheduled_at:day+'T10:00:00+07:00'};
+ f.jobs.list.mockResolvedValueOnce({items:[scheduled],next_cursor:'second'}).mockResolvedValueOnce({items:[{...scheduled,id:'second'}],next_cursor:null});
+ fireEvent.press(screen.getByTestId('jobs-view-calendar'));await screen.findByTestId('calendar-job-second');
+ expect(screen.getByTestId('calendar-job-job')).toBeTruthy();expect(f.jobs.list).toHaveBeenLastCalledWith(expect.any(String),undefined,'second');
+ fireEvent.press(screen.getByTestId('calendar-next'));const selected=screen.getByTestId('calendar-selected').props.children;
+ let release: (page: {items: typeof scheduled[]; next_cursor: null}) => void = () => {};
+ f.jobs.list.mockResolvedValue({items:[scheduled],next_cursor:null}).mockReturnValueOnce(new Promise(resolve => {release=resolve;}));
+ fireEvent.press(screen.getByTestId('jobs-reload'));await waitFor(()=>expect(screen.getByTestId('jobs-reload')).toBeDisabled());
+ expect(screen.getByTestId('jobs-calendar')).toBeTruthy();
+ await act(async()=>{release({items:[scheduled],next_cursor:null});});await enabled('jobs-reload');
+ expect(screen.getByTestId('calendar-selected').props.children).toBe(selected);
+ fireEvent.press(screen.getByTestId('calendar-today'));await screen.findByTestId('calendar-job-job');
+ f.jobs.list.mockRejectedValueOnce(new ApiError('FORBIDDEN'));fireEvent.press(screen.getByTestId('jobs-reload'));await screen.findByRole('alert');expect(screen.queryByTestId('jobs-calendar')).toBeNull();
+ fireEvent.press(screen.getByTestId('work-retry'));await screen.findByTestId('calendar-job-job');
+ fireEvent.press(screen.getByTestId('jobs-partner-partner'));await screen.findByTestId('jobs-calendar');expect(f.jobs.list).toHaveBeenLastCalledWith(expect.any(String),'partner',undefined);
+ fireEvent.press(screen.getByTestId('job-open-job'));await screen.findByTestId('job-state');
+});
+
+test('pull refresh retains chat list and draft, stops on network error and recovers without permanent reload buttons',async()=>{
+ const f=workFixture();const view=mount(f,'Conversations');await screen.findByTestId('conversation-open-room');await refreshDone();
+ expect(screen.queryByTestId('chat-list-reload')).toBeNull();
+ let reject!: (e:ApiError)=>void;f.chat.list.mockReturnValueOnce(new Promise((_resolve,no)=>{reject=no;}));
+ pull();await waitFor(()=>expect(screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.refreshing).toBe(true));
+ expect(screen.getByTestId('conversation-open-room')).toBeTruthy();
+ await act(async()=>reject(new ApiError('TIMEOUT')));await refreshDone();
+ expect(screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.refreshing).toBe(false);expect(screen.getByTestId('conversation-open-room')).toBeTruthy();
+ fireEvent.press(screen.getByTestId('refresh-retry'));await refreshDone();expect(screen.queryByRole('alert')).toBeNull();view.unmount();
+ const g=workFixture();mount(g,'Conversation');await refreshDone();expect(screen.queryByTestId('chat-reload')).toBeNull();
+ fireEvent.changeText(screen.getByTestId('chat-body'),'DEMO draft');g.chat.messages.mockRejectedValueOnce(new ApiError('NETWORK'));pull();await screen.findByTestId('refresh-retry');await refreshDone();
+ expect(screen.getByTestId('message-msg1')).toBeTruthy();expect(screen.getByTestId('chat-body').props.value).toBe('DEMO draft');
+ expect(screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.refreshing).toBe(false);fireEvent.press(screen.getByTestId('refresh-retry'));await refreshDone();expect(screen.queryByRole('alert')).toBeNull();
 });

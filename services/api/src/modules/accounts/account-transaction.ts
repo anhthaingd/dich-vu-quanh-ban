@@ -15,7 +15,9 @@ export class AccountTransaction {
     const db = await this.pool.connect();
     try {
       await db.query('BEGIN');
-      await db.query('SELECT id FROM users WHERE id=$1 FOR UPDATE', [actor.user.id]);
+      // Serialize this actor without blocking another transaction's FK check of this user.
+      // FOR UPDATE here can deadlock a provider updating a job while its customer waits for that job.
+      await db.query('SELECT id FROM users WHERE id=$1 FOR NO KEY UPDATE', [actor.user.id]);
       const current = await this.auth.authenticate(header, db);
       await authorize?.(db, current);
       const { rows: [previous] } = await db.query('SELECT request_hash,response_snapshot FROM idempotency_keys WHERE actor_id=$1 AND operation=$2 AND request_key=$3', [current.user.id, operation, key]);

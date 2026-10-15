@@ -5,7 +5,8 @@ import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../../../app/navigation/routes';
 import {useAuth} from '../../../app/providers/AuthProvider';
 import {useLocale} from '../../../app/providers/LocaleProvider';
-import {AccountPage} from '../../accounts/components/AccountPage';
+import {AccountPage,useAccountRefresh} from '../../accounts/components/AccountPage';
+import {LoadingState,RefreshError} from '../../../components/ui/Feedback';
 import {AppText} from '../../../components/ui/AppText';
 import {Button} from '../../../components/ui/Button';
 import {Card} from '../../../components/ui/Card';
@@ -24,24 +25,27 @@ export function NotificationsScreen({navigation}:NativeStackScreenProps<RootStac
     {owner=><Inbox key={owner} owner={owner} navigation={navigation}/>}</AccountPage>;
 }
 function Inbox({owner,navigation}:{owner:string;navigation:Navigation}){
-  const {items,loading,error,refresh,markRead}=useNotifications(),{manager,state}=useAuth(),{t,locale}=useLocale();
+  const {items,loading,loaded,error,refresh,markRead}=useNotifications(),{manager,state}=useAuth(),{t,locale}=useLocale();
   const [unread,setUnread]=useState(false),[busy,setBusy]=useState(false),[failure,setFailure]=useState<ApiErrorCode|null>(null),[retry,setRetry]=useState<(()=>Promise<void>)|null>(null);
+  const [pulling,setPulling]=useState(false);
+  const reload=()=>{if(loading||busy||state.busy)return false;setPulling(true);void refresh().finally(()=>setPulling(false));return true;};
+  useAccountRefresh(pulling,reload,!loading&&!busy&&!state.busy);
   const run=async(work:()=>Promise<void>)=>{if(busy)return;setBusy(true);setFailure(null);setRetry(()=>work);try{await sessionReady(manager,owner);await work();setRetry(null);}catch(e){setFailure(e instanceof ApiError?e.code:'NETWORK');}finally{setBusy(false);}};
   const open=async(n:Notice)=>{await markRead([n.id]);const r=n.resource_ref;
     // Fetch the target with current authorization before navigation. No arbitrary URL from notification data.
     if(r.invoice_id){if(!r.job_id)throw new ApiError('INVALID_RESPONSE');await manager.getInvoice(owner,r.job_id);navigation.navigate('Invoice',{id:r.job_id});}
     else if(r.job_id){await manager.getJob(owner,r.job_id);navigation.navigate('JobDetail',{id:r.job_id});}
   };
-  const visible=items.filter(n=>!unread||!n.read_at),disabled=busy||loading||state.busy;
+  const visible=items.filter(n=>!unread||!n.read_at),disabled=busy||state.busy;
   return <Card><View style={styles.tools}><Button testID="notices-all" label={t('notices.all')} variant={unread?'secondary':'primary'} onPress={()=>setUnread(false)}/><Button testID="notices-unread" label={t('notices.unread')} variant={unread?'primary':'secondary'} onPress={()=>setUnread(true)}/></View>
     <Button testID="notices-read-all" label={t('notices.readAll')} variant="secondary" disabled={disabled||!items.some(n=>!n.read_at)} onPress={()=>void run(()=>markRead(items.filter(n=>!n.read_at).map(n=>n.id)))}/>
-    <JobFeedback error={failure??error} busy={disabled} retry={()=>void (retry?run(retry):refresh())}/>
-    {loading&&<AppText>{t('accountTools.loading')}</AppText>}
-    {!loading&&!error&&!visible.length&&<AppText testID="notices-empty">{t(unread?'notices.caughtUp':'notices.empty')}</AppText>}
+    <JobFeedback error={failure} busy={disabled} retry={retry?()=>void run(retry):undefined}/>
+    <RefreshError error={error} busy={disabled||loading} retry={reload}/>
+    {loading&&!loaded&&!error&&!pulling&&<LoadingState message={t('accountTools.loading')}/>}
+    {loaded&&!error&&!visible.length&&<AppText testID="notices-empty">{t(unread?'notices.caughtUp':'notices.empty')}</AppText>}
     {visible.map(n=><Pressable testID={`notice-${n.id}`} key={n.id} accessibilityRole="button" disabled={disabled} onPress={()=>void run(()=>open(n))} style={[styles.notice,!n.read_at&&styles.unread]}>
       <AppText>{t(`notices.${labels[n.kind as keyof typeof labels]??'updated'}`)}</AppText><AppText variant="caption" tone="muted">{t(n.read_at?'notices.read':'notices.unread')} · {formatBusinessDate(new Date(n.created_at),locale)}</AppText>
     </Pressable>)}
-    <Button testID="notices-reload" label={t('accountTools.reload')} variant="link" disabled={disabled} onPress={()=>void refresh()}/>
   </Card>;
 }
 export function NotificationSettingsScreen({navigation}:NativeStackScreenProps<RootStackParamList,'NotificationSettings'>){return <AccountPage title="notices.settings" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account',{returnTo:'NotificationSettings'})}>{owner=><Settings key={owner} owner={owner}/>}</AccountPage>;}

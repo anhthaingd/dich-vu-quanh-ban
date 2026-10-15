@@ -1,3 +1,4 @@
+import {ScrollView} from 'react-native';
 import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -36,4 +37,15 @@ test('reminder settings retain form across locale changes and retry the same imm
  fireEvent.press(screen.getByRole('button',{name:'English'}));expect(screen.getByTestId('setting-reminder_push').props.value).toBe(false);
  f.notices.save.mockRejectedValueOnce(new ApiError('NETWORK'));fireEvent.press(screen.getByTestId('notices-save'));await screen.findByTestId('work-retry');expect(screen.getByTestId('setting-reminder_push')).toBeDisabled();
  fireEvent.press(screen.getByTestId('work-retry'));await screen.findByTestId('notices-saved');expect(f.notices.save.mock.calls[0]).toEqual(f.notices.save.mock.calls[1]);expect(f.notices.save.mock.calls[1][1]).toEqual({...settings,reminder_push:false});
+});
+
+test('pull refresh keeps notices visible, stops after failure, retries and clears denied data',async()=>{
+ const f=fixture();mount(f);await screen.findByTestId('notice-notice');
+ await waitFor(()=>expect(screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.accessibilityState.busy).toBe(false));expect(screen.queryByTestId('notices-reload')).toBeNull();
+ let reject!: (e:ApiError)=>void;f.notices.list.mockReturnValueOnce(new Promise((_resolve,no)=>{reject=no;}));
+ act(()=>screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.onRefresh());await waitFor(()=>expect(screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.refreshing).toBe(true));expect(screen.getByTestId('notice-notice')).toBeTruthy();
+ await act(async()=>reject(new ApiError('NETWORK')));await screen.findByTestId('refresh-retry');
+ await waitFor(()=>expect(screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.refreshing).toBe(false));expect(screen.getByTestId('notice-notice')).toBeTruthy();
+ await waitFor(()=>expect(screen.getByTestId('refresh-retry')).not.toBeDisabled());await act(async()=>{fireEvent.press(screen.getByTestId('refresh-retry'));});await waitFor(()=>expect(screen.queryByRole('alert')).toBeNull());
+ f.notices.list.mockRejectedValueOnce(new ApiError('FORBIDDEN'));act(()=>screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.onRefresh());await screen.findByRole('alert');expect(screen.queryByTestId('notice-notice')).toBeNull();
 });

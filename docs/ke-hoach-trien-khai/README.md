@@ -1,5 +1,10 @@
 # Kế hoạch triển khai và học code
 
+**15/10/2026 — B05-05:** Tin nhắn/Thông báo tự cập nhật, kéo xuống làm mới trên native, giữ nội dung khi tải nền và dừng vòng xoay khi lỗi. [Báo cáo và ảnh](bao-cao/B05-05-cap-nhat-tu-dong-va-keo-lam-moi.md).
+
+**15/10/2026 — B05-04 / P1-2:** triển khai màn lịch tổng hợp trong Công việc, dùng GET /jobs hiện hành, giờ Việt Nam, đủ trang và quyền khách/đội ngũ. [Báo cáo](bao-cao/B05-04-lich-tong-hop-cong-viec.md) ghi bằng chứng và giới hạn. Không mở provider push/production hoặc đồng bộ Drive/ui-ux; chưa đóng toàn B05.
+
+
 **14/10/2026 — RT-01A đã duyệt triển khai:** realtime foreground một API instance cho inbox/chat/việc/hóa đơn; HTTP recovery. Xem [B05-02](bao-cao/B05-02-realtime-inbox-va-chat.md) cho kết quả và giới hạn. RT-01B/Redis/production chưa mở. Các ghi chú “RT-01 chờ duyệt” phía dưới là lịch sử lập kế hoạch.
 **Đề xuất realtime · 14/10:** [RT-01 — WebSocket và SSE](de-xuat/RT-01-websocket-va-sse.md) so sánh hai hướng; đề nghị Socket.IO dùng chung inbox/chat, HTTP ghi và phục hồi, một API instance trước. **Chưa duyệt triển khai**, chưa đổi contract chuẩn; không thay trạng thái P1-02 bên dưới.
 
@@ -44,6 +49,8 @@ Theo yêu cầu mới nhất ngày 07/10/2026, thứ tự là **nguồn cung và
 Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Markdown Preview có hỗ trợ Mermaid như các tài liệu khác của dự án; tab sửa văn bản hiển thị mã sơ đồ. Không cần các file nguồn/ảnh riêng. Nếu sơ đồ không hiện, kiểm lỗi cú pháp và trình xem hiện có trước khi cài thêm công cụ.
 
 ## Báo cáo đã có
+
+- [B05-04 — Lịch tổng hợp công việc](bao-cao/B05-04-lich-tong-hop-cong-viec.md): xem tháng/ngày, đủ trang, giờ Việt Nam, quyền và đổi lịch.
 
 - [B05-03 — Tách Tin nhắn và Thông báo](bao-cao/B05-03-tach-tin-nhan-va-thong-bao.md): MSG-01, badge/đọc độc lập và loại chat cũ khỏi inbox, kiểm native hai phiên.
 

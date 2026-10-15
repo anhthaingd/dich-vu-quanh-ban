@@ -1,5 +1,8 @@
 # Thứ tự triển khai từng chức năng
 
+**15/10/2026 — B05-04 / P1-2:** triển khai màn lịch tổng hợp trong Công việc, dùng GET /jobs hiện hành, giờ Việt Nam, đủ trang và quyền khách/đội ngũ. [Báo cáo](bao-cao/B05-04-lich-tong-hop-cong-viec.md) ghi bằng chứng và giới hạn. Không mở provider push/production hoặc đồng bộ Drive/ui-ux; chưa đóng toàn B05.
+
+
 **14/10/2026 — RT-01A đã duyệt triển khai:** realtime foreground một API instance cho inbox/chat/việc/hóa đơn; HTTP recovery. Xem [B05-02](bao-cao/B05-02-realtime-inbox-va-chat.md) cho kết quả và giới hạn. RT-01B/Redis/production chưa mở. Các ghi chú “RT-01 chờ duyệt” phía dưới là lịch sử lập kế hoạch.
 **Đợt hiện hành · 14/10:** P1-2, lát P1-02 thông báo/inbox/nhắc lịch theo yêu cầu tiếp tục triển khai. Công tắc nhắc lịch riêng đã được chủ dự án duyệt và đồng bộ spec. [B05-01](bao-cao/B05-01-thong-bao-va-nhac-lich.md) ghi DB/API/app/test, ảnh native và giới hạn; chưa đóng toàn P1-2, chưa provider push hoặc production. P1-1 local trước đó xem B04-01/B04-02.
 

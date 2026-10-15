@@ -7,9 +7,10 @@ import { randomUUID } from 'expo-crypto';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../app/navigation/routes';
-import { AccountPage } from '../../accounts/components/AccountPage';
+import { AccountPage, useAccountRefresh } from '../../accounts/components/AccountPage';
 import { useAuth } from '../../../app/providers/AuthProvider';
 import { useLocale } from '../../../app/providers/LocaleProvider';
+import { LoadingState, RefreshError } from '../../../components/ui/Feedback';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { Input } from '../../../components/ui/Input';
@@ -28,9 +29,12 @@ function Room({ owner, id, jobId }: {
     const { manager, state: auth } = useAuth(), { t, locale } = useLocale();
     const [items, setItems] = useState<Message[]>([]), [body, setBody] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState<ApiErrorCode | null>(null), [attempt, setAttempt] = useState(0);
     const highest = useRef(0);
+    const [pulling, setPulling] = useState(false), [loaded, setLoaded] = useState(false);
     const {invalidate}=useMessageUnread();
     const [mutation] = useState(() => new Mutation<Message>());
     const state = useSyncExternalStore(mutation.subscribe, mutation.getSnapshot, mutation.getSnapshot);
+    const reload = () => { if (!busy && !auth.busy && !state.busy && !state.pending) { setPulling(true); setAttempt(v => v + 1); return true; } return false; };
+    useAccountRefresh(pulling, reload, !busy && !auth.busy && !state.busy && !state.pending);
     useRealtimeRefresh({error,resource:{type:'conversation',id},busy:busy||state.busy||state.pending,matches:s=>s.kind==='event'&&s.event.type==='conversation.message_created.v1'&&s.event.data.conversation_id===id,refresh:()=>setAttempt(v=>v+1),revoke:()=>{setItems([]);highest.current=0;setError('NOT_FOUND');}});
     useFocusEffect(useCallback(() => {
         let active = true, loading = false;
@@ -39,24 +43,27 @@ function Room({ owner, id, jobId }: {
                 return;
             loading = true;
             setBusy(true);
-            setError(null);
             try {
                 await sessionReady(manager, owner);
                 let cursor: string | undefined;
-                const after = highest.current, arrived: Message[] = [];
+                const after = highest.current, arrived: Message[] = [], seen = new Set<string>();
                 do {
                     const p = await manager.listMessages(owner, id, after, cursor);
                     arrived.push(...p.items);
                     cursor = p.next_cursor ?? undefined;
+                    if (cursor && seen.has(cursor)) throw new ApiError('INVALID_RESPONSE');
+                    if (cursor) seen.add(cursor);
                 } while (cursor && active);
                 if (!active)
                     return;
                 setItems(old => [...new Map([...old, ...arrived].map(m => [m.id, m])).values()].sort((a, b) => a.sequence - b.sequence));
+                setLoaded(true);
                 highest.current = Math.max(highest.current, ...arrived.map(m => m.sequence));
                 if (highest.current) {
                     await manager.readConversation(owner, id, highest.current, randomUUID());
                     invalidate();
                 }
+                if (active) setError(null);
             }
             catch (e) {
                 if (active) {
@@ -70,8 +77,7 @@ function Room({ owner, id, jobId }: {
             }
             finally {
                 loading = false;
-                if (active)
-                    setBusy(false);
+                if (active) { setBusy(false); setPulling(false); }
             }
         };
         void refresh();
@@ -86,6 +92,6 @@ function Room({ owner, id, jobId }: {
     } };
     const send = async () => { const text = body.trim(); if (!text)
         return; const input = { client_message_id: randomUUID(), body: text, ...(jobId ? { job_id: jobId } : {}) }; sent(await mutation.run(key => manager.sendMessage(owner, id, input, key))); };
-    const blocked = busy || auth.busy || state.busy || state.pending || error === 'NOT_FOUND' || error === 'FORBIDDEN';
-    return <><AppText tone="muted">{t('chat.refreshHint')}</AppText><Button testID="chat-reload" label={t('chat.reload')} disabled={busy || auth.busy || state.busy} onPress={() => setAttempt(v => v + 1)}/><JobFeedback error={error}/>{busy && <AppText>{t('accountTools.loading')}</AppText>}{!busy && !items.length && !error && <AppText>{t('chat.noMessages')}</AppText>}{items.map(m => <Card key={m.id}><AppText variant="caption">{t(m.sender_id === null ? 'chat.system' : m.sender_id === owner ? 'chat.you' : 'chat.peer')}</AppText><AppText testID={`message-${m.id}`}>{m.body}</AppText><AppText variant="caption" tone="muted">{formatBusinessDate(new Date(m.created_at), locale)}</AppText></Card>)}<Card><Input testID="chat-body" label={t('chat.message')} value={body} multiline editable={!blocked} onChangeText={setBody}/><Button testID="chat-send" label={t('chat.send')} disabled={blocked || !body.trim()} onPress={() => void send()}/><JobFeedback error={state.error} pending={state.pending} busy={state.busy || auth.busy} retry={state.pending ? () => void mutation.run().then(sent) : undefined}/></Card></>;
+    const blocked = (!loaded && busy) || auth.busy || state.busy || state.pending || error === 'NOT_FOUND' || error === 'FORBIDDEN';
+    return <><RefreshError error={error} busy={busy || auth.busy || state.busy || state.pending} retry={reload}/>{!loaded && busy && !error && !pulling && <LoadingState message={t('accountTools.loading')}/> }{loaded && !items.length && !error && <AppText>{t('chat.noMessages')}</AppText>}{items.map(m => <Card key={m.id}><AppText variant="caption">{t(m.sender_id === null ? 'chat.system' : m.sender_id === owner ? 'chat.you' : 'chat.peer')}</AppText><AppText testID={`message-${m.id}`}>{m.body}</AppText><AppText variant="caption" tone="muted">{formatBusinessDate(new Date(m.created_at), locale)}</AppText></Card>)}<Card><Input testID="chat-body" label={t('chat.message')} value={body} multiline editable={!blocked} onChangeText={setBody}/><Button testID="chat-send" label={t('chat.send')} disabled={blocked || !body.trim()} onPress={() => void send()}/><JobFeedback error={state.error} pending={state.pending} busy={state.busy || auth.busy} retry={state.pending ? () => void mutation.run().then(sent) : undefined}/></Card></>;
 }
