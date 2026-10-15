@@ -1,3 +1,5 @@
+import {event} from '../../common/events/event.store.js';
+export {event} from '../../common/events/event.store.js';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import type { PoolClient } from 'pg';
 import { hasPermission, memberAccess } from '../jobs/jobs.access.js';
@@ -46,9 +48,6 @@ export async function readConversation(db: PoolClient, id: string, user: string)
     LEFT JOIN users peer ON peer.id=CASE WHEN c.user_low=$2 THEN c.user_high ELSE c.user_low END
     LEFT JOIN conversation_reads r ON r.conversation_id=c.id AND r.user_id=$2 WHERE c.id=$1`, [id, user]);
     return c;
-}
-export async function event(db: PoolClient, key: string, id: string, version: number, type: string, payload: unknown) {
-    await db.query(`INSERT INTO outbox_events(event_key,aggregate_id,aggregate_version,event_type,payload) VALUES($1,$2,$3,$4,$5) ON CONFLICT(event_key) DO NOTHING`, [key, id, version, type, JSON.stringify(payload)]);
 }
 export async function systemMessage(db: PoolClient, conversation: string, job: string, key: string, body: string) {
     const { rows: [c] } = await db.query('UPDATE conversations SET next_sequence=next_sequence+1 WHERE id=$1 RETURNING next_sequence-1 AS sequence', [conversation]);

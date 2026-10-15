@@ -1,4 +1,5 @@
-import {fireEvent,render,screen,waitFor} from '@testing-library/react-native';
+import {useRealtimeRefresh} from '../../../app/providers/RealtimeProvider';
+import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as Picker from 'expo-image-picker';
@@ -8,6 +9,7 @@ import type {RootStackParamList} from '../../../app/navigation/routes';
 import {InvoiceScreen} from './InvoiceScreen';
 import {invoiceFixture,invoice} from '../../../../test/helpers/invoices';
 import {ApiError} from '../../../lib/http/api-error';
+jest.mock('../../../app/providers/RealtimeProvider',()=>({useRealtimeRefresh:jest.fn()}));
 jest.mock('expo-image-picker',()=>({launchImageLibraryAsync:jest.fn()}));
 const Stack=createNativeStackNavigator<RootStackParamList>();
 function mount(f:ReturnType<typeof invoiceFixture>){return render(<AppProviders api={{categories:jest.fn().mockResolvedValue([]),skills:jest.fn().mockResolvedValue([])}}><AuthProvider manager={f.manager}><NavigationContainer><Stack.Navigator screenOptions={{headerShown:false,animation:'none'}}><Stack.Screen name="Invoice" component={InvoiceScreen} initialParams={{id:'job'}}/></Stack.Navigator></NavigationContainer></AuthProvider></AppProviders>);}
@@ -45,4 +47,20 @@ test('zero invoice and two marks show completion; history pagination deduplicate
 test('missing invoice waits; permission loss removes private content; non-wallet worker can still draft',async()=>{
  const f=invoiceFixture();f.invoices.get.mockRejectedValueOnce(new ApiError('NOT_FOUND'));const v=mount(f);await ready();expect(screen.queryByTestId('invoice-review')).toBeNull();press('invoice-reload');await ready();expect(screen.getByText('DEMO work completed')).toBeTruthy();f.jobs.get.mockRejectedValueOnce(new ApiError('FORBIDDEN'));press('invoice-reload');await ready();expect(screen.queryByText('DEMO work completed')).toBeNull();v.unmount();
  const g=invoiceFixture(true);g.invoices.get.mockRejectedValueOnce(new ApiError('NOT_FOUND'));g.invoices.wallet.mockRejectedValue(new ApiError('FORBIDDEN'));mount(g);await ready();expect(screen.getByTestId('invoice-editor')).toBeTruthy();expect(screen.queryByTestId('invoice-history')).toBeNull();fireEvent.changeText(screen.getByTestId('invoice-labor'),'0');fireEvent.changeText(screen.getByTestId('invoice-materials'),'0');press('invoice-save');await ready();expect(g.invoices.save.mock.calls[0][2]).toMatchObject({expected_version:1,labor:'0',materials:'0',result_asset_ids:[]});
+});
+
+test('realtime rechecks an edited invoice: duplicate version keeps points; newer version requires reload',async()=>{
+ const f=invoiceFixture();mount(f);await ready();
+ fireEvent.changeText(screen.getByTestId('invoice-points'),'50000');
+ const refresh=()=>act(()=>jest.mocked(useRealtimeRefresh).mock.calls.at(-1)![0].refresh());
+ refresh();await ready();
+ expect(screen.getByTestId('invoice-points').props.value).toBe('50000');
+ expect(screen.getByTestId('invoice-confirm')).not.toBeDisabled();
+ f.setInvoice({...invoice,version:6,version_id:'v2',materials:'50000',total:'250000'});
+ refresh();await ready();
+ expect(screen.getByTestId('invoice-points').props.value).toBe('50000');
+ expect(screen.getByTestId('invoice-confirm')).toBeDisabled();
+ press('invoice-reload');await ready();
+ expect(screen.getByTestId('invoice-points').props.value).toBe('0');
+ expect(screen.getByTestId('invoice-confirm')).not.toBeDisabled();
 });

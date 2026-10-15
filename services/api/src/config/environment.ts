@@ -1,5 +1,5 @@
 import type {LocalMessagesConfig} from '../integrations/local-messages.js';
-export interface Config { localMessages?:LocalMessagesConfig; databaseUrl: string; cursorSecret: string; authSecret?: string; port: number; host: string; corsOrigin?: string; geoapifyKey?: string; localAssets?: { directory:string; origin:string } }
+export interface Config { realtimeEnabled?:boolean; localMessages?:LocalMessagesConfig; databaseUrl: string; cursorSecret: string; authSecret?: string; port: number; host: string; corsOrigin?: string; geoapifyKey?: string; localAssets?: { directory:string; origin:string } }
 export function config(env = process.env): Config {
   if (!env.DATABASE_URL || !env.CURSOR_SECRET || env.CURSOR_SECRET.length < 32) {
     throw new Error('DATABASE_URL and CURSOR_SECRET (at least 32 characters) are required');
@@ -23,5 +23,5 @@ export function config(env = process.env): Config {
     if(mailpit.protocol!=='http:'||!['127.0.0.1','localhost','[::1]'].includes(mailpit.hostname)||mailpit.username||mailpit.password||mailpit.pathname!=='/'||mailpit.search||mailpit.hash)throw new Error('Mailpit must be loopback only');
     localMessages={secret:env.LOCAL_MESSAGES_SECRET!,mailpit:mailpit.origin,smsDirectory:env.LOCAL_SMS_DIRECTORY,contacts:env.LOCAL_MESSAGE_CONTACTS.split(',').map(x=>x.trim().toLowerCase())};
   }
-  return { localMessages, localAssets, databaseUrl: env.DATABASE_URL, cursorSecret: env.CURSOR_SECRET, authSecret: env.AUTH_SECRET || undefined, port, host: env.HOST ?? '127.0.0.1', geoapifyKey: env.GEOAPIFY_API_KEY?.trim() || undefined, corsOrigin: env.CORS_ORIGIN };
+  return { realtimeEnabled:env.REALTIME_ENABLED==='1', localMessages, localAssets, databaseUrl: env.DATABASE_URL, cursorSecret: env.CURSOR_SECRET, authSecret: env.AUTH_SECRET || undefined, port, host: env.HOST ?? '127.0.0.1', geoapifyKey: env.GEOAPIFY_API_KEY?.trim() || undefined, corsOrigin: env.CORS_ORIGIN };
 }

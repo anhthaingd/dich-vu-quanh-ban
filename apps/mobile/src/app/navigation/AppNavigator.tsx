@@ -1,3 +1,4 @@
+import {NotificationsScreen,NotificationSettingsScreen} from '../../features/notifications/screens/NotificationsScreen';
 import {OrganizationsScreen} from '../../features/organizations/screens/OrganizationsScreen';
 import {TeamScreen} from '../../features/organizations/screens/TeamScreen';
 import {VerifyContactScreen} from '../../features/organizations/screens/VerifyContactScreen';
@@ -41,6 +42,8 @@ export function AppNavigator() {
       <Stack.Screen name="Conversations" component={ConversationsScreen} />
       <Stack.Screen name="Conversation" component={ConversationScreen} />
       <Stack.Screen name="Search" component={SearchScreen} />
+      <Stack.Screen name="Notifications" component={NotificationsScreen} />
+      <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
       <Stack.Screen name="Organizations" component={OrganizationsScreen} />
       <Stack.Screen name="Team" component={TeamScreen} />
       <Stack.Screen name="VerifyContact" component={VerifyContactScreen} />

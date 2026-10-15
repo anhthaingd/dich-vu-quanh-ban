@@ -1,3 +1,5 @@
+import {useNotifications} from '../../features/notifications/NotificationsProvider';
+import {useMessageUnread} from '../../features/chat/MessageUnreadProvider';
 import type { PropsWithChildren } from 'react';
 import { Pressable, StyleSheet, View, type ScrollViewProps } from 'react-native';
 import { useAuth } from '../providers/AuthProvider';
@@ -13,13 +15,16 @@ export type ShellProps = PropsWithChildren<{
   onCatalog?: () => void;
   onJobs?: () => void;
   onMessages?: () => void;
-  activeTab?: 'catalog' | 'jobs' | 'messages';
+  onNotifications?: () => void;
+  activeTab?: 'catalog' | 'jobs' | 'messages' | 'notifications';
   discovery?: boolean;
   keyboardDismissMode?: ScrollViewProps['keyboardDismissMode'];
 }>;
-// UI-16: avatar opens account; notifications remain disabled until implemented.
-export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, onMessages, activeTab = 'catalog', discovery, keyboardDismissMode }: ShellProps) {
+// UI-16: avatar opens account; notifications have their own tab.
+export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, onMessages, onNotifications, activeTab = 'catalog', discovery, keyboardDismissMode }: ShellProps) {
   const { t } = useLocale();
+  const unread=useNotifications().items.filter(n=>!n.read_at).length;
+  const messages=useMessageUnread().unread;
   const { state } = useAuth();
   const displayName = state.phase === 'authenticated' ? state.user!.display_name.trim() : '';
   const initial = Array.from(displayName)[0]?.toLocaleUpperCase() || '?';
@@ -41,7 +46,7 @@ export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, o
     { id: 'catalog', icon: 'search', label: t('shell.findServices'), onPress: onCatalog },
     { id: 'jobs', icon: 'jobs', label: t('jobs.title'), onPress: onJobs },
     { id: 'messages', icon: 'messages', label: t('chat.title'), onPress: onMessages },
-    { id: 'notifications', icon: 'bell', label: t('home.notifications'), onPress: undefined },
+    { id: 'notifications', icon: 'bell', label: t('home.notifications'), onPress: onNotifications },
   ] as const;
   const footer = onCatalog ? <View style={styles.footer}>
     {tabs.map(tab => <Pressable key={tab.id} testID={`nav-${tab.id}`} accessibilityRole="tab"
@@ -49,6 +54,7 @@ export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, o
       accessibilityLabel={tab.label} accessibilityHint={!tab.onPress ? t('home.unavailable') : undefined}
       onPress={tab.onPress} disabled={!tab.onPress}
       style={({ pressed }) => [styles.destination, { opacity: pressed ? 0.65 : 1 }]}>
+      {((tab.id==='notifications'&&unread>0)||(tab.id==='messages'&&messages>0))&&<View testID={tab.id==='messages'?'message-badge':'notification-badge'} style={styles.badge}><AppText style={styles.badgeText}>{Math.min(tab.id==='messages'?messages:unread,99)}{(tab.id==='messages'?messages:unread)>99?'+':''}</AppText></View>}
       <Icon name={tab.icon} color={activeTab === tab.id ? theme.colors.primary : '#78869E'} />
       <AppText style={[styles.destinationText, {color: activeTab === tab.id ? theme.colors.primary : '#78869E', fontWeight: activeTab === tab.id ? '700' : '400'}]}>{tab.label}</AppText>
     </Pressable>)}
@@ -57,6 +63,8 @@ export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, o
     style={discovery ? styles.white : undefined} contentContainerStyle={discovery ? styles.discovery : undefined}>{children}</Screen>;
 }
 const styles = StyleSheet.create({
+  badge: {position:'absolute',top:0,right:16,borderRadius:12,backgroundColor:'#B42318',paddingHorizontal:5},
+  badgeText: {color:'#fff',fontSize:11,lineHeight:18},
   white: {backgroundColor: '#fff'},
   discovery: {paddingHorizontal:16, paddingTop:24, gap:0, backgroundColor:'#fff'},
   header: { backgroundColor: '#fff', borderBottomWidth: 1, borderColor: theme.colors.border },

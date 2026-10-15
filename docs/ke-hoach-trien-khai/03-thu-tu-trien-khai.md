@@ -1,6 +1,7 @@
 # Thứ tự triển khai từng chức năng
 
-**Đợt hiện hành · 13/10:** P1-1 theo [P1-01 A/B đã duyệt](de-xuat/P1-01-doi-ngu-va-xac-thuc-local.md): xác minh local + đội ngũ/grants/reauth/bàn giao. Đã có DB/API/app/test và báo cáo [B04-01](bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md), [B04-02](bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md). Checklist phân biệt local/native/CI/UAT; không tự mở P1-2/P2, provider thật hoặc production từ kết quả này.
+**14/10/2026 — RT-01A đã duyệt triển khai:** realtime foreground một API instance cho inbox/chat/việc/hóa đơn; HTTP recovery. Xem [B05-02](bao-cao/B05-02-realtime-inbox-va-chat.md) cho kết quả và giới hạn. RT-01B/Redis/production chưa mở. Các ghi chú “RT-01 chờ duyệt” phía dưới là lịch sử lập kế hoạch.
+**Đợt hiện hành · 14/10:** P1-2, lát P1-02 thông báo/inbox/nhắc lịch theo yêu cầu tiếp tục triển khai. Công tắc nhắc lịch riêng đã được chủ dự án duyệt và đồng bộ spec. [B05-01](bao-cao/B05-01-thong-bao-va-nhac-lich.md) ghi DB/API/app/test, ảnh native và giới hạn; chưa đóng toàn P1-2, chưa provider push hoặc production. P1-1 local trước đó xem B04-01/B04-02.
 
 **P0-3 · 07/10:** đã nối ảnh kết quả local/test → hóa đơn → giữ phí/point → quyết toán/hai dấu → ví/lịch sử. [B06-01 — hóa đơn và quyết toán test](bao-cao/B06-01-hoa-don-va-quyet-toan-test.md). Web hai tài khoản và native Android/iOS đạt phạm vi báo cáo; trình chọn ảnh native chưa kiểm. **Đã push `d4828e2` ngày 08/10; [CI đạt cả 3 job](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37713859771)** (app/build, API/PostGIS, web E2E). Chưa UAT/production/tiền thật.
 

@@ -1,8 +1,10 @@
 # SDD cho toàn dự án
 
-SDD nối yêu cầu đã chốt với code và kết quả kiểm thử. Gói mặc định [SDD-PROJECT](changes/SDD-PROJECT.json) kiểm kê toàn repository, 93 ca QA, 130 operation API và 80 tiêu chí hành vi. **Đầy đủ danh mục không có nghĩa toàn bộ sản phẩm đã đạt spec.** Mỗi QA hiện là `partial` (mới chứng minh các nhánh liên kết) hoặc `unmapped` (chưa có tiêu chí được review). Các chức năng Pending giữ nguyên.
+SDD nối yêu cầu đã chốt với code và kết quả kiểm thử. Gói mặc định [SDD-PROJECT](changes/SDD-PROJECT.json) kiểm kê toàn repository, 93 ca QA, 130 operation API và 85 tiêu chí hành vi. **Đầy đủ danh mục không có nghĩa toàn bộ sản phẩm đã đạt spec.** Mỗi QA hiện là `partial` (mới chứng minh các nhánh liên kết) hoặc `unmapped` (chưa có tiêu chí được review). Các chức năng Pending giữ nguyên.
 
 Thiết kế [SDD-01](../de-xuat/SDD-01-quy-trinh-ai-bam-spec.md) · Lát đầu [B00-07](../bao-cao/B00-07-bo-kiem-sdd-local.md) · Mở rộng [B00-08](../bao-cao/B00-08-sdd-toan-du-an.md).
+
+P1-02 ngày 14/10 bổ sung 5 tiêu chí cho inbox/settings/nhắc lịch local. 93 QA giữ 61 `partial`, 32 `unmapped`; 130 operation giữ nguyên danh mục, 4 route notification hiện có đã triển khai. Đã review diff nguồn: API v0.1.12 thêm `reminder_push`, QA-025 mở rộng; README/UX chỉ thêm quyết định P1-02, phần MAP-02 không đổi. Hash toàn file được cập nhật theo các diff này; giữ toàn bộ criterion cũ và baseline.
 
 ## Mỗi lần giao việc cho AI
 
@@ -64,3 +66,5 @@ Criterion hiện dùng tên test literal đang bật. Jest hỗ trợ tên đầ
 - Không chạy native trên thiết bị thật, provider live, UAT, production hay tiền thật. Build Expo/Storybook không chứng minh app giống thiết kế.
 - QA-068 có số lượng catalog lịch sử khác seed hiện hành; giữ gap, không tự sửa nguồn. Xem thêm `knownGaps` và từng criterion.
 - P1-01 A/B đã duyệt riêng verify OTP local/test; không mở OTP login/recover/provider thật, ngân hàng, gọi, thông báo, quản trị hoặc PROMO-02. CI/branch protection không tự duyệt triển khai sản phẩm.
+
+MSG-01 ngày 15/10: thêm 3 criterion cho badge chat/inbox độc lập, legacy và snapshot/pagination. Giữ 93 criterion cũ; review chỉ API v0.1.14 mô tả hai operation notification, QA-025/095 và policy realtime v0.2.1, các ghi chú UX/README. Không đổi schema/route/quyền; không thu hẹp QA hoặc scope.

@@ -49,7 +49,8 @@
     "contract_case": "CT-refreshSession",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-003"
+      "QA-003",
+      "QA-094"
     ],
     "status": "Chưa chạy"
   },
@@ -95,7 +96,8 @@
     "contract_case": "CT-revokeSession",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-072"
+      "QA-072",
+      "QA-094"
     ],
     "status": "Chưa chạy"
   },
@@ -545,7 +547,9 @@
     "contract_case": "CT-listMessages",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-022"
+      "QA-022",
+      "QA-095",
+      "QA-097"
     ],
     "status": "Chưa chạy"
   },
@@ -555,7 +559,8 @@
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
       "QA-023",
-      "QA-085"
+      "QA-085",
+      "QA-095"
     ],
     "status": "Chưa chạy"
   },
@@ -563,7 +568,9 @@
     "operation_id": "readConversation",
     "contract_case": "CT-readConversation",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-095"
+    ],
     "status": "Chưa chạy"
   },
   {
@@ -870,7 +877,8 @@
     "contract_case": "CT-setSettings",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-025"
+      "QA-025",
+      "QA-096"
     ],
     "status": "Chưa chạy"
   },
@@ -886,7 +894,9 @@
     "contract_case": "CT-listNotifications",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
     "scenario_ids": [
-      "QA-050"
+      "QA-050",
+      "QA-096",
+      "QA-097"
     ],
     "status": "Chưa chạy"
   },
@@ -894,7 +904,9 @@
     "operation_id": "readNotification",
     "contract_case": "CT-readNotification",
     "checks": "schema input/output; 401/403; resource ownership; errors; retry/version for mutations",
-    "scenario_ids": [],
+    "scenario_ids": [
+      "QA-096"
+    ],
     "status": "Chưa chạy"
   },
   {

@@ -292,9 +292,9 @@
     "group": "Liên lạc",
     "requirement": "FR-NOT-002; FR-NOT-003",
     "operation": "setSettings",
-    "setup": "Người dùng tắt thông báo tin nhắn/cuộc gọi",
-    "steps": "Nhận tin và cuộc gọi khi khóa màn hình",
-    "expected": "Không push/đổ chuông theo mục đã tắt; inbox vẫn giữ; không lộ nội dung, địa chỉ hoặc số dư trên màn khóa.",
+    "setup": "Tài khoản có bốn tùy chọn message_push/call_push/service_push/reminder_push; P1-02 14/10/2026.",
+    "steps": "Tắt riêng từng mục, lưu/đọc lại qua tài khoản và retry; giữ service_push bật khi reminder_push tắt rồi đảo lại. Nhận sự kiện và kiểm inbox. Khi provider được duyệt, kiểm thêm push/chuông trên thiết bị khóa.",
+    "expected": "Bốn công tắc độc lập, mặc định true; inbox ngoài chat và lịch sử chat luôn giữ, badge độc lập (MSG-01). Không push/đổ chuông theo mục đã tắt, không lộ nội dung/địa chỉ/số dư trên màn khóa; an toàn tài khoản không bị tắt. Chưa provider thì chỉ xác nhận lưu cấu hình/inbox, không coi gửi ngoài app đã kiểm.",
     "level": "Integration",
     "priority": "P0",
     "status": "Chưa chạy — chưa có backend"
@@ -1114,5 +1114,53 @@
     "level": "Integration/E2E",
     "priority": "P1",
     "status": "Đang triển khai; chưa UAT"
+  },
+  {
+    "id": "QA-094",
+    "group": "RT-01A",
+    "requirement": "FR-AUTH-008; FR-ORG-006",
+    "operation": "refreshSession; revokeSession",
+    "setup": "Live authenticated sockets with membership and assignment",
+    "steps": "Rotate/revoke session; remove grants/member; race with publish",
+    "expected": "Old session closes; current ACL checked before enqueue; direct private chat preserved independently.",
+    "level": "Integration / E2E / Load",
+    "priority": "P1",
+    "status": "Tiêu chí hiện hành; bằng chứng local/native/CI/UAT ghi riêng trong B05-02, không mặc định đạt toàn bộ"
+  },
+  {
+    "id": "QA-095",
+    "group": "RT-01A",
+    "requirement": "FR-CHAT-005",
+    "operation": "listMessages; sendMessage; readConversation",
+    "setup": "Two foreground accounts, duplicate/out-of-order/lost connection",
+    "steps": "Send while receiver stays open; disconnect, reconnect, page after_sequence MSG-01: keep one non-chat notice unread, send chat, read each group separately; include legacy chat notices/deliveries, pagination, logout and second-session reads.",
+    "expected": "Live message; dedupe IDs; no gap; monotonic read; no mutation via socket. MSG-01: message badge alone increments; bell/inbox exclude chat; read counts are independent and HTTP-authoritative.",
+    "level": "Integration / E2E / Load",
+    "priority": "P1",
+    "status": "Tiêu chí hiện hành; bằng chứng local/native/CI/UAT ghi riêng trong B05-02, không mặc định đạt toàn bộ"
+  },
+  {
+    "id": "QA-096",
+    "group": "RT-01A",
+    "requirement": "FR-NOT-001; FR-NOT-002",
+    "operation": "listNotifications; readNotification; setSettings",
+    "setup": "Independent settings and two sessions",
+    "steps": "Create notice and read elsewhere; rollback/retry workers",
+    "expected": "Notification+outbox atomic; first read emits once; foreground unaffected by push switches.",
+    "level": "Integration / E2E / Load",
+    "priority": "P1",
+    "status": "Tiêu chí hiện hành; bằng chứng local/native/CI/UAT ghi riêng trong B05-02, không mặc định đạt toàn bộ"
+  },
+  {
+    "id": "QA-097",
+    "group": "RT-01A",
+    "requirement": "NFR-PERF-001; NFR-SEC-001",
+    "operation": "listMessages; listNotifications",
+    "setup": "100 sockets, 10 events/s, five minutes, single instance",
+    "steps": "Load; malformed/flood/slow client; poison delivery; DB failure",
+    "expected": "Bounded clients/buffers/retries; poison isolation; HTTP recovery; report actual transport and UI timings separately.",
+    "level": "Integration / E2E / Load",
+    "priority": "P1",
+    "status": "Tiêu chí hiện hành; bằng chứng local/native/CI/UAT ghi riêng trong B05-02, không mặc định đạt toàn bộ"
   }
 ]

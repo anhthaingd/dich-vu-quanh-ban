@@ -237,6 +237,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/app/providers/RealtimeProvider.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/components/ui/AppText.tsx",
       "kind": "product"
     },
@@ -405,6 +409,14 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/chat/MessageUnreadProvider.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/chat/api/chat-api.ts",
       "kind": "product"
     },
@@ -563,6 +575,26 @@
     {
       "path": "apps/mobile/src/features/notifications/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/NotificationsProvider.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/api/notifications-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/api/notifications-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/screens/Notifications.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx",
+      "kind": "product"
     },
     {
       "path": "apps/mobile/src/features/organizations/.gitkeep",
@@ -770,6 +802,14 @@
     },
     {
       "path": "apps/mobile/src/lib/logging/logger.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/realtime/realtime-client.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/lib/realtime/realtime-client.ts",
       "kind": "product"
     },
     {
@@ -1010,6 +1050,18 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-01-thong-bao-va-nhac-lich.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-02-realtime-inbox-va-chat.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-03-tach-tin-nhan-va-thong-bao.md",
       "kind": "documentation"
     },
     {
@@ -1345,6 +1397,58 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-01/android-inbox.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-01/android-settings.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-01/ios-inbox.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-01/ios-settings.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-01/web-inbox.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-01/web-settings.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-02/android-realtime.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-02/ios-realtime.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-02/web-chat.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-02/web-inbox.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-03/android-message-only.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-03/android-two-badges.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B05-03/ios-two-badges.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B06-01/android-invoice-editor.png",
       "kind": "documentation"
     },
@@ -1414,6 +1518,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/de-xuat/P1-01-doi-ngu-va-xac-thuc-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/RT-01-websocket-va-sse.md",
       "kind": "documentation"
     },
     {
@@ -1781,6 +1889,14 @@
       "kind": "product"
     },
     {
+      "path": "services/api/migrations/010_notifications.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/011_realtime.sql",
+      "kind": "product"
+    },
+    {
       "path": "services/api/package.json",
       "kind": "product"
     },
@@ -1798,6 +1914,10 @@
     },
     {
       "path": "services/api/src/bootstrap.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/common/events/event.store.ts",
       "kind": "product"
     },
     {
@@ -2097,6 +2217,26 @@
       "kind": "placeholder"
     },
     {
+      "path": "services/api/src/modules/notifications/notifications.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/notifications/notifications.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/notifications/notifications.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/notifications/notifications.store.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/notifications/notifications.worker.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/modules/organizations/.gitkeep",
       "kind": "placeholder"
     },
@@ -2143,6 +2283,22 @@
     {
       "path": "services/api/src/modules/points/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/modules/realtime/realtime.access.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/realtime/realtime.gateway.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/realtime/realtime.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/realtime/realtime.worker.ts",
+      "kind": "product"
     },
     {
       "path": "services/api/src/modules/search/.gitkeep",
@@ -2209,6 +2365,10 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/integration/notifications.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/integration/organizations.test.ts",
       "kind": "test"
     },
@@ -2218,6 +2378,10 @@
     },
     {
       "path": "services/api/test/integration/profile.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/realtime.test.ts",
       "kind": "test"
     },
     {
@@ -2357,6 +2521,10 @@
       "kind": "test"
     },
     {
+      "path": "tests/e2e/web/notifications.spec.mjs",
+      "kind": "test"
+    },
+    {
       "path": "tests/e2e/web/organizations.spec.mjs",
       "kind": "test"
     },
@@ -2373,6 +2541,10 @@
       "kind": "test"
     },
     {
+      "path": "tests/e2e/web/realtime.spec.mjs",
+      "kind": "test"
+    },
+    {
       "path": "tests/e2e/web/search-map.spec.mjs",
       "kind": "test"
     },
@@ -2386,6 +2558,10 @@
     },
     {
       "path": "tests/performance/catalog.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/performance/realtime.mjs",
       "kind": "test"
     },
     {
@@ -2965,6 +3141,7 @@
       "apps/mobile/src/features/auth/state/token-storage.test.ts",
       "apps/mobile/src/features/catalog/api/catalog-api.test.ts",
       "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
+      "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
       "apps/mobile/src/features/invoices/api/invoices-api.test.ts",
       "apps/mobile/src/features/invoices/format-amount.test.ts",
       "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
@@ -2974,6 +3151,8 @@
       "apps/mobile/src/features/location/api/locations-api.test.ts",
       "apps/mobile/src/features/location/components/LocationField.test.tsx",
       "apps/mobile/src/features/location/state/location-draft.test.ts",
+      "apps/mobile/src/features/notifications/api/notifications-api.test.ts",
+      "apps/mobile/src/features/notifications/screens/Notifications.test.tsx",
       "apps/mobile/src/features/organizations/api/organizations-api.test.ts",
       "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
       "apps/mobile/src/features/partners/api/partners-api.test.ts",
@@ -2988,7 +3167,8 @@
       "apps/mobile/src/lib/i18n/i18n.test.ts",
       "apps/mobile/src/lib/i18n/locale-state.test.ts",
       "apps/mobile/src/lib/i18n/locale-storage.test.ts",
-      "apps/mobile/src/lib/logging/logger.test.ts"
+      "apps/mobile/src/lib/logging/logger.test.ts",
+      "apps/mobile/src/lib/realtime/realtime-client.test.ts"
     ],
     "api": [
       "services/api/test/integration/account-management.test.ts",
@@ -3000,9 +3180,11 @@
       "services/api/test/integration/lifecycle.test.ts",
       "services/api/test/integration/locations.test.ts",
       "services/api/test/integration/logging.test.ts",
+      "services/api/test/integration/notifications.test.ts",
       "services/api/test/integration/organizations.test.ts",
       "services/api/test/integration/partners.test.ts",
       "services/api/test/integration/profile.test.ts",
+      "services/api/test/integration/realtime.test.ts",
       "services/api/test/unit/catalog-config.test.ts",
       "services/api/test/unit/catalog-seed.test.ts",
       "services/api/test/unit/demo-options.test.ts",
@@ -3021,9 +3203,11 @@
       "tests/e2e/web/invoices.spec.mjs",
       "tests/e2e/web/jobs-chat.spec.mjs",
       "tests/e2e/web/locations.spec.mjs",
+      "tests/e2e/web/notifications.spec.mjs",
       "tests/e2e/web/organizations.spec.mjs",
       "tests/e2e/web/partners.spec.mjs",
       "tests/e2e/web/profile.spec.mjs",
+      "tests/e2e/web/realtime.spec.mjs",
       "tests/e2e/web/search-map.spec.mjs",
       "tests/e2e/web/search-service.spec.mjs",
       "tests/e2e/web/shell.spec.mjs"
@@ -3116,7 +3300,23 @@
     "P1-01-AC-06",
     "P1-01-AC-07",
     "P1-01-AC-08",
-    "P1-01-AC-09"
+    "P1-01-AC-09",
+    "P1-02-AC-01",
+    "P1-02-AC-02",
+    "P1-02-AC-03",
+    "P1-02-AC-04",
+    "P1-02-AC-05",
+    "RT-01A-AC-01",
+    "RT-01A-AC-02",
+    "RT-01A-AC-03",
+    "RT-01A-AC-04",
+    "RT-01A-AC-05",
+    "RT-01A-AC-06",
+    "RT-01A-AC-07",
+    "RT-01A-AC-08",
+    "MSG-01-AC-01",
+    "MSG-01-AC-02",
+    "MSG-01-AC-03"
   ],
   "qa": [
     {
@@ -3256,9 +3456,10 @@
       "id": "QA-019",
       "status": "partial",
       "criteria": [
-        "JOB-AC-03"
+        "JOB-AC-03",
+        "P1-02-AC-04"
       ],
-      "reason": "Chưa có worker nhắc 24h/1h, test cho thời gian trôi không tự đóng; không đóng QA-019."
+      "reason": "Chưa có worker nhắc 24h/1h, test cho thời gian trôi không tự đóng; không đóng QA-019. P1-02 adds tested local inbox/settings/reminder branches only; provider push remains unverified."
     },
     {
       "id": "QA-020",
@@ -3307,9 +3508,13 @@
     },
     {
       "id": "QA-025",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P1-02-AC-01",
+        "P1-02-AC-05",
+        "MSG-01-AC-02"
+      ],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng. P1-02 adds tested local inbox/settings/reminder branches only; provider push remains unverified."
     },
     {
       "id": "QA-026",
@@ -3497,9 +3702,13 @@
     },
     {
       "id": "QA-050",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P1-02-AC-02",
+        "P1-02-AC-03",
+        "P1-02-AC-05"
+      ],
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng. P1-02 adds tested local inbox/settings/reminder branches only; provider push remains unverified."
     },
     {
       "id": "QA-051",
@@ -3884,6 +4093,44 @@
         "P1-01-AC-07"
       ],
       "reason": "P1-01 local: chỉ các nhánh assertions được liên kết; không provider thật/production/UAT."
+    },
+    {
+      "id": "QA-094",
+      "status": "partial",
+      "criteria": [
+        "RT-01A-AC-03",
+        "RT-01A-AC-04"
+      ],
+      "reason": "RT-01A local assertions and separately evidenced load/native; not complete QA matrix or production/UAT."
+    },
+    {
+      "id": "QA-095",
+      "status": "partial",
+      "criteria": [
+        "RT-01A-AC-01",
+        "RT-01A-AC-02",
+        "RT-01A-AC-08",
+        "MSG-01-AC-01",
+        "MSG-01-AC-03"
+      ],
+      "reason": "RT-01A local assertions and separately evidenced load/native; not complete QA matrix or production/UAT."
+    },
+    {
+      "id": "QA-096",
+      "status": "partial",
+      "criteria": [
+        "RT-01A-AC-05",
+        "RT-01A-AC-06"
+      ],
+      "reason": "RT-01A local assertions and separately evidenced load/native; not complete QA matrix or production/UAT."
+    },
+    {
+      "id": "QA-097",
+      "status": "partial",
+      "criteria": [
+        "RT-01A-AC-07"
+      ],
+      "reason": "RT-01A local assertions and separately evidenced load/native; not complete QA matrix or production/UAT."
     }
   ],
   "operations": [
@@ -4974,17 +5221,23 @@
       "id": "getSettings",
       "method": "GET",
       "path": "/me/notification-settings",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-02-AC-01",
+        "P1-02-AC-05"
+      ],
+      "reason": "P1-02 local HTTP/inbox/settings; no external push or whole-contract certification."
     },
     {
       "id": "setSettings",
       "method": "PUT",
       "path": "/me/notification-settings",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-02-AC-01",
+        "P1-02-AC-05"
+      ],
+      "reason": "P1-02 local HTTP/inbox/settings; no external push or whole-contract certification."
     },
     {
       "id": "registerDevice",
@@ -4998,17 +5251,25 @@
       "id": "listNotifications",
       "method": "GET",
       "path": "/me/notifications",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-02-AC-02",
+        "P1-02-AC-03",
+        "P1-02-AC-05"
+      ],
+      "reason": "P1-02 local HTTP/inbox/settings; no external push or whole-contract certification."
     },
     {
       "id": "readNotification",
       "method": "POST",
       "path": "/me/notifications/{id}/read",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-02-AC-02",
+        "P1-02-AC-03",
+        "P1-02-AC-05"
+      ],
+      "reason": "P1-02 local HTTP/inbox/settings; no external push or whole-contract certification."
     },
     {
       "id": "getOperation",
@@ -5494,6 +5755,26 @@
       "method": "POST",
       "path": "/locations/reverse",
       "file": "services/api/src/modules/locations/locations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/me/notifications",
+      "file": "services/api/src/modules/notifications/notifications.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/me/notifications/{id}/read",
+      "file": "services/api/src/modules/notifications/notifications.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/me/notification-settings",
+      "file": "services/api/src/modules/notifications/notifications.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/me/notification-settings",
+      "file": "services/api/src/modules/notifications/notifications.controller.ts"
     },
     {
       "method": "POST",

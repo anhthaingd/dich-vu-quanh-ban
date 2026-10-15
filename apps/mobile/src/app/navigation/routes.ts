@@ -1,8 +1,10 @@
-export type AccountDestination = 'Organizations' | 'VerifyContact' | 'Profile' | 'Sessions' | 'Addresses' | 'Partners' | 'Jobs' | 'Conversations';
+export type AccountDestination = 'Notifications' | 'NotificationSettings' | 'Organizations' | 'VerifyContact' | 'Profile' | 'Sessions' | 'Addresses' | 'Partners' | 'Jobs' | 'Conversations';
 // Never accept an arbitrary screen, URL or mutation as a post-login action.
 export const accountDestination = (value: unknown): AccountDestination | null =>
-  value === 'Organizations' || value === 'VerifyContact' || value === 'Profile' || value === 'Sessions' || value === 'Addresses' || value === 'Partners' || value === 'Jobs' || value === 'Conversations' ? value : null;
+  value === 'Notifications' || value === 'NotificationSettings' || value === 'Organizations' || value === 'VerifyContact' || value === 'Profile' || value === 'Sessions' || value === 'Addresses' || value === 'Partners' || value === 'Jobs' || value === 'Conversations' ? value : null;
 export type RootStackParamList = {
+  Notifications: undefined;
+  NotificationSettings: undefined;
   Organizations: undefined;
   VerifyContact: undefined;
   Team: {id:string};

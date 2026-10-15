@@ -1,3 +1,4 @@
+import {RealtimeGateway} from './modules/realtime/realtime.gateway.js';
 import { AppLog } from './logging/logger.js';
 import { requestMiddleware } from './common/http/request-context.js';
 import 'reflect-metadata';
@@ -13,5 +14,6 @@ export async function createApp(settings: Config, database?: Pool, log = new App
   app.setGlobalPrefix('v1');
   app.useGlobalFilters(new HttpExceptionFilter(log));
   if (settings.corsOrigin) app.enableCors({ origin: settings.corsOrigin.split(',').map(x => x.trim()), methods: ['GET','POST','PATCH','PUT'], allowedHeaders: ['Content-Type','Authorization','X-Client-Request-Id','Idempotency-Key'], exposedHeaders: ['X-Request-Id','Retry-After'] });
+  if(settings.authSecret&&settings.realtimeEnabled)app.get(RealtimeGateway).attach(app.getHttpServer(),settings.corsOrigin?.split(',').map(s=>s.trim())??[]);
   return app;
 }

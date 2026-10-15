@@ -2714,6 +2714,12 @@
         "timestamptz",
         "NOT NULL DEFAULT now()",
         "UTC"
+      ],
+      [
+        "reminder_push",
+        "boolean",
+        "NOT NULL DEFAULT true",
+        "P1-02: nhắc 24h/1h độc lập service_push; inbox luôn giữ."
       ]
     ],
     "checks": "",
@@ -2773,7 +2779,7 @@
   {
     "name": "notifications",
     "group": "Hạ tầng",
-    "purpose": "Inbox bền vững; push chỉ là tín hiệu.",
+    "purpose": "Inbox bền vững; push chỉ là tín hiệu. MSG-01: không chứa tin nhắn mới; API ẩn conversation.* lịch sử và worker bỏ qua hàng chờ chat cũ. Không xóa lịch sử chat.",
     "columns": [
       [
         "id",
@@ -3011,6 +3017,12 @@
         "timestamptz",
         "NOT NULL DEFAULT now()",
         "UTC"
+      ],
+      [
+        "correlation_id",
+        "uuid",
+        "NOT NULL DEFAULT gen_random_uuid()",
+        "Persist request correlation across worker retries"
       ]
     ],
     "checks": "",
@@ -3340,5 +3352,82 @@
     ],
     "checks": "CHECK(num_nonnulls(challenge_id,invitation_id)=1)\nUNIQUE(challenge_id)\nUNIQUE(invitation_id)",
     "indexes": ""
+  },
+  {
+    "name": "realtime_deliveries",
+    "group": "Realtime",
+    "purpose": "RT-01A recipient snapshot and independent consumer retry; not per-device receipt",
+    "columns": [
+      [
+        "id",
+        "uuid",
+        "PRIMARY KEY",
+        "Delivery ID"
+      ],
+      [
+        "event_id",
+        "uuid",
+        "NOT NULL REFERENCES outbox_events(id)",
+        "Committed event"
+      ],
+      [
+        "user_id",
+        "uuid",
+        "NOT NULL; no FK",
+        "Snapshot without cross-actor lock"
+      ],
+      [
+        "resource_type",
+        "text",
+        "NOT NULL",
+        "notification/conversation/job/invoice"
+      ],
+      [
+        "resource_id",
+        "uuid",
+        "NOT NULL",
+        "ACL resource"
+      ],
+      [
+        "attempts",
+        "integer",
+        "NOT NULL DEFAULT 0",
+        "Retry count"
+      ],
+      [
+        "next_attempt_at",
+        "timestamptz",
+        "NOT NULL DEFAULT now()",
+        "Next dispatch"
+      ],
+      [
+        "lease_until",
+        "timestamptz",
+        "",
+        "Crash lease"
+      ],
+      [
+        "lease_token",
+        "uuid",
+        "",
+        "Fencing token"
+      ],
+      [
+        "processed_at",
+        "timestamptz",
+        "",
+        "Dispatch complete, not device receipt"
+      ],
+      [
+        "failed_at",
+        "timestamptz",
+        "",
+        "Poison isolation after 8 attempts"
+      ]
+    ],
+    "indexes": [
+      "UNIQUE(event_id,user_id)",
+      "realtime_due(next_attempt_at) WHERE processed_at IS NULL AND failed_at IS NULL"
+    ]
   }
 ]

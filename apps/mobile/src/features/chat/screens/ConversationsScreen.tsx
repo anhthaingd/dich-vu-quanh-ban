@@ -1,3 +1,4 @@
+import {useRealtimeRefresh} from '../../../app/providers/RealtimeProvider';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -12,7 +13,7 @@ import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
 import { JobFeedback } from '../../jobs/components/JobFeedback';
 import { sessionReady } from '../../jobs/state/session-ready';
 import type { Conversation } from '../models';
-export function ConversationsScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'Conversations'>) { return <AccountPage shell={{ activeTab: 'messages', onAccount: () => navigation.navigate('Account'), onCatalog: () => navigation.popTo('CatalogHome'), onJobs: () => navigation.navigate('Jobs'), onMessages: () => navigation.navigate('Conversations') }} title="chat.title" back={() => navigation.goBack()} login={() => navigation.navigate('Account', { returnTo: 'Conversations' })}>{owner => <List key={`${owner}:${route.params?.jobId ?? ''}`} owner={owner} jobId={route.params?.jobId} open={id => navigation.navigate('Conversation', { id, jobId: route.params?.jobId })}/>}</AccountPage>; }
+export function ConversationsScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'Conversations'>) { return <AccountPage shell={{ activeTab: 'messages', onAccount: () => navigation.navigate('Account'), onCatalog: () => navigation.popTo('CatalogHome'), onJobs: () => navigation.navigate('Jobs'), onNotifications: () => navigation.navigate('Notifications'), onMessages: () => navigation.navigate('Conversations') }} title="chat.title" back={() => navigation.goBack()} login={() => navigation.navigate('Account', { returnTo: 'Conversations' })}>{owner => <List key={`${owner}:${route.params?.jobId ?? ''}`} owner={owner} jobId={route.params?.jobId} open={id => navigation.navigate('Conversation', { id, jobId: route.params?.jobId })}/>}</AccountPage>; }
 function List({ owner, jobId, open }: {
     owner: string;
     jobId?: string;
@@ -20,6 +21,7 @@ function List({ owner, jobId, open }: {
 }) {
     const { manager, state: auth } = useAuth(), { t } = useLocale();
     const [items, setItems] = useState<Conversation[]>([]), [busy, setBusy] = useState(false), [error, setError] = useState<ApiErrorCode | null>(null), [attempt, setAttempt] = useState(0), [next, setNext] = useState<string | null>(null);
+    useRealtimeRefresh({error,busy,matches:s=>s.kind==='event'&&s.event.type.startsWith('conversation.'),refresh:()=>setAttempt(v=>v+1),revoke:()=>setItems([])});
     useFocusEffect(useCallback(() => { let active = true; setBusy(true); setError(null); setItems([]); void sessionReady(manager, owner).then(() => manager.listConversations(owner)).then(p => { if (active) {
         setItems(p.items);
         setNext(p.next_cursor);

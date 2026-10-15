@@ -23,8 +23,11 @@ export class AccountTransaction {
       const result: T = previous ? previous.response_snapshot : await work(db, current);
       if (!previous) await db.query(`INSERT INTO idempotency_keys(actor_id,operation,request_key,request_hash,state,response_snapshot)
         VALUES($1,$2,$3,$4,'completed',$5::jsonb)`, [current.user.id, operation, key, hash, JSON.stringify(result)]);
-      await db.query('COMMIT'); return result;
+      await db.query('COMMIT');
+      return result;
     } catch (error) { await db.query('ROLLBACK'); throw error; }
-    finally { db.release(); }
+    finally { db.release();
+      if (/^(revokeSession|editGrants\.|membership\.)/.test(operation) || operation.includes('assignments')) await this.auth.accessChanged();
+    }
   }
 }

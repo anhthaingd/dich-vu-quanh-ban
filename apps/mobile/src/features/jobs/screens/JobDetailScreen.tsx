@@ -1,3 +1,4 @@
+import {useRealtimeRefresh} from '../../../app/providers/RealtimeProvider';
 import { formatBusinessDate } from '../../../lib/i18n/formatters';
 import { useCallback, useState, useSyncExternalStore } from 'react';
 import { Switch } from 'react-native';
@@ -29,6 +30,7 @@ function Detail({ id, owner, chat, invoice }: {
     const [action, setAction] = useState<JobAction | null>(null), [reason, setReason] = useState(''), [eta, setEta] = useState('30'), [day, setDay] = useState(''), [time, setTime] = useState(''), [charges, setCharges] = useState(false), [member, setMember] = useState('');
     const [mutation] = useState(() => new Mutation<Job>());
     const state = useSyncExternalStore(mutation.subscribe, mutation.getSnapshot, mutation.getSnapshot);
+    useRealtimeRefresh({error,resource:{type:'job',id},busy:busy||state.busy||state.pending,matches:s=>s.kind==='event'&&(s.event.data.job_id===id||s.event.type==='notification.created.v1'||s.event.type.startsWith('invoice.')),refresh:()=>{if(action)setError('VERSION_CONFLICT');else setAttempt(v=>v+1);},revoke:()=>{setJob(null);setAction(null);setError('NOT_FOUND');}});
     useFocusEffect(useCallback(() => {
         let active = true;
         setBusy(true);

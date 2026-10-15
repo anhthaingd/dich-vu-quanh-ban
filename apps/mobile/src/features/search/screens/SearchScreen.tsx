@@ -103,7 +103,7 @@ export function SearchScreen({
       discovery
       onBack={route.name === 'Search' ? () => navigation.goBack() : undefined}
       onJobs={() => navigation.navigate('Jobs')}
-      onMessages={() => navigation.navigate('Conversations')}
+      onNotifications={() => navigation.navigate('Notifications')} onMessages={() => navigation.navigate('Conversations')}
       onAccount={() => navigation.navigate('Account')}
       onCatalog={() => navigation.popTo('CatalogHome')}
     >

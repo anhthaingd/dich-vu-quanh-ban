@@ -1,3 +1,4 @@
+import {useRealtimeRefresh} from '../../../app/providers/RealtimeProvider';
 import { formatBusinessDate } from '../../../lib/i18n/formatters';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
@@ -13,7 +14,7 @@ import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
 import { JobFeedback } from '../components/JobFeedback';
 import { sessionReady } from '../state/session-ready';
 import type { Job } from '../models';
-export function JobsScreen({ navigation }: NativeStackScreenProps<RootStackParamList, 'Jobs'>) { return <AccountPage shell={{ activeTab: 'jobs', onAccount: () => navigation.navigate('Account'), onCatalog: () => navigation.popTo('CatalogHome'), onJobs: () => navigation.navigate('Jobs'), onMessages: () => navigation.navigate('Conversations') }} title="jobs.title" back={() => navigation.goBack()} login={() => navigation.navigate('Account', { returnTo: 'Jobs' })}>{owner => <List key={owner} owner={owner} open={id => navigation.navigate('JobDetail', { id })}/>}</AccountPage>; }
+export function JobsScreen({ navigation }: NativeStackScreenProps<RootStackParamList, 'Jobs'>) { return <AccountPage shell={{ activeTab: 'jobs', onAccount: () => navigation.navigate('Account'), onCatalog: () => navigation.popTo('CatalogHome'), onJobs: () => navigation.navigate('Jobs'), onNotifications: () => navigation.navigate('Notifications'), onMessages: () => navigation.navigate('Conversations') }} title="jobs.title" back={() => navigation.goBack()} login={() => navigation.navigate('Account', { returnTo: 'Jobs' })}>{owner => <List key={owner} owner={owner} open={id => navigation.navigate('JobDetail', { id })}/>}</AccountPage>; }
 function List({ owner, open }: {
     owner: string;
     open: (id: string) => void;
@@ -23,6 +24,7 @@ function List({ owner, open }: {
         id: string;
         name: string;
     }[]>([]), [items, setItems] = useState<Job[]>([]), [next, setNext] = useState<string | null>(null), [busy, setBusy] = useState(false), [error, setError] = useState<ApiErrorCode | null>(null), [attempt, setAttempt] = useState(0);
+    useRealtimeRefresh({error,busy,matches:s=>s.kind==='event'&&(s.event.type.startsWith('job.')||s.event.type.startsWith('invoice.')||s.event.type==='notification.created.v1'),refresh:()=>setAttempt(v=>v+1)});
     useFocusEffect(useCallback(() => {
         let active = true;
         setBusy(true);

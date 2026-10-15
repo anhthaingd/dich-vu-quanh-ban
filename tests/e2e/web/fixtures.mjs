@@ -11,8 +11,9 @@ import { AppLog } from '../../../services/api/dist/src/logging/logger.js';
 import { migrate } from '../../../services/api/dist/src/database/migrate.js';
 import { seed } from '../../../services/api/dist/src/database/seed.js';
 export const test = base.extend({
+  realtime: [false, {option:true}],
   teamLocal: [false, {option:true}],
-  environment: async ({teamLocal}, use, testInfo) => {
+  environment: async ({teamLocal,realtime}, use, testInfo) => {
     const url = process.env.TEST_DATABASE_URL ?? 'postgresql://dvqb_test:test-only-password@127.0.0.1:55433/dvqb_test';
     if (new URL(url).pathname !== '/dvqb_test') throw Error('E2E requires dvqb_test');
     const schema = `web_${randomUUID().replaceAll('-', '')}`;
@@ -38,12 +39,12 @@ export const test = base.extend({
       const webUrl = `http://127.0.0.1:${server.address().port}`;
       const localAssets = {directory: directory + '-assets', origin: 'http://127.0.0.1'};
       const localMessages = teamLocal ? {secret:'web-local-messages-secret-'.repeat(3),contacts:['owner@example.test','worker@example.test','+84900000001'],mailpit:'http://127.0.0.1:1',smsDirectory:directory+'-sms'} : undefined;
-      app = await createApp({localMessages,localAssets, databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), authSecret: 'isolated-web-auth-secret-'.repeat(3), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
+      app = await createApp({realtimeEnabled:realtime,localMessages,localAssets, databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), authSecret: 'isolated-web-auth-secret-'.repeat(3), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
       await app.listen(0, '127.0.0.1');
       localAssets.origin = await app.getUrl();
       const apiUrl = await app.getUrl() + '/v1';
       if (!(await fetch(apiUrl + '/ready')).ok) throw Error('API readiness failed');
-      execFileSync('npm', ['exec','-w','apps/mobile','--','expo','export','--clear','--platform','web','--output-dir',directory], { stdio: 'pipe', env: { ...process.env, CI: '1', EXPO_NO_TELEMETRY: '1', EXPO_NO_DOTENV: '1', EXPO_PUBLIC_GEOAPIFY_MAPS_KEY: 'test-only', EXPO_PUBLIC_API_URL: apiUrl } });
+      execFileSync('npm', ['exec','-w','apps/mobile','--','expo','export','--clear','--platform','web','--output-dir',directory], { stdio: 'pipe', env: { ...process.env, CI: '1', EXPO_NO_TELEMETRY: '1', EXPO_NO_DOTENV: '1', EXPO_PUBLIC_GEOAPIFY_MAPS_KEY: 'test-only', EXPO_PUBLIC_REALTIME_ENABLED:realtime?'1':'0', EXPO_PUBLIC_API_URL: apiUrl } });
       await use({ webUrl, apiUrl, pool, app, logs });
     } finally {
       try { await testInfo.attach('api-log.jsonl', { body: logs.join(''), contentType: 'application/x-ndjson' }); }

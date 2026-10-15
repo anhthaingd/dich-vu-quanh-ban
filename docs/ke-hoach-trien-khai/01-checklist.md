@@ -179,15 +179,15 @@ Nguồn: [spec](../../ui-ux/specs/partner-journey.md), [backlog](../technical-de
 | [~] | B04-01 | Membership: mời/nhận/gửi lại/rời/cấp quyền | Đã có P1-01 local/test và native theo hai báo cáo B04; chưa UAT/provider thật/toàn B04 |
 | [ ] | B04-02 | Phân công/đổi nhân viên/đầu mối gọi | Một assignment hiệu lực; người cũ mất quyền việc; giữ chat riêng; chưa mở chuyển chủ/đóng DN |
 
-## B05 — Chat, lịch và thông báo — chưa có code sản phẩm
+## B05 — Chat, lịch và thông báo — HTTP/inbox/nhắc lịch local
 
 Nguồn: [spec](../../ui-ux/specs/activity-batch.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F09/F07; QA-019,021,022,023,025,050.
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B05-01 | Chat trước/sau thuê: mở phòng, lịch sử, gửi/đọc | Phòng theo cặp tài khoản; ACK sau commit, idempotency và reconnect; quản lý không đọc phòng riêng |
-| [ ] | B05-02 | Outbox/inbox, device push, cài đặt và deep link | Provider/cost cần chốt; tắt push vẫn có inbox; chỉ đến đúng người có quyền hiện hành |
-| [ ] | B05-03 | Lịch, nhắc 24h/1h và đổi lịch | Không nhắc lịch cũ; múi giờ nghiệp vụ không đổi theo ngôn ngữ |
+| [~] | B05-01 | Chat trước/sau thuê: mở phòng, lịch sử, gửi/đọc | Phòng theo cặp tài khoản; ACK sau commit, idempotency và reconnect; quản lý không đọc phòng riêng |
+| [~] | B05-02 | Outbox/inbox, device push, cài đặt và deep link | P1-02 đã có inbox, bốn công tắc, read/unread và mở đích có kiểm quyền; đã kiểm local/web/native. Chưa device push/provider/UAT |
+| [~] | B05-03 | Lịch, nhắc 24h/1h và đổi lịch | P1-02 worker 24h/1h, hủy mốc cũ khi đổi lịch/dừng; đã kiểm API. Chưa màn lịch tổng hợp/push thật/UAT |
 
 ## B06 — Hóa đơn — P0-3 local/test
 
@@ -292,3 +292,36 @@ Ghi mã lát, trạng thái, commit, kết quả kiểm, báo cáo và phần th
 - [ ] WebSocket/push/nhắc lịch, file/gọi; OTP thật; native toàn bộ ma trận phân công/lỗi; thiết bị thật, remote CI và UAT của đợt này.
 
 Không đánh dấu toàn bộ B05 hoàn tất vì mới có phạm vi HTTP đã duyệt. Báo cáo [B03-04](bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md) ghi test và giới hạn.
+
+### P1-02 — thông báo và nhắc lịch · 14/10/2026
+
+- [x] DB/API/app: inbox riêng, phân trang, đọc tất cả, retry, bốn công tắc theo tài khoản; công tắc nhắc lịch riêng đã duyệt và đồng bộ spec.
+- [x] Worker local: cùng giao dịch, không trùng, người nhận tại lúc phát sinh và quyền lúc giao; nhắc 24h/1h theo phiên bản lịch, không tự đóng việc.
+- [x] API/PostGIS, component mobile và web hai tài khoản; Android emulator/iOS simulator lưu cài đặt và mở chat từ inbox.
+- [ ] Thiết bị thật, push provider, WebSocket, lịch tổng hợp, remote CI mới và UAT.
+
+Bằng chứng, ảnh và lệnh SDD: [B05-01](bao-cao/B05-01-thong-bao-va-nhac-lich.md). Không đánh dấu toàn B05 hoặc P1-2 hoàn tất.
+
+### RT-01A — realtime foreground · 14/10/2026
+
+- [x] Đã duyệt và đồng bộ Socket.IO websocket-only một API instance; HTTP ghi/lấy bù; migration 011, outbox và recipient snapshot riêng.
+- [x] API: auth/ACL, logout/refresh/revoke, rollback/lease/retry/poison, giới hạn kết nối/gói và client chậm; test tích hợp local.
+- [x] App: một kết nối theo phiên/foreground; chat/inbox/việc/hóa đơn tải lại, gom sự kiện trong lúc bận, giữ bản nhập và báo xung đột.
+- [x] Web hai tài khoản: chat live/offline catch-up/read phiên khác; hóa đơn sửa/xác nhận/hai dấu thanh toán dùng tiền test.
+- [x] Thử tải local: 100 kết nối, 3.000 tin/300 giây, đủ 60.000 lượt tin; p95 HTTP ACK → nhận frame 113 ms. Không đồng nhất với độ trễ render/UI production.
+- [x] iOS 27 simulator và Android API 36 emulator: phòng đang mở nhận tin DEMO không tải lại; có ảnh trong B05-02. Android debug build đạt.
+- [ ] Thiết bị thật, full ma trận native, remote CI mới và UAT; chưa push provider/production.
+- [ ] RT-01B: bus/adapter cho nhiều API instance, chưa mở Redis.
+
+Báo cáo/ảnh/native và bằng chứng SDD: [B05-02](bao-cao/B05-02-realtime-inbox-va-chat.md). Các dòng chưa WebSocket ở mốc P0-2/P1-02 phía trên là lịch sử trước RT-01A. Không đóng toàn bộ B05/P1-2.
+
+
+### MSG-01 — tách Tin nhắn và Thông báo · 15/10/2026
+
+- [x] Backend ngừng tạo inbox chat; loại mục chat cũ trước phân trang và bỏ qua hàng chờ cũ; kiểm API local.
+- [x] Hai badge độc lập, tổng qua nhiều trang, 0 ẩn/99+; đọc ở phiên khác, hồi phục mạng, đổi tài khoản; kiểm mobile/web.
+- [x] Android 16 emulator/iOS 27 simulator: hai badge riêng; đọc thông báo không đọc chat, đồng bộ giữa hai phiên. Không quay lại video theo yêu cầu.
+- [x] Spec MSG-01 và sổ v1.52; nguồn/mirror/export/Drive cùng ID, đọc lại. Báo cáo chỉ repo.
+- [ ] CI mới, UAT, điện thoại thật và push provider.
+
+Bằng chứng và giới hạn: [B05-03](bao-cao/B05-03-tach-tin-nhan-va-thong-bao.md). SDD-PROJECT vẫn giữ toàn bộ tiêu chí trước và QA partial/unmapped; evidence toàn repo tạo bằng sdd:run/verify trên nội dung cuối.

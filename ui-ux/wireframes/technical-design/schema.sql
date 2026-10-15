@@ -605,6 +605,7 @@ CREATE TABLE notification_settings (
   message_push boolean NOT NULL DEFAULT true,
   call_push boolean NOT NULL DEFAULT true,
   service_push boolean NOT NULL DEFAULT true,
+  reminder_push boolean NOT NULL DEFAULT true,
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -660,6 +661,7 @@ CREATE TABLE idempotency_keys (
 
 
 CREATE TABLE outbox_events (
+  correlation_id uuid NOT NULL DEFAULT gen_random_uuid(),
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   event_key text NOT NULL UNIQUE,
   aggregate_id uuid NOT NULL,
@@ -765,4 +767,21 @@ CREATE TABLE local_deliveries (
  next_attempt_at timestamptz NOT NULL DEFAULT clock_timestamp(), created_at timestamptz NOT NULL DEFAULT clock_timestamp(),
  CHECK(num_nonnulls(challenge_id,invitation_id)=1), UNIQUE(challenge_id), UNIQUE(invitation_id)
 );
+-- RT-01A independent realtime consumer
+CREATE TABLE realtime_deliveries (
+ id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+ event_id uuid NOT NULL REFERENCES outbox_events(id),
+ user_id uuid NOT NULL, -- snapshot, no cross-actor FK lock during a business transaction
+ resource_type text NOT NULL CHECK(resource_type IN ('notification','conversation','job','invoice')),
+ resource_id uuid NOT NULL,
+ attempts integer NOT NULL DEFAULT 0,
+ next_attempt_at timestamptz NOT NULL DEFAULT now(),
+ lease_until timestamptz,
+ lease_token uuid,
+ processed_at timestamptz,
+ failed_at timestamptz,
+ UNIQUE(event_id,user_id)
+);
+CREATE INDEX realtime_due ON realtime_deliveries(next_attempt_at) WHERE processed_at IS NULL AND failed_at IS NULL;
+
 COMMIT;

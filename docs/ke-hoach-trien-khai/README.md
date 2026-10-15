@@ -1,5 +1,10 @@
 # Kế hoạch triển khai và học code
 
+**14/10/2026 — RT-01A đã duyệt triển khai:** realtime foreground một API instance cho inbox/chat/việc/hóa đơn; HTTP recovery. Xem [B05-02](bao-cao/B05-02-realtime-inbox-va-chat.md) cho kết quả và giới hạn. RT-01B/Redis/production chưa mở. Các ghi chú “RT-01 chờ duyệt” phía dưới là lịch sử lập kế hoạch.
+**Đề xuất realtime · 14/10:** [RT-01 — WebSocket và SSE](de-xuat/RT-01-websocket-va-sse.md) so sánh hai hướng; đề nghị Socket.IO dùng chung inbox/chat, HTTP ghi và phục hồi, một API instance trước. **Chưa duyệt triển khai**, chưa đổi contract chuẩn; không thay trạng thái P1-02 bên dưới.
+
+**P1-2 · 14/10 — P1-02:** đã nối inbox, đọc/chưa đọc, mở nội dung có kiểm quyền, bốn công tắc độc lập và nhắc lịch 24h/1h. [B05-01](bao-cao/B05-01-thong-bao-va-nhac-lich.md) có luồng code, ảnh và bằng chứng local/native. Chủ dự án đã duyệt công tắc nhắc lịch riêng và đồng bộ spec; chưa push provider, CI mới hoặc UAT.
+
 **SDD toàn dự án · 13/10:** mở rộng danh mục toàn repo, 88 QA, 123 operation API và 71 criterion có test; gói `SDD-PROJECT` dùng cho CI, có build prototype/Storybook và giữ coverage/load gate. Các mục partial/unmapped giữ nguyên. [Cách dùng](sdd/README.md) · [B00-08 — báo cáo mở rộng](bao-cao/B00-08-sdd-toan-du-an.md) · [Thiết kế SDD-01](de-xuat/SDD-01-quy-trinh-ai-bam-spec.md). Kết quả local/CI và giới hạn ghi trong B00-08; không suy ra native/UAT đã đạt.
 
 **P1-1 · 13/10:** chủ dự án đã duyệt A/B của [P1-01](de-xuat/P1-01-doi-ngu-va-xac-thuc-local.md). Đã nối đội ngũ + OTP verify local qua Mailpit/SMS mô phỏng; [B04-01](bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md) và [B04-02](bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md) có luồng code/ảnh/bằng chứng. Chưa email/SMS thật, OTP login/recover, MFA, remote CI mới hoặc UAT. Các mốc OTP Pending trước 13/10 là lịch sử; phần ngoài verify local vẫn Pending.
@@ -40,6 +45,11 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 
 ## Báo cáo đã có
 
+- [B05-03 — Tách Tin nhắn và Thông báo](bao-cao/B05-03-tach-tin-nhan-va-thong-bao.md): MSG-01, badge/đọc độc lập và loại chat cũ khỏi inbox, kiểm native hai phiên.
+
+- [B05-02 — Realtime inbox và chat](bao-cao/B05-02-realtime-inbox-va-chat.md): Socket.IO, HTTP recovery, phiên/quyền, việc/hóa đơn và thử tải local.
+
+- [B05-01 — Thông báo và nhắc lịch](bao-cao/B05-01-thong-bao-va-nhac-lich.md): inbox, quyền hiện hành, cài đặt riêng và lịch cũ/dừng việc.
 - [B04-01 — Đội ngũ và xác thực local](bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md): mời, xác minh, nhận lời; ảnh iOS/Android.
 - [B04-02 — Quyền và bàn giao đội ngũ](bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md): xác thực lại, cấp/thu hồi quyền, đầu mối, gỡ/tự rời và hóa đơn/chat.
 

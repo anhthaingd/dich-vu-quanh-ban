@@ -1,3 +1,5 @@
+import type {RealtimeClient} from '../../../lib/realtime/realtime-client';
+import type {NotificationsApi,NotificationSettings} from '../../notifications/api/notifications-api';
 import type {OrganizationsApi} from '../../organizations/api/organizations-api';
 import type { InvoicesApi } from '../../invoices/api/invoices-api';
 import type { InvoiceDraft,InvoiceAction,InvoiceChange } from '../../invoices/models';
@@ -18,7 +20,12 @@ export class AuthSession {
   private session: Session | null = null;
   private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
   private readonly listeners = new Set<() => void>();
-  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi) {}
+  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi, private readonly notifications?:NotificationsApi) {}
+  bindRealtime(client:RealtimeClient){
+    const update=()=>client.setSession(this.session?{owner:this.session.user.id,token:this.session.access_token,expiresAt:Date.parse(this.session.expires_at)}:null);
+    client.setRefresh(async()=>{const owner=this.session?.user.id;if(!owner)throw new ApiError('UNAUTHENTICATED');await this.accountOperation(owner,async()=>{await this.rotate();});});
+    const unsubscribe=this.subscribe(update);update();return unsubscribe;
+  }
   getSnapshot = () => this.snapshot;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   private update(values: Partial<Snapshot>) { this.snapshot = { ...this.snapshot, ...values }; this.listeners.forEach(fn => fn()); }
@@ -113,6 +120,25 @@ export class AuthSession {
     }
     return user;
   }
+  private notificationApi(){if(!this.notifications)throw new ApiError('CONFIG');return this.notifications;}
+  // Passive badge/inbox polling must not take the submit lock from an active form.
+  // Refresh still uses the serialized session path; never return another account's result.
+  private async passiveRead<T>(o:string,work:(token:string)=>Promise<T>):Promise<T>{
+    if(!this.session || this.snapshot.user?.id!==o)throw new ApiError('UNAUTHENTICATED');
+    let result;
+    if(Date.parse(this.session.expires_at)<=Date.now())result=await this.accountOperation(o,work);
+    else try{result=await work(this.session.access_token);}catch(e){
+      if(!(e instanceof ApiError)||e.code!=='UNAUTHENTICATED')throw e;
+      result=await this.accountOperation(o,work);
+    }
+    if(this.snapshot.user?.id!==o)throw new ApiError('UNAUTHENTICATED');
+    return result;
+  }
+  listNotifications=(o:string,c?:string)=>this.passiveRead(o,t=>this.notificationApi().list(t,c));
+  unreadConversations=(o:string,c?:string)=>this.passiveRead(o,t=>this.chatApi().list(t,c));
+  readNotification=(o:string,id:string,k:string)=>this.accountOperation(o,t=>this.notificationApi().read(t,id,k));
+  notificationSettings=(o:string)=>this.accountOperation(o,t=>this.notificationApi().settings(t));
+  saveNotificationSettings=(o:string,b:NotificationSettings,k:string)=>this.accountOperation(o,t=>this.notificationApi().save(t,b,k));
   private teamApi(){if(!this.organizations)throw new ApiError('CONFIG');return this.organizations;}
   myMemberships=(o:string,c?:string)=>this.accountOperation(o,t=>this.teamApi().memberships(t,c));
   teamInvitations=(o:string,p:string,c?:string)=>this.accountOperation(o,t=>this.teamApi().invitations(t,p,c));

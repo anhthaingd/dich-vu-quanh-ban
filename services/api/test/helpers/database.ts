@@ -9,7 +9,7 @@ import { createApp } from '../../src/bootstrap.js';
 import { migrate } from '../../src/database/migrate.js';
 import { seed } from '../../src/database/seed.js';
 import { captureLogs } from './logs.js';
-export async function databaseFixture(authSecret?: string, assets = false, localMessages?:LocalMessagesConfig) {
+export async function databaseFixture(authSecret?: string, assets = false, localMessages?:LocalMessagesConfig, realtimeEnabled=false) {
   const connectionString = process.env.TEST_DATABASE_URL ?? 'postgresql://dvqb_test:test-only-password@127.0.0.1:55433/dvqb_test';
   if (new URL(connectionString).pathname !== '/dvqb_test') throw new Error('Integration requires isolated database dvqb_test');
   const schema = `test_${randomUUID().replaceAll('-', '')}`;
@@ -29,7 +29,7 @@ export async function databaseFixture(authSecret?: string, assets = false, local
   try {
     await admin.query(`CREATE SCHEMA ${schema}`); created = true;
     await migrate(pool); await seed(pool);
-    app = await createApp({ localMessages, localAssets, databaseUrl: connectionString, cursorSecret: 'test-secret-'.repeat(4), authSecret, port: 0, host: '127.0.0.1', corsOrigin: 'http://localhost' }, pool, logs.log);
+    app = await createApp({ realtimeEnabled, localMessages, localAssets, databaseUrl: connectionString, cursorSecret: 'test-secret-'.repeat(4), authSecret, port: 0, host: '127.0.0.1', corsOrigin: 'http://localhost' }, pool, logs.log);
     await app.listen(0, '127.0.0.1');
     if(localAssets)localAssets.origin=await app.getUrl();
     return { pool, app, base: await app.getUrl() + '/v1', logs, close };

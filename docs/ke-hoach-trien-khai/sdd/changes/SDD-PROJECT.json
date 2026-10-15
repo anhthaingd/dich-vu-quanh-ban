@@ -3,8 +3,8 @@
   "id": "SDD-PROJECT",
   "profile": "project",
   "type": "spec-change",
-  "objective": "P1-01 A/B đã duyệt: xác minh local và đội ngũ, hồi quy toàn dự án; giữ Pending ngoài phạm vi.",
-  "decision": "Chủ dự án 13/10/2026: ok hãy làm như đề xuất P1-01 A/B. Contract v0.1.11, không provider thật/production. Giữ baseline để review diff; không thu hẹp 71 tiêu chí trước.",
+  "objective": "MSG-01 đã chốt: tách badge Tin nhắn và Thông báo, không có chat trong inbox; giữ RT-01A và hồi quy toàn repo.",
+  "decision": "Chủ dự án 14/10/2026: tiếp tục implement phần kế tiếp; Bổ sung công tắc nhắc lịch riêng và đồng bộ spec. API v0.1.12/QA-025; giữ quyết định P1-01 A/B ngày 13/10 và baseline cũ để review đầy đủ. Không thu hẹp 80 tiêu chí trước, không provider/production. RT-01A được duyệt ngày 14/10/2026: ok bắt đầu làm đi sau plan RT-01; realtime v0.2/API v0.1.13/QA-094–097. Giữ toàn bộ 85 criterion trước; RT-01B/Redis/provider/production chưa mở. MSG-01 duyệt 15/10/2026: chuẩn rồi, hãy sửa lại; không quay lại video. API v0.1.14/realtime v0.2.1; QA-025/095. Giữ toàn bộ 93 criterion trước, không mở provider/production.",
   "baseCommit": "8c25c32b30ae32c4e29153f2eb34c8d08569b006",
   "sources": [
     "map02",
@@ -104,7 +104,12 @@
     "QA-090",
     "QA-091",
     "QA-092",
-    "QA-093"
+    "QA-093",
+    "QA-094",
+    "QA-095",
+    "QA-096",
+    "QA-097",
+    "rt01-contract"
   ],
   "criteria": [
     "MAP-02-AC-01",
@@ -186,7 +191,23 @@
     "P1-01-AC-06",
     "P1-01-AC-07",
     "P1-01-AC-08",
-    "P1-01-AC-09"
+    "P1-01-AC-09",
+    "P1-02-AC-01",
+    "P1-02-AC-02",
+    "P1-02-AC-03",
+    "P1-02-AC-04",
+    "P1-02-AC-05",
+    "RT-01A-AC-01",
+    "RT-01A-AC-02",
+    "RT-01A-AC-03",
+    "RT-01A-AC-04",
+    "RT-01A-AC-05",
+    "RT-01A-AC-06",
+    "RT-01A-AC-07",
+    "RT-01A-AC-08",
+    "MSG-01-AC-01",
+    "MSG-01-AC-02",
+    "MSG-01-AC-03"
   ],
   "domains": [
     "PROJECT"

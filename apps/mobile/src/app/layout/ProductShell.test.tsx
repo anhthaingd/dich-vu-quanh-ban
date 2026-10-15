@@ -3,6 +3,11 @@ import { AppNavigator } from '../navigation/AppNavigator';
 import { AppProviders } from '../providers/AppProviders';
 import { AuthProvider } from '../providers/AuthProvider';
 import { authFixture, credentials } from '../../../test/helpers/auth';
+import {ProductShell} from './ProductShell';
+let mockMessageCount=0;
+let mockNotices:{read_at:string|null}[]=[];
+jest.mock('../../features/chat/MessageUnreadProvider',()=>({useMessageUnread:()=>({unread:mockMessageCount,invalidate:()=>{}})}));
+jest.mock('../../features/notifications/NotificationsProvider',()=>({useNotifications:()=>({items:mockNotices})}));
 const category = { id: 'industry', code: 'home_utilities', name_vi: 'Điện nước', name: 'Điện nước', name_locale: 'vi' as const, active: true, parent_id: null };
 function mount() {
   const auth = authFixture();
@@ -33,7 +38,9 @@ test('home keeps service selection after account, and protected tabs have real d
   await screen.findByTestId('auth-email');
   fireEvent.press(screen.getByTestId('nav-back'));
   expect(await screen.findByTestId('search-service-selected')).toHaveTextContent('Điện nước');
-  expect(screen.getByTestId('nav-notifications')).toBeDisabled();
+  expect(screen.getByTestId('nav-notifications')).not.toBeDisabled();
+  fireEvent.press(screen.getByTestId('nav-notifications'));
+  expect(await screen.findByTestId('account-continue-login')).toBeVisible();
   fireEvent.press(screen.getByTestId('nav-jobs'));
   expect(await screen.findByTestId('account-continue-login')).toBeVisible();
   expect(screen.getByRole('tab', {name:'Công việc',selected:true})).toBeVisible();
@@ -42,4 +49,14 @@ test('home keeps service selection after account, and protected tabs have real d
   fireEvent.press(screen.getByTestId('nav-catalog'));
   expect(await screen.findByRole('header', {name:/Việc nhà có người lo/})).toBeVisible();
   expect(screen.queryByTestId('nav-back')).toBeNull();
+});
+test('message and notification badges are independent, hide zero and cap at 99+',async()=>{
+ const auth=authFixture();
+ const tree=()=> <AppProviders api={{categories:async()=>[],skills:async()=>[]}}><AuthProvider manager={auth.manager}><ProductShell onCatalog={()=>{}} onMessages={()=>{}} onNotifications={()=>{}} /></AuthProvider></AppProviders>;
+ mockMessageCount=1;mockNotices=[];const view=render(tree());await act(async()=>{});
+ expect(screen.getByTestId('message-badge')).toHaveTextContent('1');expect(screen.queryByTestId('notification-badge')).toBeNull();
+ mockNotices=[{read_at:null}];view.rerender(tree());expect(screen.getByTestId('notification-badge')).toHaveTextContent('1');
+ mockMessageCount=0;view.rerender(tree());expect(screen.queryByTestId('message-badge')).toBeNull();expect(screen.getByTestId('notification-badge')).toHaveTextContent('1');
+ mockMessageCount=125;mockNotices=[{read_at:'2026-10-15'}];view.rerender(tree());expect(screen.getByTestId('message-badge')).toHaveTextContent('99+');expect(screen.queryByTestId('notification-badge')).toBeNull();
+ mockMessageCount=0;mockNotices=[];
 });

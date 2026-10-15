@@ -2,7 +2,7 @@ import { test, expect } from './fixtures.mjs';
 test('discovery home follows Storybook layout and real tabs, preserves service selection and supports locales', async ({ page, environment }, testInfo) => {
   await page.goto(environment.webUrl);
   await expect(page.getByRole('tab')).toHaveCount(4);
-  await expect(page.getByRole('tab', {name:'Thông báo'})).toBeDisabled();
+  await expect(page.getByRole('tab', {name:'Thông báo'})).toBeEnabled();
   await expect(page.getByRole('button',{name:'English',exact:true})).toHaveCount(0);
   await page.getByRole('button',{name:'Điện nước',exact:true}).click();
   await page.getByTestId('nav-account').filter({visible:true}).click();

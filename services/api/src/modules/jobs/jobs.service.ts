@@ -1,3 +1,4 @@
+import {syncReminders,queueNotice,jobRecipients} from '../notifications/notifications.store.js';
 import {discardUnsentDrafts} from '../invoices/invoice-handover.js';
 import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Ajv } from 'ajv';
@@ -63,6 +64,7 @@ export class JobsService {
                 await db.query(`INSERT INTO job_skills(job_id,skill_id,name_snapshot,schema_version,answers) SELECT $1,id,name_vi,$3,$4 FROM skills WHERE id=$2`, [j.id, s.skill_id, s.schema_version, JSON.stringify(s.answers)]);
             const conversation = await partnerConversation(db, input.partner_id, actor.user.id);
             await db.query('INSERT INTO job_conversations(job_id,conversation_id) VALUES($1,$2)', [j.id, conversation]);
+            await queueNotice(db,`job:${j.id}:requested`,'job.requested',{job_id:j.id},(await jobRecipients(db,j.id)).filter(r=>r.user_id!==actor.user.id));
             return this.read(db, await jobAccess(db, j.id, actor.user.id));
         }, async (db, actor) => {
             if (!actor.user.phone_verified)
@@ -166,6 +168,8 @@ export class JobsService {
                 return { job: await this.read(db, await jobAccess(db, id, actor.user.id)), conversation_id: conversation };
             }
             await db.query('UPDATE jobs SET version=version+1 WHERE id=$1', [id]);
+            if (['accept','reschedule','stop'].includes(action)) await syncReminders(db,id);
+            if (['decline','withdraw','stop'].includes(action)) await queueNotice(db,`job:${id}:${j.version+1}:${action}`,`job.${action}`,{job_id:id},(await jobRecipients(db,id)).filter(r=>r.user_id!==actor.user.id));
             const conversation = await partnerConversation(db, j.partner_id, j.customer_id);
             const key = `job:${id}:${j.version + 1}:${action}`;
             if (action === 'accept') {

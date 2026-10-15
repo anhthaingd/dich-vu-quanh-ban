@@ -10,6 +10,9 @@ const issuer = 'dvqb-api', audience = 'dvqb-mobile';
 type User = { id: string; display_name: string; status: string; locale: 'vi'; version: number };
 export class AuthService {
   private readonly key: Uint8Array;
+  private readonly changes = new Set<()=>Promise<void>>();
+  onAccessChange(fn:()=>Promise<void>){this.changes.add(fn);return ()=>{this.changes.delete(fn);};}
+  async accessChanged(){await Promise.all([...this.changes].map(fn=>fn()));}
   constructor(private readonly pool: Pool, secret: string) { this.key = new TextEncoder().encode(secret); }
 
   private async me(user: User, db: Pool | PoolClient) {
@@ -74,6 +77,7 @@ export class AuthService {
       await db.query('UPDATE sessions SET revoked_at=now() WHERE id=$1', [session.id]);
       return this.issue(db, user, session.family_id, session.expires_at);
     });
+    await this.accessChanged();
     if (!result) throw new UnauthorizedException();
     return result;
   }
@@ -87,7 +91,7 @@ export class AuthService {
     const { rows: [user] } = await db.query<User>(`UPDATE sessions s SET last_seen_at=clock_timestamp() FROM users u
       WHERE s.user_id=u.id AND s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND u.status='active' RETURNING u.id,u.display_name,u.status,u.locale,u.version`, [claims.sid,claims.sub]);
     if (!user) throw new UnauthorizedException();
-    return { user: await this.me(user, db), sessionId: claims.sid };
+    return { user: await this.me(user, db), sessionId: claims.sid, expiresAt: Number(claims.exp)*1000 };
   }
   async logout(header: string | undefined) {
     const { sessionId, user } = await this.authenticate(header);
@@ -95,6 +99,7 @@ export class AuthService {
       await db.query('SELECT id FROM users WHERE id=$1 FOR UPDATE', [user.id]);
       await db.query('UPDATE sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE family_id=(SELECT family_id FROM sessions WHERE id=$1)', [sessionId]);
     });
+    await this.accessChanged();
     return { id: sessionId, version: 1, state: 'revoked' };
   }
 }

@@ -1,6 +1,6 @@
 {
-  "version": "0.1",
-  "transport": "WebSocket abstraction; thư viện/provider chưa chốt",
+  "version": "0.2.1",
+  "transport": "Socket.IO 4; websocket only; single NestJS instance; HTTP commands and recovery",
   "envelope": {
     "event_id": "uuid",
     "type": "versioned.name.v1",
@@ -18,7 +18,8 @@
         "job_version",
         "conversation_id"
       ],
-      "recovery": "GET /jobs/{id}"
+      "recovery": "GET /jobs/{id}",
+      "implementation_scope": "RT-01A"
     },
     {
       "name": "job.assigned.v1",
@@ -29,7 +30,8 @@
         "assignment_id",
         "conversation_id"
       ],
-      "recovery": "GET job; API thu hồi quyền người cũ ngay, không chờ event"
+      "recovery": "GET job; API thu hồi quyền người cũ ngay, không chờ event",
+      "implementation_scope": "RT-01A"
     },
     {
       "name": "job.schedule_changed.v1",
@@ -39,7 +41,8 @@
         "schedule_version",
         "scheduled_at"
       ],
-      "recovery": "GET job; bỏ reminder version cũ"
+      "recovery": "GET job; bỏ reminder version cũ",
+      "implementation_scope": "RT-01A"
     },
     {
       "name": "invoice.sent.v1",
@@ -49,7 +52,8 @@
         "version_id",
         "resource_version"
       ],
-      "recovery": "GET invoice; point mặc định 0"
+      "recovery": "GET invoice; point mặc định 0",
+      "implementation_scope": "RT-01A"
     },
     {
       "name": "invoice.locked.v1",
@@ -59,27 +63,30 @@
         "version_id",
         "resource_version"
       ],
-      "recovery": "GET invoice; không phát wallet balance vào room khách"
+      "recovery": "GET invoice; không phát wallet balance vào room khách",
+      "implementation_scope": "RT-01A"
     },
     {
       "name": "invoice.payment_reported.v1",
       "audience": "Người thực hiện và khách",
       "payload": [
         "invoice_id",
+        "version_id",
         "resource_version"
       ],
-      "recovery": "GET invoice; không gọi settle từ event"
+      "recovery": "GET invoice; không gọi settle từ event",
+      "implementation_scope": "RT-01A"
     },
     {
       "name": "invoice.settled.v1",
       "audience": "Hai bên, thông tin ví ở kênh riêng",
       "payload": [
         "invoice_id",
-        "settlement_id",
-        "actor_kind",
-        "review_eligible"
+        "version_id",
+        "resource_version"
       ],
-      "recovery": "GET invoice/points/wallet theo quyền; không tự mở review nếu thiếu dấu"
+      "recovery": "GET invoice for settlement/review eligibility and role-scoped points/wallet; no event-driven accounting",
+      "implementation_scope": "RT-01A"
     },
     {
       "name": "conversation.message_created.v1",
@@ -89,7 +96,8 @@
         "message_id",
         "sequence"
       ],
-      "recovery": "GET messages after_sequence; message body chỉ fetch theo ACL"
+      "recovery": "GET messages after_sequence; message body chỉ fetch theo ACL",
+      "implementation_scope": "RT-01A"
     },
     {
       "name": "conversation.read.v1",
@@ -99,7 +107,8 @@
         "user_id",
         "last_sequence"
       ],
-      "recovery": "Lưu max cursor; sự kiện cũ không làm unread tăng lại"
+      "recovery": "Lưu max cursor; sự kiện cũ không làm unread tăng lại",
+      "implementation_scope": "RT-01A"
     },
     {
       "name": "call.ringing.v1",
@@ -109,7 +118,8 @@
         "job_id",
         "caller_id"
       ],
-      "recovery": "GET/accept qua API, token ngắn hạn; không gửi credential qua push"
+      "recovery": "GET/accept qua API, token ngắn hạn; không gửi credential qua push",
+      "implementation_scope": "Not opened by RT-01A"
     },
     {
       "name": "call.ended.v1",
@@ -118,7 +128,8 @@
         "call_id",
         "reason"
       ],
-      "recovery": "Dọn UI; không retry gọi mới tự động"
+      "recovery": "Dọn UI; không retry gọi mới tự động",
+      "implementation_scope": "Not opened by RT-01A"
     },
     {
       "name": "wallet.changed.v1",
@@ -127,7 +138,8 @@
         "partner_id",
         "account_version"
       ],
-      "recovery": "GET wallet; không phát sang phòng công việc"
+      "recovery": "GET wallet; không phát sang phòng công việc",
+      "implementation_scope": "Not opened by RT-01A"
     },
     {
       "name": "points.changed.v1",
@@ -136,7 +148,8 @@
         "user_id",
         "account_version"
       ],
-      "recovery": "GET /me/points; không cộng delta từ event"
+      "recovery": "GET /me/points; không cộng delta từ event",
+      "implementation_scope": "Not opened by RT-01A"
     },
     {
       "name": "report.updated.v1",
@@ -145,7 +158,8 @@
         "report_id",
         "version"
       ],
-      "recovery": "GET report với filter admin_only"
+      "recovery": "GET report với filter admin_only",
+      "implementation_scope": "Not opened by RT-01A"
     },
     {
       "name": "notification.created.v1",
@@ -153,7 +167,66 @@
       "payload": [
         "notification_id"
       ],
-      "recovery": "GET inbox; kiểm quyền tài nguyên lại khi mở"
+      "recovery": "GET inbox; kiểm quyền tài nguyên lại khi mở",
+      "implementation_scope": "RT-01A"
+    },
+    {
+      "name": "notification.read.v1",
+      "audience": "Chính tài khoản trên mọi phiên còn hiệu lực",
+      "payload": [
+        "notification_id"
+      ],
+      "recovery": "GET inbox; chỉ phát khi unread chuyển read lần đầu; giữ read_at đơn điệu",
+      "implementation_scope": "RT-01A"
+    },
+    {
+      "name": "invoice.revision_requested.v1",
+      "audience": "Khách và người còn quyền việc tại thời điểm phát, nằm trong snapshot lúc commit",
+      "payload": [
+        "invoice_id",
+        "version_id",
+        "resource_version"
+      ],
+      "recovery": "GET invoice; giữ bản đang nhập và yêu cầu tải lại khi xung đột",
+      "implementation_scope": "RT-01A"
     }
-  ]
+  ],
+  "connection": {
+    "path": "/v1/realtime/socket.io",
+    "namespace": "/",
+    "auth": {
+      "token": "current access token; never URL/query"
+    },
+    "server_channel": "domain.event",
+    "subscribe": {
+      "type": "conversation | job | invoice",
+      "id": "uuid",
+      "request_id": "uuid"
+    },
+    "unsubscribe": "same payload; ACK {ok,request_id}; validation/rate/ACL error {ok:false,code,request_id?}",
+    "limits": {
+      "auth_timeout_ms": 5000,
+      "packet_bytes": 8192,
+      "connections_per_user": 10,
+      "connections_per_instance": 1000,
+      "subscriptions_per_connection": 32,
+      "client_packets_per_10_seconds": 40
+    },
+    "origin": "explicit CORS_ORIGIN allowlist for web upgrades; native without Origin still authenticates",
+    "controls": {
+      "access.revoked": "{type,id} only for known subscription; clear private state",
+      "resync.required": "no payload; HTTP recovery"
+    },
+    "recovery": "listeners before connect; subscribe ACK triggers snapshot; dirty flag reruns events during fetch; event_id bounded dedupe; sequence cursor for messages; no durable per-device replay; connectionStateRecovery disabled",
+    "lifecycle": "close on token expiry/logout/background, reauthenticate refresh/reconnect; proactive session and membership/assignment revocation after commit; latest ACL under locks immediately before synchronous enqueue",
+    "reconciliation": "healthy foreground 60s; disconnected HTTP 15s; retry exponential jitter; local tunables, not production SLA",
+    "rollout": "REALTIME_ENABLED=1 plus EXPO_PUBLIC_REALTIME_ENABLED=1; defaults disabled"
+  },
+  "delivery": "Outbox + recipient snapshot in same transaction. realtime_deliveries unique(event_id,user_id), lease/retry independent of notifications consumer. Recheck live ACL. Retry same event_id; offline dispatch is not proof of device delivery. Historical events without snapshot are not backfilled; HTTP recovers. Poison isolated after 8 attempts; inspect/retry operationally.",
+  "inboxRouting": {
+    "decision": "MSG-01 / 2026-10-15",
+    "messages": "conversation.* invalidates Conversation.unread; never creates notification inbox entries",
+    "notifications": "non-chat events only; notification.read does not modify conversation_reads",
+    "recovery": "Authoritative HTTP snapshot across all pages; no event-count arithmetic; independent read and badges"
+  }
 }

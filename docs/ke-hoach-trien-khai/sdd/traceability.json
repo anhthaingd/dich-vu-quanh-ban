@@ -2443,6 +2443,511 @@
         }
       ],
       "gaps": "Native riêng báo cáo B04-01; CI không chạy native. Không UAT."
+    },
+    {
+      "id": "P1-02-AC-01",
+      "requirement": "FR-NOT-002; FR-NOT-003",
+      "qa": [
+        "QA-025"
+      ],
+      "description": "notification settings keep four independent switches, isolate accounts and preserve inbox with push disabled",
+      "code": [
+        "services/api/src/modules/notifications/notifications.service.ts",
+        "services/api/src/modules/notifications/notifications.store.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/notifications.test.ts",
+          "name": "notification settings keep four independent switches, isolate accounts and preserve inbox with push disabled"
+        }
+      ],
+      "sources": [
+        "QA-025",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Local inbox/worker/settings only; no push transport/provider/device delivery, full QA or production/UAT."
+    },
+    {
+      "id": "P1-02-AC-02",
+      "requirement": "FR-NOT-001",
+      "qa": [
+        "QA-050"
+      ],
+      "description": "inbox commit is atomic, retry and competing consumers dedupe, read and pagination are actor scoped",
+      "code": [
+        "services/api/src/modules/notifications/notifications.worker.ts",
+        "services/api/src/modules/notifications/notifications.store.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/notifications.test.ts",
+          "name": "inbox commit is atomic, retry and competing consumers dedupe, read and pagination are actor scoped"
+        }
+      ],
+      "sources": [
+        "QA-050",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Local inbox/worker/settings only; no push transport/provider/device delivery, full QA or production/UAT."
+    },
+    {
+      "id": "P1-02-AC-03",
+      "requirement": "FR-NOT-001",
+      "qa": [
+        "QA-050"
+      ],
+      "description": "notification recipients are captured at event commit and revoked members cannot receive delayed job or partner chat notices",
+      "code": [
+        "services/api/src/modules/notifications/notifications.worker.ts",
+        "services/api/src/modules/notifications/notifications.store.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/notifications.test.ts",
+          "name": "notification recipients are captured at event commit and revoked members cannot receive delayed job or partner chat notices"
+        }
+      ],
+      "sources": [
+        "QA-050",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Local inbox/worker/settings only; no push transport/provider/device delivery, full QA or production/UAT."
+    },
+    {
+      "id": "P1-02-AC-04",
+      "requirement": "FR-JOB-003; FR-JOB-004",
+      "qa": [
+        "QA-019"
+      ],
+      "description": "reminders use future lead times, invalidate rescheduled and stopped jobs, and never close work by time",
+      "code": [
+        "services/api/src/modules/notifications/notifications.worker.ts",
+        "services/api/src/modules/notifications/notifications.store.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/notifications.test.ts",
+          "name": "reminders use future lead times, invalidate rescheduled and stopped jobs, and never close work by time"
+        }
+      ],
+      "sources": [
+        "QA-019",
+        "api-project"
+      ],
+      "operations": [],
+      "gaps": "Local inbox/worker/settings only; no push transport/provider/device delivery, full QA or production/UAT."
+    },
+    {
+      "id": "P1-02-AC-05",
+      "requirement": "FR-NOT-001; FR-NOT-002",
+      "qa": [
+        "QA-025",
+        "QA-050"
+      ],
+      "description": "App inbox: all pages, dedupe, read/retry, permission-checked target, account isolation and four independent settings",
+      "code": [
+        "apps/mobile/src/features/notifications/NotificationsProvider.tsx",
+        "apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/screens/Notifications.test.tsx",
+          "name": "inbox reads all pages, deduplicates IDs, marks across pages and clears private data on logout"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/screens/Notifications.test.tsx",
+          "name": "notification retry retains read key and denied target never navigates using stale permissions"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/screens/Notifications.test.tsx",
+          "name": "reminder settings retain form across locale changes and retry the same immutable payload"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/notifications.spec.mjs",
+          "name": "notifications follow real events, preserve independent reminder settings, read across sessions and recheck deep links"
+        }
+      ],
+      "sources": [
+        "QA-025",
+        "QA-050",
+        "api-project"
+      ],
+      "gaps": "Component and web evidence only; native manually evidenced in B05-01; no external push or UAT."
+    },
+    {
+      "id": "RT-01A-AC-01",
+      "requirement": "FR-CHAT-005",
+      "qa": [
+        "QA-095"
+      ],
+      "description": "Live two-account chat and HTTP recovery",
+      "code": [
+        "services/api/src/modules/realtime/realtime.gateway.ts",
+        "services/api/src/modules/realtime/realtime.worker.ts",
+        "services/api/src/common/events/event.store.ts",
+        "apps/mobile/src/lib/realtime/realtime-client.ts",
+        "apps/mobile/src/app/providers/RealtimeProvider.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/realtime.test.ts",
+          "name": "realtime authenticates, gates Origin and subscriptions, emits committed minimal events and read once"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/realtime.spec.mjs",
+          "name": "realtime two accounts: visible chat, offline catch-up and inbox read on another session"
+        }
+      ],
+      "sources": [
+        "QA-095",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Single-instance local assertions only. Native and five-minute load manually evidenced in B05-02; not full native matrix, multi-instance, provider, production, device or UAT certification."
+    },
+    {
+      "id": "RT-01A-AC-02",
+      "requirement": "FR-CHAT-005",
+      "qa": [
+        "QA-095"
+      ],
+      "description": "Client lifecycle, dedupe, expiry refresh and recovery",
+      "code": [
+        "services/api/src/modules/realtime/realtime.gateway.ts",
+        "services/api/src/modules/realtime/realtime.worker.ts",
+        "services/api/src/common/events/event.store.ts",
+        "apps/mobile/src/lib/realtime/realtime-client.ts",
+        "apps/mobile/src/app/providers/RealtimeProvider.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/realtime/realtime-client.test.ts",
+          "name": "listeners precede connect, duplicate IDs collapse, subscriptions ACK triggers recovery and background tears down"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/realtime/realtime-client.test.ts",
+          "name": "rotation cancels old callbacks and dedupe is account scoped; bounded retry and expiry use auth callback"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/realtime/realtime-client.test.ts",
+          "name": "auth busy and network failures retry without parallel connection; disabled flag never connects"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/realtime/realtime-client.test.ts",
+          "name": "subscriptions wait for prior ACK; temporary rejection retries without revoking access"
+        }
+      ],
+      "sources": [
+        "QA-095",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Single-instance local assertions only. Native and five-minute load manually evidenced in B05-02; not full native matrix, multi-instance, provider, production, device or UAT certification."
+    },
+    {
+      "id": "RT-01A-AC-03",
+      "requirement": "FR-AUTH-008; FR-ORG-006",
+      "qa": [
+        "QA-094"
+      ],
+      "description": "Revoked and rotated sessions close; stale tokens fail",
+      "code": [
+        "services/api/src/modules/realtime/realtime.gateway.ts",
+        "services/api/src/modules/realtime/realtime.worker.ts",
+        "services/api/src/common/events/event.store.ts",
+        "apps/mobile/src/lib/realtime/realtime-client.ts",
+        "apps/mobile/src/app/providers/RealtimeProvider.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/realtime.test.ts",
+          "name": "realtime closes revoked/rotated sessions before HTTP returns; old tokens never reconnect"
+        }
+      ],
+      "sources": [
+        "QA-094",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Single-instance local assertions only. Native and five-minute load manually evidenced in B05-02; not full native matrix, multi-instance, provider, production, device or UAT certification."
+    },
+    {
+      "id": "RT-01A-AC-04",
+      "requirement": "FR-AUTH-008; FR-ORG-006",
+      "qa": [
+        "QA-094"
+      ],
+      "description": "Recipient snapshot and live ACL on emission",
+      "code": [
+        "services/api/src/modules/realtime/realtime.gateway.ts",
+        "services/api/src/modules/realtime/realtime.worker.ts",
+        "services/api/src/common/events/event.store.ts",
+        "apps/mobile/src/lib/realtime/realtime-client.ts",
+        "apps/mobile/src/app/providers/RealtimeProvider.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/realtime.test.ts",
+          "name": "realtime rechecks ACL before emit and proactively revokes known subscriptions after membership removal"
+        }
+      ],
+      "sources": [
+        "QA-094",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Single-instance local assertions only. Native and five-minute load manually evidenced in B05-02; not full native matrix, multi-instance, provider, production, device or UAT certification."
+    },
+    {
+      "id": "RT-01A-AC-05",
+      "requirement": "FR-NOT-001; FR-NOT-002",
+      "qa": [
+        "QA-096"
+      ],
+      "description": "Atomic event, lease retry, crash after emit and poison isolation",
+      "code": [
+        "services/api/src/modules/realtime/realtime.gateway.ts",
+        "services/api/src/modules/realtime/realtime.worker.ts",
+        "services/api/src/common/events/event.store.ts",
+        "apps/mobile/src/lib/realtime/realtime-client.ts",
+        "apps/mobile/src/app/providers/RealtimeProvider.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/realtime.test.ts",
+          "name": "realtime rollback has no delivery; retries retain event id and isolate poison; offline recovers via HTTP"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/realtime.test.ts",
+          "name": "realtime lease expiry and crash after enqueue retry the same event ID; poison never blocks other rows"
+        }
+      ],
+      "sources": [
+        "QA-096",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Single-instance local assertions only. Native and five-minute load manually evidenced in B05-02; not full native matrix, multi-instance, provider, production, device or UAT certification."
+    },
+    {
+      "id": "RT-01A-AC-06",
+      "requirement": "FR-NOT-001; FR-NOT-002",
+      "qa": [
+        "QA-096"
+      ],
+      "description": "Inbox first read event and cross-session refresh",
+      "code": [
+        "services/api/src/modules/realtime/realtime.gateway.ts",
+        "services/api/src/modules/realtime/realtime.worker.ts",
+        "services/api/src/common/events/event.store.ts",
+        "apps/mobile/src/lib/realtime/realtime-client.ts",
+        "apps/mobile/src/app/providers/RealtimeProvider.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/realtime.test.ts",
+          "name": "realtime authenticates, gates Origin and subscriptions, emits committed minimal events and read once"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/realtime.spec.mjs",
+          "name": "realtime two accounts: visible chat, offline catch-up and inbox read on another session"
+        }
+      ],
+      "sources": [
+        "QA-096",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Single-instance local assertions only. Native and five-minute load manually evidenced in B05-02; not full native matrix, multi-instance, provider, production, device or UAT certification."
+    },
+    {
+      "id": "RT-01A-AC-07",
+      "requirement": "NFR-PERF-001; NFR-SEC-001",
+      "qa": [
+        "QA-097"
+      ],
+      "description": "Connection cap, packet flood and slow client bounds",
+      "code": [
+        "services/api/src/modules/realtime/realtime.gateway.ts",
+        "services/api/src/modules/realtime/realtime.worker.ts",
+        "services/api/src/common/events/event.store.ts",
+        "apps/mobile/src/lib/realtime/realtime-client.ts",
+        "apps/mobile/src/app/providers/RealtimeProvider.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/realtime.test.ts",
+          "name": "realtime bounds connections and packet floods, and disconnects slow receivers without buffering private frames"
+        }
+      ],
+      "sources": [
+        "QA-097",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Single-instance local assertions only. Native and five-minute load manually evidenced in B05-02; not full native matrix, multi-instance, provider, production, device or UAT certification."
+    },
+    {
+      "id": "RT-01A-AC-08",
+      "requirement": "FR-CHAT-005",
+      "qa": [
+        "QA-095"
+      ],
+      "description": "Realtime invoice transitions preserve HTTP version/retry and test settlement",
+      "code": [
+        "services/api/src/modules/realtime/realtime.gateway.ts",
+        "services/api/src/modules/realtime/realtime.worker.ts",
+        "services/api/src/common/events/event.store.ts",
+        "apps/mobile/src/lib/realtime/realtime-client.ts",
+        "apps/mobile/src/app/providers/RealtimeProvider.tsx",
+        "apps/mobile/src/features/invoices/screens/InvoiceScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/invoices.spec.mjs",
+          "name": "invoice: photo, revision, points, lost confirm response and two payment marks"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+          "name": "realtime rechecks an edited invoice: duplicate version keeps points; newer version requires reload"
+        }
+      ],
+      "sources": [
+        "QA-095",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Single-instance local assertions only. Native and five-minute load manually evidenced in B05-02; not full native matrix, multi-instance, provider, production, device or UAT certification."
+    },
+    {
+      "id": "MSG-01-AC-01",
+      "requirement": "FR-CHAT-005",
+      "qa": [
+        "QA-095"
+      ],
+      "description": "Separate chat and notification badges and reads",
+      "code": [
+        "apps/mobile/src/features/chat/MessageUnreadProvider.tsx",
+        "apps/mobile/src/app/layout/ProductShell.tsx",
+        "services/api/src/modules/notifications/notifications.store.ts",
+        "services/api/src/modules/notifications/notifications.service.ts",
+        "services/api/src/modules/notifications/notifications.worker.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/app/layout/ProductShell.test.tsx",
+          "name": "message and notification badges are independent, hide zero and cap at 99+"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/realtime.spec.mjs",
+          "name": "realtime two accounts: visible chat, offline catch-up and inbox read on another session"
+        }
+      ],
+      "sources": [
+        "QA-095",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Local integration/UI assertions only. Native two-session evidence in B05-03; not device/provider/production/UAT or complete QA certification."
+    },
+    {
+      "id": "MSG-01-AC-02",
+      "requirement": "FR-NOT-002",
+      "qa": [
+        "QA-025"
+      ],
+      "description": "Chat does not create inbox entries; legacy rows and deliveries excluded",
+      "code": [
+        "apps/mobile/src/features/chat/MessageUnreadProvider.tsx",
+        "apps/mobile/src/app/layout/ProductShell.tsx",
+        "services/api/src/modules/notifications/notifications.store.ts",
+        "services/api/src/modules/notifications/notifications.service.ts",
+        "services/api/src/modules/notifications/notifications.worker.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/notifications.test.ts",
+          "name": "chat never enters inbox and legacy chat rows and pending deliveries remain excluded"
+        }
+      ],
+      "sources": [
+        "QA-025",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Local integration/UI assertions only. Native two-session evidence in B05-03; not device/provider/production/UAT or complete QA certification."
+    },
+    {
+      "id": "MSG-01-AC-03",
+      "requirement": "FR-CHAT-005",
+      "qa": [
+        "QA-095"
+      ],
+      "description": "HTTP unread snapshots across pagination, invalidation, account changes and fallback",
+      "code": [
+        "apps/mobile/src/features/chat/MessageUnreadProvider.tsx",
+        "apps/mobile/src/app/layout/ProductShell.tsx",
+        "services/api/src/modules/notifications/notifications.store.ts",
+        "services/api/src/modules/notifications/notifications.service.ts",
+        "services/api/src/modules/notifications/notifications.worker.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
+          "name": "message badge totals all pages, dedupes conversations and refreshes reads without adding events"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
+          "name": "message invalidation during HTTP remains dirty and account switch discards late snapshots"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
+          "name": "message badge waits for forms and retries failed or cyclic pages without publishing partial totals"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
+          "name": "message badge reconciles by HTTP while transport is disabled"
+        }
+      ],
+      "sources": [
+        "QA-095",
+        "api-project",
+        "rt01-contract"
+      ],
+      "gaps": "Local integration/UI assertions only. Native two-session evidence in B05-03; not device/provider/production/UAT or complete QA certification."
     }
   ]
 }

@@ -1,3 +1,5 @@
+import {useRealtimeRefresh} from '../../../app/providers/RealtimeProvider';
+import {useMessageUnread} from '../MessageUnreadProvider';
 import { formatBusinessDate } from '../../../lib/i18n/formatters';
 import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
 import { AppState } from 'react-native';
@@ -26,8 +28,10 @@ function Room({ owner, id, jobId }: {
     const { manager, state: auth } = useAuth(), { t, locale } = useLocale();
     const [items, setItems] = useState<Message[]>([]), [body, setBody] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState<ApiErrorCode | null>(null), [attempt, setAttempt] = useState(0);
     const highest = useRef(0);
+    const {invalidate}=useMessageUnread();
     const [mutation] = useState(() => new Mutation<Message>());
     const state = useSyncExternalStore(mutation.subscribe, mutation.getSnapshot, mutation.getSnapshot);
+    useRealtimeRefresh({error,resource:{type:'conversation',id},busy:busy||state.busy||state.pending,matches:s=>s.kind==='event'&&s.event.type==='conversation.message_created.v1'&&s.event.data.conversation_id===id,refresh:()=>setAttempt(v=>v+1),revoke:()=>{setItems([]);highest.current=0;setError('NOT_FOUND');}});
     useFocusEffect(useCallback(() => {
         let active = true, loading = false;
         const refresh = async () => {
@@ -49,8 +53,10 @@ function Room({ owner, id, jobId }: {
                     return;
                 setItems(old => [...new Map([...old, ...arrived].map(m => [m.id, m])).values()].sort((a, b) => a.sequence - b.sequence));
                 highest.current = Math.max(highest.current, ...arrived.map(m => m.sequence));
-                if (highest.current)
+                if (highest.current) {
                     await manager.readConversation(owner, id, highest.current, randomUUID());
+                    invalidate();
+                }
             }
             catch (e) {
                 if (active) {
@@ -72,7 +78,7 @@ function Room({ owner, id, jobId }: {
         const subscription = AppState.addEventListener('change', value => { if (value === 'active')
             void refresh(); });
         return () => { active = false; subscription.remove(); };
-    }, [manager, owner, id, attempt]));
+    }, [manager, owner, id, attempt, invalidate]));
     const sent = (m: Message | null) => { if (m) {
         setBody('');
         setItems(old => [...new Map([...old, m].map(x => [x.id, x])).values()].sort((a, b) => a.sequence - b.sequence));
