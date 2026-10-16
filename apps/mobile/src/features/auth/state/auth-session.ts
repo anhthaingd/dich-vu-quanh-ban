@@ -1,3 +1,5 @@
+import type {SupportApi} from '../../support/api/support-api';
+import type {ReportInput} from '../../support/models';
 import type {ReviewsApi} from '../../reviews/api/reviews-api';
 import type {ReviewInput} from '../../reviews/models';
 import type {RealtimeClient} from '../../../lib/realtime/realtime-client';
@@ -22,7 +24,7 @@ export class AuthSession {
   private session: Session | null = null;
   private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
   private readonly listeners = new Set<() => void>();
-  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi, private readonly notifications?:NotificationsApi, private readonly reviews?:ReviewsApi) {}
+  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi, private readonly notifications?:NotificationsApi, private readonly reviews?:ReviewsApi,private readonly support?:SupportApi) {}
   bindRealtime(client:RealtimeClient){
     const update=()=>client.setSession(this.session?{owner:this.session.user.id,token:this.session.access_token,expiresAt:Date.parse(this.session.expires_at)}:null);
     client.setRefresh(async()=>{const owner=this.session?.user.id;if(!owner)throw new ApiError('UNAUTHENTICATED');await this.accountOperation(owner,async()=>{await this.rotate();});});
@@ -156,6 +158,13 @@ export class AuthSession {
   setTeamContact=(o:string,p:string,id:string|null,v:number,k:string)=>this.accountOperation(o,t=>this.teamApi().setContact(t,p,id,v,k));
   requestChallenge=(o:string,contact:string)=>this.accountOperation(o,t=>this.teamApi().challenge(t,contact));
   verifyChallenge=(o:string,id:string,code:string)=>this.accountOperation(o,t=>this.teamApi().verify(t,id,code));
+  private supportApi(){if(!this.support)throw new ApiError('CONFIG');return this.support;}
+  listReports=(o:string,c?:string)=>this.accountOperation(o,t=>this.supportApi().list(t,c));
+  getReport=(o:string,id:string)=>this.accountOperation(o,t=>this.supportApi().get(t,id));
+  createReport=(o:string,b:ReportInput,k:string)=>this.accountOperation(o,t=>this.supportApi().create(t,b,k));
+  replyReport=(o:string,id:string,body:string,ids:string[],k:string)=>this.accountOperation(o,t=>this.supportApi().reply(t,id,body,ids,k));
+  uploadEvidence=(o:string,blob:Blob,k:string)=>this.accountOperation(o,t=>this.supportApi().upload(t,blob,k));
+  evidenceAsset=(o:string,id:string)=>this.passiveRead(o,t=>this.supportApi().asset(t,id));
   private reviewsApi(){if(!this.reviews)throw new ApiError('CONFIG');return this.reviews;}
   replyReview=(o:string,id:string,v:number,body:string,k:string)=>this.accountOperation(o,t=>this.reviewsApi().reply(t,id,v,body,k));
   uploadReview=(o:string,blob:Blob,k:string)=>this.accountOperation(o,t=>this.reviewsApi().upload(t,blob,k));

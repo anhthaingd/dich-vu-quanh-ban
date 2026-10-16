@@ -3030,14 +3030,15 @@
         "QA-025",
         "rt01-contract"
       ],
-      "description": "Theo yêu cầu 15/10: kéo làm mới thay nút thường trực, giữ nội dung/bản nháp khi lỗi mạng, dừng vòng xoay và retry, xóa khi mất quyền. Regression 16/10: profile waits/retries transient BUSY after chat; background read watermark does not lock draft input. Sending remains session-locked.",
+      "description": "Theo yêu cầu 15/10: kéo làm mới thay nút thường trực, giữ nội dung/bản nháp khi lỗi mạng, dừng vòng xoay và retry, xóa khi mất quyền. Regression 16/10: profile waits/retries transient BUSY after chat; background read watermark does not lock draft input. Sending remains session-locked. Job draft actions/inputs remain editable during snapshot reads; confirmation stays locked.",
       "code": [
         "apps/mobile/src/features/accounts/components/AccountPage.tsx",
         "apps/mobile/src/features/chat/screens/ConversationsScreen.tsx",
         "apps/mobile/src/features/chat/screens/ConversationScreen.tsx",
         "apps/mobile/src/features/notifications/NotificationsProvider.tsx",
         "apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx",
-        "apps/mobile/src/features/partners/screens/PartnerProfileScreen.tsx"
+        "apps/mobile/src/features/partners/screens/PartnerProfileScreen.tsx",
+        "apps/mobile/src/features/jobs/screens/JobDetailScreen.tsx"
       ],
       "tests": [
         {
@@ -3059,6 +3060,11 @@
           "suite": "mobile",
           "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
           "name": "chat draft remains editable while the read watermark holds the account lock"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "job action draft stays editable during a background snapshot while confirmation waits"
         }
       ],
       "gaps": "Không chứng nhận offline storage, push ngoài app, thiết bị vật lý, UAT hoặc toàn bộ QA. Cử chỉ native cần bằng chứng riêng.",
@@ -3296,6 +3302,130 @@
         }
       ],
       "gaps": "Local storage only; no admin/support, cross-job customer history, production, physical devices or UAT. QA remains partial.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "SUP-01-AC-01",
+      "requirement": "FR-SUP-001; FR-ADM-012",
+      "qa": [
+        "QA-047"
+      ],
+      "sources": [
+        "QA-047",
+        "api-support-report",
+        "api-support-create",
+        "ux-support"
+      ],
+      "description": "Reporter-only reports, exact invoice/review access, actor-bound pages, idempotency, closed history and waiting-evidence transitions do not mutate job or money.",
+      "code": [
+        "services/api/src/modules/support/support.service.ts",
+        "services/api/src/modules/support/support.input.ts",
+        "services/api/migrations/014_support_reports.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/support.test.ts",
+          "name": "support creates private reports with immutable retry and actor-bound pagination without changing jobs or money"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/support.test.ts",
+          "name": "support updates serialize, hide admin-only content, reopen awaiting evidence and preserve closed history"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/support.test.ts",
+          "name": "support checks exact invoice and review resources, current membership and preserves reporter history after leaving"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/support.test.ts",
+          "name": "support rejects forged fields, inconsistent resource references, blank content and invalid evidence"
+        }
+      ],
+      "gaps": "Reporter local slice only. Admin queue, MFA, moderation decisions, submitted chat evidence, production, devices and UAT are not certified; QA-047 remains partial.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "SUP-01-AC-02",
+      "requirement": "FR-SUP-001; FR-ADM-012",
+      "qa": [
+        "QA-047"
+      ],
+      "sources": [
+        "QA-047",
+        "api-support-report",
+        "api-support-create",
+        "ux-support"
+      ],
+      "description": "Private local evidence uses ready owned images, per-message links, session-bound signed URLs and atomic rollback.",
+      "code": [
+        "services/api/src/modules/assets/assets.service.ts",
+        "services/api/src/modules/support/support.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/support.test.ts",
+          "name": "support evidence uploads are private, tied to the submitted message and rolled back with invalid evidence"
+        }
+      ],
+      "gaps": "Reporter local slice only. Admin queue, MFA, moderation decisions, submitted chat evidence, production, devices and UAT are not certified; QA-047 remains partial.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "SUP-01-AC-03",
+      "requirement": "FR-SUP-001; FR-ADM-012",
+      "qa": [
+        "QA-047"
+      ],
+      "sources": [
+        "QA-047",
+        "api-support-report",
+        "api-support-create",
+        "ux-support"
+      ],
+      "description": "App creates subject/body/photos, shows filtered private history, preserves uncertain retry and makes closed reports read-only.",
+      "code": [
+        "apps/mobile/src/features/support/screens/SupportScreen.tsx",
+        "apps/mobile/src/features/support/screens/EvidencePhoto.tsx",
+        "apps/mobile/src/features/support/api/support-api.ts",
+        "apps/mobile/src/features/auth/state/auth-session.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/support/screens/Support.test.tsx",
+          "name": "support submits job context with title, preserves lost-response retry, and lists and filters saved reports"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/support/screens/Support.test.tsx",
+          "name": "support uploads and removes draft photos, then attaches evidence to the correct update"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/support/screens/Support.test.tsx",
+          "name": "support handles closed cases, pagination and private draft revocation"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/support/api/support-api.test.ts",
+          "name": "support client preserves context, evidence and retry keys and rejects private or malformed responses"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/support/api/support-api.test.ts",
+          "name": "support uploads resume ready evidence, retain photo bytes, and reject expired grants and failed uploads"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/support.spec.mjs",
+          "name": "support: private photo reports, lost response retry, additional evidence and closed history"
+        }
+      ],
+      "gaps": "Reporter local slice only. Admin queue, MFA, moderation decisions, submitted chat evidence, production, devices and UAT are not certified; QA-047 remains partial.",
       "evidenceStatus": "mapping-reviewed-not-executed"
     }
   ]

@@ -20,9 +20,9 @@ import {JobFeedback} from '../../jobs/components/JobFeedback';
 import type {Job} from '../../jobs/models';
 import {formatInteger} from '../format-amount';
 import type {Asset,LedgerPage,Invoice,InvoiceAction,InvoiceChange,Wallet} from '../models';
-export function InvoiceScreen({navigation,route}:NativeStackScreenProps<RootStackParamList,'Invoice'>){return <AccountPage title="invoice.title" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account')}>{owner=><InvoiceContent key={owner+route.params.id} owner={owner} id={route.params.id}/>}</AccountPage>;}
+export function InvoiceScreen({navigation,route}:NativeStackScreenProps<RootStackParamList,'Invoice'>){return <AccountPage title="invoice.title" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account')}>{owner=><InvoiceContent key={owner+route.params.id} owner={owner} id={route.params.id} report={invoice=>navigation.navigate('Support',{context:{kind:'invoice',job_id:route.params.id,invoice_id:invoice.id,invoice_version_id:invoice.version_id}})}/>}</AccountPage>;}
 const validAmount=(v:string)=>/^(0|[1-9][0-9]*)$/.test(v);
-function InvoiceContent({owner,id}:{owner:string;id:string}){
+function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoice:Invoice)=>void}){
  const {manager,state:auth}=useAuth(),{t,locale}=useLocale();
  const [job,setJob]=useState<Job|null>(null),[invoice,setInvoice]=useState<Invoice|null>(null),[assets,setAssets]=useState<Asset[]>([]),[available,setAvailable]=useState('0'),[wallet,setWallet]=useState<Wallet|null>(null);
  const [ledger,setLedger]=useState<LedgerPage|null>(null),[history,setHistory]=useState(false);
@@ -97,6 +97,7 @@ function InvoiceContent({owner,id}:{owner:string;id:string}){
  const row=(label:string,value:string,kind?:'total'|'cash')=><View style={[styles.amount,kind==='total'&&styles.total,kind==='cash'&&styles.cash]}><AppText style={styles.amountLabel} tone={kind==='cash'?'primary':'text'}>{label}</AppText><AppText style={[styles.amountValue,kind==='cash'&&styles.cashValue]} tone={kind==='cash'?'primary':'text'}>{value}</AppText></View>;
  const photos=<View style={styles.photos}>{assets.map(a=><Image key={a.id} testID="invoice-photo" source={{uri:a.download_url??undefined}} accessibilityLabel={t('invoice.photoAlt')} style={styles.photo} resizeMode="contain"/>)}</View>;
  return <>
+  {invoice&&<Button testID="invoice-support" label={t('support.title')} disabled={busy||auth.busy||state.pending||up.pending} onPress={()=>report(invoice)}/>}
   <AppText variant="caption" tone="muted">{t('invoice.test')}</AppText>
   <Button testID="invoice-reload" label={t('accountTools.reload')} variant="link" disabled={busy||auth.busy||state.busy||state.pending||up.busy||up.pending} onPress={()=>{edited.current=false;formVersion.current=null;setStale(false);setAttempt(x=>x+1);}}/>
   {stale&&<AppText accessibilityRole="alert">{t('jobs.reloadBeforeRetry')}</AppText>}

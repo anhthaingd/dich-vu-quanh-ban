@@ -3,8 +3,8 @@
   "id": "SDD-PROJECT",
   "profile": "project",
   "type": "spec-change",
-  "objective": "MSG-01 đã chốt: tách badge Tin nhắn và Thông báo, không có chat trong inbox; giữ RT-01A và hồi quy toàn repo. B05-04: màn lịch tổng hợp qua API jobs hiện hành, giữ toàn bộ hồi quy. B05-05: kéo làm mới và xử lý lỗi tải chat/thông báo. Sửa deadlock FK tài khoản phát hiện trong kiểm hồi quy đổi lịch; giữ yêu cầu một thắng/một xung đột. B10-01: review stars/text/edit/removal and public ratings under the existing contract. B10-03: metadata, one review photo and recipient reply under the approved API extension.",
-  "decision": "Chủ dự án 14/10/2026: tiếp tục implement phần kế tiếp; Bổ sung công tắc nhắc lịch riêng và đồng bộ spec. API v0.1.12/QA-025; giữ quyết định P1-01 A/B ngày 13/10 và baseline cũ để review đầy đủ. Không thu hẹp 80 tiêu chí trước, không provider/production. RT-01A được duyệt ngày 14/10/2026: ok bắt đầu làm đi sau plan RT-01; realtime v0.2/API v0.1.13/QA-094–097. Giữ toàn bộ 85 criterion trước; RT-01B/Redis/provider/production chưa mở. MSG-01 duyệt 15/10/2026: chuẩn rồi, hãy sửa lại; không quay lại video. API v0.1.14/realtime v0.2.1; QA-025/095. Giữ toàn bộ 93 criterion trước, không mở provider/production. Chủ dự án 15/10/2026 yêu cầu xem phần tiếp theo và triển khai: chọn B05-03 còn thiếu trong P1-2, implementation theo contract hiện hành; không thay spec hoặc source hash, không mở provider/production, không đồng bộ Drive/ui-ux. REFRESH-01 ngày 15/10/2026: chủ dự án yêu cầu tham khảo ứng dụng lớn và áp dụng tự cập nhật/kéo làm mới, bỏ nút thường trực, dừng chờ khi lỗi. Giữ 98 tiêu chí trước, không đồng bộ Drive/ui-ux, không đổi API/quyền. User 15/10/2026 requested next implementation: P1-2 B10-01 existing-contract core. Images/replies/response authorization fields await a decision; no new schema or Drive/ui-ux sync authorized. User 16/10/2026 approved adding reply/photo data so the app can display them, including server actions and local photo/reply flow proposed together. Reviewed OpenAPI 0.1.15 diff only; no Drive/ui-ux sync. Baseline and all previous criteria preserved.",
+  "objective": "MSG-01 đã chốt: tách badge Tin nhắn và Thông báo, không có chat trong inbox; giữ RT-01A và hồi quy toàn repo. B05-04: màn lịch tổng hợp qua API jobs hiện hành, giữ toàn bộ hồi quy. B05-05: kéo làm mới và xử lý lỗi tải chat/thông báo. Sửa deadlock FK tài khoản phát hiện trong kiểm hồi quy đổi lịch; giữ yêu cầu một thắng/một xung đột. B10-01: review stars/text/edit/removal and public ratings under the existing contract. B10-03: metadata, one review photo and recipient reply under the approved API extension. B09-01: reporter support with approved subject and private local image evidence.",
+  "decision": "Chủ dự án 14/10/2026: tiếp tục implement phần kế tiếp; Bổ sung công tắc nhắc lịch riêng và đồng bộ spec. API v0.1.12/QA-025; giữ quyết định P1-01 A/B ngày 13/10 và baseline cũ để review đầy đủ. Không thu hẹp 80 tiêu chí trước, không provider/production. RT-01A được duyệt ngày 14/10/2026: ok bắt đầu làm đi sau plan RT-01; realtime v0.2/API v0.1.13/QA-094–097. Giữ toàn bộ 85 criterion trước; RT-01B/Redis/provider/production chưa mở. MSG-01 duyệt 15/10/2026: chuẩn rồi, hãy sửa lại; không quay lại video. API v0.1.14/realtime v0.2.1; QA-025/095. Giữ toàn bộ 93 criterion trước, không mở provider/production. Chủ dự án 15/10/2026 yêu cầu xem phần tiếp theo và triển khai: chọn B05-03 còn thiếu trong P1-2, implementation theo contract hiện hành; không thay spec hoặc source hash, không mở provider/production, không đồng bộ Drive/ui-ux. REFRESH-01 ngày 15/10/2026: chủ dự án yêu cầu tham khảo ứng dụng lớn và áp dụng tự cập nhật/kéo làm mới, bỏ nút thường trực, dừng chờ khi lỗi. Giữ 98 tiêu chí trước, không đồng bộ Drive/ui-ux, không đổi API/quyền. User 15/10/2026 requested next implementation: P1-2 B10-01 existing-contract core. Images/replies/response authorization fields await a decision; no new schema or Drive/ui-ux sync authorized. User 16/10/2026 approved adding reply/photo data so the app can display them, including server actions and local photo/reply flow proposed together. Reviewed OpenAPI 0.1.15 diff only; no Drive/ui-ux sync. Baseline and all previous criteria preserved. User 16/10/2026: Dong y bo sung tieu de va anh local; admin de dot rieng. Reviewed OpenAPI v0.1.16 Report fields and descriptions. Preserved baseline and prior criteria; no Drive/ui-ux synchronization. Job draft interaction regression follows failed CI 38843555641; no business contract change.",
   "baseCommit": "8c25c32b30ae32c4e29153f2eb34c8d08569b006",
   "sources": [
     "map02",
@@ -112,7 +112,10 @@
     "rt01-contract",
     "api-review-metadata",
     "api-review-reply",
-    "api-review-asset"
+    "api-review-asset",
+    "api-support-report",
+    "api-support-create",
+    "ux-support"
   ],
   "criteria": [
     "MAP-02-AC-01",
@@ -219,7 +222,10 @@
     "REV-01-AC-03",
     "REV-03-AC-01",
     "REV-03-AC-02",
-    "REV-03-AC-03"
+    "REV-03-AC-03",
+    "SUP-01-AC-01",
+    "SUP-01-AC-02",
+    "SUP-01-AC-03"
   ],
   "domains": [
     "PROJECT"
@@ -269,6 +275,6 @@
   "outOfScope": [
     "Không chứng nhận toàn bộ nghiệp vụ chỉ từ inventory: mỗi QA đều giữ partial/unmapped với giới hạn.",
     "Không chứng nhận thiết bị thật/native, UAT, provider live, production hoặc tiền thật.",
-    "Pending OTP, đội ngũ, ngân hàng, gọi, notification, admin/support giữ nguyên; PROMO-02 không mở lại."
+    "Pending OTP, đội ngũ, ngân hàng, gọi, notification, admin/MFA giữ nguyên; PROMO-02 không mở lại."
   ]
 }

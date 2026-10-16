@@ -53,6 +53,7 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
     {state.phase === 'authenticated' && <Card>
       <AppText variant="section">{state.user!.display_name}</AppText>
       <AppText>{t(state.user!.email_verified ? 'auth.verified' : 'auth.unverified')}</AppText>
+      <Button testID="support-open" label={t('support.title')} disabled={state.busy} onPress={() => navigation.navigate('Support')} />
       <Button testID="notification-settings-open" label={t('notices.settings')} disabled={state.busy} onPress={() => navigation.navigate('NotificationSettings')} />
       <Button testID="team-open" label={t('team.title')} disabled={state.busy} onPress={() => navigation.navigate('Organizations')} />
       <Button testID="verify-open" label={t('team.verifyTitle')} disabled={state.busy} onPress={() => navigation.navigate('VerifyContact')} />

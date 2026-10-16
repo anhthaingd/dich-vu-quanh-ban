@@ -1,5 +1,15 @@
 # Checklist chức năng và bằng chứng
 
+## B09-01 — Hỗ trợ phía người gửi, 16/10/2026
+
+- [x] Chủ dự án duyệt bổ sung tiêu đề/ảnh local; admin/MFA để đợt riêng.
+- [x] DB/API: hồ sơ riêng, phân trang theo tài khoản, đúng phiên bản hóa đơn, chứng cứ của chính người gửi, idempotency/audit; không đổi việc/tiền.
+- [x] App: điểm vào Tài khoản/việc/hóa đơn/đánh giá; tạo, lọc, xem, bổ sung ảnh/nội dung; closed chỉ đọc; VI/EN/JA.
+- [x] Kiểm riêng: 5 API, 5 mobile/client, 1 web; quyền người ngoài, mất response/retry và trạng thái test. [Báo cáo](bao-cao/B09-01-ho-tro-va-bao-cao.md).
+- [ ] SDD local: 240 mobile/118 API, coverage/build đạt; web 19 đạt/1 lỗi gián đoạn danh mục, kiểm riêng 3/3 đạt. Chưa đánh dấu verify local đạt; CI commit mới phải chạy đủ.
+- [x] iOS simulator: picker/upload ảnh và gửi/đọc hồ sơ có tiêu đề; ảnh trong báo cáo. Android chưa hoàn tất kiểm hỗ trợ do driver timeout.
+- [ ] Admin tiếp nhận/đổi trạng thái/MFA; chọn đoạn chat chứng cứ; thiết bị thật/UAT/production chưa thực hiện. Chưa đóng toàn B09/P1-2.
+
 ## B10-03 — Ảnh và phản hồi đánh giá, 16/10/2026
 
 - [x] Chủ dự án duyệt thêm metadata ảnh/phản hồi/quyền vào API; một ảnh và một phản hồi theo contract, server kiểm quyền hiện hành.
@@ -8,7 +18,7 @@
 - [x] iOS 27 simulator: đọc ảnh/phản hồi, viết phản hồi và chọn/tải/gửi ảnh từ Photos qua API local thật. Đã sửa MIME Blob trống trên iOS và cảnh báo JSX.
 - [ ] Android lát này, thiết bị thật, UAT và production chưa xác nhận.
 - SDD bổ sung 3 tiêu chí, tổng 105; giữ 68 QA partial/29 unmapped. Báo cáo máy và `verify` quyết định trạng thái bộ file cuối, không dùng checklist thay bằng chứng.
-- B10-03 hiện chưa commit/push; không đồng bộ Drive/Excel/ui-ux. [Báo cáo và ảnh](bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md).
+- B10-03 đã đẩy commit `0ccfa6e` lên nhánh `feat/review-photos-replies`; CI 38843555641 lỗi tương tác đổi lịch, đã thêm regression và sửa form trong đợt B09-01; không đồng bộ Drive/Excel/ui-ux. [Báo cáo và ảnh](bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md).
 
 ## B10-01 — Đánh giá sao/nội dung và điểm công khai, 15/10/2026
 
@@ -47,6 +57,7 @@
 - [x] Chủ dự án duyệt verify-only local Mailpit/SMS mô phỏng và contract đội ngũ/reauth. API v0.1.11, migration009; không mở login/recover/MFA/provider thật.
 - [x] DB/API/app: lời mời/list/resend/revoke/accept, memberships của mình, cấp quyền có lý do/mật khẩu, preview/gỡ/tự rời, đọc/reset đầu mối và bỏ nháp khi bàn giao.
 - [x] API P1: 9 integration với PostGIS, response OpenAPI, 2 unit; mobile 4 màn + 1 API boundary; web hai tài khoản.
+- [ ] SDD local: 240 mobile/118 API, coverage/build đạt; web 19 đạt/1 lỗi gián đoạn danh mục, kiểm riêng 3/3 đạt. Chưa đánh dấu verify local đạt; CI commit mới phải chạy đủ.
 - [x] iOS simulator: mời qua Mailpit, xem thành viên, cấp jobs.assign bằng mật khẩu; kiểm lại DB. Android emulator: xác minh email từ Mailpit, nhận lời, preview/Hủy/xác nhận tự rời. Chỉ máy ảo, không thiết bị thật.
 - [x] Báo cáo [B04-01](bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md)/[B04-02](bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md), ảnh DEMO và Mermaid render; spec/mirror/ZIP/Drive theo phạm vi, sổ v1.49.
 - [x] Các suite SDD-PROJECT đã chạy đạt: lint/typecheck/tooling/mobile/API/coverage/build/web/load/prototype/Storybook. Giữ 80 tiêu chí, 93 QA/130 operation, 59 partial/34 unmapped. Bằng chứng đúng fingerprint bộ file bàn giao là `test-results/sdd/SDD-PROJECT/result.json` và lệnh `--phase verify`; lượt trước đổi tài liệu bị checker từ chối, không dùng thay evidence cuối.
@@ -262,13 +273,13 @@ Nguồn: [spec](../../ui-ux/specs/finance-batch.md), [backlog](../technical-desi
 | [ ] | B08-01 | Ngân hàng đã xác minh, topup/payout và hàng đợi duyệt | Một ngân hàng; mức rút 50.000 theo spec; quyền tài chính riêng, không rút credit |
 | [ ] | B08-02 | Đối soát, idempotency và kết quả unknown | Giữ tiền khi chưa rõ; không ghi có/chuyển lại hai lần; nhà cung cấp/ngân sách chưa chọn |
 
-## B09 — Hỗ trợ/admin — chưa có code sản phẩm
+## B09 — Hỗ trợ/admin — đã có lát phía người gửi local/test
 
 Nguồn: [spec](../../ui-ux/specs/support-moderation.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F14/F15/F16; QA-038,039,047,048.
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B09-01 | Báo cáo, chứng cứ, trao đổi và hàng đợi hỗ trợ | URL có quyền, audit; đóng báo cáo không sinh bút toán |
+| [ ] | B09-01 | Báo cáo, chứng cứ, trao đổi và hàng đợi hỗ trợ | Phía người gửi/ảnh local đã có B09-01; hàng đợi và xử lý admin/MFA còn thiếu. Không sinh bút toán |
 | [ ] | B09-02 | Admin hoàn tất thay: preview/fresh auth/lý do/recheck | Dùng cùng settlement service; không giả dấu nhận tiền, không tự mở đánh giá |
 | [ ] | B09-03 | Xử lý khôi phục/xóa, user/partner/verification/admin grants | Nối các luồng B01/B02; nguyên tắc tối thiểu quyền và lịch sử quyết định |
 

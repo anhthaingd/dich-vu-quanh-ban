@@ -26,7 +26,7 @@ export class AssetsService {
  }
  private url(id:string,user:string,session:string,kind:string){return this.configured().origin+'/v1/assets/'+id+'/'+(kind==='public-content'?'content':kind)+'?grant='+this.sign(id,user,session,kind);}
  grant(header:string|undefined,body:unknown,key:string){
-  this.configured();const v=object(body,['purpose','mime','bytes','checksum']);if(!['result','review'].includes(String(v.purpose))||!['image/jpeg','image/png','image/webp'].includes(String(v.mime))||!Number.isSafeInteger(v.bytes)||Number(v.bytes)<1||Number(v.bytes)>MAX_BYTES||(v.checksum!==undefined&&(typeof v.checksum!=='string'||!/^[a-f0-9]{64}$/.test(v.checksum))))throw new BadRequestException();
+  this.configured();const v=object(body,['purpose','mime','bytes','checksum']);if(!['result','review','evidence'].includes(String(v.purpose))||!['image/jpeg','image/png','image/webp'].includes(String(v.mime))||!Number.isSafeInteger(v.bytes)||Number(v.bytes)<1||Number(v.bytes)>MAX_BYTES||(v.checksum!==undefined&&(typeof v.checksum!=='string'||!/^[a-f0-9]{64}$/.test(v.checksum))))throw new BadRequestException();
   return this.tx.run(header,'assets.grant',key,v,async(db,actor)=>{
    const count=(await db.query("SELECT count(*) FROM assets WHERE uploader_id=$1 AND created_at>now()-interval '1 hour'",[actor.user.id])).rows[0].count;if(Number(count)>=100)throw new BadRequestException();
    const a=(await db.query("INSERT INTO assets(uploader_id,object_key,purpose,mime,bytes,status,checksum) VALUES($1,$2,$6,$3,$4,'pending',$5) RETURNING id",[actor.user.id,randomUUID(),v.mime,v.bytes,v.checksum??null,v.purpose])).rows[0];
@@ -60,6 +60,7 @@ export class AssetsService {
  private dto(a:{id:string;status:string},user:string,session:string){return {id:a.id,status:a.status,download_url:a.status==='ready'?this.url(a.id,user,session,'content'):null,expires_at:a.status==='ready'?new Date(Date.now()+TTL).toISOString():null};}
  private async authorized(db:PoolClient,id:string,user:string){
   const a=(await db.query('SELECT * FROM assets WHERE id=$1',[id])).rows[0];if(!a)throw new NotFoundException();
+  if(a.purpose==='evidence'){if(a.uploader_id!==user)throw new NotFoundException();return a;}
   const reviews=(await db.query('SELECT j.id,j.partner_id,j.customer_id FROM reviews r JOIN jobs j ON j.id=r.job_id WHERE r.asset_id=$1',[id])).rows;
   if(reviews.length){
    for(const j of reviews){

@@ -777,8 +777,28 @@
       "kind": "product"
     },
     {
-      "path": "apps/mobile/src/features/support/.gitkeep",
-      "kind": "placeholder"
+      "path": "apps/mobile/src/features/support/api/support-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/support/api/support-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/support/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/support/screens/EvidencePhoto.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/support/screens/Support.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/support/screens/SupportScreen.tsx",
+      "kind": "product"
     },
     {
       "path": "apps/mobile/src/features/wallet/.gitkeep",
@@ -1114,6 +1134,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B06-01-hoa-don-va-quyet-toan-test.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-01-ho-tro-va-bao-cao.md",
       "kind": "documentation"
     },
     {
@@ -1593,6 +1617,18 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-01/ios-report.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-01/web-closed-history.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-01/web-report.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-01/android-edited.png",
       "kind": "documentation"
     },
@@ -2029,6 +2065,10 @@
       "kind": "product"
     },
     {
+      "path": "services/api/migrations/014_support_reports.sql",
+      "kind": "product"
+    },
+    {
       "path": "services/api/package.json",
       "kind": "product"
     },
@@ -2461,8 +2501,20 @@
       "kind": "product"
     },
     {
-      "path": "services/api/src/modules/support/.gitkeep",
-      "kind": "placeholder"
+      "path": "services/api/src/modules/support/support.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/support/support.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/support/support.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/support/support.service.ts",
+      "kind": "product"
     },
     {
       "path": "services/api/src/modules/wallet/.gitkeep",
@@ -2534,6 +2586,10 @@
     },
     {
       "path": "services/api/test/integration/reviews.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/support.test.ts",
       "kind": "test"
     },
     {
@@ -2714,6 +2770,10 @@
     },
     {
       "path": "tests/e2e/web/shell.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/support.spec.mjs",
       "kind": "test"
     },
     {
@@ -3326,6 +3386,8 @@
       "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
       "apps/mobile/src/features/search/components/results-map-model.test.ts",
       "apps/mobile/src/features/search/state/partner-search.test.ts",
+      "apps/mobile/src/features/support/api/support-api.test.ts",
+      "apps/mobile/src/features/support/screens/Support.test.tsx",
       "apps/mobile/src/lib/http/request.test.ts",
       "apps/mobile/src/lib/i18n/i18n.test.ts",
       "apps/mobile/src/lib/i18n/locale-state.test.ts",
@@ -3349,6 +3411,7 @@
       "services/api/test/integration/profile.test.ts",
       "services/api/test/integration/realtime.test.ts",
       "services/api/test/integration/reviews.test.ts",
+      "services/api/test/integration/support.test.ts",
       "services/api/test/unit/catalog-config.test.ts",
       "services/api/test/unit/catalog-seed.test.ts",
       "services/api/test/unit/demo-options.test.ts",
@@ -3376,7 +3439,8 @@
       "tests/e2e/web/reviews.spec.mjs",
       "tests/e2e/web/search-map.spec.mjs",
       "tests/e2e/web/search-service.spec.mjs",
-      "tests/e2e/web/shell.spec.mjs"
+      "tests/e2e/web/shell.spec.mjs",
+      "tests/e2e/web/support.spec.mjs"
     ],
     "tooling": [
       "scripts/diagnostics/export.test.mjs",
@@ -3491,7 +3555,10 @@
     "REV-01-AC-03",
     "REV-03-AC-01",
     "REV-03-AC-02",
-    "REV-03-AC-03"
+    "REV-03-AC-03",
+    "SUP-01-AC-01",
+    "SUP-01-AC-02",
+    "SUP-01-AC-03"
   ],
   "qa": [
     {
@@ -3876,9 +3943,13 @@
     },
     {
       "id": "QA-047",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "SUP-01-AC-01",
+        "SUP-01-AC-02",
+        "SUP-01-AC-03"
+      ],
+      "reason": "B09-01 reporter/local image flow mapped. Admin decisions/MFA and selected chat evidence remain unimplemented; not full QA certification."
     },
     {
       "id": "QA-048",
@@ -5202,33 +5273,49 @@
       "id": "createReport",
       "method": "POST",
       "path": "/reports",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "SUP-01-AC-01",
+        "SUP-01-AC-02",
+        "SUP-01-AC-03"
+      ],
+      "reason": "B09-01 reporter-only local support; admin/MFA deferred."
     },
     {
       "id": "listReports",
       "method": "GET",
       "path": "/reports",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "SUP-01-AC-01",
+        "SUP-01-AC-02",
+        "SUP-01-AC-03"
+      ],
+      "reason": "B09-01 reporter-only local support; admin/MFA deferred."
     },
     {
       "id": "getReport",
       "method": "GET",
       "path": "/reports/{id}",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "SUP-01-AC-01",
+        "SUP-01-AC-02",
+        "SUP-01-AC-03"
+      ],
+      "reason": "B09-01 reporter-only local support; admin/MFA deferred."
     },
     {
       "id": "addReportUpdate",
       "method": "POST",
       "path": "/reports/{id}/updates",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "SUP-01-AC-01",
+        "SUP-01-AC-02",
+        "SUP-01-AC-03"
+      ],
+      "reason": "B09-01 reporter-only local support; admin/MFA deferred."
     },
     {
       "id": "adminReports",
@@ -6148,6 +6235,26 @@
       "method": "PUT",
       "path": "/reviews/{id}/reply",
       "file": "services/api/src/modules/reviews/reviews.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/reports",
+      "file": "services/api/src/modules/support/support.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/reports",
+      "file": "services/api/src/modules/support/support.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/reports/{id}",
+      "file": "services/api/src/modules/support/support.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/reports/{id}/updates",
+      "file": "services/api/src/modules/support/support.controller.ts"
     }
   ],
   "contractGaps": [

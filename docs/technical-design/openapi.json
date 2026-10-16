@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Dịch vụ quanh bạn — API thiết kế",
-    "version": "0.1.15",
+    "version": "0.1.16",
     "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local. B01-04 (06/10/2026): Me.version bat buoc >=1, PATCH /me sua ten theo expected_version va Idempotency-Key da duyet. MAP-01 (07/10/2026): thử MapLibre + Geoapify Free và bộ chọn 4 nơi theo yêu cầu triển khai; chưa billing/production. MAP-02 (07/10/2026): ghim địa điểm công khai trong kết quả; không công khai tâm vùng. P0-2: Job includes service mode, time mode, location ID, note and ETA. PartnerProfile includes public location IDs and skill service modes. HTTP chat pilot; OTP and WebSocket remain Pending. MAP-03/P0-2: bỏ nhập tọa độ; Job có chi tiết nơi/giờ/ETA; PartnerProfile có public_locations/service_modes; HTTP chat local/test, WebSocket Pending. P0-3: Invoice.note/revision_reason; adapter ảnh local/test đã duyệt, chưa production. P1-01: xác minh local/test và vòng đời đội ngũ được duyệt 13/10/2026; chưa gửi thật."
   },
   "servers": [
@@ -10105,7 +10105,7 @@
           "Hỗ trợ"
         ],
         "summary": "Gửi báo cáo",
-        "description": "Quyền: User và tài nguyên đúng quyền. ",
+        "description": "Quyền: User và tài nguyên đúng quyền.  B09-01: non-blank subject and body; referenced resources must be currently accessible. Invoice reports bind the exact invoice version. Ready evidence images must belong to the reporter. Retry does not create duplicate reports.",
         "security": [
           {
             "bearerAuth": []
@@ -10484,7 +10484,7 @@
           "Hỗ trợ"
         ],
         "summary": "Bổ sung chứng cứ",
-        "description": "Quyền: Participant case. ",
+        "description": "Quyền: Participant case.  B09-01 local: reporter only; closed reports are read-only. An update while awaiting_evidence returns the case to reviewing; retry preserves the original result. Neither action changes jobs, invoices, or money.",
         "security": [
           {
             "bearerAuth": []
@@ -20020,11 +20020,17 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Required non-blank report subject, matching the support prototype."
           }
         },
         "required": [
           "kind",
-          "body"
+          "body",
+          "subject"
         ],
         "description": "Đối chiếu quyền/tài nguyên. Báo cáo hóa đơn luôn gắn đúng phiên bản; không tự đổi tiền."
       },
@@ -20049,13 +20055,22 @@
           "created_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "uniqueItems": true
           }
         },
         "required": [
           "actor_id",
           "body",
           "visibility",
-          "created_at"
+          "created_at",
+          "evidence_ids"
         ]
       },
       "Report": {
@@ -20106,6 +20121,18 @@
             "items": {
               "$ref": "#/components/schemas/ReportUpdate"
             }
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "uniqueItems": true
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "required": [
@@ -20116,8 +20143,11 @@
           "body",
           "job_id",
           "invoice_id",
-          "updates"
-        ]
+          "updates",
+          "evidence_ids",
+          "subject"
+        ],
+        "description": "B09-01: subject and private image evidence approved 2026-10-16. evidence_ids contains initial evidence; each update carries its own evidence_ids. Only reporter access implemented in this local slice; admin handling/MFA deferred. No money or job mutations."
       },
       "ReportReply": {
         "type": "object",

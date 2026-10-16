@@ -127,3 +127,13 @@ test('chat draft remains editable while the read watermark holds the account loc
  expect(screen.getByTestId('chat-body').props.editable).toBe(true);fireEvent.changeText(screen.getByTestId('chat-body'),'DEMO draft during background read');expect(screen.getByTestId('chat-send')).toBeDisabled();
  await act(async()=>finish({id:'room',state:'read'}));await enabled('chat-send');expect(screen.getByTestId('chat-body').props.value).toBe('DEMO draft during background read');
 });
+
+test('job action draft stays editable during a background snapshot while confirmation waits',async()=>{
+ const f=workFixture();mount(f,'JobDetail');await enabled('job-reload');
+ let finish!:(value:typeof job)=>void;f.jobs.get.mockReturnValueOnce(new Promise(resolve=>{finish=resolve;}));
+ fireEvent.press(screen.getByTestId('job-reload'));await waitFor(()=>expect(f.manager.getSnapshot().busy).toBe(true));
+ expect(screen.getByTestId('job-action-reschedule')).not.toBeDisabled();fireEvent.press(screen.getByTestId('job-action-reschedule'));
+ expect(screen.getByTestId('job-date').props.editable).toBe(true);fireEvent.changeText(screen.getByTestId('job-date'),'2099-12-11');
+ expect(screen.getByTestId('job-action-confirm')).toBeDisabled();expect(f.jobs.change).not.toHaveBeenCalled();
+ await act(async()=>finish(job));await enabled('job-action-confirm');expect(screen.getByTestId('job-date').props.value).toBe('2099-12-11');
+});
