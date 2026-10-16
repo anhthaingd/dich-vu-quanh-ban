@@ -50,6 +50,8 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 
 ## Báo cáo đã có
 
+- [B10-01 — Đánh giá sau công việc](bao-cao/B10-01-danh-gia-sau-cong-viec.md): Q01, sao/nội dung/sửa/gỡ, quyền và điểm công khai; ảnh/phản hồi chờ contract.
+
 - [B05-04 — Lịch tổng hợp công việc](bao-cao/B05-04-lich-tong-hop-cong-viec.md): xem tháng/ngày, đủ trang, giờ Việt Nam, quyền và đổi lịch.
 
 - [B05-03 — Tách Tin nhắn và Thông báo](bao-cao/B05-03-tach-tin-nhan-va-thong-bao.md): MSG-01, badge/đọc độc lập và loại chat cũ khỏi inbox, kiểm native hai phiên.

@@ -3052,6 +3052,138 @@
       ],
       "gaps": "Không chứng nhận offline storage, push ngoài app, thiết bị vật lý, UAT hoặc toàn bộ QA. Cử chỉ native cần bằng chứng riêng.",
       "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "REV-01-AC-01",
+      "requirement": "FR-REV-001; FR-REV-004; Q01",
+      "qa": [
+        "QA-044"
+      ],
+      "sources": [
+        "QA-044"
+      ],
+      "description": "Q01, one review per direction; concurrency, idempotency, current authorization and validation.",
+      "code": [
+        "services/api/src/modules/reviews/reviews.service.ts",
+        "services/api/migrations/012_reviews.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/reviews.test.ts",
+          "name": "reviews require settlement and both payment marks; concurrent requests create one per direction"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/reviews.test.ts",
+          "name": "review rights are checked on retry and current membership; pagination is actor and scope bound"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/reviews.test.ts",
+          "name": "review input rejects invalid stars, forged direction, foreign assets and missing resources"
+        }
+      ],
+      "gaps": "Core stars/text/removal only. Images/replies/admin/support and customer history via other jobs remain open. Admin hidden uses DB fixture; no claim of admin endpoint, native/CI/UAT/production.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "REV-01-AC-02",
+      "requirement": "FR-REV-005; FR-REV-006; FR-REV-007",
+      "qa": [
+        "QA-045",
+        "QA-046"
+      ],
+      "sources": [
+        "QA-045",
+        "QA-046"
+      ],
+      "description": "Independent removal and moderation, audit/CAS, private customer reviews; public ratings count visible reviews only.",
+      "code": [
+        "services/api/src/modules/reviews/reviews.service.ts",
+        "services/api/src/modules/search/search.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/reviews.test.ts",
+          "name": "reviews preserve audit, CAS and admin hidden across edit and own removal; public excludes customer reviews"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/reviews.test.ts",
+          "name": "public search ratings count only visible customer-to-partner reviews and become null when none remain"
+        }
+      ],
+      "gaps": "Core stars/text/removal only. Images/replies/admin/support and customer history via other jobs remain open. Admin hidden uses DB fixture; no claim of admin endpoint, native/CI/UAT/production.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "REV-01-AC-03",
+      "requirement": "FR-REV-001; FR-REV-004; FR-REV-005",
+      "qa": [
+        "QA-044",
+        "QA-045"
+      ],
+      "sources": [
+        "QA-044",
+        "QA-045"
+      ],
+      "description": "App two-party review, identical retry, edit/removal and public reading; drafts, versions and revoked access.",
+      "code": [
+        "apps/mobile/src/features/reviews/screens/ReviewsScreen.tsx",
+        "apps/mobile/src/features/reviews/screens/PartnerReviews.tsx",
+        "apps/mobile/src/features/reviews/api/reviews-api.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "reviews keep the same payload after lost response, then edit and remove the existing review"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "reviews stay locked without both marks, retain draft on reload error and clear private content when access is lost"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "review conflict requires an explicit reload before editing the latest version"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "public partner reviews page loads more and retries without displaying failed partial pages"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "refreshing an open review draft does not silently adopt a newer edit version"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/api/reviews-api.test.ts",
+          "name": "review API validates data and preserves mutation keys, versions and private/public routes"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/reviews.spec.mjs",
+          "name": "reviews: both directions, lost response retry, edit and removal through real API"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "review reads wait for session contention without losing the loaded form"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "returning to a public profile restarts pagination and drops reviews removed since the previous visit"
+        }
+      ],
+      "gaps": "Core stars/text/removal only. Images/replies/admin/support and customer history via other jobs remain open. Admin hidden uses DB fixture; no claim of admin endpoint, native/CI/UAT/production.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
     }
   ]
 }

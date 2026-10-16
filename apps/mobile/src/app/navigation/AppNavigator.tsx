@@ -1,3 +1,4 @@
+import {ReviewsScreen} from '../../features/reviews/screens/ReviewsScreen';
 import {NotificationsScreen,NotificationSettingsScreen} from '../../features/notifications/screens/NotificationsScreen';
 import {OrganizationsScreen} from '../../features/organizations/screens/OrganizationsScreen';
 import {TeamScreen} from '../../features/organizations/screens/TeamScreen';
@@ -37,6 +38,7 @@ export function AppNavigator() {
       <Stack.Screen name="PartnerProfile" component={PartnerProfileScreen} />
       <Stack.Screen name="Jobs" component={JobsScreen} />
       <Stack.Screen name="JobCreate" component={JobCreateScreen} />
+      <Stack.Screen name="Reviews" component={ReviewsScreen} />
       <Stack.Screen name="Invoice" component={InvoiceScreen} />
       <Stack.Screen name="JobDetail" component={JobDetailScreen} />
       <Stack.Screen name="Conversations" component={ConversationsScreen} />

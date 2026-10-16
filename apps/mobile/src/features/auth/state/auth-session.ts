@@ -1,3 +1,5 @@
+import type {ReviewsApi} from '../../reviews/api/reviews-api';
+import type {ReviewInput} from '../../reviews/models';
 import type {RealtimeClient} from '../../../lib/realtime/realtime-client';
 import type {NotificationsApi,NotificationSettings} from '../../notifications/api/notifications-api';
 import type {OrganizationsApi} from '../../organizations/api/organizations-api';
@@ -20,7 +22,7 @@ export class AuthSession {
   private session: Session | null = null;
   private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
   private readonly listeners = new Set<() => void>();
-  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi, private readonly notifications?:NotificationsApi) {}
+  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi, private readonly notifications?:NotificationsApi, private readonly reviews?:ReviewsApi) {}
   bindRealtime(client:RealtimeClient){
     const update=()=>client.setSession(this.session?{owner:this.session.user.id,token:this.session.access_token,expiresAt:Date.parse(this.session.expires_at)}:null);
     client.setRefresh(async()=>{const owner=this.session?.user.id;if(!owner)throw new ApiError('UNAUTHENTICATED');await this.accountOperation(owner,async()=>{await this.rotate();});});
@@ -154,6 +156,11 @@ export class AuthSession {
   setTeamContact=(o:string,p:string,id:string|null,v:number,k:string)=>this.accountOperation(o,t=>this.teamApi().setContact(t,p,id,v,k));
   requestChallenge=(o:string,contact:string)=>this.accountOperation(o,t=>this.teamApi().challenge(t,contact));
   verifyChallenge=(o:string,id:string,code:string)=>this.accountOperation(o,t=>this.teamApi().verify(t,id,code));
+  private reviewsApi(){if(!this.reviews)throw new ApiError('CONFIG');return this.reviews;}
+  jobReviews=(o:string,j:string,c?:string)=>this.accountOperation(o,t=>this.reviewsApi().list(t,j,c));
+  createReview=(o:string,j:string,b:ReviewInput,k:string)=>this.accountOperation(o,t=>this.reviewsApi().create(t,j,b,k));
+  editReview=(o:string,id:string,b:ReviewInput,k:string)=>this.accountOperation(o,t=>this.reviewsApi().edit(t,id,b,k));
+  reviewVisibility=(o:string,id:string,v:number,removed:boolean,k:string)=>this.accountOperation(o,t=>this.reviewsApi().visibility(t,id,v,removed,k));
   private invoicesApi(){if(!this.invoices)throw new ApiError('CONFIG');return this.invoices;}
   getInvoice=(owner:string,job:string)=>this.accountOperation(owner,t=>this.invoicesApi().get(t,job));
   saveInvoice=(owner:string,job:string,input:InvoiceDraft,key:string)=>this.accountOperation(owner,t=>this.invoicesApi().save(t,job,input,key));

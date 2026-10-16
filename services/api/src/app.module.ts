@@ -1,3 +1,4 @@
+import {ReviewsModule} from './modules/reviews/reviews.module.js';
 import {RealtimeModule} from './modules/realtime/realtime.module.js';
 import {NotificationsModule} from './modules/notifications/notifications.module.js';
 import {OrganizationsModule} from './modules/organizations/organizations.module.js';
@@ -24,7 +25,7 @@ export class AppModule {
     return {
       module: AppModule,
       imports: [LocationsModule.register(settings.geoapifyKey), LoggingModule.register(log), DatabaseModule.register(settings, database, log), CatalogModule.register(settings.cursorSecret), HealthModule,
-        ...(settings.authSecret ? [AuthModule.register(settings.authSecret,settings.localMessages), ...(settings.realtimeEnabled?[RealtimeModule]:[]), NotificationsModule.register(settings.cursorSecret), AccountsModule.register(settings.cursorSecret), OrganizationsModule.register(settings.cursorSecret), InvoicesModule.register(settings.cursorSecret), AssetsModule.register(settings.authSecret,settings.localAssets), PartnersModule.register(settings.cursorSecret), JobsModule.register(settings.cursorSecret), ChatModule.register(settings.cursorSecret)] : [])],
+        ...(settings.authSecret ? [AuthModule.register(settings.authSecret,settings.localMessages), ...(settings.realtimeEnabled?[RealtimeModule]:[]), ReviewsModule.register(settings.cursorSecret), NotificationsModule.register(settings.cursorSecret), AccountsModule.register(settings.cursorSecret), OrganizationsModule.register(settings.cursorSecret), InvoicesModule.register(settings.cursorSecret), AssetsModule.register(settings.authSecret,settings.localAssets), PartnersModule.register(settings.cursorSecret), JobsModule.register(settings.cursorSecret), ChatModule.register(settings.cursorSecret)] : [])],
     };
   }
 }

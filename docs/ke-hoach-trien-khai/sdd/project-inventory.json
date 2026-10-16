@@ -693,6 +693,30 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/mobile/src/features/reviews/api/reviews-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/reviews/api/reviews-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/reviews/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/reviews/screens/PartnerReviews.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/reviews/screens/ReviewsScreen.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/search/.gitkeep",
       "kind": "placeholder"
     },
@@ -1086,6 +1110,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B06-01-hoa-don-va-quyet-toan-test.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-01-danh-gia-sau-cong-viec.md",
       "kind": "documentation"
     },
     {
@@ -1557,6 +1585,22 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-01/android-edited.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-01/android-reviews.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-01/ios-form.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-01/ios-saved.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B03-01-geoapify-30-dia-chi.json",
       "kind": "documentation"
     },
@@ -1958,6 +2002,10 @@
     },
     {
       "path": "services/api/migrations/011_realtime.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/012_reviews.sql",
       "kind": "product"
     },
     {
@@ -2365,6 +2413,22 @@
       "kind": "product"
     },
     {
+      "path": "services/api/src/modules/reviews/reviews.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/reviews/reviews.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/reviews/reviews.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/reviews/reviews.service.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/modules/search/.gitkeep",
       "kind": "placeholder"
     },
@@ -2446,6 +2510,10 @@
     },
     {
       "path": "services/api/test/integration/realtime.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/reviews.test.ts",
       "kind": "test"
     },
     {
@@ -2610,6 +2678,10 @@
     },
     {
       "path": "tests/e2e/web/realtime.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/reviews.spec.mjs",
       "kind": "test"
     },
     {
@@ -3227,6 +3299,8 @@
       "apps/mobile/src/features/partners/api/partners-api.test.ts",
       "apps/mobile/src/features/partners/screens/Partners.test.tsx",
       "apps/mobile/src/features/partners/state/partner-editor.test.ts",
+      "apps/mobile/src/features/reviews/api/reviews-api.test.ts",
+      "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
       "apps/mobile/src/features/search/components/ResultsMap.native.test.tsx",
       "apps/mobile/src/features/search/components/SearchResultsMap.test.tsx",
       "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
@@ -3254,6 +3328,7 @@
       "services/api/test/integration/partners.test.ts",
       "services/api/test/integration/profile.test.ts",
       "services/api/test/integration/realtime.test.ts",
+      "services/api/test/integration/reviews.test.ts",
       "services/api/test/unit/catalog-config.test.ts",
       "services/api/test/unit/catalog-seed.test.ts",
       "services/api/test/unit/demo-options.test.ts",
@@ -3278,6 +3353,7 @@
       "tests/e2e/web/partners.spec.mjs",
       "tests/e2e/web/profile.spec.mjs",
       "tests/e2e/web/realtime.spec.mjs",
+      "tests/e2e/web/reviews.spec.mjs",
       "tests/e2e/web/search-map.spec.mjs",
       "tests/e2e/web/search-service.spec.mjs",
       "tests/e2e/web/shell.spec.mjs"
@@ -3389,7 +3465,10 @@
     "MSG-01-AC-03",
     "CAL-01-AC-01",
     "CAL-01-AC-02",
-    "REFRESH-01-AC-01"
+    "REFRESH-01-AC-01",
+    "REV-01-AC-01",
+    "REV-01-AC-02",
+    "REV-01-AC-03"
   ],
   "qa": [
     {
@@ -3741,21 +3820,29 @@
     },
     {
       "id": "QA-044",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "REV-01-AC-01",
+        "REV-01-AC-03"
+      ],
+      "reason": "B10-01 assertions reviewed. Images/replies/admin and cross-job customer history remain open. Not full QA certification."
     },
     {
       "id": "QA-045",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "REV-01-AC-02",
+        "REV-01-AC-03"
+      ],
+      "reason": "B10-01 assertions reviewed. Images/replies/admin and cross-job customer history remain open. Not full QA certification."
     },
     {
       "id": "QA-046",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "REV-01-AC-02"
+      ],
+      "reason": "B10-01 assertions reviewed. Images/replies/admin and cross-job customer history remain open. Not full QA certification."
     },
     {
       "id": "QA-047",
@@ -4999,41 +5086,61 @@
       "id": "listPartnerReviews",
       "method": "GET",
       "path": "/partners/{id}/reviews",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "REV-01-AC-01",
+        "REV-01-AC-02",
+        "REV-01-AC-03"
+      ],
+      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial."
     },
     {
       "id": "getJobReviews",
       "method": "GET",
       "path": "/jobs/{id}/reviews",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "REV-01-AC-01",
+        "REV-01-AC-02",
+        "REV-01-AC-03"
+      ],
+      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial."
     },
     {
       "id": "createReview",
       "method": "POST",
       "path": "/jobs/{id}/reviews",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "REV-01-AC-01",
+        "REV-01-AC-02",
+        "REV-01-AC-03"
+      ],
+      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial."
     },
     {
       "id": "editReview",
       "method": "PATCH",
       "path": "/reviews/{id}",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "REV-01-AC-01",
+        "REV-01-AC-02",
+        "REV-01-AC-03"
+      ],
+      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial."
     },
     {
       "id": "toggleOwnReview",
       "method": "POST",
       "path": "/reviews/{id}/visibility",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "REV-01-AC-01",
+        "REV-01-AC-02",
+        "REV-01-AC-03"
+      ],
+      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial."
     },
     {
       "id": "replyReview",
@@ -5960,6 +6067,31 @@
       "method": "PUT",
       "path": "/partners/{id}/availability",
       "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/reviews",
+      "file": "services/api/src/modules/reviews/reviews.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/jobs/{id}/reviews",
+      "file": "services/api/src/modules/reviews/reviews.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/jobs/{id}/reviews",
+      "file": "services/api/src/modules/reviews/reviews.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/reviews/{id}",
+      "file": "services/api/src/modules/reviews/reviews.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/reviews/{id}/visibility",
+      "file": "services/api/src/modules/reviews/reviews.controller.ts"
     }
   ],
   "contractGaps": [
@@ -5993,7 +6125,7 @@
     "QA-033 concurrent payout/fee holds",
     "QA-034/038/039 admin completion/locked overdue holds Q02",
     "QA-040/041/042 banking/topup/payout",
-    "QA-044/045/046 reviews APIs/visibility",
+    "QA-044/045/046: B10-01 core mapped; images/replies/admin and customer history via other jobs remain open",
     "QA-047/048/049 support/admin moderation/catalog management",
     "QA-050 notifications worker",
     "QA-051 getOperation endpoint",

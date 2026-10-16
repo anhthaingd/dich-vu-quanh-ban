@@ -12,6 +12,7 @@ export type RootStackParamList = {
   JobCreate: {partnerId:string};
   JobDetail: {id:string};
   Invoice: {id:string};
+  Reviews: {id:string};
   Conversations: {jobId?:string}|undefined;
   Conversation: {id:string;jobId?:string};
   CatalogHome: undefined;

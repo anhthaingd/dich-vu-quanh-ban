@@ -1,5 +1,18 @@
 # Checklist chức năng và bằng chứng
 
+## B10-01 — Đánh giá sao/nội dung và điểm công khai, 15/10/2026
+
+- [x] DB/API: Q01, một bản mỗi chiều, sửa/gỡ/khôi phục, audit, retry và quyền hiện hành; 5 bài PostGIS tập trung đạt.
+- [x] App VI/EN/JA: đánh giá từ công việc, bản gửi/nhận, sửa/gỡ và danh sách public trên hồ sơ. Giữ phiên bản lúc bắt đầu sửa; không lấy phiên bản mới để ghi đè bản nháp cũ.
+- [x] Web hai tài khoản: đủ dấu, gửi, mất phản hồi/retry cùng key, sửa, gỡ/hiện lại; dữ liệu test thật.
+- [x] iOS 27 simulator gửi 5 sao; Android 16 emulator đọc hai chiều và sửa 5 xuống 4 sao qua API DEMO; ảnh trong báo cáo.
+- SDD toàn repo: 102 tiêu chí, giữ 68 QA partial/29 unmapped. Kết quả máy kiểm của bộ file cuối nằm ở `test-results/sdd/SDD-PROJECT/result.json` và `evidence.json`, kiểm lại bằng `sdd:check --phase verify`; không dùng lượt kiểm tập trung thay thế.
+- [ ] Ảnh/phản hồi và metadata quyền response: đã hỏi quyết định bổ sung contract, chưa duyệt. Admin/support và lịch sử đánh giá khách qua quan hệ việc khác chưa triển khai.
+- [ ] Commit/push, remote CI, điện thoại thật, UAT và production chưa thực hiện.
+
+[Báo cáo B10-01 và giới hạn](bao-cao/B10-01-danh-gia-sau-cong-viec.md). Không đóng toàn B10-01/B10 hoặc P1-2.
+
+
 ## B05-05 — Tự cập nhật và kéo làm mới, 15/10/2026
 
 - [x] Bỏ nút tải lại thường trực ở danh sách phòng/chat/thông báo, thêm kéo xuống native và retry riêng khi lỗi.
@@ -249,13 +262,13 @@ Nguồn: [spec](../../ui-ux/specs/support-moderation.md), [backlog](../technical
 | [ ] | B09-02 | Admin hoàn tất thay: preview/fresh auth/lý do/recheck | Dùng cùng settlement service; không giả dấu nhận tiền, không tự mở đánh giá |
 | [ ] | B09-03 | Xử lý khôi phục/xóa, user/partner/verification/admin grants | Nối các luồng B01/B02; nguyên tắc tối thiểu quyền và lịch sử quyết định |
 
-## B10 — Đánh giá và gọi — chưa có code sản phẩm
+## B10 — Đánh giá và gọi — đánh giá sao/nội dung đã có lát local
 
 Nguồn: [spec](../../ui-ux/specs/activity-batch.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F09/F13; QA-024,044…046.
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B10-01 | Đánh giá hai chiều, sửa/ẩn/phản hồi, tính sao | Chỉ sau đủ hai dấu Q01; mỗi chiều một đánh giá; ẩn/gỡ không tính sao |
+| [~] | B10-01 | Đánh giá hai chiều, sửa/ẩn/phản hồi, tính sao | Chỉ sau đủ hai dấu Q01; mỗi chiều một đánh giá; ẩn/gỡ không tính sao |
 | [ ] | B10-02 | Gọi trong app, đầu mối hiện hành và sau hoàn tất | Adapter/provider cần chọn; recheck quyền; không coi nút gọi hoặc mock là cuộc gọi thật |
 
 ## B11 — UAT và vận hành — chưa nghiệm thu

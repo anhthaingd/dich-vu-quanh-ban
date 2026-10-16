@@ -1,5 +1,7 @@
 # Thứ tự triển khai từng chức năng
 
+**15/10/2026 — B10-01 / P1-2:** tiếp tục đánh giá sao/nội dung/sửa/gỡ và điểm công khai theo contract hiện hành. [Báo cáo](bao-cao/B10-01-danh-gia-sau-cong-viec.md); ảnh/phản hồi chờ quyết định bổ sung contract, admin/support chưa mở. Không đóng toàn B10/P1-2.
+
 **15/10/2026 — B05-04 / P1-2:** triển khai màn lịch tổng hợp trong Công việc, dùng GET /jobs hiện hành, giờ Việt Nam, đủ trang và quyền khách/đội ngũ. [Báo cáo](bao-cao/B05-04-lich-tong-hop-cong-viec.md) ghi bằng chứng và giới hạn. Không mở provider push/production hoặc đồng bộ Drive/ui-ux; chưa đóng toàn B05.
 
 

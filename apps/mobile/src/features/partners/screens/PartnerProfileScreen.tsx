@@ -1,3 +1,4 @@
+import {PartnerReviews} from '../../reviews/screens/PartnerReviews';
 import {sessionReady} from '../../jobs/state/session-ready';
 import {Mutation} from '../../jobs/state/mutation';
 import {JobFeedback} from '../../jobs/components/JobFeedback';
@@ -108,6 +109,7 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
           ))}
         </Card>
       )}
+      <PartnerReviews key={id} id={id}/>
       <Card>
         {profile.contact === null ? (
           <Button label={t('search.loginContact')} onPress={login} />

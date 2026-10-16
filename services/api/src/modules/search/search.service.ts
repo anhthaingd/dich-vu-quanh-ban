@@ -39,8 +39,13 @@ export class SearchService {
         ORDER BY id,distance_m,distance_kind,reference_labor NULLS LAST
       )
       SELECT p.id,p.name,p.kind,p.verification_status,b.distance_m,b.distance_kind,b.reference_labor::text,
-        NULL::numeric AS stars,0 AS review_count,b.created_at::text,ml.map_location
+        rs.stars,rs.review_count,b.created_at::text,ml.map_location
       FROM best b JOIN partners p ON p.id=b.id
+      LEFT JOIN LATERAL (
+        SELECT avg(r.stars)::double precision AS stars,count(*)::integer AS review_count
+        FROM reviews r JOIN jobs j ON j.id=r.job_id WHERE j.partner_id=p.id
+        AND r.direction='customer_to_partner' AND r.hidden_at IS NULL AND r.removed_at IS NULL
+      ) rs ON true
       LEFT JOIN LATERAL (
         SELECT json_build_object('text',l.address_text,'point',json_build_object(
           'latitude',ST_Y(l.point::geometry),'longitude',ST_X(l.point::geometry))) AS map_location
