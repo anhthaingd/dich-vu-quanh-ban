@@ -1,3 +1,4 @@
+import * as Picker from 'expo-image-picker';
 import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
 import {View} from 'react-native';
 import {createNavigationContainerRef,NavigationContainer} from '@react-navigation/native';
@@ -13,10 +14,11 @@ import {PartnerReviews} from './PartnerReviews';
 import type {ReviewsApi} from '../api/reviews-api';
 import type {Review} from '../models';
 import {ApiError} from '../../../lib/http/api-error';
+jest.mock('expo-image-picker',()=>({launchImageLibraryAsync:jest.fn()}));
 const Stack=createNativeStackNavigator<RootStackParamList>();
-const review:Review={id:'r',job_id:'job',direction:'customer_to_partner',author_id:session.user.id,stars:5,body:'DEMO sent',hidden:false,removed:false,version:1};
+const review:Review={id:'r',job_id:'job',direction:'customer_to_partner',author_id:session.user.id,stars:5,body:'DEMO sent',hidden:false,removed:false,version:1,asset_id:null,reply:null,allowed_actions:['edit','visibility']};
 function fixture(){const f=invoiceFixture();f.setInvoice({...invoice,review_eligible:true});let items:Review[]=[];
- const reviews:jest.Mocked<ReviewsApi>={list:jest.fn().mockImplementation(async()=>({items,next_cursor:null})),publicList:jest.fn().mockResolvedValue({items:[],next_cursor:null}),create:jest.fn().mockImplementation(async(_t,_j,b)=>{const r={...review,...b};items=[r];return r;}),edit:jest.fn().mockImplementation(async(_t,_id,b)=>{const r={...review,...b,version:2};items=[r];return r;}),visibility:jest.fn().mockImplementation(async(_t,_id,_v,removed)=>{const r={...review,removed,version:3};items=[r];return r;})};
+ const reviews:jest.Mocked<ReviewsApi>={reply:jest.fn(),upload:jest.fn(),asset:jest.fn(),list:jest.fn().mockImplementation(async()=>({items,next_cursor:null})),publicList:jest.fn().mockResolvedValue({items:[],next_cursor:null}),create:jest.fn().mockImplementation(async(_t,_j,b)=>{const r={...review,...b};items=[r];return r;}),edit:jest.fn().mockImplementation(async(_t,_id,b)=>{const r={...review,...b,version:2};items=[r];return r;}),visibility:jest.fn().mockImplementation(async(_t,_id,_v,removed)=>{const r={...review,removed,version:3};items=[r];return r;})};
  return {...f,reviews,setReviews:(next:Review[])=>{items=next;},manager:new AuthSession(f.api,f.storage,f.accounts,f.partners,f.jobs,f.chat,f.invoices,undefined,undefined,reviews)};
 }
 function mount(f:ReturnType<typeof fixture>){return render(<AppProviders api={{categories:jest.fn(),skills:jest.fn()}}><AuthProvider manager={f.manager}><NavigationContainer><Stack.Navigator screenOptions={{headerShown:false,animation:'none'}}><Stack.Screen name="Reviews" component={ReviewsScreen} initialParams={{id:'job'}}/></Stack.Navigator></NavigationContainer></AuthProvider></AppProviders>);}
@@ -57,4 +59,18 @@ test('returning to a public profile restarts pagination and drops reviews remove
  await screen.findByText('DEMO sent');fireEvent.press(screen.getByRole('button',{name:'Xem thêm'}));await screen.findByText('Next');
  act(()=>nav.navigate('Other'));f.reviews.publicList.mockResolvedValueOnce({items:[],next_cursor:null});act(()=>nav.goBack());
  await screen.findByText('Chưa có đánh giá công khai.');expect(f.reviews.publicList.mock.calls.at(-1)).toEqual(['p',undefined]);expect(screen.queryByText('DEMO sent')).toBeNull();expect(screen.queryByText('Next')).toBeNull();
+});
+
+test('review reply keeps draft version and retry payload, then clears private draft after revocation',async()=>{
+ const f=fixture(),received:Review={...review,id:'received',author_id:'worker',direction:'partner_to_customer',allowed_actions:['reply']};f.setReviews([received]);
+ f.reviews.reply.mockRejectedValueOnce(new ApiError('NETWORK')).mockImplementation(async(_t,_id,_v,body)=>{const r={...received,version:2,reply:{body,author_id:session.user.id}};f.setReviews([r]);return r;});
+ mount(f);await screen.findByTestId('review-reply-edit');await ready();press('review-reply-edit');fireEvent.changeText(screen.getByTestId('review-reply-body'),'DEMO reply');
+ f.setReviews([{...received,version:9}]);press('reviews-reload');await ready();press('review-reply-save');await screen.findByTestId('work-retry');expect(screen.getByTestId('review-reply-save')).toBeDisabled();press('work-retry');await screen.findByText('DEMO reply');await ready();expect(f.reviews.reply.mock.calls[1]).toEqual(f.reviews.reply.mock.calls[0]);expect(f.reviews.reply.mock.calls[0][2]).toBe(1);
+ await waitFor(()=>expect(screen.queryByTestId('review-reply-body')).toBeNull());await ready();press('review-reply-edit');await waitFor(()=>expect(screen.getByTestId('review-reply-save')).not.toBeDisabled());f.reviews.reply.mockRejectedValueOnce(new ApiError('FORBIDDEN'));press('review-reply-save');await waitFor(()=>expect(f.reviews.reply).toHaveBeenCalledTimes(3));await expect(f.reviews.reply.mock.results[2].value).rejects.toMatchObject({code:'FORBIDDEN'});await screen.findByText('Bạn không có quyền hoặc dữ liệu này không còn khả dụng.');await waitFor(()=>expect(screen.queryByTestId('review-reply-body')).toBeNull());expect(screen.queryByText('DEMO reply')).toBeNull();
+});
+test('review photo upload retries the same blob, attaches it, and explicit removal sends null',async()=>{
+ const f=fixture(),photo={id:'photo',status:'ready' as const,download_url:'http://local/photo',expires_at:'2099-01-01T00:00:00Z'};
+ const blob=new Blob(['image']);jest.mocked(Picker.launchImageLibraryAsync).mockResolvedValue({canceled:false,assets:[{uri:'demo',file:blob,mimeType:'image/png',width:24,height:24}]} as Awaited<ReturnType<typeof Picker.launchImageLibraryAsync>>);
+ f.reviews.upload.mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValue(photo);mount(f);await screen.findByTestId('review-save');await ready();press('review-photo-pick');await screen.findByTestId('work-retry');press('work-retry');await screen.findByTestId('review-photo');await ready();expect(f.reviews.upload.mock.calls[1]).toEqual(f.reviews.upload.mock.calls[0]);expect(f.reviews.upload.mock.calls[0][1].type).toBe('image/png');press('review-star-5');press('review-save');await screen.findByTestId('review-edit');await ready();expect(f.reviews.create.mock.calls[0][2].asset_id).toBe('photo');
+ press('review-edit');press('review-photo-remove');press('review-save');await ready();expect(f.reviews.edit.mock.calls[0][2].asset_id).toBeNull();
 });

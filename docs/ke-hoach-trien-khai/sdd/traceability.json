@@ -3030,13 +3030,14 @@
         "QA-025",
         "rt01-contract"
       ],
-      "description": "Theo yêu cầu 15/10: kéo làm mới thay nút thường trực, giữ nội dung/bản nháp khi lỗi mạng, dừng vòng xoay và retry, xóa khi mất quyền.",
+      "description": "Theo yêu cầu 15/10: kéo làm mới thay nút thường trực, giữ nội dung/bản nháp khi lỗi mạng, dừng vòng xoay và retry, xóa khi mất quyền. Regression 16/10: profile waits/retries transient BUSY after chat; background read watermark does not lock draft input. Sending remains session-locked.",
       "code": [
         "apps/mobile/src/features/accounts/components/AccountPage.tsx",
         "apps/mobile/src/features/chat/screens/ConversationsScreen.tsx",
         "apps/mobile/src/features/chat/screens/ConversationScreen.tsx",
         "apps/mobile/src/features/notifications/NotificationsProvider.tsx",
-        "apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx"
+        "apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx",
+        "apps/mobile/src/features/partners/screens/PartnerProfileScreen.tsx"
       ],
       "tests": [
         {
@@ -3048,6 +3049,16 @@
           "suite": "mobile",
           "file": "apps/mobile/src/features/notifications/screens/Notifications.test.tsx",
           "name": "pull refresh keeps notices visible, stops after failure, retries and clears denied data"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "profile retries transient account contention before showing a load error"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "chat draft remains editable while the read watermark holds the account lock"
         }
       ],
       "gaps": "Không chứng nhận offline storage, push ngoài app, thiết bị vật lý, UAT hoặc toàn bộ QA. Cử chỉ native cần bằng chứng riêng.",
@@ -3084,7 +3095,7 @@
           "name": "review input rejects invalid stars, forged direction, foreign assets and missing resources"
         }
       ],
-      "gaps": "Core stars/text/removal only. Images/replies/admin/support and customer history via other jobs remain open. Admin hidden uses DB fixture; no claim of admin endpoint, native/CI/UAT/production.",
+      "gaps": "B10-01 core criterion only; local images/replies are mapped separately by REV-03. Admin/support and cross-job customer history remain open. No physical-device/UAT/production certification.",
       "evidenceStatus": "mapping-reviewed-not-executed"
     },
     {
@@ -3115,7 +3126,7 @@
           "name": "public search ratings count only visible customer-to-partner reviews and become null when none remain"
         }
       ],
-      "gaps": "Core stars/text/removal only. Images/replies/admin/support and customer history via other jobs remain open. Admin hidden uses DB fixture; no claim of admin endpoint, native/CI/UAT/production.",
+      "gaps": "B10-01 core criterion only; local images/replies are mapped separately by REV-03. Admin/support and cross-job customer history remain open. No physical-device/UAT/production certification.",
       "evidenceStatus": "mapping-reviewed-not-executed"
     },
     {
@@ -3182,7 +3193,109 @@
           "name": "returning to a public profile restarts pagination and drops reviews removed since the previous visit"
         }
       ],
-      "gaps": "Core stars/text/removal only. Images/replies/admin/support and customer history via other jobs remain open. Admin hidden uses DB fixture; no claim of admin endpoint, native/CI/UAT/production.",
+      "gaps": "B10-01 core criterion only; local images/replies are mapped separately by REV-03. Admin/support and cross-job customer history remain open. No physical-device/UAT/production certification.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "REV-03-AC-01",
+      "requirement": "FR-REV-004; FR-REV-006",
+      "qa": [
+        "QA-044",
+        "QA-045"
+      ],
+      "sources": [
+        "QA-044",
+        "QA-045",
+        "api-review-reply",
+        "api-review-metadata"
+      ],
+      "description": "Recipient reply uses current permission, shared review version, idempotent retry and audit without changing ratings or moderation.",
+      "code": [
+        "services/api/src/modules/reviews/reviews.service.ts",
+        "services/api/migrations/013_review_replies.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/reviews.test.ts",
+          "name": "review replies enforce recipient grants, shared version, retry and immutable audit without changing stars"
+        }
+      ],
+      "gaps": "Local storage only; no admin/support, cross-job customer history, production, physical devices or UAT. QA remains partial.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "REV-03-AC-02",
+      "requirement": "FR-REV-001; FR-REV-005; FR-REV-007",
+      "qa": [
+        "QA-044",
+        "QA-045",
+        "QA-046"
+      ],
+      "sources": [
+        "QA-044",
+        "QA-045",
+        "QA-046",
+        "api-review-asset",
+        "api-review-metadata"
+      ],
+      "description": "Review images preserve omitted fields, allow explicit removal and recheck public visibility/current membership at signed URL reads.",
+      "code": [
+        "services/api/src/modules/assets/assets.service.ts",
+        "services/api/src/modules/reviews/reviews.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/reviews.test.ts",
+          "name": "review photos recheck public visibility and private membership at signed URL reads and preserve omitted assets"
+        }
+      ],
+      "gaps": "Local storage only; no admin/support, cross-job customer history, production, physical devices or UAT. QA remains partial.",
+      "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "REV-03-AC-03",
+      "requirement": "FR-REV-001; FR-REV-004; FR-REV-006",
+      "qa": [
+        "QA-044",
+        "QA-045"
+      ],
+      "sources": [
+        "QA-044",
+        "QA-045",
+        "api-review-metadata"
+      ],
+      "description": "App displays one photo/reply, preserves draft version and retries identical payload, handles missing native Blob MIME and revocation.",
+      "code": [
+        "apps/mobile/src/features/reviews/screens/ReviewsScreen.tsx",
+        "apps/mobile/src/features/reviews/screens/ReviewPhoto.tsx",
+        "apps/mobile/src/features/reviews/screens/PartnerReviews.tsx",
+        "apps/mobile/src/features/reviews/api/reviews-api.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "review reply keeps draft version and retry payload, then clears private draft after revocation"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "review photo upload retries the same blob, attaches it, and explicit removal sends null"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/api/reviews-api.test.ts",
+          "name": "review image upload uses review purpose and resumes a completed upload without uploading twice"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/reviews.spec.mjs",
+          "name": "reviews: both directions, lost response retry, edit and removal through real API"
+        }
+      ],
+      "gaps": "Local storage only; no admin/support, cross-job customer history, production, physical devices or UAT. QA remains partial.",
       "evidenceStatus": "mapping-reviewed-not-executed"
     }
   ]

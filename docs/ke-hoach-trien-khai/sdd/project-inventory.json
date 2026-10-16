@@ -709,6 +709,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/reviews/screens/ReviewPhoto.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
       "kind": "test"
     },
@@ -1114,6 +1118,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B10-01-danh-gia-sau-cong-viec.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md",
       "kind": "documentation"
     },
     {
@@ -1601,6 +1609,14 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-03/ios-anh-va-phan-hoi.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-03/ios-gui-anh.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B03-01-geoapify-30-dia-chi.json",
       "kind": "documentation"
     },
@@ -2006,6 +2022,10 @@
     },
     {
       "path": "services/api/migrations/012_reviews.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/013_review_replies.sql",
       "kind": "product"
     },
     {
@@ -3468,7 +3488,10 @@
     "REFRESH-01-AC-01",
     "REV-01-AC-01",
     "REV-01-AC-02",
-    "REV-01-AC-03"
+    "REV-01-AC-03",
+    "REV-03-AC-01",
+    "REV-03-AC-02",
+    "REV-03-AC-03"
   ],
   "qa": [
     {
@@ -3823,26 +3846,33 @@
       "status": "partial",
       "criteria": [
         "REV-01-AC-01",
-        "REV-01-AC-03"
+        "REV-01-AC-03",
+        "REV-03-AC-01",
+        "REV-03-AC-02",
+        "REV-03-AC-03"
       ],
-      "reason": "B10-01 assertions reviewed. Images/replies/admin and cross-job customer history remain open. Not full QA certification."
+      "reason": "B10-01 core and B10-03 local photos/replies mapped. Admin/support and cross-job history remain open; QA partial."
     },
     {
       "id": "QA-045",
       "status": "partial",
       "criteria": [
         "REV-01-AC-02",
-        "REV-01-AC-03"
+        "REV-01-AC-03",
+        "REV-03-AC-01",
+        "REV-03-AC-02",
+        "REV-03-AC-03"
       ],
-      "reason": "B10-01 assertions reviewed. Images/replies/admin and cross-job customer history remain open. Not full QA certification."
+      "reason": "B10-01 core and B10-03 local photos/replies mapped. Admin/support and cross-job history remain open; QA partial."
     },
     {
       "id": "QA-046",
       "status": "partial",
       "criteria": [
-        "REV-01-AC-02"
+        "REV-01-AC-02",
+        "REV-03-AC-02"
       ],
-      "reason": "B10-01 assertions reviewed. Images/replies/admin and cross-job customer history remain open. Not full QA certification."
+      "reason": "B10-01 core and B10-03 local photos/replies mapped. Admin/support and cross-job history remain open; QA partial."
     },
     {
       "id": "QA-047",
@@ -5090,9 +5120,12 @@
       "criteria": [
         "REV-01-AC-01",
         "REV-01-AC-02",
-        "REV-01-AC-03"
+        "REV-01-AC-03",
+        "REV-03-AC-01",
+        "REV-03-AC-02",
+        "REV-03-AC-03"
       ],
-      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial."
+      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial. B10-03 local review photo/reply metadata and current ACL reviewed; not full product certification."
     },
     {
       "id": "getJobReviews",
@@ -5102,9 +5135,12 @@
       "criteria": [
         "REV-01-AC-01",
         "REV-01-AC-02",
-        "REV-01-AC-03"
+        "REV-01-AC-03",
+        "REV-03-AC-01",
+        "REV-03-AC-02",
+        "REV-03-AC-03"
       ],
-      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial."
+      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial. B10-03 local review photo/reply metadata and current ACL reviewed; not full product certification."
     },
     {
       "id": "createReview",
@@ -5114,9 +5150,12 @@
       "criteria": [
         "REV-01-AC-01",
         "REV-01-AC-02",
-        "REV-01-AC-03"
+        "REV-01-AC-03",
+        "REV-03-AC-01",
+        "REV-03-AC-02",
+        "REV-03-AC-03"
       ],
-      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial."
+      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial. B10-03 local review photo/reply metadata and current ACL reviewed; not full product certification."
     },
     {
       "id": "editReview",
@@ -5126,9 +5165,12 @@
       "criteria": [
         "REV-01-AC-01",
         "REV-01-AC-02",
-        "REV-01-AC-03"
+        "REV-01-AC-03",
+        "REV-03-AC-01",
+        "REV-03-AC-02",
+        "REV-03-AC-03"
       ],
-      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial."
+      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial. B10-03 local review photo/reply metadata and current ACL reviewed; not full product certification."
     },
     {
       "id": "toggleOwnReview",
@@ -5138,17 +5180,23 @@
       "criteria": [
         "REV-01-AC-01",
         "REV-01-AC-02",
-        "REV-01-AC-03"
+        "REV-01-AC-03",
+        "REV-03-AC-01",
+        "REV-03-AC-02",
+        "REV-03-AC-03"
       ],
-      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial."
+      "reason": "B10-01 core stars/text/removal. Images/replies and full contract remain partial. B10-03 local review photo/reply metadata and current ACL reviewed; not full product certification."
     },
     {
       "id": "replyReview",
       "method": "PUT",
       "path": "/reviews/{id}/reply",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "REV-03-AC-01",
+        "REV-03-AC-03"
+      ],
+      "reason": "B10-03 recipient reply implemented locally; current grants/version/audit."
     },
     {
       "id": "createReport",
@@ -5395,9 +5443,12 @@
       "status": "implemented",
       "criteria": [
         "ASSET-AC-01",
-        "INV-AC-10"
+        "INV-AC-10",
+        "REV-03-AC-01",
+        "REV-03-AC-02",
+        "REV-03-AC-03"
       ],
-      "reason": "API outsider 404 và client mock response; chưa có positive GET owner integration riêng."
+      "reason": "API outsider 404 và client mock response; chưa có positive GET owner integration riêng. B10-03 local review photo/reply metadata and current ACL reviewed; not full product certification."
     },
     {
       "id": "getSettings",
@@ -6092,6 +6143,11 @@
       "method": "POST",
       "path": "/reviews/{id}/visibility",
       "file": "services/api/src/modules/reviews/reviews.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/reviews/{id}/reply",
+      "file": "services/api/src/modules/reviews/reviews.controller.ts"
     }
   ],
   "contractGaps": [
@@ -6125,7 +6181,7 @@
     "QA-033 concurrent payout/fee holds",
     "QA-034/038/039 admin completion/locked overdue holds Q02",
     "QA-040/041/042 banking/topup/payout",
-    "QA-044/045/046: B10-01 core mapped; images/replies/admin and customer history via other jobs remain open",
+    "QA-044/045/046: B10-01 core and B10-03 local images/replies mapped; admin and customer history via other jobs remain open",
     "QA-047/048/049 support/admin moderation/catalog management",
     "QA-050 notifications worker",
     "QA-051 getOperation endpoint",

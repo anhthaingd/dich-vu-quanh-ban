@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import {readFile} from 'node:fs/promises';
 import {Ajv} from 'ajv';
 import addFormats from 'ajv-formats';
@@ -15,7 +16,7 @@ async function call(a:Actor,path:string,method='GET',body?:unknown,key=randomUUI
 }
 async function actor(name:string){const r=await fetch(f.base+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:name+'@example.test',display_name:name,password:'Invoice test password 2026'})});const a=await r.json();return {id:a.user.id,token:a.access_token};}
 beforeEach(async()=>{
- f=await databaseFixture('test-secret-'.repeat(4));customer=await actor('customer');worker=await actor('worker');other=await actor('other');
+ f=await databaseFixture('test-secret-'.repeat(4),true);customer=await actor('customer');worker=await actor('worker');other=await actor('other');
  partner=(await f.pool.query("INSERT INTO partners(kind,name) VALUES('solo','DEMO invoices') RETURNING id")).rows[0].id;
  const m=(await f.pool.query('INSERT INTO memberships(partner_id,user_id,is_owner) VALUES($1,$2,true) RETURNING id',[partner,worker.id])).rows[0].id;
  await f.pool.query("INSERT INTO ledger_accounts(owner_partner_id,unit) VALUES($1,'VND')",[partner]);
@@ -110,4 +111,55 @@ test('public search ratings count only visible customer-to-partner reviews and b
  await call(customer,`/reviews/${first.id}/visibility`,'POST',{expected_version:first.version,removed:true});assert.deepEqual(await stats(),{stars:null,count:0});
  const page=(await call(other,`/partners/${partner}/reviews`)).body;assert.deepEqual(page.items,[]);
  await f.pool.query('UPDATE reviews SET hidden_at=NULL WHERE id=$1',[second.id]);assert.deepEqual(await stats(),{stars:1,count:1});
+});
+test('review replies enforce recipient grants, shared version, retry and immutable audit without changing stars',async()=>{
+ await ready();let r=(await write(customer)).body;
+ assert.deepEqual(r.allowed_actions,['edit','visibility']);assert.equal(r.reply,null);
+ assert.equal((await call(customer,`/reviews/${r.id}/reply`,'PUT',{expected_version:1,body:'Own'})).status,403);
+ assert.equal((await call(other,`/reviews/${r.id}/reply`,'PUT',{expected_version:1,body:'Foreign'})).status,404);
+ assert.equal((await call(worker,`/reviews/${r.id}/reply`,'PUT',{expected_version:1,body:'  '})).status,400);
+ const input={expected_version:1,body:'DEMO thank you'},key=randomUUID();
+ const pair=await Promise.all([call(worker,`/reviews/${r.id}/reply`,'PUT',input,key),call(worker,`/reviews/${r.id}/reply`,'PUT',input,key)]);
+ assert.equal(pair[0].status,200);assert.deepEqual(pair[0],pair[1]);r=pair[0].body;assert.equal(validateReview(r),true,JSON.stringify(validateReview.errors));assert.equal(r.reply.body,input.body);assert.equal(r.reply.author_id,worker.id);assert.equal(r.version,2);assert.equal(r.stars,5);assert.deepEqual(r.allowed_actions,['reply']);
+ assert.equal((await call(worker,`/reviews/${r.id}/reply`,'PUT',{expected_version:1,body:'Stale'})).status,409);
+ await f.pool.query('UPDATE reviews SET hidden_at=now(),removed_at=now() WHERE id=$1',[r.id]);
+ r=(await call(worker,`/reviews/${r.id}/reply`,'PUT',{expected_version:2,body:'Edited reply'})).body;assert.equal(r.hidden,true);assert.equal(r.removed,true);assert.equal(r.stars,5);
+ assert.equal((await f.pool.query("SELECT count(*) FROM audit_events WHERE action='review.reply'")).rows[0].count,'2');
+ await f.pool.query('UPDATE memberships SET is_owner=false WHERE partner_id=$1',[partner]);
+ assert.equal((await call(worker,`/reviews/${r.id}/reply`,'PUT',input,key)).status,403);
+ const m=(await f.pool.query('SELECT id FROM memberships WHERE partner_id=$1',[partner])).rows[0].id;
+ await f.pool.query("INSERT INTO membership_grants(membership_id,permission,granted_by) VALUES($1,'reviews.respond',$2)",[m,worker.id]);
+ assert.equal((await call(worker,`/reviews/${r.id}/reply`,'PUT',input,key)).status,200);
+ await f.pool.query('UPDATE memberships SET is_owner=true WHERE id=$1',[m]);
+ const received=(await write(worker,4)).body;
+ assert.equal((await call(customer,`/reviews/${received.id}/reply`,'PUT',{expected_version:1,body:'Customer reply'})).body.reply.author_id,customer.id);
+});
+async function photo(a:Actor){
+ const bytes=await sharp({create:{width:24,height:24,channels:3,background:'#2457d6'}}).png().toBuffer();
+ const grant=(await call(a,'/assets/upload-grants','POST',{purpose:'review',mime:'image/png',bytes:bytes.length})).body;
+ assert.equal((await fetch(grant.upload_url,{method:'PUT',headers:grant.required_headers,body:bytes})).status,200);
+ const asset=await call(a,`/assets/${grant.asset_id}/complete`,'POST',{expected_version:1});assert.equal(asset.status,201);return asset.body;
+}
+test('review photos recheck public visibility and private membership at signed URL reads and preserve omitted assets',async()=>{
+ await ready();await f.pool.query("UPDATE partners SET publication_status='published' WHERE id=$1",[partner]);
+ const image=await photo(customer);const anonymous=async(id:string)=>fetch(f.base+'/assets/'+id);
+ assert.equal((await anonymous(image.id)).status,404);assert.equal((await call(other,'/assets/'+image.id)).status,404);
+ let r=(await call(customer,`/jobs/${job}/reviews`,'POST',{stars:5,asset_id:image.id})).body;assert.equal(r.asset_id,image.id);
+ const publicAsset=await (await anonymous(image.id)).json();assert.equal((await fetch(publicAsset.download_url)).status,200);
+ assert.equal((await call(other,'/assets/'+image.id)).status,200);
+ const pub=(await call(other,`/partners/${partner}/reviews`)).body.items[0];assert.equal(pub.asset_id,image.id);assert.deepEqual(pub.allowed_actions,[]);
+ r=(await call(customer,`/reviews/${r.id}`,'PATCH',{expected_version:r.version,stars:4})).body;assert.equal(r.asset_id,image.id);
+ r=(await call(customer,`/reviews/${r.id}/visibility`,'POST',{expected_version:r.version,removed:true})).body;
+ assert.equal((await fetch(publicAsset.download_url)).status,404);assert.equal((await anonymous(image.id)).status,404);
+ const privateAsset=(await call(worker,'/assets/'+image.id)).body;assert.equal((await fetch(privateAsset.download_url)).status,200);
+ await f.pool.query('UPDATE memberships SET active=false WHERE partner_id=$1',[partner]);assert.equal((await fetch(privateAsset.download_url)).status,404);
+ await f.pool.query('UPDATE memberships SET active=true WHERE partner_id=$1',[partner]);
+ r=(await call(customer,`/reviews/${r.id}/visibility`,'POST',{expected_version:r.version,removed:false})).body;
+ await f.pool.query('UPDATE reviews SET hidden_at=now() WHERE id=$1',[r.id]);assert.equal((await fetch(publicAsset.download_url)).status,404);
+ await f.pool.query('UPDATE reviews SET hidden_at=NULL WHERE id=$1',[r.id]);
+ const second=await photo(customer);r=(await call(customer,`/reviews/${r.id}`,'PATCH',{expected_version:r.version,stars:4,asset_id:second.id})).body;
+ assert.equal(r.asset_id,second.id);assert.equal((await fetch(publicAsset.download_url)).status,404);
+ r=(await call(customer,`/reviews/${r.id}`,'PATCH',{expected_version:r.version,stars:4,asset_id:null})).body;assert.equal(r.asset_id,null);assert.equal((await anonymous(second.id)).status,404);
+ const privateImage=await photo(worker);const privateReview=(await call(worker,`/jobs/${job}/reviews`,'POST',{stars:4,asset_id:privateImage.id})).body;
+ assert.equal(privateReview.asset_id,privateImage.id);assert.equal((await anonymous(privateImage.id)).status,404);assert.equal((await call(customer,'/assets/'+privateImage.id)).status,200);assert.equal((await call(other,'/assets/'+privateImage.id)).status,404);
 });

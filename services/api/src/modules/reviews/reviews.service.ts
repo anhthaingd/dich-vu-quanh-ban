@@ -5,10 +5,10 @@ import { AccountTransaction } from '../accounts/account-transaction.js';
 import type { PageInput } from '../accounts/accounts.input.js';
 import { hasPermission, memberAccess } from '../jobs/jobs.access.js';
 import type { Cursor } from '../../common/http/cursor.js';
-import type { ReviewInput, visibilityInput } from './reviews.input.js';
+import type { ReviewInput, visibilityInput, replyInput } from './reviews.input.js';
 
-type ReviewRow = { id: string; job_id: string; direction: string; author_id: string; stars: number; body: string; asset_id: string | null; hidden_at: Date | null; removed_at: Date | null; version: number; created_at: Date };
-function dto(r: ReviewRow) { return { id:r.id, job_id:r.job_id, direction:r.direction, author_id:r.author_id, stars:r.stars, body:r.body, hidden:!!r.hidden_at, removed:!!r.removed_at, version:r.version }; }
+type ReviewRow = { id: string; job_id: string; direction: string; author_id: string; stars: number; body: string; asset_id: string | null; hidden_at: Date | null; removed_at: Date | null; version: number; created_at: Date; reply_body: string | null; reply_author_id: string | null };
+function dto(r: ReviewRow, allowed_actions: string[] = []) { return { id:r.id, job_id:r.job_id, direction:r.direction, author_id:r.author_id, stars:r.stars, body:r.body, hidden:!!r.hidden_at, removed:!!r.removed_at, version:r.version, asset_id:r.asset_id, reply:r.reply_body === null ? null : {body:r.reply_body,author_id:r.reply_author_id}, allowed_actions }; }
 export class ReviewsService {
  private readonly tx: AccountTransaction;
  constructor(private readonly pool: Pool, private readonly auth: AuthService, private readonly cursor: Cursor) { this.tx = new AccountTransaction(pool, auth); }
@@ -23,7 +23,7 @@ export class ReviewsService {
   const assigned = !!member && !!(await db.query('SELECT 1 FROM assignments WHERE job_id=$1 AND membership_id=$2 AND ended_at IS NULL', [jobId, member.id])).rowCount;
   if (!customer && !assigned && !['jobs.manage','jobs.accept','jobs.assign','reviews.write','reviews.respond'].some(p => hasPermission(member,p))) throw new NotFoundException();
   if (write && !customer && !hasPermission(member,'reviews.write')) throw new ForbiddenException();
-  return { job, customer };
+  return { job, customer, member };
  }
  private async eligible(db: PoolClient, jobId: string) {
   const { rowCount } = await db.query(`SELECT 1 FROM invoices i JOIN settlements s ON s.invoice_id=i.id
@@ -42,7 +42,7 @@ export class ReviewsService {
   if (r.author_id !== user) throw new ForbiddenException();
   return { ...a, r };
  }
- private async asset(db: PoolClient, id: string | undefined, user: string) {
+ private async asset(db: PoolClient, id: string | null | undefined, user: string) {
   if (id && !(await db.query("SELECT 1 FROM assets WHERE id=$1 AND uploader_id=$2 AND purpose='review' AND status='ready' FOR SHARE",[id,user])).rowCount) throw new BadRequestException();
  }
  private async audit(db: PoolClient, user: string, partner: string, action: string, id: string, before: unknown, after: unknown, reason = '') {
@@ -55,35 +55,64 @@ export class ReviewsService {
    const direction = access.customer ? 'customer_to_partner' : 'partner_to_customer';
    if ((await db.query('SELECT 1 FROM reviews WHERE job_id=$1 AND direction=$2',[jobId,direction])).rowCount) throw new ConflictException({code:'STATE_CONFLICT'});
    const r = (await db.query('INSERT INTO reviews(job_id,direction,author_id,stars,body,asset_id) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',[jobId,direction,a.user.id,input.stars,input.body,input.asset_id??null])).rows[0];
-   await this.audit(db,a.user.id,access.job.partner_id,'review.create',r.id,null,r); return dto(r);
-  },async(db,a)=>{await this.access(db,jobId,a.user.id,true);});
+   await this.audit(db,a.user.id,access.job.partner_id,'review.create',r.id,null,r); return dto(r,this.actions(r,access,a.user.id));
+  },async(db,a)=>{await this.access(db,jobId,a.user.id,true);}).then(r=>this.currentResult(header,r));
  }
  edit(header: string | undefined, id: string, input: ReviewInput, key: string) {
   return this.tx.run(header,`editReview:${id}`,key,input,async(db,a)=>{
-   const {r,job} = await this.own(db,id,a.user.id);
+   const access = await this.own(db,id,a.user.id); const {r,job}=access;
    if (r.version !== input.expected_version) throw new ConflictException({code:'VERSION_CONFLICT'});
    await this.asset(db,input.asset_id,a.user.id);
-   const next = (await db.query('UPDATE reviews SET stars=$2,body=$3,asset_id=$4,version=version+1 WHERE id=$1 RETURNING *',[id,input.stars,input.body,input.asset_id??null])).rows[0];
-   await this.audit(db,a.user.id,job.partner_id,'review.edit',id,r,next); return dto(next);
-  },async(db,a)=>{await this.own(db,id,a.user.id);});
+   const next = (await db.query('UPDATE reviews SET stars=$2,body=$3,asset_id=$4,version=version+1 WHERE id=$1 RETURNING *',[id,input.stars,input.body,input.asset_id===undefined?r.asset_id:input.asset_id])).rows[0];
+   await this.audit(db,a.user.id,job.partner_id,'review.edit',id,r,next); return dto(next,this.actions(next,access,a.user.id));
+  },async(db,a)=>{await this.own(db,id,a.user.id);}).then(r=>this.currentResult(header,r));
  }
  visibility(header: string | undefined, id: string, input: ReturnType<typeof visibilityInput>, key: string) {
   return this.tx.run(header,`toggleOwnReview:${id}`,key,input,async(db,a)=>{
-   const {r,job} = await this.own(db,id,a.user.id);
+   const access = await this.own(db,id,a.user.id); const {r,job}=access;
    if (r.version !== input.expected_version) throw new ConflictException({code:'VERSION_CONFLICT'});
    const next = (await db.query('UPDATE reviews SET removed_at=CASE WHEN $2 THEN COALESCE(removed_at,now()) ELSE NULL END,version=version+1 WHERE id=$1 RETURNING *',[id,input.removed])).rows[0];
-   await this.audit(db,a.user.id,job.partner_id,'review.visibility',id,r,next,input.reason); return dto(next);
-  },async(db,a)=>{await this.own(db,id,a.user.id);});
+   await this.audit(db,a.user.id,job.partner_id,'review.visibility',id,r,next,input.reason); return dto(next,this.actions(next,access,a.user.id));
+  },async(db,a)=>{await this.own(db,id,a.user.id);}).then(r=>this.currentResult(header,r));
+ }
+ private async currentResult(header:string|undefined,r:ReturnType<typeof dto>) {
+  const db=await this.pool.connect();try{
+   await db.query('BEGIN');const actor=await this.auth.authenticate(header,db),access=await this.access(db,r.job_id,actor.user.id);
+   // Old retry snapshots predate B10-03; preserve their original payload/version,
+   // while adding nullable fields and recomputing current permissions.
+   const result={...r,asset_id:r.asset_id??null,reply:r.reply??null,allowed_actions:this.actions(r,access,actor.user.id)};
+   await db.query('COMMIT');return result;
+  }catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
+ }
+ private actions(r:Pick<ReviewRow,'author_id'|'direction'>,a:Awaited<ReturnType<ReviewsService['access']>>,user:string) {
+  const result:string[]=[];
+  if(r.author_id===user&&(a.customer||hasPermission(a.member,'reviews.write')))result.push('edit','visibility');
+  if(r.direction==='partner_to_customer'?a.customer:!a.customer&&hasPermission(a.member,'reviews.respond'))result.push('reply');
+  return result;
+ }
+ private async recipient(db:PoolClient,id:string,user:string) {
+  const ref=await this.row(db,id),access=await this.access(db,ref.job_id,user),r=await this.row(db,id);
+  if(!this.actions(r,access,user).includes('reply'))throw new ForbiddenException();
+  return {...access,r};
+ }
+ reply(header:string|undefined,id:string,input:ReturnType<typeof replyInput>,key:string) {
+  return this.tx.run(header,`replyReview:${id}`,key,input,async(db,a)=>{
+   const access=await this.recipient(db,id,a.user.id),{r,job}=access;
+   if(r.version!==input.expected_version)throw new ConflictException({code:'VERSION_CONFLICT'});
+   const next=(await db.query('UPDATE reviews SET reply_body=$2,reply_author_id=$3,version=version+1 WHERE id=$1 RETURNING *',[id,input.body,a.user.id])).rows[0];
+   await this.audit(db,a.user.id,job.partner_id,'review.reply',id,r,next);
+   return dto(next,this.actions(next,access,a.user.id));
+  },async(db,a)=>{await this.recipient(db,id,a.user.id);}).then(r=>this.currentResult(header,r));
  }
  async list(header: string | undefined, id: string, publicPartner: boolean, q: PageInput) {
   const db = await this.pool.connect();
   try {
    await db.query('BEGIN');
-   let scope = `partnerReviews:${id}`;
+   let scope = `partnerReviews:${id}`, user: string | undefined, access: Awaited<ReturnType<ReviewsService['access']>> | undefined;
    if (publicPartner) {
     if (!(await db.query("SELECT 1 FROM partners WHERE id=$1 AND publication_status='published' AND moderation_status='active' AND archived_at IS NULL",[id])).rowCount) throw new NotFoundException();
    } else {
-    const a = await this.auth.authenticate(header,db); await this.access(db,id,a.user.id); scope = `jobReviews:${id}:${a.user.id}`;
+    const a = await this.auth.authenticate(header,db); access=await this.access(db,id,a.user.id);user=a.user.id; scope = `jobReviews:${id}:${a.user.id}`;
    }
    const start = this.cursor.decode(q.cursor,scope);
    const {rows} = await db.query(`SELECT r.*,date_trunc('milliseconds',r.created_at) AS created_at FROM reviews r JOIN jobs j ON j.id=r.job_id
@@ -91,7 +120,7 @@ export class ReviewsService {
     AND ($2::timestamptz IS NULL OR (date_trunc('milliseconds',r.created_at),r.id)<($2::timestamptz,$3::uuid))
     ORDER BY date_trunc('milliseconds',r.created_at) DESC,r.id DESC LIMIT $4`,[id,start?.created_at??null,start?.id??null,q.limit+1]);
    const items = rows.slice(0,q.limit), last = items.at(-1);
-   const result = {items:items.map(dto),next_cursor:rows.length>q.limit ? this.cursor.encode({id:last.id,created_at:last.created_at.toISOString()},scope) : null};
+   const result = {items:items.map(r=>dto(r,access&&user?this.actions(r,access,user):[])),next_cursor:rows.length>q.limit ? this.cursor.encode({id:last.id,created_at:last.created_at.toISOString()},scope) : null};
    await db.query('COMMIT'); return result;
   } catch(e) { await db.query('ROLLBACK'); throw e; } finally { db.release(); }
  }

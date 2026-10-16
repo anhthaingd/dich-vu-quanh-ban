@@ -57,7 +57,14 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
       setProfile(null);
       setError(null);
       const work = owner
-        ? sessionReady(manager,owner).then(()=>{if(c.signal.aborted)throw new ApiError('CANCELLED');return manager.partnerProfile(owner,id,locale,c.signal);})
+        ? (async()=>{
+            for(let retries=0;;retries++){
+              await sessionReady(manager,owner);
+              if(c.signal.aborted)throw new ApiError('CANCELLED');
+              try{return await manager.partnerProfile(owner,id,locale,c.signal);}
+              catch(e){if(!(e instanceof ApiError)||e.code!=='BUSY'||retries>=2)throw e;}
+            }
+          })()
         : api.profile(id, locale, c.signal);
       work
         .then((p) => {

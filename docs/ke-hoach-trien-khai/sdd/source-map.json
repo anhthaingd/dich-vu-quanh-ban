@@ -26,7 +26,7 @@
     {
       "id": "api-search",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "aebd5b6b324869b745b99ee6111982f9c7e1cc862f3e15e1963e358badd623b0",
+      "sha256": "045cdc3b70023fd5a1482e3ac37ceb978b3a84f23ff0bdc63c5d2e8f33f2d087",
       "pointer": "/paths/~1partners/get",
       "expected": {
         "operationId": "searchPartners"
@@ -1003,10 +1003,10 @@
     {
       "id": "api-project",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "aebd5b6b324869b745b99ee6111982f9c7e1cc862f3e15e1963e358badd623b0",
+      "sha256": "045cdc3b70023fd5a1482e3ac37ceb978b3a84f23ff0bdc63c5d2e8f33f2d087",
       "pointer": "/info",
       "expected": {
-        "version": "0.1.14"
+        "version": "0.1.15"
       }
     },
     {
@@ -1108,6 +1108,46 @@
       "expected": {
         "path": "/v1/realtime/socket.io",
         "namespace": "/"
+      }
+    },
+    {
+      "id": "api-review-metadata",
+      "path": "docs/technical-design/openapi.json",
+      "sha256": "045cdc3b70023fd5a1482e3ac37ceb978b3a84f23ff0bdc63c5d2e8f33f2d087",
+      "pointer": "/components/schemas/Review",
+      "expected": {
+        "required": [
+          "id",
+          "job_id",
+          "direction",
+          "stars",
+          "body",
+          "author_id",
+          "hidden",
+          "removed",
+          "version",
+          "asset_id",
+          "reply",
+          "allowed_actions"
+        ]
+      }
+    },
+    {
+      "id": "api-review-reply",
+      "path": "docs/technical-design/openapi.json",
+      "sha256": "045cdc3b70023fd5a1482e3ac37ceb978b3a84f23ff0bdc63c5d2e8f33f2d087",
+      "pointer": "/paths/~1reviews~1{id}~1reply/put",
+      "expected": {
+        "operationId": "replyReview"
+      }
+    },
+    {
+      "id": "api-review-asset",
+      "path": "docs/technical-design/openapi.json",
+      "sha256": "045cdc3b70023fd5a1482e3ac37ceb978b3a84f23ff0bdc63c5d2e8f33f2d087",
+      "pointer": "/paths/~1assets~1{id}/get",
+      "expected": {
+        "operationId": "getAsset"
       }
     }
   ],

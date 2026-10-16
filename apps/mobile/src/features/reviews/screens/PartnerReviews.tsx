@@ -1,3 +1,4 @@
+import {ReviewPhoto} from './ReviewPhoto';
 import {useCallback,useRef,useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {createReviewsApi,type ReviewsApi} from '../api/reviews-api';
@@ -15,5 +16,5 @@ export function PartnerReviews({id,api=defaultApi}:{id:string;api?:ReviewsApi}){
   void api.publicList(id,page).then(p=>{if(request===generation.current){setItems(old=>page?[...old.filter(r=>!p.items.some(v=>v.id===r.id)),...p.items]:p.items);setCursor(p.next_cursor);}}).catch(()=>{if(request===generation.current){setError(true);setItems([]);setCursor(null);}}).finally(()=>{if(request===generation.current)setBusy(false);});
  },[id,api]);
  useFocusEffect(useCallback(()=>{load();return()=>{generation.current++;};},[load,attempt]));
- return <Card><AppText variant="section">{t('reviews.public')}</AppText>{busy&&<AppText>{t('accountTools.loading')}</AppText>}{error?<ErrorState message={t('search.error')} retryLabel={t('common.retry')} onRetry={()=>{setAttempt(n=>n+1);}}/>:items.map(r=><Card key={r.id}><AppText>{t('reviews.score',{stars:r.stars})}</AppText><AppText>{r.body}</AppText></Card>)}{!busy&&!error&&!items.length&&<AppText>{t('reviews.empty')}</AppText>}{cursor&&<Button label={t('accountTools.more')} disabled={busy} onPress={()=>load(cursor)}/>}</Card>;
+ return <Card><AppText variant="section">{t('reviews.public')}</AppText>{busy&&<AppText>{t('accountTools.loading')}</AppText>}{error?<ErrorState message={t('search.error')} retryLabel={t('common.retry')} onRetry={()=>{setAttempt(n=>n+1);}}/>:items.map(r=><Card key={r.id}><AppText>{t('reviews.score',{stars:r.stars})}</AppText><AppText>{r.body}</AppText>{r.asset_id&&<ReviewPhoto key={r.asset_id} id={r.asset_id} load={api.asset}/>}{r.reply&&<><AppText variant="section">{t('reviews.reply')}</AppText><AppText>{r.reply.body}</AppText></>}</Card>)}{!busy&&!error&&!items.length&&<AppText>{t('reviews.empty')}</AppText>}{cursor&&<Button label={t('accountTools.more')} disabled={busy} onPress={()=>load(cursor)}/>}</Card>;
 }

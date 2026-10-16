@@ -10,13 +10,14 @@ import {JobsScreen} from './JobsScreen';
 import {JobDetailScreen} from './JobDetailScreen';
 import {JobCreateScreen} from './JobCreateScreen';
 import {ConversationsScreen} from '../../chat/screens/ConversationsScreen';
+import {PartnerProfileScreen} from '../../partners/screens/PartnerProfileScreen';
 import {ConversationScreen} from '../../chat/screens/ConversationScreen';
 import {workFixture,job,message,room} from '../../../../test/helpers/work';
 import {ApiError} from '../../../lib/http/api-error';
 jest.mock('../../location/components/LocationField',()=>({LocationField:({onChange}:{onChange:(v:unknown)=>void})=>{const {Button}=jest.requireActual('../../../components/ui/Button');return <Button testID="test-place" label="DEMO place" onPress={()=>onChange({text:'DEMO place',point:{latitude:21,longitude:105},source:'saved'})}/>;}}));
 const Stack=createNativeStackNavigator<RootStackParamList>();
-function mount(f:ReturnType<typeof workFixture>,initial: 'Jobs'|'JobDetail'|'JobCreate'|'Conversations'|'Conversation'='Jobs'){
- return render(<AppProviders api={{categories:jest.fn().mockResolvedValue([]),skills:jest.fn().mockResolvedValue([])}}><AuthProvider manager={f.manager}><NavigationContainer><Stack.Navigator initialRouteName={initial} screenOptions={{headerShown:false,animation:'none'}}><Stack.Screen name="Jobs" component={JobsScreen}/><Stack.Screen name="JobDetail" component={JobDetailScreen} initialParams={{id:'job'}}/><Stack.Screen name="JobCreate" component={JobCreateScreen} initialParams={{partnerId:'partner'}}/><Stack.Screen name="Conversations" component={ConversationsScreen} initialParams={{jobId:'job'}}/><Stack.Screen name="Conversation" component={ConversationScreen} initialParams={{id:'room',jobId:'job'}}/></Stack.Navigator></NavigationContainer></AuthProvider></AppProviders>);
+function mount(f:ReturnType<typeof workFixture>,initial: 'Jobs'|'JobDetail'|'JobCreate'|'Conversations'|'Conversation'|'PartnerProfile'='Jobs'){
+ return render(<AppProviders api={{categories:jest.fn().mockResolvedValue([]),skills:jest.fn().mockResolvedValue([])}}><AuthProvider manager={f.manager}><NavigationContainer><Stack.Navigator initialRouteName={initial} screenOptions={{headerShown:false,animation:'none'}}><Stack.Screen name="PartnerProfile" component={PartnerProfileScreen} initialParams={{id:'partner'}}/><Stack.Screen name="Jobs" component={JobsScreen}/><Stack.Screen name="JobDetail" component={JobDetailScreen} initialParams={{id:'job'}}/><Stack.Screen name="JobCreate" component={JobCreateScreen} initialParams={{partnerId:'partner'}}/><Stack.Screen name="Conversations" component={ConversationsScreen} initialParams={{jobId:'job'}}/><Stack.Screen name="Conversation" component={ConversationScreen} initialParams={{id:'room',jobId:'job'}}/></Stack.Navigator></NavigationContainer></AuthProvider></AppProviders>);
 }
 async function refreshDone(){await waitFor(()=>expect(screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.accessibilityState.busy).toBe(false));}
 function pull(){act(()=>screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.onRefresh());}
@@ -113,4 +114,16 @@ test('pull refresh retains chat list and draft, stops on network error and recov
  fireEvent.changeText(screen.getByTestId('chat-body'),'DEMO draft');g.chat.messages.mockRejectedValueOnce(new ApiError('NETWORK'));pull();await screen.findByTestId('refresh-retry');await refreshDone();
  expect(screen.getByTestId('message-msg1')).toBeTruthy();expect(screen.getByTestId('chat-body').props.value).toBe('DEMO draft');
  expect(screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.refreshing).toBe(false);fireEvent.press(screen.getByTestId('refresh-retry'));await refreshDone();expect(screen.queryByRole('alert')).toBeNull();
+});
+
+test('profile retries transient account contention before showing a load error',async()=>{
+ const f=workFixture();const read=jest.spyOn(f.manager,'partnerProfile').mockRejectedValueOnce(new ApiError('BUSY'));mount(f,'PartnerProfile');
+ await screen.findByTestId('profile-hire');await enabled('profile-hire');expect(read).toHaveBeenCalledTimes(2);
+});
+test('chat draft remains editable while the read watermark holds the account lock',async()=>{
+ const f=workFixture();let finish!:(value:{id:string;state:'read'})=>void;
+ f.chat.read.mockImplementationOnce(()=>new Promise(resolve=>{finish=resolve;}));mount(f,'Conversation');await screen.findByTestId('message-msg1');
+ await waitFor(()=>expect(f.chat.read).toHaveBeenCalled());expect(f.manager.getSnapshot().busy).toBe(true);
+ expect(screen.getByTestId('chat-body').props.editable).toBe(true);fireEvent.changeText(screen.getByTestId('chat-body'),'DEMO draft during background read');expect(screen.getByTestId('chat-send')).toBeDisabled();
+ await act(async()=>finish({id:'room',state:'read'}));await enabled('chat-send');expect(screen.getByTestId('chat-body').props.value).toBe('DEMO draft during background read');
 });

@@ -1,5 +1,7 @@
 # Kế hoạch triển khai và học code
 
+**16/10/2026 — B10-03 / P1-2:** ảnh và phản hồi đánh giá đã được duyệt bổ sung contract; nối DB/API/app, quyền hiện hành và ảnh local. [Báo cáo](bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md). Chưa đóng toàn B10/P1-2, chưa đồng bộ Drive/ui-ux.
+
 **15/10/2026 — B05-05:** Tin nhắn/Thông báo tự cập nhật, kéo xuống làm mới trên native, giữ nội dung khi tải nền và dừng vòng xoay khi lỗi. [Báo cáo và ảnh](bao-cao/B05-05-cap-nhat-tu-dong-va-keo-lam-moi.md).
 
 **15/10/2026 — B05-04 / P1-2:** triển khai màn lịch tổng hợp trong Công việc, dùng GET /jobs hiện hành, giờ Việt Nam, đủ trang và quyền khách/đội ngũ. [Báo cáo](bao-cao/B05-04-lich-tong-hop-cong-viec.md) ghi bằng chứng và giới hạn. Không mở provider push/production hoặc đồng bộ Drive/ui-ux; chưa đóng toàn B05.
@@ -50,7 +52,8 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 
 ## Báo cáo đã có
 
-- [B10-01 — Đánh giá sau công việc](bao-cao/B10-01-danh-gia-sau-cong-viec.md): Q01, sao/nội dung/sửa/gỡ, quyền và điểm công khai; ảnh/phản hồi chờ contract.
+- [B10-03 — Ảnh và phản hồi đánh giá](bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md): một ảnh, phản hồi bên nhận và quyền server; API/local/native/test.
+- [B10-01 — Đánh giá sau công việc](bao-cao/B10-01-danh-gia-sau-cong-viec.md): Q01, sao/nội dung/sửa/gỡ, quyền và điểm công khai; ảnh/phản hồi bổ sung tại B10-03.
 
 - [B05-04 — Lịch tổng hợp công việc](bao-cao/B05-04-lich-tong-hop-cong-viec.md): xem tháng/ngày, đủ trang, giờ Việt Nam, quyền và đổi lịch.
 

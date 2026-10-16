@@ -1,5 +1,15 @@
 # Checklist chức năng và bằng chứng
 
+## B10-03 — Ảnh và phản hồi đánh giá, 16/10/2026
+
+- [x] Chủ dự án duyệt thêm metadata ảnh/phản hồi/quyền vào API; một ảnh và một phản hồi theo contract, server kiểm quyền hiện hành.
+- [x] DB/API/app: chọn/tải/xem/thay/gỡ ảnh; bên nhận tạo/sửa phản hồi; phiên bản chung, audit và retry cùng payload.
+- [x] 8 bài API, 11 bài app/client và hành trình web hai tài khoản đạt ở lượt tập trung; kiểm lại toàn bộ bằng SDD trên bộ file cuối.
+- [x] iOS 27 simulator: đọc ảnh/phản hồi, viết phản hồi và chọn/tải/gửi ảnh từ Photos qua API local thật. Đã sửa MIME Blob trống trên iOS và cảnh báo JSX.
+- [ ] Android lát này, thiết bị thật, UAT và production chưa xác nhận.
+- SDD bổ sung 3 tiêu chí, tổng 105; giữ 68 QA partial/29 unmapped. Báo cáo máy và `verify` quyết định trạng thái bộ file cuối, không dùng checklist thay bằng chứng.
+- B10-03 hiện chưa commit/push; không đồng bộ Drive/Excel/ui-ux. [Báo cáo và ảnh](bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md).
+
 ## B10-01 — Đánh giá sao/nội dung và điểm công khai, 15/10/2026
 
 - [x] DB/API: Q01, một bản mỗi chiều, sửa/gỡ/khôi phục, audit, retry và quyền hiện hành; 5 bài PostGIS tập trung đạt.
@@ -7,8 +17,8 @@
 - [x] Web hai tài khoản: đủ dấu, gửi, mất phản hồi/retry cùng key, sửa, gỡ/hiện lại; dữ liệu test thật.
 - [x] iOS 27 simulator gửi 5 sao; Android 16 emulator đọc hai chiều và sửa 5 xuống 4 sao qua API DEMO; ảnh trong báo cáo.
 - SDD toàn repo: 102 tiêu chí, giữ 68 QA partial/29 unmapped. Kết quả máy kiểm của bộ file cuối nằm ở `test-results/sdd/SDD-PROJECT/result.json` và `evidence.json`, kiểm lại bằng `sdd:check --phase verify`; không dùng lượt kiểm tập trung thay thế.
-- [ ] Ảnh/phản hồi và metadata quyền response: đã hỏi quyết định bổ sung contract, chưa duyệt. Admin/support và lịch sử đánh giá khách qua quan hệ việc khác chưa triển khai.
-- [ ] Commit/push, remote CI, điện thoại thật, UAT và production chưa thực hiện.
+- [ ] Ảnh/phản hồi và metadata quyền response: đã duyệt 16/10, triển khai trong B10-03 bên trên. Admin/support và lịch sử đánh giá khách qua quan hệ việc khác chưa triển khai.
+- [ ] B10-01 đã push `bc90978` lên main sau CI nhánh đạt. CI main cả hai lượt lỗi web/timeout; sửa tranh khóa hồ sơ/chat trong B10-03 local, chưa push; điện thoại thật/UAT/production chưa thực hiện.
 
 [Báo cáo B10-01 và giới hạn](bao-cao/B10-01-danh-gia-sau-cong-viec.md). Không đóng toàn B10-01/B10 hoặc P1-2.
 

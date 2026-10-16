@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import {test,expect} from './fixtures.mjs';
 import {randomUUID} from 'node:crypto';
 import {mkdir} from 'node:fs/promises';
@@ -23,12 +24,19 @@ test('reviews: both directions, lost response retry, edit and removal through re
  await login(page,'DEMO-customer');await expect(page.getByTestId('reviews-locked')).toBeVisible();await expect(page.getByTestId('review-save')).toHaveCount(0);
  await call(customer.access_token,`/invoices/${invoice.id}/payment-reported`,'POST',{expected_version:invoice.version,version_id:invoice.version_id,confirmed:true});
  await page.getByTestId('reviews-reload').click();await expect(page.getByTestId('review-save')).toBeDisabled();await page.getByTestId('review-star-5').click();await page.getByTestId('review-body').fill('DEMO làm đúng hẹn, gọn gàng.');
+ const bytes=await sharp({create:{width:320,height:180,channels:3,background:'#dce9e5'}}).composite([{input:Buffer.from('<svg width="320" height="180"><text x="35" y="95" font-size="25" fill="#2457d6">DEMO REVIEW PHOTO</text></svg>')}]).png().toBuffer();
+ const chooser=page.waitForEvent('filechooser');await page.getByTestId('review-photo-pick').click();await(await chooser).setFiles({name:'demo-review.png',mimeType:'image/png',buffer:bytes});await expect(page.getByTestId('review-photo')).toBeVisible();
  const attempts=[];await page.route('**/jobs/*/reviews',async route=>{if(route.request().method()!=='POST')return route.continue();attempts.push({key:route.request().headers()['idempotency-key'],body:route.request().postDataJSON()});if(attempts.length===1){await route.fetch();await route.abort('failed');}else await route.continue();});
  await page.getByTestId('review-save').click();await page.getByTestId('work-retry').click();await expect(page.getByTestId('review-edit')).toBeVisible();expect(attempts).toHaveLength(2);expect(attempts[0]).toEqual(attempts[1]);
  await page.getByTestId('review-edit').click();await page.getByTestId('review-star-4').click();await page.getByTestId('review-body').fill('DEMO đã bổ sung nhận xét.');await page.getByTestId('review-save').click();await expect(page.getByText('DEMO đã bổ sung nhận xét.')).toBeVisible();
  await page.getByTestId('review-visibility').click();await expect(page.getByText('Tác giả đã gỡ đánh giá này')).toBeVisible();await page.getByTestId('review-visibility').click();await expect(page.getByText('Tác giả đã gỡ đánh giá này')).toHaveCount(0);
  const context=await browser.newContext({viewport:{width:390,height:844}});try{const w=await context.newPage();await login(w,'DEMO-worker',true);await w.getByTestId('review-star-5').click();await w.getByTestId('review-body').fill('DEMO khách trao đổi rõ ràng.');await w.getByTestId('review-save').click();await expect(w.getByText('DEMO khách trao đổi rõ ràng.')).toBeVisible();await page.getByTestId('reviews-reload').click();await expect(page.getByText('DEMO khách trao đổi rõ ràng.')).toBeVisible();
- const dir='test-results/web/report-screenshots/B10-01';await mkdir(dir,{recursive:true});await page.screenshot({path:dir+'/web-customer.png',fullPage:true});await w.screenshot({path:dir+'/web-provider.png',fullPage:true});
+ const replies=[];await w.route('**/reviews/*/reply',async route=>{replies.push({key:route.request().headers()['idempotency-key'],body:route.request().postDataJSON()});if(replies.length===1){await route.fetch();await route.abort('failed');}else await route.continue();});
+ await w.getByTestId('review-reply-edit').click();await w.getByTestId('review-reply-body').fill('DEMO cảm ơn khách đã góp ý.');await w.getByTestId('review-reply-save').click();await w.getByTestId('work-retry').click();await expect(w.getByText('DEMO cảm ơn khách đã góp ý.')).toBeVisible();expect(replies).toHaveLength(2);expect(replies[0]).toEqual(replies[1]);
+ await page.getByTestId('reviews-reload').click();await expect(page.getByText('DEMO cảm ơn khách đã góp ý.')).toBeVisible();await expect(page.getByTestId('review-photo')).toBeVisible();
+ await page.getByTestId('review-reply-edit').click();await page.getByTestId('review-reply-body').fill('DEMO hẹn gặp lần tới.');await page.getByTestId('review-reply-save').click();await expect(page.getByText('DEMO hẹn gặp lần tới.')).toBeVisible();
+ await w.getByTestId('reviews-reload').click();await expect(w.getByText('DEMO hẹn gặp lần tới.')).toBeVisible();
+ const dir='test-results/web/report-screenshots/B10-03';await mkdir(dir,{recursive:true});await page.screenshot({path:dir+'/web-customer.png',fullPage:true});await w.screenshot({path:dir+'/web-provider.png',fullPage:true});
  }finally{await context.close();}
  const rows=(await environment.pool.query('SELECT * FROM reviews WHERE job_id=$1',[job])).rows;expect(rows).toHaveLength(2);expect(rows.find(r=>r.direction==='customer_to_partner').stars).toBe(4);
 });

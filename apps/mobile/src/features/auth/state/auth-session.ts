@@ -157,6 +157,8 @@ export class AuthSession {
   requestChallenge=(o:string,contact:string)=>this.accountOperation(o,t=>this.teamApi().challenge(t,contact));
   verifyChallenge=(o:string,id:string,code:string)=>this.accountOperation(o,t=>this.teamApi().verify(t,id,code));
   private reviewsApi(){if(!this.reviews)throw new ApiError('CONFIG');return this.reviews;}
+  replyReview=(o:string,id:string,v:number,body:string,k:string)=>this.accountOperation(o,t=>this.reviewsApi().reply(t,id,v,body,k));
+  uploadReview=(o:string,blob:Blob,k:string)=>this.accountOperation(o,t=>this.reviewsApi().upload(t,blob,k));
   jobReviews=(o:string,j:string,c?:string)=>this.accountOperation(o,t=>this.reviewsApi().list(t,j,c));
   createReview=(o:string,j:string,b:ReviewInput,k:string)=>this.accountOperation(o,t=>this.reviewsApi().create(t,j,b,k));
   editReview=(o:string,id:string,b:ReviewInput,k:string)=>this.accountOperation(o,t=>this.reviewsApi().edit(t,id,b,k));
