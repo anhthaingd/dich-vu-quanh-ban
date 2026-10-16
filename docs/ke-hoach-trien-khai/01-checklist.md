@@ -6,7 +6,8 @@
 - [x] DB/API: hồ sơ riêng, phân trang theo tài khoản, đúng phiên bản hóa đơn, chứng cứ của chính người gửi, idempotency/audit; không đổi việc/tiền.
 - [x] App: điểm vào Tài khoản/việc/hóa đơn/đánh giá; tạo, lọc, xem, bổ sung ảnh/nội dung; closed chỉ đọc; VI/EN/JA.
 - [x] Kiểm riêng: 5 API, 5 mobile/client, 1 web; quyền người ngoài, mất response/retry và trạng thái test. [Báo cáo](bao-cao/B09-01-ho-tro-va-bao-cao.md).
-- [ ] SDD local: 240 mobile/118 API, coverage/build đạt; web 19 đạt/1 lỗi gián đoạn danh mục, kiểm riêng 3/3 đạt. Chưa đánh dấu verify local đạt; CI commit mới phải chạy đủ.
+- [x] SDD local trên `e1664cd`: 240 mobile/118 API/20 web, coverage/build/load/prototype/Storybook và verify đạt. Giữ lịch sử lỗi gián đoạn danh mục trong báo cáo.
+- [ ] CI `38847707687` lỗi thao tác gửi lại hóa đơn; đã thêm test giữ đọc nền và sửa xếp hàng thao tác. Commit sửa phải chạy lại SDD/CI trước main.
 - [x] iOS simulator: picker/upload ảnh và gửi/đọc hồ sơ có tiêu đề; ảnh trong báo cáo. Android chưa hoàn tất kiểm hỗ trợ do driver timeout.
 - [ ] Admin tiếp nhận/đổi trạng thái/MFA; chọn đoạn chat chứng cứ; thiết bị thật/UAT/production chưa thực hiện. Chưa đóng toàn B09/P1-2.
 
@@ -57,7 +58,8 @@
 - [x] Chủ dự án duyệt verify-only local Mailpit/SMS mô phỏng và contract đội ngũ/reauth. API v0.1.11, migration009; không mở login/recover/MFA/provider thật.
 - [x] DB/API/app: lời mời/list/resend/revoke/accept, memberships của mình, cấp quyền có lý do/mật khẩu, preview/gỡ/tự rời, đọc/reset đầu mối và bỏ nháp khi bàn giao.
 - [x] API P1: 9 integration với PostGIS, response OpenAPI, 2 unit; mobile 4 màn + 1 API boundary; web hai tài khoản.
-- [ ] SDD local: 240 mobile/118 API, coverage/build đạt; web 19 đạt/1 lỗi gián đoạn danh mục, kiểm riêng 3/3 đạt. Chưa đánh dấu verify local đạt; CI commit mới phải chạy đủ.
+- [x] SDD local trên `e1664cd`: 240 mobile/118 API/20 web, coverage/build/load/prototype/Storybook và verify đạt. Giữ lịch sử lỗi gián đoạn danh mục trong báo cáo.
+- [ ] CI `38847707687` lỗi thao tác gửi lại hóa đơn; đã thêm test giữ đọc nền và sửa xếp hàng thao tác. Commit sửa phải chạy lại SDD/CI trước main.
 - [x] iOS simulator: mời qua Mailpit, xem thành viên, cấp jobs.assign bằng mật khẩu; kiểm lại DB. Android emulator: xác minh email từ Mailpit, nhận lời, preview/Hủy/xác nhận tự rời. Chỉ máy ảo, không thiết bị thật.
 - [x] Báo cáo [B04-01](bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md)/[B04-02](bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md), ảnh DEMO và Mermaid render; spec/mirror/ZIP/Drive theo phạm vi, sổ v1.49.
 - [x] Các suite SDD-PROJECT đã chạy đạt: lint/typecheck/tooling/mobile/API/coverage/build/web/load/prototype/Storybook. Giữ 80 tiêu chí, 93 QA/130 operation, 59 partial/34 unmapped. Bằng chứng đúng fingerprint bộ file bàn giao là `test-results/sdd/SDD-PROJECT/result.json` và lệnh `--phase verify`; lượt trước đổi tài liệu bị checker từ chối, không dùng thay evidence cuối.

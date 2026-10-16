@@ -31,12 +31,13 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
  const [mutation]=useState(()=>new Mutation<Invoice>()),[upload]=useState(()=>new Mutation<Asset>());
  const state=useSyncExternalStore(mutation.subscribe,mutation.getSnapshot,mutation.getSnapshot),up=useSyncExternalStore(upload.subscribe,upload.getSnapshot,upload.getSnapshot);
  const formVersion=useRef<string|null>(null),mounted=useRef(true);
+ const readTask=useRef<Promise<void>>(Promise.resolve());
  const [stale,setStale]=useState(false);
  const edited=useRef(false),currentInvoice=useRef(invoice);currentInvoice.current=invoice;
  useRealtimeRefresh({error,resource:{type:'job',id},busy:busy||state.busy||state.pending||up.busy||up.pending,matches:s=>s.kind==='event'&&(s.event.data.job_id===id||s.event.type==='notification.created.v1'||s.event.type.startsWith('invoice.')&&(!invoice||s.event.data.invoice_id===invoice.id)),refresh:()=>setAttempt(v=>v+1),revoke:()=>{setJob(null);setInvoice(null);setAssets([]);setError('NOT_FOUND');}});
  useFocusEffect(useCallback(()=>{
   let active=true;mounted.current=true;setBusy(true);setError(null);
-  void (async()=>{
+  readTask.current=(async()=>{
    await sessionReady(manager,owner);const j=await manager.getJob(owner,id);let i:Invoice|null=null;
    try{i=await manager.getInvoice(owner,id);}catch(e){if(!(e instanceof ApiError)||e.code!=='NOT_FOUND')throw e;}
    const photos:Asset[]=[];if(i)for(const aid of i.result_asset_ids){if(!active)return;photos.push(await manager.getAsset(owner,aid));}
@@ -56,7 +57,16 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
   })().catch(e=>{if(active){setError(e instanceof ApiError?e.code:'NETWORK');if(e instanceof ApiError&&['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(e.code)){setJob(null);setInvoice(null);setAssets([]);}}}).finally(()=>{if(active)setBusy(false);});
   return ()=>{active=false;mounted.current=false;};
  },[manager,owner,id,attempt]));
- const blocked=stale||busy||auth.busy||state.busy||state.pending||up.busy||up.pending;
+ const draftBlocked=stale||state.busy||state.pending||up.busy||up.pending;
+ const blocked=busy||auth.busy||draftBlocked;
+ // Accept a press while a snapshot is loading. Keep its captured payload/key,
+ // finish the whole read, then use the existing session/version-checked write.
+ const afterRead=async<T,>(work:()=>Promise<T>):Promise<T>=>{
+  let task:Promise<void>;do{task=readTask.current;await task;}while(task!==readTask.current);
+  await sessionReady(manager,owner);
+  if(!mounted.current)throw new ApiError('BUSY');
+  return work();
+ };
  const customer=job?.customer_id===owner,worker=job?.allowed_actions.includes('invoice');
  const editing=worker&&job?.state==='accepted'&&(!invoice||['draft','revision_requested'].includes(invoice.state));
  const locked=invoice?.state==='locked'||invoice?.state==='settled';
@@ -72,7 +82,7 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
   if(action==='confirm'&&(!validAmount(points)||BigInt(points)>BigInt(invoice.total)||BigInt(points)>BigInt(available))){setError('VALIDATION');return;}
   if(action==='revision-requests'&&!reason.trim()){setError('VALIDATION');return;}
   const input:InvoiceChange={expected_version:invoice.version,...(action==='send'?{draft_version_id:invoice.version_id}:action==='revision-requests'?{reason:reason.trim()}:{version_id:invoice.version_id}),...(action==='confirm'?{points_used:points}:{}),...(action==='payment-reported'?{confirmed:true as const}:{}),...(action==='settle'?{received_in_full:true as const}:{})};
-  apply(await mutation.run(key=>manager.changeInvoice(owner,invoice.id,action,input,key)));
+  apply(await mutation.run(key=>afterRead(()=>manager.changeInvoice(owner,invoice.id,action,input,key))));
  };
  const save=async(send:boolean)=>{
   if(!validAmount(labor)||!validAmount(materials)||(send&&!assets.length)){setError('VALIDATION');return;}
@@ -80,7 +90,7 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
   // A saved draft is retained within the retry closure, so a lost send response
   // never creates another draft/version on the next attempt.
   let draft:Invoice|null=null;
-  const result=await mutation.run(async key=>{if(!draft)draft=await manager.saveInvoice(owner,id,input,key);return send?manager.changeInvoice(owner,draft.id,'send',{expected_version:draft.version,draft_version_id:draft.version_id},key):draft;});
+  const result=await mutation.run(key=>afterRead(async()=>{if(!draft)draft=await manager.saveInvoice(owner,id,input,key);return send?manager.changeInvoice(owner,draft.id,'send',{expected_version:draft.version,draft_version_id:draft.version_id},key):draft;}));
   apply(result);if(!result&&draft&&!mutation.getSnapshot().pending){setInvoice(draft);setAttempt(x=>x+1);}if(result&&!send)setSaved(true);
  };
  const picked=async()=>{
@@ -110,26 +120,26 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
     <AppText variant="section">{t(invoice?.revision_reason?'invoice.edit':'invoice.editor')}</AppText>{invoice?.revision_reason&&<AppText style={styles.notice}>{t('invoice.revision',{reason:invoice.revision_reason})}</AppText>}
     <View style={styles.photoInput}><AppText variant="card">{t('invoice.photos')}</AppText>{photos}<Button testID="invoice-pick" label={t('invoice.pick')} variant="secondary" disabled={blocked} onPress={()=>void picked()}/></View>
     <AppText variant="card">{t('invoice.costs')}</AppText>
-    <Input testID="invoice-materials" label={t('invoice.materialInput')} value={materials} onChangeText={v=>{edited.current=true;setMaterials(v);}} keyboardType="number-pad" editable={!blocked}/>
-    <Input testID="invoice-labor" label={t('invoice.laborInput')} value={labor} onChangeText={v=>{edited.current=true;setLabor(v);}} keyboardType="number-pad" editable={!blocked}/>
-    <Input testID="invoice-note" label={t('invoice.note')} value={note} onChangeText={v=>{edited.current=true;setNote(v);}} multiline editable={!blocked}/>
+    <Input testID="invoice-materials" label={t('invoice.materialInput')} value={materials} onChangeText={v=>{edited.current=true;setMaterials(v);}} keyboardType="number-pad" editable={!draftBlocked}/>
+    <Input testID="invoice-labor" label={t('invoice.laborInput')} value={labor} onChangeText={v=>{edited.current=true;setLabor(v);}} keyboardType="number-pad" editable={!draftBlocked}/>
+    <Input testID="invoice-note" label={t('invoice.note')} value={note} onChangeText={v=>{edited.current=true;setNote(v);}} multiline editable={!draftBlocked}/>
     <AppText variant="caption" tone="muted">{t('invoice.direct')}</AppText>{saved&&<AppText tone="success">{t('invoice.saved')}</AppText>}
-    <Button testID="invoice-send" label={t('invoice.send')} disabled={blocked||!assets.length} onPress={()=>void save(true)}/><Button testID="invoice-save" label={t('invoice.save')} variant="secondary" disabled={blocked} onPress={()=>void save(false)}/>
+    <Button testID="invoice-send" label={t('invoice.send')} disabled={draftBlocked||!assets.length} onPress={()=>void save(true)}/><Button testID="invoice-save" label={t('invoice.save')} variant="secondary" disabled={draftBlocked} onPress={()=>void save(false)}/>
    </Card>:invoice?<Card testID="invoice-review" style={styles.panel}>
     <View style={styles.invoiceTitle}><AppText tone="primary" style={styles.receipt}>▤</AppText><View style={styles.grow}><AppText variant="brand" tone="muted">{t('invoice.version',{version:invoice.version})}</AppText><AppText variant="section">{t(locked?'invoice.locked':'invoice.review')}</AppText></View></View>
     {photos}{!!invoice.note&&<AppText style={styles.notice}>{invoice.note}</AppText>}
     <View>{row(t('invoice.materials'),money(invoice.materials))}{row(t('invoice.labor'),money(invoice.labor))}{row(t('invoice.total'),money(invoice.total),'total')}</View>
     {invoice.state==='revision_requested'?<AppText style={styles.notice}>{t('invoice.revision',{reason:invoice.revision_reason??''})}</AppText>:<>
-     {customer&&job.state==='accepted'&&!locked&&invoice.state==='sent'&&<View style={styles.points}><Input testID="invoice-points" label={t('invoice.points')} value={points} onChangeText={v=>{edited.current=true;setPoints(v);}} keyboardType="number-pad" editable={!blocked}/><AppText variant="caption" tone="muted">{t('invoice.available',{amount:num(available)})}</AppText><Button testID="invoice-max" variant="link" label={t('invoice.max')} disabled={blocked} onPress={()=>{edited.current=true;setPoints(String(BigInt(available)<BigInt(invoice.total)?BigInt(available):BigInt(invoice.total)));}}/></View>}
+     {customer&&job.state==='accepted'&&!locked&&invoice.state==='sent'&&<View style={styles.points}><Input testID="invoice-points" label={t('invoice.points')} value={points} onChangeText={v=>{edited.current=true;setPoints(v);}} keyboardType="number-pad" editable={!draftBlocked}/><AppText variant="caption" tone="muted">{t('invoice.available',{amount:num(available)})}</AppText><Button testID="invoice-max" variant="link" label={t('invoice.max')} disabled={draftBlocked} onPress={()=>{edited.current=true;setPoints(String(BigInt(available)<BigInt(invoice.total)?BigInt(available):BigInt(invoice.total)));}}/></View>}
      {locked&&<AppText style={styles.notice}>{t('invoice.lockedHint')}</AppText>}
      <View>{row(t('invoice.deduction'),'−'+money(used))}{row(t(customer?'invoice.cash':'invoice.cashWorker'),money(cash),'cash')}</View>
      <AppText variant="caption" tone="muted">{t(cash==='0'?'invoice.zero':customer?'invoice.payHint':'invoice.payHintWorker')}</AppText>
      {customer&&<View><AppText tone="success">{t(invoice.settled?'invoice.rewarded':'invoice.reward',{amount:num(reward)})}</AppText><AppText variant="caption" tone="muted">{t('invoice.rewardHint')}</AppText></View>}
-     {customer&&job.state==='accepted'&&!locked&&invoice.state==='sent'&&<><Button testID="invoice-confirm" label={t('invoice.confirm')} disabled={blocked} onPress={()=>void act('confirm')}/><Button testID="invoice-revise" variant="link" label={t('invoice.revise')} disabled={blocked} onPress={()=>setRevision(v=>!v)}/>{revision&&<><Input testID="invoice-reason" label={t('invoice.reason')} value={reason} onChangeText={v=>{edited.current=true;setReason(v);}} multiline editable={!blocked}/><Button testID="invoice-revision-send" variant="secondary" label={t('invoice.revisionSend')} disabled={blocked||!reason.trim()} onPress={()=>void act('revision-requests')}/></> }</>}
-     {locked&&customer&&!invoice.customer_payment_reported_at&&<Button testID="invoice-paid" label={t(cash==='0'?'invoice.paidZero':'invoice.paid')} disabled={blocked} onPress={()=>void act('payment-reported')}/>}
+     {customer&&job.state==='accepted'&&!locked&&invoice.state==='sent'&&<><Button testID="invoice-confirm" label={t('invoice.confirm')} disabled={draftBlocked} onPress={()=>void act('confirm')}/><Button testID="invoice-revise" variant="link" label={t('invoice.revise')} disabled={draftBlocked} onPress={()=>setRevision(v=>!v)}/>{revision&&<><Input testID="invoice-reason" label={t('invoice.reason')} value={reason} onChangeText={v=>{edited.current=true;setReason(v);}} multiline editable={!draftBlocked}/><Button testID="invoice-revision-send" variant="secondary" label={t('invoice.revisionSend')} disabled={draftBlocked||!reason.trim()} onPress={()=>void act('revision-requests')}/></> }</>}
+     {locked&&customer&&!invoice.customer_payment_reported_at&&<Button testID="invoice-paid" label={t(cash==='0'?'invoice.paidZero':'invoice.paid')} disabled={draftBlocked} onPress={()=>void act('payment-reported')}/>}
      {invoice.state==='locked'&&!customer&&worker&&<View style={styles.receive}>
-      <Pressable testID="invoice-receive-check" accessibilityRole="checkbox" accessibilityState={{checked:received,disabled:blocked}} disabled={blocked} onPress={()=>setReceived(v=>!v)} style={styles.check}><AppText tone="primary">{received?'☑':'☐'}</AppText><AppText style={styles.grow}>{t(cash==='0'?'invoice.receiveZero':'invoice.receiveCheck')}</AppText></Pressable>
-      <Button testID="invoice-receive" label={t(cash==='0'?'invoice.complete':'invoice.receive')} disabled={blocked||!received} onPress={()=>void act('settle')}/>
+      <Pressable testID="invoice-receive-check" accessibilityRole="checkbox" accessibilityState={{checked:received,disabled:draftBlocked}} disabled={draftBlocked} onPress={()=>setReceived(v=>!v)} style={styles.check}><AppText tone="primary">{received?'☑':'☐'}</AppText><AppText style={styles.grow}>{t(cash==='0'?'invoice.receiveZero':'invoice.receiveCheck')}</AppText></Pressable>
+      <Button testID="invoice-receive" label={t(cash==='0'?'invoice.complete':'invoice.receive')} disabled={draftBlocked||!received} onPress={()=>void act('settle')}/>
      </View>}
      {invoice.review_eligible?<AppText testID="invoice-done" style={styles.notice}>{t('invoice.done')}</AppText>:invoice.worker_receipt_confirmed_at?<AppText style={styles.notice}>{t('invoice.waitingCustomer')}</AppText>:invoice.customer_payment_reported_at?<AppText style={styles.notice}>{t('invoice.waitingWorker')}</AppText>:!customer&&invoice.state==='sent'?<AppText style={styles.notice}>{t('invoice.waitingReview')}</AppText>:null}
     </>}

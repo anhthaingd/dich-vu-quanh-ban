@@ -98,6 +98,11 @@ Câu hỏi học code:
 
 ## 6. Kiểm thử và giới hạn
 
+**Cập nhật tiếp ngày 16/10:** lượt SDD local trên commit `e1664cd` đã đạt đầy đủ: 240 mobile, 118 API, 20 web, coverage, build, load, prototype/Storybook và verify (108 tiêu chí). Giữ ghi nhận lượt lỗi danh mục phía dưới như lịch sử kiểm, chưa khẳng định đã tìm được nguyên nhân của lỗi gián đoạn đó.
+
+[CI 38847707687](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/38847707687) trên cùng commit đạt 19 web, lỗi hóa đơn khi bấm gửi lại sau yêu cầu sửa. Trace không có request gửi lần hai. Test mới tái hiện bằng cách giữ lượt đọc nền và bấm gửi trong lúc đó. Bản sửa ở `InvoiceContent`, `afterRead` giữ nội dung/khóa gửi, chờ cả lượt đọc xong rồi gọi API; vẫn kiểm phiên bản cũ đã xem, xử lý conflict và hủy lần gửi chưa bắt đầu nếu rời màn. Background vẫn kiểm phiên bản, không giảm kiểm quyền/tiền và không tăng timeout. `invoice-send` không bị tải nền làm mất click. Test web chủ động giữ request đọc, xác nhận chưa có ghi trước khi nhả đọc, rồi chỉ có một draft đúng số tiền. Kiểm tập trung sau sửa: 11 test InvoiceScreen và 3/3 lượt web hóa đơn đạt; lint, typecheck và SDD prepare đạt.
+
+
 Kiểm riêng hỗ trợ: 5 test API với PostgreSQL/PostGIS, 5 test mobile/API client và 1 hành trình web đã đạt. Web kiểm chọn ảnh thật, mất response sau khi đã lưu, thử lại không trùng, người ngoài bị chặn, bổ sung chứng cứ và lịch sử đóng. Dữ liệu trạng thái do fixture test tạo; chưa chứng minh thao tác admin.
 
 SDD local sau sửa kỳ vọng migration 14 đã qua lint, typecheck, tooling, 240 test mobile, 118 test API, hai coverage gate và build app/API. Toàn web: **19 đạt, 1 thất bại** ở hành trình danh mục (API 200 nhưng UI hiện lỗi tải); ba lượt kiểm riêng có log fetch/JSON sau đó đều đạt, chưa xác định nguyên nhân gián đoạn. Vì vậy **không đánh dấu SDD local/verify đạt**; bước load/prototype/Storybook trong lượt này chưa chạy. CI phải chạy lại toàn bộ trên commit mới, không bỏ test hoặc tăng timeout.

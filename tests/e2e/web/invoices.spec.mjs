@@ -17,6 +17,7 @@ test('invoice: photo, revision, points, lost confirm response and two payment ma
  const signIn=async(tab,name)=>{await tab.goto(environment.webUrl);await tab.getByTestId('nav-account').click();await tab.getByTestId('auth-email').fill(name+'@example.test');await tab.getByTestId('auth-password').fill(password);await tab.getByTestId('auth-submit').click();await tab.getByTestId('jobs-open').click();};
  const context=await browser.newContext({viewport:{width:390,height:844}}),client=await context.newPage();
  const capture=async(tab,id,path)=>{await tab.setViewportSize({width:390,height:2000});await tab.getByTestId(id).screenshot({path});await tab.setViewportSize({width:390,height:844});};
+ let releaseSnapshot;
  const directory='test-results/web/report-screenshots/B06-01';await mkdir(directory,{recursive:true});
  try{
  await signIn(page,'DEMO-worker');await page.getByTestId('jobs-partner-'+partner).click();await page.getByTestId('job-open-'+job).click();await page.getByTestId('job-invoice').click();await expect(page.getByTestId('invoice-editor')).toBeVisible();
@@ -25,7 +26,17 @@ test('invoice: photo, revision, points, lost confirm response and two payment ma
  await page.getByTestId('invoice-materials').fill('100000');await page.getByTestId('invoice-labor').fill('200000');await page.getByTestId('invoice-note').fill('DEMO đã thay ổ điện và kiểm tra an toàn.');await capture(page,'invoice-editor',directory+'/web-editor.png');await page.getByTestId('invoice-send').click();await expect(page.getByTestId('invoice-review')).toBeVisible();
  await signIn(client,'DEMO-customer');await client.getByTestId('job-open-'+job).click();await client.getByTestId('job-invoice').click();await expect(client.getByTestId('invoice-points')).toHaveValue('0');await expect(client.getByText('DEMO đã thay ổ điện và kiểm tra an toàn.')).toBeVisible();await capture(client,'invoice-review',directory+'/web-customer-review.png');
  await client.getByTestId('invoice-revise').click();await client.getByTestId('invoice-reason').fill('DEMO vật tư đã thống nhất 50000đ');await client.getByTestId('invoice-revision-send').click();await expect(client.getByText(/Đã yêu cầu sửa: DEMO/)).toBeVisible();
- await expect(page.getByTestId('invoice-editor')).toBeVisible();await page.getByTestId('invoice-materials').fill('50000');await page.getByTestId('invoice-send').click();await expect(page.getByTestId('invoice-review')).toBeVisible();
+ await expect(page.getByTestId('invoice-editor')).toBeVisible();
+ // A background snapshot must not swallow editing or the send click. Hold the
+ // read, submit once, then verify the captured mutation starts only after it.
+ let started;const reading=new Promise(resolve=>{started=resolve;}),held=new Promise(resolve=>{releaseSnapshot=resolve;}),writes=[];
+ await page.route('**/v1/jobs/'+job,async route=>{started();await held;await route.continue();});
+ await page.route('**/invoice-draft',async route=>{writes.push(route.request().postDataJSON());await route.continue();});
+ await page.getByTestId('invoice-reload').click();await reading;
+ await page.getByTestId('invoice-materials').fill('50000');await page.getByTestId('invoice-send').click();
+ await expect(page.getByTestId('invoice-send')).toBeDisabled();expect(writes).toHaveLength(0);releaseSnapshot();
+ await expect(page.getByTestId('invoice-review')).toBeVisible();expect(writes).toHaveLength(1);expect(writes[0].materials).toBe('50000');
+ await page.unroute('**/v1/jobs/'+job);await page.unroute('**/invoice-draft');
  await client.getByTestId('invoice-reload').click();await expect(client.getByTestId('invoice-points')).toHaveValue('0');await client.getByTestId('invoice-points').fill('50000');
  const attempts=[];await client.route('**/invoices/*/confirm',async route=>{attempts.push({key:route.request().headers()['idempotency-key'],body:route.request().postDataJSON()});if(attempts.length===1){await route.fetch();await route.abort('failed');}else await route.continue();});
  await client.getByTestId('invoice-confirm').click();await client.getByTestId('work-retry').click();await expect(client.getByTestId('invoice-paid')).toBeVisible();expect(attempts).toHaveLength(2);expect(attempts[0]).toEqual(attempts[1]);await client.unroute('**/invoices/*/confirm');await capture(client,'invoice-review',directory+'/web-payment.png');
@@ -34,5 +45,5 @@ test('invoice: photo, revision, points, lost confirm response and two payment ma
  await expect(page.getByTestId('invoice-done')).toBeVisible();await page.getByTestId('invoice-history').click();await expect(page.getByText('Quyết toán công việc')).toBeVisible();await page.getByTestId('invoice-history').scrollIntoViewIfNeeded();await page.screenshot({path:directory+'/web-worker-completed.png'});
  const invoice=await call(customer.access_token,'/jobs/'+job+'/invoice');expect(invoice.points_used).toBe('50000');expect(invoice.cash_due).toBe('200000');expect(invoice.reward).toBe('3200');expect(invoice.review_eligible).toBe(true);
  expect((await call(customer.access_token,'/me/points')).balance).toBe('33200');expect((await call(worker.access_token,'/partners/'+partner+'/wallet')).balance).toBe('30000');expect((await environment.pool.query('SELECT count(*) FROM settlements')).rows[0].count).toBe('1');
- }finally{await context.close();}
+ }finally{releaseSnapshot?.();await context.close();}
 });

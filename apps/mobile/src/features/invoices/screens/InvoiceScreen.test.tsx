@@ -64,3 +64,34 @@ test('realtime rechecks an edited invoice: duplicate version keeps points; newer
  expect(screen.getByTestId('invoice-points').props.value).toBe('0');
  expect(screen.getByTestId('invoice-confirm')).not.toBeDisabled();
 });
+
+test('invoice send waits for background snapshot without losing the click or replacing the draft',async()=>{
+ const f=invoiceFixture(true);f.setInvoice({...invoice,state:'revision_requested'});mount(f);await ready();
+ const job=await f.jobs.get.mock.results[0].value;let finish!:(value:typeof job)=>void;
+ f.jobs.get.mockReturnValueOnce(new Promise(resolve=>{finish=resolve;}));
+ act(()=>jest.mocked(useRealtimeRefresh).mock.calls.at(-1)![0].refresh());
+ await waitFor(()=>expect(f.manager.getSnapshot().busy).toBe(true));
+ expect(screen.getByTestId('invoice-materials').props.editable).toBe(true);
+ fireEvent.changeText(screen.getByTestId('invoice-materials'),'50000');
+ expect(screen.getByTestId('invoice-send')).not.toBeDisabled();press('invoice-send');
+ expect(f.invoices.save).not.toHaveBeenCalled();expect(screen.getByTestId('invoice-send')).toBeDisabled();
+ await act(async()=>finish(job));await screen.findByTestId('invoice-review');await ready();
+ expect(f.invoices.save).toHaveBeenCalledTimes(1);expect(f.invoices.save.mock.calls[0][2]).toMatchObject({expected_version:3,materials:'50000'});
+});
+
+test('queued invoice confirmation keeps the reviewed version and handles a newer server snapshot as conflict',async()=>{
+ const f=invoiceFixture();mount(f);await ready();const job=await f.jobs.get.mock.results[0].value;
+ let finish!:(value:typeof job)=>void;f.jobs.get.mockReturnValueOnce(new Promise(resolve=>{finish=resolve;}));
+ act(()=>jest.mocked(useRealtimeRefresh).mock.calls.at(-1)![0].refresh());await waitFor(()=>expect(f.manager.getSnapshot().busy).toBe(true));
+ fireEvent.changeText(screen.getByTestId('invoice-points'),'50000');press('invoice-confirm');
+ f.setInvoice({...invoice,version:6,version_id:'v2'});f.invoices.change.mockRejectedValueOnce(new ApiError('VERSION_CONFLICT'));
+ await act(async()=>finish(job));expect(await screen.findAllByRole('alert')).toHaveLength(2);
+ expect(f.invoices.change.mock.calls[0][3]).toEqual({expected_version:3,version_id:'v1',points_used:'50000'});
+ expect(screen.getByTestId('invoice-points').props.value).toBe('50000');expect(screen.getByTestId('invoice-confirm')).toBeDisabled();expect(f.invoices.change).toHaveBeenCalledTimes(1);
+});
+test('leaving the invoice screen cancels a queued write before it reaches the API',async()=>{
+ const f=invoiceFixture(true);f.setInvoice({...invoice,state:'draft'});const view=mount(f);await ready();const job=await f.jobs.get.mock.results[0].value;
+ let finish!:(value:typeof job)=>void;f.jobs.get.mockReturnValueOnce(new Promise(resolve=>{finish=resolve;}));
+ act(()=>jest.mocked(useRealtimeRefresh).mock.calls.at(-1)![0].refresh());await waitFor(()=>expect(f.manager.getSnapshot().busy).toBe(true));
+ press('invoice-send');view.unmount();await act(async()=>finish(job));expect(f.invoices.save).not.toHaveBeenCalled();expect(f.invoices.change).not.toHaveBeenCalled();
+});

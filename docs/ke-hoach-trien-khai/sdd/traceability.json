@@ -2823,7 +2823,7 @@
       "qa": [
         "QA-095"
       ],
-      "description": "Realtime invoice transitions preserve HTTP version/retry and test settlement",
+      "description": "Realtime invoice transitions preserve HTTP version/retry and test settlement Regression 16/10: accept a submit press during an HTTP snapshot, queue the immutable payload until the read ends, retain reviewed version on conflict and cancel queued writes on departure.",
       "code": [
         "services/api/src/modules/realtime/realtime.gateway.ts",
         "services/api/src/modules/realtime/realtime.worker.ts",
@@ -2842,6 +2842,21 @@
           "suite": "mobile",
           "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
           "name": "realtime rechecks an edited invoice: duplicate version keeps points; newer version requires reload"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+          "name": "invoice send waits for background snapshot without losing the click or replacing the draft"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+          "name": "queued invoice confirmation keeps the reviewed version and handles a newer server snapshot as conflict"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+          "name": "leaving the invoice screen cancels a queued write before it reaches the API"
         }
       ],
       "sources": [
