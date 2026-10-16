@@ -128,6 +128,8 @@ Không thêm thư viện/framework. Giữ kiến trúc module hiện hành; UI k
 
 </details>
 
+**Cập nhật CI tiếp theo:** [run 38850018137](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/38850018137) trên `aec122d` đạt mobile/API/coverage/build và 19 hành trình web, gồm hóa đơn và đổi lịch. Runner dừng ở đúng 600 giây trước khi hành trình thứ 20 hoàn tất; các bài trước không có assertion lỗi. Đây là giới hạn tổng dành cho 14 hành trình cũ. Đã tăng ngân sách toàn suite lên 900 giây cho 20 hành trình, giữ timeout từng test, retries=0, assertions, coverage và toàn bộ tiêu chí. Local trước đó đạt 20 web nhưng không được chứng nhận vì HEAD đổi giữa lượt; lượt local tiếp theo được chủ động dừng để cập nhật ngân sách. Cần SDD/verify mới trên commit cuối, không dùng những lượt này chứng nhận mã nguồn sau sửa.
+
 ## 7. Phần chưa làm và bước sau
 
 Admin queue/MFA, quyết định xử lý và chọn đoạn chat làm chứng cứ cần đợt riêng. Chưa chứng nhận thiết bị thật, UAT, production, kho ảnh cloud, provider hoặc chi phí. Chưa đóng toàn B09/P1-2. Code phía người gửi không mở quyền quản trị hoặc thay đổi luồng tiền hiện hành.
