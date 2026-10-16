@@ -69,14 +69,17 @@ test('invoice send waits for background snapshot without losing the click or rep
  const f=invoiceFixture(true);f.setInvoice({...invoice,state:'revision_requested'});mount(f);await ready();
  const job=await f.jobs.get.mock.results[0].value;let finish!:(value:typeof job)=>void;
  f.jobs.get.mockReturnValueOnce(new Promise(resolve=>{finish=resolve;}));
- act(()=>jest.mocked(useRealtimeRefresh).mock.calls.at(-1)![0].refresh());
+ press('invoice-reload');
  await waitFor(()=>expect(f.manager.getSnapshot().busy).toBe(true));
  expect(screen.getByTestId('invoice-materials').props.editable).toBe(true);
- fireEvent.changeText(screen.getByTestId('invoice-materials'),'50000');
+ fireEvent.changeText(screen.getByTestId('invoice-materials'),'40000');
+ let releaseWrite!:()=>void;const gate=new Promise<void>(resolve=>{releaseWrite=resolve;}),save=f.invoices.save.getMockImplementation()!;
+ f.invoices.save.mockImplementationOnce(async(...args)=>{await gate;return save(...args);});
  expect(screen.getByTestId('invoice-send')).not.toBeDisabled();press('invoice-send');
  expect(f.invoices.save).not.toHaveBeenCalled();expect(screen.getByTestId('invoice-send')).toBeDisabled();
- await act(async()=>finish(job));await screen.findByTestId('invoice-review');await ready();
- expect(f.invoices.save).toHaveBeenCalledTimes(1);expect(f.invoices.save.mock.calls[0][2]).toMatchObject({expected_version:3,materials:'50000'});
+ await act(async()=>finish(job));expect(screen.getByTestId('invoice-materials').props.value).toBe('40000');
+ await act(async()=>releaseWrite());await screen.findByTestId('invoice-review');await ready();
+ expect(f.invoices.save).toHaveBeenCalledTimes(1);expect(f.invoices.save.mock.calls[0][2]).toMatchObject({expected_version:3,materials:'40000'});
 });
 
 test('queued invoice confirmation keeps the reviewed version and handles a newer server snapshot as conflict',async()=>{

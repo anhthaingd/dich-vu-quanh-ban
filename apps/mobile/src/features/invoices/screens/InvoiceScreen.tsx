@@ -52,7 +52,7 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
    if(edited.current&&(previous?.version!==i?.version||previous?.version_id!==i?.version_id)){setStale(true);return;}
    setLedger(entries);setJob(j);setInvoice(i);setAvailable(pointsAvailable);setWallet(w);
    // Reloading never silently replaces an edited draft or a customer's point choice.
-   if(formVersion.current!==i?.version_id){setLabor(i?.labor??'');setMaterials(i?.materials??'');setNote(i?.note??'');setPoints(i?.points_used??'0');setAssets(photos);formVersion.current=i?.version_id??null;}
+   if(formVersion.current!==i?.version_id&&!edited.current){setLabor(i?.labor??'');setMaterials(i?.materials??'');setNote(i?.note??'');setPoints(i?.points_used??'0');setAssets(photos);formVersion.current=i?.version_id??null;}
    else setAssets(old=>old.map(a=>photos.find(p=>p.id===a.id)??a));
   })().catch(e=>{if(active){setError(e instanceof ApiError?e.code:'NETWORK');if(e instanceof ApiError&&['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(e.code)){setJob(null);setInvoice(null);setAssets([]);}}}).finally(()=>{if(active)setBusy(false);});
   return ()=>{active=false;mounted.current=false;};
