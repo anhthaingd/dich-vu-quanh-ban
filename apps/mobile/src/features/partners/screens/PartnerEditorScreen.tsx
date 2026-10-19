@@ -34,6 +34,7 @@ export function PartnerEditorScreen({
           key={`${owner}:${route.params.id ?? 'new'}`}
           owner={owner}
           id={route.params.id}
+          verification={(id)=>navigation.navigate('Verification',{id})}
           preview={(id) => navigation.navigate('PartnerProfile', { id })}
         />
       )}
@@ -50,11 +51,13 @@ type LocationDraft = {
 function Editor({
   owner,
   id,
-  preview
+  preview,
+  verification
 }: {
   owner: string;
   id?: string;
   preview: (id: string) => void;
+  verification: (id:string)=>void;
 }) {
   const { manager, state: auth } = useAuth(),
     { t, locale } = useLocale(),
@@ -643,9 +646,10 @@ function Editor({
               )}
             </AppText>
             <AppText tone="muted">{t('partners.publishHint')}</AppText>
+            <Button testID="partner-verification" label={t('verification.title')} variant="secondary" onPress={()=>verification(p.id)} />
             {p.publication_status === 'published' && (
               <>
-                <Button
+              <Button
                   label={t('partners.preview')}
                   variant="secondary"
                   onPress={() => preview(p.id)}

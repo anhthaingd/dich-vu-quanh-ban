@@ -4,7 +4,8 @@
   "private": true,
   "workspaces": [
     "apps/mobile",
-    "services/api"
+    "services/api",
+    "apps/admin"
   ],
   "engines": {
     "node": "24.7.0",
@@ -12,7 +13,7 @@
   },
   "packageManager": "npm@11.5.1",
   "scripts": {
-    "lint": "eslint apps/mobile services/api scripts tests",
+    "lint": "eslint apps/mobile apps/admin services/api scripts tests",
     "typecheck": "npm run typecheck --workspaces",
     "test": "npm run test --workspaces",
     "test:integration": "npm run test:integration -w services/api",
@@ -42,7 +43,8 @@
     "test:native": "npm run build -w services/api && node scripts/test/native.mjs",
     "db:demo-partners": "npm run db:demo-partners -w services/api",
     "sdd:check": "node scripts/sdd/check.mjs",
-    "sdd:run": "node scripts/sdd/run.mjs"
+    "sdd:run": "node scripts/sdd/run.mjs",
+    "admin": "npm run dev -w apps/admin"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

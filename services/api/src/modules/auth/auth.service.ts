@@ -21,7 +21,8 @@ export class AuthService {
       EXISTS(SELECT 1 FROM identities WHERE user_id=$1 AND provider='email' AND verified_at IS NOT NULL) AS email_verified,
       ARRAY(SELECT m.partner_id FROM memberships m JOIN partners p ON p.id=m.partner_id
         WHERE m.user_id=$1 AND m.active AND p.archived_at IS NULL ORDER BY m.partner_id) AS partner_ids`, [user.id]);
-    return { ...user, ...flags, admin_permissions: [] };
+    const grants=await db.query('SELECT permission FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL ORDER BY permission',[user.id]);
+    return { ...user, ...flags, admin_permissions: grants.rows.map(r=>r.permission as string) };
   }
   private async issue(db: PoolClient, user: User, family = randomUUID(), expiry = new Date(Date.now() + 30 * 86400000)) {
     const refresh = randomBytes(32).toString('hex');

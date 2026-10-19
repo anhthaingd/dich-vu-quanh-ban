@@ -14,7 +14,7 @@ export class SupportService {
   const r=(await db.query(`SELECT * FROM reports WHERE id=$1 AND reporter_id=$2${lock?' FOR UPDATE':''}`,[id,user])).rows[0];
   if(!r)throw new NotFoundException();return r;
  }
- private async dto(db:PoolClient,r:ReportRow){
+ async dto(db:PoolClient,r:ReportRow){
   const {rows:updates}=await db.query("SELECT id,actor_id,body,visibility,created_at FROM report_updates WHERE report_id=$1 AND visibility='participants' ORDER BY created_at,id",[r.id]);
   const {rows:evidence}=await db.query('SELECT asset_id,update_id FROM report_evidence WHERE report_id=$1 ORDER BY created_at,id',[r.id]);
   return {id:r.id,state:r.state,version:r.version,kind:r.kind,subject:r.subject,body:r.body,job_id:r.job_id,invoice_id:r.invoice_id,evidence_ids:evidence.filter(e=>e.update_id===null).map(e=>e.asset_id),updates:updates.map(u=>({actor_id:u.actor_id,body:u.body,visibility:u.visibility,created_at:u.created_at.toISOString(),evidence_ids:evidence.filter(e=>e.update_id===u.id).map(e=>e.asset_id)}))};

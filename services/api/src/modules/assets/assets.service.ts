@@ -1,3 +1,4 @@
+import {AdminAuthService} from '../admin-auth/admin-auth.service.js';
 import {BadRequestException,ConflictException,NotFoundException,ServiceUnavailableException} from '@nestjs/common';
 import {createHmac,createHash,randomUUID,timingSafeEqual} from 'node:crypto';
 import {mkdir,readFile,writeFile,rename} from 'node:fs/promises';
@@ -13,7 +14,7 @@ export type LocalAssets={directory:string;origin:string};
 const MAX_BYTES=10*1024*1024,TTL=10*60*1000;
 export class AssetsService {
  private readonly tx:AccountTransaction;
- constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly secret:string,private readonly config?:LocalAssets){this.tx=new AccountTransaction(pool,auth);}
+ constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly secret:string,private readonly config?:LocalAssets,private readonly admin?:AdminAuthService){this.tx=new AccountTransaction(pool,auth);}
  private configured(){if(!this.config)throw new ServiceUnavailableException();return this.config;}
  private sign(id:string,user:string,session:string,kind:string){const payload=Buffer.from(JSON.stringify({id,user,session,kind,expires:Date.now()+TTL})).toString('base64url');return payload+'.'+createHmac('sha256',this.secret).update('asset:'+payload).digest('base64url');}
  private async verify(id:string,token:unknown,kind:string){
@@ -26,7 +27,8 @@ export class AssetsService {
  }
  private url(id:string,user:string,session:string,kind:string){return this.configured().origin+'/v1/assets/'+id+'/'+(kind==='public-content'?'content':kind)+'?grant='+this.sign(id,user,session,kind);}
  grant(header:string|undefined,body:unknown,key:string){
-  this.configured();const v=object(body,['purpose','mime','bytes','checksum']);if(!['result','review','evidence'].includes(String(v.purpose))||!['image/jpeg','image/png','image/webp'].includes(String(v.mime))||!Number.isSafeInteger(v.bytes)||Number(v.bytes)<1||Number(v.bytes)>MAX_BYTES||(v.checksum!==undefined&&(typeof v.checksum!=='string'||!/^[a-f0-9]{64}$/.test(v.checksum))))throw new BadRequestException();
+  this.configured();const v=object(body,['purpose','mime','bytes','checksum']);if(!['result','review','evidence','verification'].includes(String(v.purpose))||!['image/jpeg','image/png','image/webp'].includes(String(v.mime))||!Number.isSafeInteger(v.bytes)||Number(v.bytes)<1||Number(v.bytes)>MAX_BYTES||(v.checksum!==undefined&&(typeof v.checksum!=='string'||!/^[a-f0-9]{64}$/.test(v.checksum))))throw new BadRequestException();
+  if(v.purpose==='verification'){if(!this.admin)throw new ServiceUnavailableException();this.admin.requireConfigured();}
   return this.tx.run(header,'assets.grant',key,v,async(db,actor)=>{
    const count=(await db.query("SELECT count(*) FROM assets WHERE uploader_id=$1 AND created_at>now()-interval '1 hour'",[actor.user.id])).rows[0].count;if(Number(count)>=100)throw new BadRequestException();
    const a=(await db.query("INSERT INTO assets(uploader_id,object_key,purpose,mime,bytes,status,checksum) VALUES($1,$2,$6,$3,$4,'pending',$5) RETURNING id",[actor.user.id,randomUUID(),v.mime,v.bytes,v.checksum??null,v.purpose])).rows[0];
@@ -39,7 +41,7 @@ export class AssetsService {
    if(!a)throw new NotFoundException();if(a.status!=='pending')throw new ConflictException({code:'STATE_CONFLICT'});
    if(Number(a.bytes)!==size||req.headers['content-type']!==a.mime||(a.checksum&&a.checksum!==hash))throw new BadRequestException();
    if(a.uploaded_checksum&&a.uploaded_checksum!==hash)throw new ConflictException({code:'IDEMPOTENCY_MISMATCH'});
-   const dir=this.configured().directory;await mkdir(dir,{recursive:true});const path=join(dir,a.object_key+'.raw');const temp=path+'.'+randomUUID();await writeFile(temp,data,{mode:0o600});await rename(temp,path);
+   const dir=this.configured().directory;await mkdir(dir,{recursive:true});const path=join(dir,a.object_key+'.raw');const temp=path+'.'+randomUUID();await writeFile(temp,a.purpose==='verification'?this.admin!.secrets.encrypt(data.toString('base64')):data,{mode:0o600});await rename(temp,path);
    await db.query('UPDATE assets SET uploaded_checksum=$2 WHERE id=$1',[id,hash]);await db.query('COMMIT');return {uploaded:true};
   }catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
  }
@@ -50,16 +52,21 @@ export class AssetsService {
    if(a.status==='ready')return this.dto(a,actor.user.id,actor.sessionId);
    if(a.status!=='pending'||!a.uploaded_checksum)throw new BadRequestException();
    let bytes:Buffer;try{
-    const raw=await readFile(join(this.configured().directory,a.object_key+'.raw'));if(raw.length!==Number(a.bytes)||createHash('sha256').update(raw).digest('hex')!==a.uploaded_checksum)throw new Error('bytes');
+    const file=await readFile(join(this.configured().directory,a.object_key+'.raw'));const raw=a.purpose==='verification'?Buffer.from(this.admin!.secrets.decrypt(file.toString()),'base64'):file;if(raw.length!==Number(a.bytes)||createHash('sha256').update(raw).digest('hex')!==a.uploaded_checksum)throw new Error('bytes');
     const image=sharp(raw,{limitInputPixels:25000000,failOn:'warning'}),meta=await image.metadata();if(({jpeg:'image/jpeg',png:'image/png',webp:'image/webp'} as Record<string,string>)[meta.format??'']!==a.mime||(meta.pages??1)>1)throw new Error('mime');
     bytes=await image.rotate().png().toBuffer();
    }catch{throw new BadRequestException();}
-   const target=join(this.configured().directory,a.object_key+'.png');await writeFile(target,bytes,{mode:0o600});await db.query("UPDATE assets SET status='ready' WHERE id=$1",[id]);return this.dto({...a,status:'ready'},actor.user.id,actor.sessionId);
+   const target=join(this.configured().directory,a.object_key+'.png');await writeFile(target,a.purpose==='verification'?this.admin!.secrets.encrypt(bytes.toString('base64')):bytes,{mode:0o600});await db.query("UPDATE assets SET status='ready' WHERE id=$1",[id]);return this.dto({...a,status:'ready'},actor.user.id,actor.sessionId);
   },async(db,actor)=>{if(!(await db.query('SELECT 1 FROM assets WHERE id=$1 AND uploader_id=$2',[id,actor.user.id])).rows.length)throw new NotFoundException();});
  }
  private dto(a:{id:string;status:string},user:string,session:string){return {id:a.id,status:a.status,download_url:a.status==='ready'?this.url(a.id,user,session,'content'):null,expires_at:a.status==='ready'?new Date(Date.now()+TTL).toISOString():null};}
  private async authorized(db:PoolClient,id:string,user:string){
   const a=(await db.query('SELECT * FROM assets WHERE id=$1',[id])).rows[0];if(!a)throw new NotFoundException();
+  if(a.purpose==='verification'){
+   this.admin?.requireConfigured();const refs=(await db.query('SELECT v.partner_id FROM verification_assets x JOIN verification_requests v ON v.id=x.request_id WHERE x.asset_id=$1',[id])).rows;
+   if(!refs.length&&a.uploader_id===user)return a;
+   for(const r of refs)if(hasPermission(await memberAccess(db,r.partner_id,user),'profile.manage'))return a;throw new NotFoundException();
+  }
   if(a.purpose==='evidence'){if(a.uploader_id!==user)throw new NotFoundException();return a;}
   const reviews=(await db.query('SELECT j.id,j.partner_id,j.customer_id FROM reviews r JOIN jobs j ON j.id=r.job_id WHERE r.asset_id=$1',[id])).rows;
   if(reviews.length){
@@ -88,6 +95,15 @@ export class AssetsService {
   if(header){const actor=await this.auth.authenticate(header);return this.withRead(id,actor.user.id,a=>this.dto(a,actor.user.id,actor.sessionId));}
   return this.withRead(id,'',a=>({id:a.id,status:a.status,download_url:this.url(a.id,'','','public-content'),expires_at:new Date(Date.now()+TTL).toISOString()}));
  }
- private async withRead<T>(id:string,user:string,read:(a: {id:string;status:string;object_key:string})=>Promise<T>|T){const db=await this.pool.connect();try{await db.query('BEGIN');const a=user?await this.authorized(db,id,user):await this.publicAsset(db,id);const r=await read(a);await db.query('COMMIT');return r;}catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}}
- async content(id:string,grant:unknown){const actor=await this.verify(id,grant,'content');return this.withRead(id,actor.user,async a=>{if(a.status!=='ready')throw new NotFoundException();return readFile(join(this.configured().directory,a.object_key+'.png'));});}
+ private async withRead<T>(id:string,user:string,read:(a: {id:string;status:string;object_key:string;purpose:string})=>Promise<T>|T){const db=await this.pool.connect();try{await db.query('BEGIN');const a=user?await this.authorized(db,id,user):await this.publicAsset(db,id);const r=await read(a);await db.query('COMMIT');return r;}catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}}
+ async content(id:string,grant:unknown){const actor=await this.verify(id,grant,'content');return this.withRead(id,actor.user,async a=>{if(a.status!=='ready')throw new NotFoundException();return this.bytes(a);});}
+ private async bytes(a:{object_key:string;purpose:string}){const data=await readFile(join(this.configured().directory,a.object_key+'.png'));return a.purpose==='verification'?Buffer.from(this.admin!.secrets.decrypt(data.toString()),'base64'):data;}
+ async adminContent(header:string|undefined,token:string|undefined,id:string){if(!this.admin)throw new ServiceUnavailableException();return this.admin.read(header,token,undefined,async(db,actor)=>{
+  const a=(await db.query("SELECT * FROM assets WHERE id=$1 AND status='ready'",[id])).rows[0];if(!a)throw new NotFoundException();
+  if(a.purpose==='evidence'){await this.admin!.grants(db,actor,'support.read');if(!(await db.query('SELECT 1 FROM report_evidence WHERE asset_id=$1',[id])).rowCount)throw new NotFoundException();}
+  else if(a.purpose==='verification'){await this.admin!.grants(db,actor,'moderation.manage');if(!(await db.query('SELECT 1 FROM verification_assets WHERE asset_id=$1',[id])).rowCount)throw new NotFoundException();}
+  else if(a.purpose==='review'){await this.admin!.grants(db,actor,'moderation.manage');if(!(await db.query('SELECT 1 FROM reviews WHERE asset_id=$1',[id])).rowCount)throw new NotFoundException();}
+  else throw new NotFoundException();const bytes=await this.bytes(a);await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.asset.read',$2,'Submitted evidence read','{}')",[actor.user.id,id]);return bytes;
+ });}
+
 }

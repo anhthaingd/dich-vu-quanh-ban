@@ -1,3 +1,4 @@
+import type {VerificationApi,VerificationInput} from '../../verification/api/verification-api';
 import type {SupportApi} from '../../support/api/support-api';
 import type {ReportInput} from '../../support/models';
 import type {ReviewsApi} from '../../reviews/api/reviews-api';
@@ -24,7 +25,7 @@ export class AuthSession {
   private session: Session | null = null;
   private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
   private readonly listeners = new Set<() => void>();
-  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi, private readonly notifications?:NotificationsApi, private readonly reviews?:ReviewsApi,private readonly support?:SupportApi) {}
+  constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi, private readonly notifications?:NotificationsApi, private readonly reviews?:ReviewsApi,private readonly support?:SupportApi,private readonly verification?:VerificationApi) {}
   bindRealtime(client:RealtimeClient){
     const update=()=>client.setSession(this.session?{owner:this.session.user.id,token:this.session.access_token,expiresAt:Date.parse(this.session.expires_at)}:null);
     client.setRefresh(async()=>{const owner=this.session?.user.id;if(!owner)throw new ApiError('UNAUTHENTICATED');await this.accountOperation(owner,async()=>{await this.rotate();});});
@@ -124,6 +125,11 @@ export class AuthSession {
     }
     return user;
   }
+  // Admin uses the same refresh family; MFA stays in memory in its own client.
+  adminOperation<T>(owner: string, work: (token: string) => Promise<T>, read = false): Promise<T> {
+    if (!this.snapshot.user?.admin_permissions?.length) return Promise.reject(new ApiError('FORBIDDEN'));
+    return read ? this.passiveRead(owner, work) : this.accountOperation(owner, work);
+  }
   private notificationApi(){if(!this.notifications)throw new ApiError('CONFIG');return this.notifications;}
   // Passive badge/inbox polling must not take the submit lock from an active form.
   // Refresh still uses the serialized session path; never return another account's result.
@@ -158,6 +164,11 @@ export class AuthSession {
   setTeamContact=(o:string,p:string,id:string|null,v:number,k:string)=>this.accountOperation(o,t=>this.teamApi().setContact(t,p,id,v,k));
   requestChallenge=(o:string,contact:string)=>this.accountOperation(o,t=>this.teamApi().challenge(t,contact));
   verifyChallenge=(o:string,id:string,code:string)=>this.accountOperation(o,t=>this.teamApi().verify(t,id,code));
+  private verificationApi(){if(!this.verification)throw new ApiError('CONFIG');return this.verification;}
+  listVerifications=(o:string,id:string,c?:string)=>this.accountOperation(o,t=>this.verificationApi().list(t,id,c));
+  submitVerification=(o:string,id:string,b:VerificationInput,k:string)=>this.accountOperation(o,t=>this.verificationApi().submit(t,id,b,k));
+  uploadVerification=(o:string,b:Blob,k:string)=>this.accountOperation(o,t=>this.verificationApi().upload(t,b,k));
+  verificationAsset=(o:string,id:string)=>this.passiveRead(o,t=>this.verificationApi().asset(t,id));
   private supportApi(){if(!this.support)throw new ApiError('CONFIG');return this.support;}
   listReports=(o:string,c?:string)=>this.accountOperation(o,t=>this.supportApi().list(t,c));
   getReport=(o:string,id:string)=>this.accountOperation(o,t=>this.supportApi().get(t,id));

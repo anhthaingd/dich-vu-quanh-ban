@@ -68,3 +68,5 @@ Criterion hiện dùng tên test literal đang bật. Jest hỗ trợ tên đầ
 - P1-01 A/B đã duyệt riêng verify OTP local/test; không mở OTP login/recover/provider thật, ngân hàng, gọi, thông báo, quản trị hoặc PROMO-02. CI/branch protection không tự duyệt triển khai sản phẩm.
 
 MSG-01 ngày 15/10: thêm 3 criterion cho badge chat/inbox độc lập, legacy và snapshot/pagination. Giữ 93 criterion cũ; review chỉ API v0.1.14 mô tả hai operation notification, QA-025/095 và policy realtime v0.2.1, các ghi chú UX/README. Không đổi schema/route/quyền; không thu hẹp QA hoặc scope.
+
+P1-03 ngày 19/10: chủ dự án duyệt gói admin TOTP/hỗ trợ/xác minh/đánh giá local/test. Review API v0.1.17 và chỉ bổ sung QA-098–102; giữ 97 QA cũ, baseline, 108 criterion cũ và mọi required step. Hiện 113 criterion, 141 operation, 74 QA partial/28 unmapped. QA mới giới hạn đúng pilot; không đổi trạng thái nghiệp vụ cũ thành hoàn tất. Hash nguồn API/QA được cập nhật sau review diff P1-03 và kiểm phản hồi bằng contract.

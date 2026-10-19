@@ -1,5 +1,16 @@
 # Checklist chức năng và bằng chứng
 
+## P1-03 — Admin hỗ trợ, xác minh và kiểm duyệt, 19/10/2026
+
+- [x] Chủ dự án duyệt toàn bộ contract bổ sung: TOTP, phiên admin, khai báo/ảnh/lịch sử xác minh, Cần bổ sung, chi tiết/tìm/lọc và Giữ/Ẩn/Khôi phục.
+- [x] DB/API: MFA gắn family, quyền hiện hành, fresh 5 phút, rate limit, chống replay; phiên bản/idempotency, audit truy cập/quyết định, dữ liệu xác minh mã hóa.
+- [x] Admin workspace React có build/typecheck/test, đăng nhập/MFA, ba hàng đợi và nhật ký VI/EN/JA. App Expo có lối vào từ hồ sơ nháp, nộp ảnh/bổ sung/lịch sử và đọc kết quả.
+- [x] Kiểm tập trung: 4 integration + TOTP/config + 4 mobile/client + admin client; web API/DB thật hai vai, retry mất response, duyệt bổ sung, ẩn/khôi phục và khóa phiên đạt.
+- [x] iOS 27 simulator: nhập khai báo, chọn ảnh Photos, upload/gửi và đọc lịch sử hồ sơ chờ duyệt qua API DEMO thật.
+- [x] Báo cáo riêng [B09-02](bao-cao/B09-02-admin-ho-tro-va-kiem-duyet.md), [B02-04](bao-cao/B02-04-nop-va-xet-xac-minh.md); Mermaid đã parse/render, ảnh DEMO.
+- SDD: thêm 5 tiêu chí/QA, giữ 108 tiêu chí trước và baseline. 113 tiêu chí, 74 QA partial/28 unmapped. Kết quả đầy đủ theo `test-results/sdd/SDD-PROJECT/evidence.json` và `sdd:check --phase verify` của bộ file cuối; không dùng kiểm tập trung thay SDD.
+- [ ] CI trên commit mới, Android, thiết bị thật/UAT/production; khôi phục MFA, quản trị tài chính/tài khoản/danh mục đầy đủ, hoàn tất thay và chọn đoạn chat chứng cứ còn mở. Không đóng toàn B02/B09/B10/P1-2.
+
 ## B09-01 — Hỗ trợ phía người gửi, 16/10/2026
 
 - [x] Chủ dự án duyệt bổ sung tiêu đề/ảnh local; admin/MFA để đợt riêng.
@@ -275,13 +286,15 @@ Nguồn: [spec](../../ui-ux/specs/finance-batch.md), [backlog](../technical-desi
 | [ ] | B08-01 | Ngân hàng đã xác minh, topup/payout và hàng đợi duyệt | Một ngân hàng; mức rút 50.000 theo spec; quyền tài chính riêng, không rút credit |
 | [ ] | B08-02 | Đối soát, idempotency và kết quả unknown | Giữ tiền khi chưa rõ; không ghi có/chuyển lại hai lần; nhà cung cấp/ngân sách chưa chọn |
 
-## B09 — Hỗ trợ/admin — đã có lát phía người gửi local/test
+## B09 — Hỗ trợ/admin — người gửi và quản trị local/test
+
+**B09-03 ngày 19/10:** đã nối khu quản trị riêng trên app với MFA, hàng đợi/chi tiết/quyết định/nhật ký của P1-03; kiểm iOS simulator riêng với DEMO lưu bền. [Báo cáo và giới hạn](bao-cao/B09-03-admin-tren-dien-thoai.md). Không đóng các chức năng quản trị khác; Android native/UAT/CI mới chưa kiểm.
 
 Nguồn: [spec](../../ui-ux/specs/support-moderation.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F14/F15/F16; QA-038,039,047,048.
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B09-01 | Báo cáo, chứng cứ, trao đổi và hàng đợi hỗ trợ | Phía người gửi/ảnh local đã có B09-01; hàng đợi và xử lý admin/MFA còn thiếu. Không sinh bút toán |
+| [ ] | B09-01 | Báo cáo, chứng cứ, trao đổi và hàng đợi hỗ trợ | Phía người gửi/ảnh local có B09-01; web admin/MFA có B09-02, khu quản trị mobile có B09-03. Giữ trạng thái một phần do chưa UAT và còn giới hạn ghi trong báo cáo. Không sinh bút toán |
 | [ ] | B09-02 | Admin hoàn tất thay: preview/fresh auth/lý do/recheck | Dùng cùng settlement service; không giả dấu nhận tiền, không tự mở đánh giá |
 | [ ] | B09-03 | Xử lý khôi phục/xóa, user/partner/verification/admin grants | Nối các luồng B01/B02; nguyên tắc tối thiểu quyền và lịch sử quyết định |
 

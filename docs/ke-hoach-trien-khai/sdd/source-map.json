@@ -26,7 +26,7 @@
     {
       "id": "api-search",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "9462eecb86f111d4586fda9543fc8533d090389eaa4c3abd2a54bd63871843ce",
+      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
       "pointer": "/paths/~1partners/get",
       "expected": {
         "operationId": "searchPartners"
@@ -35,7 +35,7 @@
     {
       "id": "QA-001",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/0",
       "expected": {
         "id": "QA-001",
@@ -46,7 +46,7 @@
     {
       "id": "QA-002",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/1",
       "expected": {
         "id": "QA-002",
@@ -57,7 +57,7 @@
     {
       "id": "QA-003",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/2",
       "expected": {
         "id": "QA-003",
@@ -68,7 +68,7 @@
     {
       "id": "QA-004",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/3",
       "expected": {
         "id": "QA-004",
@@ -79,7 +79,7 @@
     {
       "id": "QA-005",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/4",
       "expected": {
         "id": "QA-005",
@@ -90,7 +90,7 @@
     {
       "id": "QA-006",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/5",
       "expected": {
         "id": "QA-006",
@@ -101,7 +101,7 @@
     {
       "id": "QA-007",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/6",
       "expected": {
         "id": "QA-007",
@@ -112,7 +112,7 @@
     {
       "id": "QA-008",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/7",
       "expected": {
         "id": "QA-008",
@@ -123,7 +123,7 @@
     {
       "id": "QA-009",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/8",
       "expected": {
         "id": "QA-009",
@@ -134,7 +134,7 @@
     {
       "id": "QA-010",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/9",
       "expected": {
         "id": "QA-010",
@@ -145,7 +145,7 @@
     {
       "id": "QA-011",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/10",
       "expected": {
         "id": "QA-011",
@@ -156,7 +156,7 @@
     {
       "id": "QA-012",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/11",
       "expected": {
         "id": "QA-012",
@@ -167,7 +167,7 @@
     {
       "id": "QA-013",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/12",
       "expected": {
         "id": "QA-013",
@@ -178,7 +178,7 @@
     {
       "id": "QA-014",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/13",
       "expected": {
         "id": "QA-014",
@@ -189,7 +189,7 @@
     {
       "id": "QA-015",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/14",
       "expected": {
         "id": "QA-015",
@@ -200,7 +200,7 @@
     {
       "id": "QA-016",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/15",
       "expected": {
         "id": "QA-016",
@@ -211,7 +211,7 @@
     {
       "id": "QA-017",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/16",
       "expected": {
         "id": "QA-017",
@@ -222,7 +222,7 @@
     {
       "id": "QA-018",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/17",
       "expected": {
         "id": "QA-018",
@@ -233,7 +233,7 @@
     {
       "id": "QA-019",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/18",
       "expected": {
         "id": "QA-019",
@@ -244,7 +244,7 @@
     {
       "id": "QA-020",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/19",
       "expected": {
         "id": "QA-020",
@@ -255,7 +255,7 @@
     {
       "id": "QA-021",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/20",
       "expected": {
         "id": "QA-021",
@@ -266,7 +266,7 @@
     {
       "id": "QA-022",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/21",
       "expected": {
         "id": "QA-022",
@@ -277,7 +277,7 @@
     {
       "id": "QA-023",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/22",
       "expected": {
         "id": "QA-023",
@@ -288,7 +288,7 @@
     {
       "id": "QA-024",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/23",
       "expected": {
         "id": "QA-024",
@@ -299,7 +299,7 @@
     {
       "id": "QA-025",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/24",
       "expected": {
         "id": "QA-025",
@@ -310,7 +310,7 @@
     {
       "id": "QA-026",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/25",
       "expected": {
         "id": "QA-026",
@@ -321,7 +321,7 @@
     {
       "id": "QA-027",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/26",
       "expected": {
         "id": "QA-027",
@@ -332,7 +332,7 @@
     {
       "id": "QA-028",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/27",
       "expected": {
         "id": "QA-028",
@@ -343,7 +343,7 @@
     {
       "id": "QA-029",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/28",
       "expected": {
         "id": "QA-029",
@@ -354,7 +354,7 @@
     {
       "id": "QA-030",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/29",
       "expected": {
         "id": "QA-030",
@@ -365,7 +365,7 @@
     {
       "id": "QA-031",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/30",
       "expected": {
         "id": "QA-031",
@@ -376,7 +376,7 @@
     {
       "id": "QA-032",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/31",
       "expected": {
         "id": "QA-032",
@@ -387,7 +387,7 @@
     {
       "id": "QA-033",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/32",
       "expected": {
         "id": "QA-033",
@@ -398,7 +398,7 @@
     {
       "id": "QA-034",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/33",
       "expected": {
         "id": "QA-034",
@@ -409,7 +409,7 @@
     {
       "id": "QA-035",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/34",
       "expected": {
         "id": "QA-035",
@@ -420,7 +420,7 @@
     {
       "id": "QA-036",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/35",
       "expected": {
         "id": "QA-036",
@@ -431,7 +431,7 @@
     {
       "id": "QA-037",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/36",
       "expected": {
         "id": "QA-037",
@@ -442,7 +442,7 @@
     {
       "id": "QA-038",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/37",
       "expected": {
         "id": "QA-038",
@@ -453,7 +453,7 @@
     {
       "id": "QA-039",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/38",
       "expected": {
         "id": "QA-039",
@@ -464,7 +464,7 @@
     {
       "id": "QA-040",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/39",
       "expected": {
         "id": "QA-040",
@@ -475,7 +475,7 @@
     {
       "id": "QA-041",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/40",
       "expected": {
         "id": "QA-041",
@@ -486,7 +486,7 @@
     {
       "id": "QA-042",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/41",
       "expected": {
         "id": "QA-042",
@@ -497,7 +497,7 @@
     {
       "id": "QA-043",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/42",
       "expected": {
         "id": "QA-043",
@@ -508,7 +508,7 @@
     {
       "id": "QA-044",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/43",
       "expected": {
         "id": "QA-044",
@@ -519,7 +519,7 @@
     {
       "id": "QA-045",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/44",
       "expected": {
         "id": "QA-045",
@@ -530,7 +530,7 @@
     {
       "id": "QA-046",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/45",
       "expected": {
         "id": "QA-046",
@@ -541,7 +541,7 @@
     {
       "id": "QA-047",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/46",
       "expected": {
         "id": "QA-047",
@@ -552,7 +552,7 @@
     {
       "id": "QA-048",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/47",
       "expected": {
         "id": "QA-048",
@@ -563,7 +563,7 @@
     {
       "id": "QA-049",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/48",
       "expected": {
         "id": "QA-049",
@@ -574,7 +574,7 @@
     {
       "id": "QA-050",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/49",
       "expected": {
         "id": "QA-050",
@@ -585,7 +585,7 @@
     {
       "id": "QA-051",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/50",
       "expected": {
         "id": "QA-051",
@@ -596,7 +596,7 @@
     {
       "id": "QA-052",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/51",
       "expected": {
         "id": "QA-052",
@@ -607,7 +607,7 @@
     {
       "id": "QA-053",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/52",
       "expected": {
         "id": "QA-053",
@@ -618,7 +618,7 @@
     {
       "id": "QA-054",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/53",
       "expected": {
         "id": "QA-054",
@@ -629,7 +629,7 @@
     {
       "id": "QA-055",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/54",
       "expected": {
         "id": "QA-055",
@@ -640,7 +640,7 @@
     {
       "id": "QA-056",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/55",
       "expected": {
         "id": "QA-056",
@@ -651,7 +651,7 @@
     {
       "id": "QA-057",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/56",
       "expected": {
         "id": "QA-057",
@@ -662,7 +662,7 @@
     {
       "id": "QA-058",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/57",
       "expected": {
         "id": "QA-058",
@@ -673,7 +673,7 @@
     {
       "id": "QA-059",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/58",
       "expected": {
         "id": "QA-059",
@@ -684,7 +684,7 @@
     {
       "id": "QA-060",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/59",
       "expected": {
         "id": "QA-060",
@@ -695,7 +695,7 @@
     {
       "id": "QA-061",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/60",
       "expected": {
         "id": "QA-061",
@@ -706,7 +706,7 @@
     {
       "id": "QA-062",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/61",
       "expected": {
         "id": "QA-062",
@@ -717,7 +717,7 @@
     {
       "id": "QA-063",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/62",
       "expected": {
         "id": "QA-063",
@@ -728,7 +728,7 @@
     {
       "id": "QA-064",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/63",
       "expected": {
         "id": "QA-064",
@@ -739,7 +739,7 @@
     {
       "id": "QA-065",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/64",
       "expected": {
         "id": "QA-065",
@@ -750,7 +750,7 @@
     {
       "id": "QA-066",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/65",
       "expected": {
         "id": "QA-066",
@@ -761,7 +761,7 @@
     {
       "id": "QA-067",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/66",
       "expected": {
         "id": "QA-067",
@@ -772,7 +772,7 @@
     {
       "id": "QA-068",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/67",
       "expected": {
         "id": "QA-068",
@@ -783,7 +783,7 @@
     {
       "id": "QA-069",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/68",
       "expected": {
         "id": "QA-069",
@@ -794,7 +794,7 @@
     {
       "id": "QA-070",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/69",
       "expected": {
         "id": "QA-070",
@@ -805,7 +805,7 @@
     {
       "id": "QA-071",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/70",
       "expected": {
         "id": "QA-071",
@@ -816,7 +816,7 @@
     {
       "id": "QA-072",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/71",
       "expected": {
         "id": "QA-072",
@@ -827,7 +827,7 @@
     {
       "id": "QA-073",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/72",
       "expected": {
         "id": "QA-073",
@@ -838,7 +838,7 @@
     {
       "id": "QA-074",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/73",
       "expected": {
         "id": "QA-074",
@@ -849,7 +849,7 @@
     {
       "id": "QA-075",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/74",
       "expected": {
         "id": "QA-075",
@@ -860,7 +860,7 @@
     {
       "id": "QA-076",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/75",
       "expected": {
         "id": "QA-076",
@@ -871,7 +871,7 @@
     {
       "id": "QA-077",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/76",
       "expected": {
         "id": "QA-077",
@@ -882,7 +882,7 @@
     {
       "id": "QA-078",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/77",
       "expected": {
         "id": "QA-078",
@@ -893,7 +893,7 @@
     {
       "id": "QA-079",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/78",
       "expected": {
         "id": "QA-079",
@@ -904,7 +904,7 @@
     {
       "id": "QA-080",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/79",
       "expected": {
         "id": "QA-080",
@@ -915,7 +915,7 @@
     {
       "id": "QA-081",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/80",
       "expected": {
         "id": "QA-081",
@@ -926,7 +926,7 @@
     {
       "id": "QA-082",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/81",
       "expected": {
         "id": "QA-082",
@@ -937,7 +937,7 @@
     {
       "id": "QA-083",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/82",
       "expected": {
         "id": "QA-083",
@@ -948,7 +948,7 @@
     {
       "id": "QA-084",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/83",
       "expected": {
         "id": "QA-084",
@@ -959,7 +959,7 @@
     {
       "id": "QA-085",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/84",
       "expected": {
         "id": "QA-085",
@@ -970,7 +970,7 @@
     {
       "id": "QA-086",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/85",
       "expected": {
         "id": "QA-086",
@@ -981,7 +981,7 @@
     {
       "id": "QA-087",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/86",
       "expected": {
         "id": "QA-087",
@@ -992,7 +992,7 @@
     {
       "id": "QA-088",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/87",
       "expected": {
         "id": "QA-088",
@@ -1003,16 +1003,16 @@
     {
       "id": "api-project",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "9462eecb86f111d4586fda9543fc8533d090389eaa4c3abd2a54bd63871843ce",
+      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
       "pointer": "/info",
       "expected": {
-        "version": "0.1.16"
+        "version": "0.1.17"
       }
     },
     {
       "id": "QA-089",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/88",
       "expected": {
         "id": "QA-089",
@@ -1023,7 +1023,7 @@
     {
       "id": "QA-090",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/89",
       "expected": {
         "id": "QA-090",
@@ -1034,7 +1034,7 @@
     {
       "id": "QA-091",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/90",
       "expected": {
         "id": "QA-091",
@@ -1045,7 +1045,7 @@
     {
       "id": "QA-092",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/91",
       "expected": {
         "id": "QA-092",
@@ -1056,7 +1056,7 @@
     {
       "id": "QA-093",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/92",
       "expected": {
         "id": "QA-093",
@@ -1067,7 +1067,7 @@
     {
       "id": "QA-094",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/93",
       "expected": {
         "id": "QA-094"
@@ -1076,7 +1076,7 @@
     {
       "id": "QA-095",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/94",
       "expected": {
         "id": "QA-095"
@@ -1085,7 +1085,7 @@
     {
       "id": "QA-096",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/95",
       "expected": {
         "id": "QA-096"
@@ -1094,7 +1094,7 @@
     {
       "id": "QA-097",
       "path": "docs/technical-design/qa-cases.json",
-      "sha256": "b9b4327b367bd1668d8e599e283157770bdf8c681d57697f00db0537b6fa56f5",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
       "pointer": "/96",
       "expected": {
         "id": "QA-097"
@@ -1113,7 +1113,7 @@
     {
       "id": "api-review-metadata",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "9462eecb86f111d4586fda9543fc8533d090389eaa4c3abd2a54bd63871843ce",
+      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
       "pointer": "/components/schemas/Review",
       "expected": {
         "required": [
@@ -1135,7 +1135,7 @@
     {
       "id": "api-review-reply",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "9462eecb86f111d4586fda9543fc8533d090389eaa4c3abd2a54bd63871843ce",
+      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
       "pointer": "/paths/~1reviews~1{id}~1reply/put",
       "expected": {
         "operationId": "replyReview"
@@ -1144,7 +1144,7 @@
     {
       "id": "api-review-asset",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "9462eecb86f111d4586fda9543fc8533d090389eaa4c3abd2a54bd63871843ce",
+      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
       "pointer": "/paths/~1assets~1{id}/get",
       "expected": {
         "operationId": "getAsset"
@@ -1153,7 +1153,7 @@
     {
       "id": "api-support-report",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "9462eecb86f111d4586fda9543fc8533d090389eaa4c3abd2a54bd63871843ce",
+      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
       "pointer": "/components/schemas/Report",
       "expected": {
         "required": [
@@ -1173,7 +1173,7 @@
     {
       "id": "api-support-create",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "9462eecb86f111d4586fda9543fc8533d090389eaa4c3abd2a54bd63871843ce",
+      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
       "pointer": "/paths/~1reports/post",
       "expected": {
         "operationId": "createReport"
@@ -1184,6 +1184,73 @@
       "path": "ui-ux/specs/support-moderation.md",
       "sha256": "742cbae4ec32df2a6c334be49eea4a2b1dd13252c604f80e622c811b9e191c2f",
       "heading": "## Luồng hỗ trợ"
+    },
+    {
+      "id": "p1-03-approved",
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P1-03-admin-ho-tro-va-kiem-duyet.md",
+      "sha256": "65ff8c26ec0e2dab6a5b29d1506f664bb52de4de7cb39ae6559c03fd516ec1ad",
+      "heading": "## Thiết kế đã chốt và lựa chọn triển khai"
+    },
+    {
+      "id": "QA-098",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
+      "pointer": "/97",
+      "expected": {
+        "id": "QA-098",
+        "requirement": "P1-03",
+        "operation": "adminFactorStatus"
+      }
+    },
+    {
+      "id": "QA-099",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
+      "pointer": "/98",
+      "expected": {
+        "id": "QA-099",
+        "requirement": "P1-03",
+        "operation": "decideReport"
+      }
+    },
+    {
+      "id": "QA-100",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
+      "pointer": "/99",
+      "expected": {
+        "id": "QA-100",
+        "requirement": "P1-03",
+        "operation": "submitVerification"
+      }
+    },
+    {
+      "id": "QA-101",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
+      "pointer": "/100",
+      "expected": {
+        "id": "QA-101",
+        "requirement": "P1-03",
+        "operation": "decideReview"
+      }
+    },
+    {
+      "id": "QA-102",
+      "path": "docs/technical-design/qa-cases.json",
+      "sha256": "841fc83903a840b25c416f5e48bc0bfc15dd7319c56d66e4a622abf24482689f",
+      "pointer": "/101",
+      "expected": {
+        "id": "QA-102",
+        "requirement": "P1-03",
+        "operation": "listPartnerVerifications"
+      }
+    },
+    {
+      "id": "b09-03-mobile-approved",
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-03-admin-tren-dien-thoai.md",
+      "sha256": "9857f2bdf4e04f69023cb893456a735a78fa006c36283ec9cbd22c0aeb6eead3",
+      "heading": "## Quyết định và phạm vi đã duyệt"
     }
   ],
   "domains": [

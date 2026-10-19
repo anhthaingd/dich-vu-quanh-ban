@@ -3442,6 +3442,217 @@
       ],
       "gaps": "Reporter local slice only. Admin queue, MFA, moderation decisions, submitted chat evidence, production, devices and UAT are not certified; QA-047 remains partial.",
       "evidenceStatus": "mapping-reviewed-not-executed"
+    },
+    {
+      "id": "P1-03-AC-01",
+      "requirement": "P1-03",
+      "description": "Password and TOTP grant-bound sessions reject replay, stale MFA, revoked grants and wrong login families.",
+      "sources": [
+        "p1-03-approved",
+        "QA-098"
+      ],
+      "code": [
+        "services/api/src/modules/admin-auth/admin-auth.service.ts",
+        "services/api/src/modules/admin-auth/totp.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-moderation.test.ts",
+          "name": "admin MFA requires grants, password, confirmed TOTP and rejects replay, expiry, revoked rights and locked sessions"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/totp.test.ts",
+          "name": "TOTP matches RFC 6238 vectors and rejects replay, malformed input and clock drift"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/catalog-config.test.ts",
+          "name": "admin pilot is disabled by default and restricted to isolated local databases"
+        }
+      ],
+      "gaps": "DEMO local/test only. No production, real identity documents, cloud storage, MFA recovery, chat evidence selection, financial administration or physical device/UAT certification.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-098"
+      ]
+    },
+    {
+      "id": "P1-03-AC-02",
+      "requirement": "P1-03",
+      "description": "Admin support checks submitted evidence and current permissions, serializes versions and retries without money transitions.",
+      "sources": [
+        "p1-03-approved",
+        "QA-099"
+      ],
+      "code": [
+        "services/api/src/modules/moderation/moderation.service.ts",
+        "services/api/src/modules/assets/assets.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-moderation.test.ts",
+          "name": "admin support decisions preserve money and privacy with stale versions, retry, current permissions and closed history"
+        }
+      ],
+      "gaps": "DEMO local/test only. No production, real identity documents, cloud storage, MFA recovery, chat evidence selection, financial administration or physical device/UAT certification.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-099"
+      ]
+    },
+    {
+      "id": "P1-03-AC-03",
+      "requirement": "P1-03",
+      "description": "Private immutable verification submissions encrypt declaration and images, retain resubmission history and update identity badge only after checked approval.",
+      "sources": [
+        "p1-03-approved",
+        "QA-100"
+      ],
+      "code": [
+        "services/api/src/modules/verification/verification.service.ts",
+        "services/api/src/modules/moderation/moderation.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-moderation.test.ts",
+          "name": "verification encrypts declarations and files, requires ownership and reviewed evidence, preserves resubmission history and public badge"
+        }
+      ],
+      "gaps": "DEMO local/test only. No production, real identity documents, cloud storage, MFA recovery, chat evidence selection, financial administration or physical device/UAT certification.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-100"
+      ]
+    },
+    {
+      "id": "P1-03-AC-04",
+      "requirement": "P1-03",
+      "description": "Keep, hide and unhide preserve original review stars, replies and author removal while recording decisions.",
+      "sources": [
+        "p1-03-approved",
+        "QA-101"
+      ],
+      "code": [
+        "services/api/src/modules/moderation/moderation.service.ts",
+        "services/api/src/modules/reviews/reviews.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-moderation.test.ts",
+          "name": "review moderation keeps author removal, original stars and replies, serializes reviewers and records keep/hide/unhide"
+        }
+      ],
+      "gaps": "DEMO local/test only. No production, real identity documents, cloud storage, MFA recovery, chat evidence selection, financial administration or physical device/UAT certification.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-101"
+      ]
+    },
+    {
+      "id": "P1-03-AC-05",
+      "requirement": "P1-03",
+      "description": "Product app and admin connect MFA, private uploads, supplementary submissions, support retry and moderation decisions.",
+      "sources": [
+        "p1-03-approved",
+        "QA-102"
+      ],
+      "code": [
+        "apps/admin/src/App.tsx",
+        "apps/admin/src/client.ts",
+        "apps/mobile/src/features/verification/screens/VerificationScreen.tsx",
+        "apps/mobile/src/features/verification/api/verification-api.ts"
+      ],
+      "tests": [
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/admin-moderation.spec.mjs",
+          "name": "admin MFA and decisions connect support, private verification resubmission and review visibility"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/verification/screens/Verification.test.tsx",
+          "name": "verification screen submits additional private evidence with exact prior version and retries without changing payload"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/verification/screens/Verification.test.tsx",
+          "name": "verification screen keeps pending records read-only and clears private data when access is revoked"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/admin-client.test.mjs",
+          "name": "admin client keeps retry payload and token scope, clears rejected sessions and rejects malformed pages"
+        }
+      ],
+      "gaps": "DEMO local/test only. No production, real identity documents, cloud storage, MFA recovery, chat evidence selection, financial administration or physical device/UAT certification.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-102"
+      ]
+    },
+    {
+      "id": "P1-03-MOBILE-01",
+      "requirement": "P1-03",
+      "description": "Admin mobile routes to an exclusive management console with MFA, private evidence, permission-scoped decisions and memory cleanup.",
+      "sources": [
+        "b09-03-mobile-approved",
+        "QA-102"
+      ],
+      "code": [
+        "apps/mobile/src/app/navigation/AppNavigator.tsx",
+        "apps/mobile/src/features/admin/screens/AdminScreen.tsx",
+        "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
+        "apps/mobile/src/features/admin/screens/AdminDecision.tsx",
+        "apps/mobile/src/features/admin/api/admin-api.ts",
+        "apps/mobile/src/features/auth/state/auth-session.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "admin login routes to a dedicated mobile console and never renders customer tabs; lock removes private data"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "mobile admin retries the exact decision after a lost response and reloads a conflicting version"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "mobile admin filters queues, reviews private verification evidence, moderates reviews and reads audit"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "admin setup requires confirmation and backgrounding clears the MFA secret and console"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "support read-only grants cannot decide and revoked MFA clears the loaded record"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/api/admin-api.test.ts",
+          "name": "mobile admin shares auth rotation and preserves MFA and idempotency while retrying 401"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/admin-moderation.spec.mjs",
+          "name": "mobile admin uses a dedicated console with MFA, decisions and locking without customer tabs"
+        }
+      ],
+      "gaps": "DEMO local only. Native iOS evidence recorded separately; no Android native, physical-device, production or UAT certification. Other governance/finance screens remain outside this slice.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-102"
+      ]
     }
   ]
 }

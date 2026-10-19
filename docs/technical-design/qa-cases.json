@@ -1162,5 +1162,65 @@
     "level": "Integration / E2E / Load",
     "priority": "P1",
     "status": "Tiêu chí hiện hành; bằng chứng local/native/CI/UAT ghi riêng trong B05-02, không mặc định đạt toàn bộ"
+  },
+  {
+    "id": "QA-098",
+    "group": "P1-03 admin local/test",
+    "requirement": "P1-03",
+    "operation": "adminFactorStatus",
+    "setup": "DEMO grants and two login families",
+    "steps": "Enroll, verify TOTP, replay, refresh, lock, revoke grants",
+    "expected": "Password and unused TOTP; MFA bound to family; read 15min and mutation freshness 5min; retries recheck authorization.",
+    "level": "Integration",
+    "priority": "P0",
+    "status": "Mapped local tests; see SDD evidence. Not production/native/UAT certification."
+  },
+  {
+    "id": "QA-099",
+    "group": "P1-03 admin local/test",
+    "requirement": "P1-03",
+    "operation": "decideReport",
+    "setup": "Two admins and reporter with DEMO evidence",
+    "steps": "Read evidence, race versions, retry and read reply",
+    "expected": "One decision wins; same key does not duplicate; evidence read is audited; money and private chat unchanged.",
+    "level": "Integration",
+    "priority": "P0",
+    "status": "Mapped local tests; see SDD evidence. Not production/native/UAT certification."
+  },
+  {
+    "id": "QA-100",
+    "group": "P1-03 admin local/test",
+    "requirement": "P1-03",
+    "operation": "submitVerification",
+    "setup": "DEMO partner and ready images with distinct owners",
+    "steps": "Submit, request evidence, resubmit and approve",
+    "expected": "Encrypted declaration/files; immutable submissions; no overwrite of pending/approved; identity approval controls badge.",
+    "level": "Integration",
+    "priority": "P0",
+    "status": "Mapped local tests; see SDD evidence. Not production/native/UAT certification."
+  },
+  {
+    "id": "QA-101",
+    "group": "P1-03 admin local/test",
+    "requirement": "P1-03",
+    "operation": "decideReview",
+    "setup": "DEMO review with stars and author removal",
+    "steps": "Keep, hide and unhide with concurrent admins",
+    "expected": "Stars, body, reply and author removal preserved; version conflict and immutable decision history.",
+    "level": "Integration",
+    "priority": "P0",
+    "status": "Mapped local tests; see SDD evidence. Not production/native/UAT certification."
+  },
+  {
+    "id": "QA-102",
+    "group": "P1-03 admin local/test",
+    "requirement": "P1-03",
+    "operation": "listPartnerVerifications",
+    "setup": "Expo web and admin desktop with real test API/DB",
+    "steps": "Upload evidence, MFA, request evidence, resubmit, approve; lost response retry",
+    "expected": "Real search/filter/detail/history; private images; same retry payload/key; lock clears admin data.",
+    "level": "E2E web",
+    "priority": "P0",
+    "status": "Mapped local tests; see SDD evidence. Not production/native/UAT certification."
   }
 ]

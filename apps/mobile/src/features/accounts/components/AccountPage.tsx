@@ -20,7 +20,7 @@ export function useAccountRefresh(refreshing: boolean, onRefresh: () => boolean,
     return () => setRefresh(null);
   }, [setRefresh, refreshing, enabled]);
 }
-export function AccountPage({ title, back, login, children, shell }: { shell?: ShellProps; title: 'support.title' | 'reviews.title' | 'notices.title' | 'notices.settings' | 'team.title' | 'team.verifyTitle' | 'invoice.title' | 'addresses.title' | 'sessions.title' | 'partners.title' | 'jobs.title' | 'jobs.create' | 'jobs.detail' | 'chat.title'; back: () => void; login: () => void; children: (owner: string) => ReactNode }) {
+export function AccountPage({ title, back, login, children, shell }: { shell?: ShellProps; title: 'verification.title' | 'support.title' | 'reviews.title' | 'notices.title' | 'notices.settings' | 'team.title' | 'team.verifyTitle' | 'invoice.title' | 'addresses.title' | 'sessions.title' | 'partners.title' | 'jobs.title' | 'jobs.create' | 'jobs.detail' | 'chat.title'; back: () => void; login: () => void; children: (owner: string) => ReactNode }) {
   const [refresh, setRefresh] = useState<Refresh>(null);
   const { manager, state } = useAuth(); const { t } = useLocale();
   return <RefreshContext.Provider value={setRefresh}><ProductShell keyboardDismissMode="on-drag" onBack={back} {...shell}

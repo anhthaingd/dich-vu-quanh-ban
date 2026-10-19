@@ -13,6 +13,8 @@ export class AssetsController {
  complete(@Headers('authorization')auth:string|undefined,@Headers('idempotency-key')key:string|undefined,@Param('id')id:string,@Body()body:unknown){return this.service.complete(auth,identifier(id),identifier(key),body);}
  @Get(':id/content') @Header('Cache-Control','no-store') @Header('X-Content-Type-Options','nosniff')
  async content(@Param('id')id:string,@Query('grant')grant:unknown){return new StreamableFile(await this.service.content(identifier(id),grant),{type:'image/png'});}
+ @Get(':id/admin-content') @Header('Cache-Control','no-store') @Header('X-Content-Type-Options','nosniff')
+ async adminContent(@Headers('authorization')auth:string|undefined,@Headers('x-admin-session')token:string|undefined,@Param('id')id:string){return new StreamableFile(await this.service.adminContent(auth,token,identifier(id)),{type:'image/png'});}
  @Get(':id') @Header('Cache-Control','no-store')
  get(@Headers('authorization')auth:string|undefined,@Param('id')id:string){return this.service.get(auth,identifier(id));}
 }

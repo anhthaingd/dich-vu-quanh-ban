@@ -18,10 +18,13 @@ async function mount(){
  fireEvent.press(screen.getByTestId('test-pick-location'));
  return {change};
 }
-beforeEach(()=>{jest.clearAllMocks();jest.mocked(locationsApi.search).mockResolvedValue([result]);jest.mocked(locationsApi.reverse).mockResolvedValue(result);});
+beforeEach(()=>{jest.useFakeTimers();jest.clearAllMocks();jest.mocked(locationsApi.search).mockResolvedValue([result]);jest.mocked(locationsApi.reverse).mockResolvedValue(result);});
+afterEach(()=>jest.useRealTimers());
+// Drive the autocomplete debounce explicitly; machine load must not decide whether the result exists.
+async function searchAddress(){fireEvent.changeText(screen.getByTestId('location-query'),'Hanoi');await act(async()=>{jest.advanceTimersByTime(400);});}
 test('confirm requires a selected point; changing query invalidates it; cancel never mutates caller',async()=>{
  const {change}=await mount();expect(screen.getByTestId('location-confirm')).toBeDisabled();
- fireEvent.changeText(screen.getByTestId('location-query'),'Hanoi');fireEvent.press(await screen.findByTestId('location-result-0'));
+ await searchAddress();fireEvent.press(await screen.findByTestId('location-result-0'));
  fireEvent.changeText(screen.getByTestId('location-description'),'DEMO floor 2');expect(screen.getByTestId('location-confirm')).not.toBeDisabled();
  fireEvent.changeText(screen.getByTestId('location-query'),'another');expect(screen.getByTestId('location-confirm')).toBeDisabled();
  fireEvent.press(screen.getByTestId('location-cancel'));expect(change).not.toHaveBeenCalled();expect(screen.queryByTestId('location-query')).toBeNull();
@@ -34,7 +37,7 @@ test('selection returns a trimmed description and exact point only on confirmati
 test('denied GPS allows address search without requesting a position',async()=>{
  jest.mocked(Location.requestForegroundPermissionsAsync).mockResolvedValue({status:'denied'} as Location.LocationPermissionResponse);
  await mount();fireEvent.press(screen.getByTestId('location-gps'));await screen.findByText(/Chưa được cấp quyền vị trí/);
- fireEvent.changeText(screen.getByTestId('location-query'),'Hanoi');fireEvent.press(await screen.findByTestId('location-result-0'));expect(screen.getByTestId('location-confirm')).not.toBeDisabled();
+ await searchAddress();fireEvent.press(await screen.findByTestId('location-result-0'));expect(screen.getByTestId('location-confirm')).not.toBeDisabled();
  expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
 });
 test('GPS arriving after another address choice cannot overwrite that choice',async()=>{
@@ -43,7 +46,7 @@ test('GPS arriving after another address choice cannot overwrite that choice',as
  jest.mocked(Location.getCurrentPositionAsync).mockImplementation(()=>new Promise(resolve=>{finish=resolve;}));
  const {change}=await mount();fireEvent.press(screen.getByTestId('location-gps'));
  await waitFor(()=>expect(Location.getCurrentPositionAsync).toHaveBeenCalled());
- fireEvent.changeText(screen.getByTestId('location-query'),'Hanoi');fireEvent.press(await screen.findByTestId('location-result-0'));
+ await searchAddress();fireEvent.press(await screen.findByTestId('location-result-0'));
  await act(async()=>finish({timestamp:Date.now(),coords:{latitude:10,longitude:100,accuracy:20,altitude:null,altitudeAccuracy:null,heading:null,speed:null}}));
  fireEvent.press(screen.getByTestId('location-confirm'));
  expect(change).toHaveBeenCalledWith({text:result.text,point,source:'search'});

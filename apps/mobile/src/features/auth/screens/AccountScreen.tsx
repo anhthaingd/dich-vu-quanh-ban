@@ -26,7 +26,7 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
   const focused = useIsFocused();
   const destination = accountDestination(route.params?.returnTo);
   useEffect(() => {
-    if (focused && destination && state.phase === 'authenticated' && !state.busy) navigation.replace(destination);
+    if (focused && destination && state.phase === 'authenticated' && !state.busy && !state.user?.admin_permissions?.length) navigation.replace(destination);
   }, [focused, destination, state.phase, state.busy, navigation]);
   const [register, setRegister] = useState(false);
   const [email, setEmail] = useState(''), [password, setPassword] = useState(''), [name, setName] = useState('');

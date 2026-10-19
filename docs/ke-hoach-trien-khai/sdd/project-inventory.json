@@ -45,8 +45,24 @@
       "kind": "documentation"
     },
     {
+      "path": "apps/admin/index.html",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/package.json",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/App.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/admin/src/app/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "apps/admin/src/client.ts",
+      "kind": "product"
     },
     {
       "path": "apps/admin/src/components/.gitkeep",
@@ -57,8 +73,24 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/admin/src/i18n.ts",
+      "kind": "product"
+    },
+    {
       "path": "apps/admin/src/lib/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "apps/admin/src/main.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/style.css",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/tsconfig.json",
+      "kind": "product"
     },
     {
       "path": "apps/mobile/.env.example",
@@ -346,6 +378,46 @@
     },
     {
       "path": "apps/mobile/src/features/accounts/state/session-revocation.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/api/admin-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/api/admin-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/AdminChoice.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/AdminDecision.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/AdminScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/presentation.ts",
       "kind": "product"
     },
     {
@@ -801,6 +873,22 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/verification/api/verification-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/verification/api/verification-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/verification/screens/Verification.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/verification/screens/VerificationScreen.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/wallet/.gitkeep",
       "kind": "placeholder"
     },
@@ -1085,6 +1173,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-04-nop-va-xet-xac-minh.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B03-01-chon-dia-diem-va-ban-do.md",
       "kind": "documentation"
     },
@@ -1138,6 +1230,14 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B09-01-ho-tro-va-bao-cao.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-02-admin-ho-tro-va-kiem-duyet.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-03-admin-tren-dien-thoai.md",
       "kind": "documentation"
     },
     {
@@ -1294,6 +1394,26 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/ios-partner-skills.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-04/ios-verification-history.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-04/ios-verification-pending.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-04/web-admin-verification.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-04/web-verification-approved.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-04/web-verification-pending.png",
       "kind": "documentation"
     },
     {
@@ -1629,6 +1749,30 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-02/web-admin-audit.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-02/web-admin-review.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-02/web-admin-support.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-03/ios-admin-approved.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-03/ios-admin-evidence.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-03/ios-admin-queue.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-01/android-edited.png",
       "kind": "documentation"
     },
@@ -1678,6 +1822,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/de-xuat/P1-01-doi-ngu-va-xac-thuc-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P1-03-admin-ho-tro-va-kiem-duyet.md",
       "kind": "documentation"
     },
     {
@@ -1973,6 +2121,10 @@
       "kind": "tooling"
     },
     {
+      "path": "scripts/test/admin-client.test.mjs",
+      "kind": "test"
+    },
+    {
       "path": "scripts/test/coverage-gate.mjs",
       "kind": "test"
     },
@@ -2069,6 +2221,10 @@
       "kind": "product"
     },
     {
+      "path": "services/api/migrations/015_admin_moderation.sql",
+      "kind": "product"
+    },
+    {
       "path": "services/api/package.json",
       "kind": "product"
     },
@@ -2118,6 +2274,10 @@
     },
     {
       "path": "services/api/src/database/database.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/database/demo-admin.ts",
       "kind": "product"
     },
     {
@@ -2218,6 +2378,22 @@
     },
     {
       "path": "services/api/src/modules/accounts/sessions.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/admin-auth/admin-auth.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/admin-auth/admin-auth.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/admin-auth/admin-auth.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/admin-auth/totp.ts",
       "kind": "product"
     },
     {
@@ -2385,6 +2561,26 @@
       "kind": "placeholder"
     },
     {
+      "path": "services/api/src/modules/moderation/history.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/moderation.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/moderation.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/moderation.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/moderation.service.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/modules/notifications/.gitkeep",
       "kind": "placeholder"
     },
@@ -2517,6 +2713,18 @@
       "kind": "product"
     },
     {
+      "path": "services/api/src/modules/verification/verification.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/verification/verification.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/verification/verification.service.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/modules/wallet/.gitkeep",
       "kind": "placeholder"
     },
@@ -2530,6 +2738,10 @@
     },
     {
       "path": "services/api/test/integration/account-management.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/admin-moderation.test.ts",
       "kind": "test"
     },
     {
@@ -2625,6 +2837,10 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/unit/totp.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/tsconfig.json",
       "kind": "product"
     },
@@ -2690,6 +2906,10 @@
     },
     {
       "path": "tests/e2e/web/account-security.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/admin-moderation.spec.mjs",
       "kind": "test"
     },
     {
@@ -3355,6 +3575,8 @@
       "apps/mobile/src/features/accounts/state/account-collection.test.ts",
       "apps/mobile/src/features/accounts/state/profile-editor.test.ts",
       "apps/mobile/src/features/accounts/state/session-revocation.test.ts",
+      "apps/mobile/src/features/admin/api/admin-api.test.ts",
+      "apps/mobile/src/features/admin/screens/Admin.test.tsx",
       "apps/mobile/src/features/auth/api/auth-api.test.ts",
       "apps/mobile/src/features/auth/screens/AccountScreen.test.tsx",
       "apps/mobile/src/features/auth/state/auth-session.test.ts",
@@ -3388,6 +3610,8 @@
       "apps/mobile/src/features/search/state/partner-search.test.ts",
       "apps/mobile/src/features/support/api/support-api.test.ts",
       "apps/mobile/src/features/support/screens/Support.test.tsx",
+      "apps/mobile/src/features/verification/api/verification-api.test.ts",
+      "apps/mobile/src/features/verification/screens/Verification.test.tsx",
       "apps/mobile/src/lib/http/request.test.ts",
       "apps/mobile/src/lib/i18n/i18n.test.ts",
       "apps/mobile/src/lib/i18n/locale-state.test.ts",
@@ -3397,6 +3621,7 @@
     ],
     "api": [
       "services/api/test/integration/account-management.test.ts",
+      "services/api/test/integration/admin-moderation.test.ts",
       "services/api/test/integration/assets.test.ts",
       "services/api/test/integration/auth.test.ts",
       "services/api/test/integration/catalog.test.ts",
@@ -3419,11 +3644,13 @@
       "services/api/test/unit/locations.test.ts",
       "services/api/test/unit/logging.test.ts",
       "services/api/test/unit/organizations.test.ts",
-      "services/api/test/unit/output.test.ts"
+      "services/api/test/unit/output.test.ts",
+      "services/api/test/unit/totp.test.ts"
     ],
     "web": [
       "tests/e2e/web/account-management.spec.mjs",
       "tests/e2e/web/account-security.spec.mjs",
+      "tests/e2e/web/admin-moderation.spec.mjs",
       "tests/e2e/web/auth.spec.mjs",
       "tests/e2e/web/calendar.spec.mjs",
       "tests/e2e/web/catalog.spec.mjs",
@@ -3444,6 +3671,7 @@
     ],
     "tooling": [
       "scripts/diagnostics/export.test.mjs",
+      "scripts/test/admin-client.test.mjs",
       "scripts/test/coverage-gate.test.mjs",
       "scripts/test/native-options.test.mjs",
       "scripts/test/sdd-check.test.mjs",
@@ -3558,7 +3786,13 @@
     "REV-03-AC-03",
     "SUP-01-AC-01",
     "SUP-01-AC-02",
-    "SUP-01-AC-03"
+    "SUP-01-AC-03",
+    "P1-03-AC-01",
+    "P1-03-AC-02",
+    "P1-03-AC-03",
+    "P1-03-AC-04",
+    "P1-03-AC-05",
+    "P1-03-MOBILE-01"
   ],
   "qa": [
     {
@@ -3947,9 +4181,10 @@
       "criteria": [
         "SUP-01-AC-01",
         "SUP-01-AC-02",
-        "SUP-01-AC-03"
+        "SUP-01-AC-03",
+        "P1-03-AC-02"
       ],
-      "reason": "B09-01 reporter/local image flow mapped. Admin decisions/MFA and selected chat evidence remain unimplemented; not full QA certification."
+      "reason": "B09-01 reporter/local image flow mapped. Admin decisions/MFA and selected chat evidence remain unimplemented; not full QA certification. P1-03 adds current MFA/permission decisions, submitted image access audit, version races and money invariants; selected chat and full expiry matrix remain partial."
     },
     {
       "id": "QA-048",
@@ -4394,6 +4629,47 @@
         "RT-01A-AC-07"
       ],
       "reason": "RT-01A local assertions and separately evidenced load/native; not complete QA matrix or production/UAT."
+    },
+    {
+      "id": "QA-098",
+      "status": "partial",
+      "criteria": [
+        "P1-03-AC-01"
+      ],
+      "reason": "P1-03 local/test criteria only; physical devices, UAT, production and full operational edge matrix not certified."
+    },
+    {
+      "id": "QA-099",
+      "status": "partial",
+      "criteria": [
+        "P1-03-AC-02"
+      ],
+      "reason": "P1-03 local/test criteria only; physical devices, UAT, production and full operational edge matrix not certified."
+    },
+    {
+      "id": "QA-100",
+      "status": "partial",
+      "criteria": [
+        "P1-03-AC-03"
+      ],
+      "reason": "P1-03 local/test criteria only; physical devices, UAT, production and full operational edge matrix not certified."
+    },
+    {
+      "id": "QA-101",
+      "status": "partial",
+      "criteria": [
+        "P1-03-AC-04"
+      ],
+      "reason": "P1-03 local/test criteria only; physical devices, UAT, production and full operational edge matrix not certified."
+    },
+    {
+      "id": "QA-102",
+      "status": "partial",
+      "criteria": [
+        "P1-03-AC-05",
+        "P1-03-MOBILE-01"
+      ],
+      "reason": "P1-03 local/test criteria only; physical devices, UAT, production and full operational edge matrix not certified."
     }
   ],
   "operations": [
@@ -4720,9 +4996,23 @@
       "id": "submitVerification",
       "method": "POST",
       "path": "/partners/{id}/verification",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-03",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "listPartnerVerifications",
+      "method": "GET",
+      "path": "/partners/{id}/verification",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-03",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
     },
     {
       "id": "listMembers",
@@ -5321,33 +5611,45 @@
       "id": "adminReports",
       "method": "GET",
       "path": "/admin/reports",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-02",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
     },
     {
       "id": "decideReport",
       "method": "POST",
       "path": "/admin/reports/{id}/decision",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-02",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
     },
     {
       "id": "previewCompletion",
       "method": "GET",
       "path": "/admin/reports/{id}/completion-preview",
       "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "criteria": [
+        "P1-03-AC-02",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
     },
     {
       "id": "completeOnBehalf",
       "method": "POST",
       "path": "/admin/reports/{id}/complete-on-behalf",
       "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "criteria": [
+        "P1-03-AC-02",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
     },
     {
       "id": "adminListTopups",
@@ -5401,17 +5703,23 @@
       "id": "queueVerification",
       "method": "GET",
       "path": "/admin/verifications",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-03",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
     },
     {
       "id": "decideVerification",
       "method": "POST",
       "path": "/admin/verifications/{id}/decision",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-03",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
     },
     {
       "id": "queuePartner",
@@ -5449,17 +5757,23 @@
       "id": "queueReview",
       "method": "GET",
       "path": "/admin/reviews",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-04",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
     },
     {
       "id": "decideReview",
       "method": "POST",
       "path": "/admin/reviews/{id}/decision",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-04",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
     },
     {
       "id": "editCategory",
@@ -5808,6 +6122,113 @@
         "P1-01-AC-09"
       ],
       "reason": "P1-01 A/B local/test; kiểm response schema và assertions trong tiêu chí liên kết, không toàn bộ production."
+    },
+    {
+      "id": "adminFactorStatus",
+      "method": "GET",
+      "path": "/admin/auth/status",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-01"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "startAdminEnrollment",
+      "method": "POST",
+      "path": "/admin/auth/enrollment",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-01"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "confirmAdminEnrollment",
+      "method": "POST",
+      "path": "/admin/auth/enrollment/confirm",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-01"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "verifyAdminMfa",
+      "method": "POST",
+      "path": "/admin/auth/verify",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-01"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "lockAdminSession",
+      "method": "POST",
+      "path": "/admin/auth/lock",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-01"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "getAdminReport",
+      "method": "GET",
+      "path": "/admin/reports/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-02",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "getAdminVerification",
+      "method": "GET",
+      "path": "/admin/verifications/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-03",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "getAdminReview",
+      "method": "GET",
+      "path": "/admin/reviews/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-04",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "listModerationAudit",
+      "method": "GET",
+      "path": "/admin/moderation-audit",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-02",
+        "P1-03-AC-04",
+        "P1-03-AC-05"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "getAdminAssetContent",
+      "method": "GET",
+      "path": "/assets/{id}/admin-content",
+      "status": "implemented",
+      "criteria": [
+        "P1-03-AC-02",
+        "P1-03-AC-03",
+        "P1-03-AC-04"
+      ],
+      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
     }
   ],
   "routes": [
@@ -5857,6 +6278,31 @@
       "file": "services/api/src/modules/accounts/accounts.controller.ts"
     },
     {
+      "method": "GET",
+      "path": "/admin/auth/status",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/enrollment",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/enrollment/confirm",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/verify",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/lock",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts"
+    },
+    {
       "method": "POST",
       "path": "/assets/upload-grants",
       "file": "services/api/src/modules/assets/assets.controller.ts"
@@ -5874,6 +6320,11 @@
     {
       "method": "GET",
       "path": "/assets/{id}/content",
+      "file": "services/api/src/modules/assets/assets.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/assets/{id}/admin-content",
       "file": "services/api/src/modules/assets/assets.controller.ts"
     },
     {
@@ -6078,6 +6529,56 @@
     },
     {
       "method": "GET",
+      "path": "/admin/moderation-audit",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/reports",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/reports/{id}",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/reports/{id}/decision",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/verifications",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/verifications/{id}",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/verifications/{id}/decision",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/reviews",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/reviews/{id}",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/reviews/{id}/decision",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "GET",
       "path": "/me/notifications",
       "file": "services/api/src/modules/notifications/notifications.controller.ts"
     },
@@ -6227,19 +6728,14 @@
       "file": "services/api/src/modules/reviews/reviews.controller.ts"
     },
     {
-      "method": "POST",
-      "path": "/reviews/{id}/visibility",
-      "file": "services/api/src/modules/reviews/reviews.controller.ts"
-    },
-    {
       "method": "PUT",
       "path": "/reviews/{id}/reply",
       "file": "services/api/src/modules/reviews/reviews.controller.ts"
     },
     {
       "method": "POST",
-      "path": "/reports",
-      "file": "services/api/src/modules/support/support.controller.ts"
+      "path": "/reviews/{id}/visibility",
+      "file": "services/api/src/modules/reviews/reviews.controller.ts"
     },
     {
       "method": "GET",
@@ -6253,8 +6749,23 @@
     },
     {
       "method": "POST",
+      "path": "/reports",
+      "file": "services/api/src/modules/support/support.controller.ts"
+    },
+    {
+      "method": "POST",
       "path": "/reports/{id}/updates",
       "file": "services/api/src/modules/support/support.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/verification",
+      "file": "services/api/src/modules/verification/verification.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/partners/{id}/verification",
+      "file": "services/api/src/modules/verification/verification.controller.ts"
     }
   ],
   "contractGaps": [

@@ -13,7 +13,7 @@ export async function createApp(settings: Config, database?: Pool, log = new App
   app.use(requestMiddleware(log));
   app.setGlobalPrefix('v1');
   app.useGlobalFilters(new HttpExceptionFilter(log));
-  if (settings.corsOrigin) app.enableCors({ origin: settings.corsOrigin.split(',').map(x => x.trim()), methods: ['GET','POST','PATCH','PUT'], allowedHeaders: ['Content-Type','Authorization','X-Client-Request-Id','Idempotency-Key'], exposedHeaders: ['X-Request-Id','Retry-After'] });
+  if (settings.corsOrigin) app.enableCors({ origin: settings.corsOrigin.split(',').map(x => x.trim()), methods: ['GET','POST','PATCH','PUT'], allowedHeaders: ['Content-Type','Authorization','X-Client-Request-Id','Idempotency-Key','X-Admin-Session'], exposedHeaders: ['X-Request-Id','Retry-After'] });
   if(settings.authSecret&&settings.realtimeEnabled)app.get(RealtimeGateway).attach(app.getHttpServer(),settings.corsOrigin?.split(',').map(s=>s.trim())??[]);
   return app;
 }

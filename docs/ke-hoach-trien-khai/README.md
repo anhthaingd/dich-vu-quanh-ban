@@ -1,5 +1,9 @@
 # Kế hoạch triển khai và học code
 
+**19/10/2026 — B09-03:** admin có khu quản trị riêng trên app điện thoại, MFA và bốn mục hỗ trợ/xác minh/đánh giá/nhật ký; không có tab khách trong khu admin. [Báo cáo, ảnh iOS và cách mở DEMO](bao-cao/B09-03-admin-tren-dien-thoai.md). Chưa native Android/UAT/CI mới/production.
+
+**19/10/2026 — P1-03:** admin DEMO với mật khẩu + TOTP, quyền độc lập, hàng đợi hỗ trợ/xác minh/đánh giá và nhật ký. App nộp ảnh xác minh riêng, bổ sung và đọc kết quả. [B09-02](bao-cao/B09-02-admin-ho-tro-va-kiem-duyet.md) · [B02-04](bao-cao/B02-04-nop-va-xet-xac-minh.md). Web hai vai đã đạt; bằng chứng SDD cuối ghi riêng. Chưa commit/push, CI mới, UAT hoặc production; chưa đóng toàn P1-2.
+
 **16/10/2026 — B09-01 / P1-2:** gửi/xem/bổ sung báo cáo riêng tư, tiêu đề và ảnh local đã được chủ dự án duyệt; liên kết đúng công việc/hóa đơn/đánh giá. [Báo cáo](bao-cao/B09-01-ho-tro-va-bao-cao.md). Admin/MFA để đợt riêng; chưa đóng toàn B09/P1-2.
 
 **16/10/2026 — B10-03 / P1-2:** ảnh và phản hồi đánh giá đã được duyệt bổ sung contract; nối DB/API/app, quyền hiện hành và ảnh local. [Báo cáo](bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md). Chưa đóng toàn B10/P1-2, chưa đồng bộ Drive/ui-ux.
