@@ -3559,6 +3559,82 @@
     {
       "path": "ui-ux/wireframes/technical-design/technical-design.html",
       "kind": "reference"
+    },
+    {
+      "path": "apps/admin/src/Completion.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/AdminCompletion.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/desktop-preview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/mobile-web-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-04-admin-hoan-tat-thay.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P1-04-admin-hoan-tat-thay.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "services/api/migrations/016_admin_completion.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/invoices/invoice-view.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/invoices/settlement.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/completion.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/completion.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/completion.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/test/integration/admin-completion.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/admin-completion.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/ios-preview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/ios-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/android-preview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/android-completed.png",
+      "kind": "documentation"
     }
   ],
   "tests": {
@@ -3617,7 +3693,8 @@
       "apps/mobile/src/lib/i18n/locale-state.test.ts",
       "apps/mobile/src/lib/i18n/locale-storage.test.ts",
       "apps/mobile/src/lib/logging/logger.test.ts",
-      "apps/mobile/src/lib/realtime/realtime-client.test.ts"
+      "apps/mobile/src/lib/realtime/realtime-client.test.ts",
+      "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx"
     ],
     "api": [
       "services/api/test/integration/account-management.test.ts",
@@ -3645,7 +3722,8 @@
       "services/api/test/unit/logging.test.ts",
       "services/api/test/unit/organizations.test.ts",
       "services/api/test/unit/output.test.ts",
-      "services/api/test/unit/totp.test.ts"
+      "services/api/test/unit/totp.test.ts",
+      "services/api/test/integration/admin-completion.test.ts"
     ],
     "web": [
       "tests/e2e/web/account-management.spec.mjs",
@@ -3667,7 +3745,8 @@
       "tests/e2e/web/search-map.spec.mjs",
       "tests/e2e/web/search-service.spec.mjs",
       "tests/e2e/web/shell.spec.mjs",
-      "tests/e2e/web/support.spec.mjs"
+      "tests/e2e/web/support.spec.mjs",
+      "tests/e2e/web/admin-completion.spec.mjs"
     ],
     "tooling": [
       "scripts/diagnostics/export.test.mjs",
@@ -3792,7 +3871,10 @@
     "P1-03-AC-03",
     "P1-03-AC-04",
     "P1-03-AC-05",
-    "P1-03-MOBILE-01"
+    "P1-03-MOBILE-01",
+    "P1-04-AC-01",
+    "P1-04-AC-02",
+    "P1-04-AC-03"
   ],
   "qa": [
     {
@@ -4067,9 +4149,12 @@
     },
     {
       "id": "QA-034",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P1-04-AC-01",
+        "P1-04-AC-03"
+      ],
+      "reason": "P1-04 local/test admin completion has reviewed settlement, permission, MFA, evidence, version and retry tests. Full business QA, native devices, production, chat evidence and UAT remain outside automated proof."
     },
     {
       "id": "QA-035",
@@ -4108,9 +4193,12 @@
     },
     {
       "id": "QA-039",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P1-04-AC-02",
+        "P1-04-AC-03"
+      ],
+      "reason": "P1-04 local/test admin completion has reviewed settlement, permission, MFA, evidence, version and retry tests. Full business QA, native devices, production, chat evidence and UAT remain outside automated proof."
     },
     {
       "id": "QA-040",
@@ -5633,23 +5721,29 @@
       "id": "previewCompletion",
       "method": "GET",
       "path": "/admin/reports/{id}/completion-preview",
-      "status": "specified-not-implemented",
+      "status": "implemented",
       "criteria": [
         "P1-03-AC-02",
-        "P1-03-AC-05"
+        "P1-03-AC-05",
+        "P1-04-AC-01",
+        "P1-04-AC-02",
+        "P1-04-AC-03"
       ],
-      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+      "reason": "P1-04 approved local/test controller with finance.review, support.read, fresh MFA and version-bound preview. Does not close reports or alter payment marks; no real money/production."
     },
     {
       "id": "completeOnBehalf",
       "method": "POST",
       "path": "/admin/reports/{id}/complete-on-behalf",
-      "status": "specified-not-implemented",
+      "status": "implemented",
       "criteria": [
         "P1-03-AC-02",
-        "P1-03-AC-05"
+        "P1-03-AC-05",
+        "P1-04-AC-01",
+        "P1-04-AC-02",
+        "P1-04-AC-03"
       ],
-      "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+      "reason": "P1-04 approved local/test controller with finance.review, support.read, fresh MFA and version-bound preview. Does not close reports or alter payment marks; no real money/production."
     },
     {
       "id": "adminListTopups",
@@ -6766,6 +6860,16 @@
       "method": "POST",
       "path": "/partners/{id}/verification",
       "file": "services/api/src/modules/verification/verification.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/reports/{id}/completion-preview",
+      "file": "services/api/src/modules/moderation/completion.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/reports/{id}/complete-on-behalf",
+      "file": "services/api/src/modules/moderation/completion.controller.ts"
     }
   ],
   "contractGaps": [

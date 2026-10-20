@@ -1,5 +1,14 @@
 # Checklist chức năng và bằng chứng
 
+## P1-04 — Admin hoàn tất thay, 20/10/2026
+
+- [x] Chủ dự án duyệt bổ sung trường xem trước và xác nhận đối chiếu; phạm vi tiền test, web/mobile.
+- [x] DB/API: quyền finance.review riêng + support.read + MFA; xem trước gắn phiên bản/tác động, quyết toán chung với thợ, chứng cứ/audit. Giữ hai dấu và trạng thái báo cáo.
+- [x] Kiểm tập trung PostgreSQL: 5 bài mới và 6 bài hóa đơn hồi quy đạt; UI/client và hồi quy 27 bài đạt. Web desktop/mobile qua API/DB thật, mất response rồi retry cùng payload/key đạt.
+- [x] iOS 27 simulator và Android 16/API 36 emulator: ảnh chứng cứ, xem trước, gửi và lịch sử đạt; DB giữ hai dấu null, report open. Ảnh DEMO và Mermaid đã kiểm trong B09-04.
+- SDD: dùng bằng chứng cuối tại [B09-04](bao-cao/B09-04-admin-hoan-tat-thay.md), không lấy lượt tập trung thay kết quả toàn gói.
+- [ ] Commit/push, CI mới, thiết bị thật/UAT/production. Chưa đóng toàn B09/P1-2.
+
 ## P1-03 — Admin hỗ trợ, xác minh và kiểm duyệt, 19/10/2026
 
 - [x] Chủ dự án duyệt toàn bộ contract bổ sung: TOTP, phiên admin, khai báo/ảnh/lịch sử xác minh, Cần bổ sung, chi tiết/tìm/lọc và Giữ/Ẩn/Khôi phục.
@@ -295,7 +304,7 @@ Nguồn: [spec](../../ui-ux/specs/support-moderation.md), [backlog](../technical
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
 | [ ] | B09-01 | Báo cáo, chứng cứ, trao đổi và hàng đợi hỗ trợ | Phía người gửi/ảnh local có B09-01; web admin/MFA có B09-02, khu quản trị mobile có B09-03. Giữ trạng thái một phần do chưa UAT và còn giới hạn ghi trong báo cáo. Không sinh bút toán |
-| [ ] | B09-02 | Admin hoàn tất thay: preview/fresh auth/lý do/recheck | Dùng cùng settlement service; không giả dấu nhận tiền, không tự mở đánh giá |
+| [~] | B09-02 | Admin hoàn tất thay: preview/fresh auth/lý do/recheck | Lát tiền test [B09-04](bao-cao/B09-04-admin-hoan-tat-thay.md): quyết toán chung, giữ hai dấu và báo cáo; native/CI/UAT ghi riêng |
 | [ ] | B09-03 | Xử lý khôi phục/xóa, user/partner/verification/admin grants | Nối các luồng B01/B02; nguyên tắc tối thiểu quyền và lịch sử quyết định |
 
 ## B10 — Đánh giá và gọi — đánh giá sao/nội dung đã có lát local

@@ -98,3 +98,6 @@ test('leaving the invoice screen cancels a queued write before it reaches the AP
  act(()=>jest.mocked(useRealtimeRefresh).mock.calls.at(-1)![0].refresh());await waitFor(()=>expect(f.manager.getSnapshot().busy).toBe(true));
  press('invoice-send');view.unmount();await act(async()=>finish(job));expect(f.invoices.save).not.toHaveBeenCalled();expect(f.invoices.change).not.toHaveBeenCalled();
 });
+test('admin-settled invoice shows settlement separately without inventing a worker receipt or review eligibility',async()=>{
+ const f=invoiceFixture(true);f.setInvoice({...invoice,state:'settled',settled:true,customer_payment_reported_at:'2026-10-20T00:00:00Z',worker_receipt_confirmed_at:null,review_eligible:false});mount(f);await ready();expect(screen.getByTestId('invoice-settled-separate')).toBeTruthy();expect(screen.queryByTestId('invoice-receive')).toBeNull();expect(screen.queryByTestId('invoice-done')).toBeNull();
+});

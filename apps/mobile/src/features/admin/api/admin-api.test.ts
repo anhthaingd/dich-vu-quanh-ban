@@ -24,3 +24,10 @@ test('non-admin sessions cannot call admin APIs and missing config fails before 
  const f=authFixture();await f.manager.login({email:'user@example.test',password:'DEMO'});const fetcher=jest.fn();const client=new AdminApi(f.manager,session.user.id,'http://localhost:3100/v1',fetcher);await expect(client.status()).rejects.toEqual(new ApiError('FORBIDDEN'));expect(fetcher).not.toHaveBeenCalled();
  const admin=await fixture();await expect(new AdminApi(admin.manager,session.user.id,undefined,admin.transport).status()).rejects.toMatchObject({code:'CONFIG'});await expect(admin.client.photo('photo')).rejects.toMatchObject({code:'FORBIDDEN'});
 });
+test('completion API validates preview money and sends exact authorization and retry input',async()=>{
+ const f=await fixture(),preview={invoice_id:'i',invoice_version_id:'v',invoice_expected_version:3,total:'100',cash_due:'50',fee:'10',points_used:'50',reward:'1',partner_delta:'40',preview_token:'preview',expires_at:'2099-01-01T00:00:00Z'};
+ f.transport.mockResolvedValueOnce(response(preview));expect(await f.client.completionPreview('r')).toEqual(preview);
+ f.transport.mockResolvedValueOnce(response({...preview,total:-1}));await expect(f.client.completionPreview('r')).rejects.toMatchObject({code:'INVALID_RESPONSE'});
+ f.transport.mockResolvedValueOnce(response({settlement_id:'s',actor_kind:'admin',invoice:{id:'i',settled:true,review_eligible:false}}));await f.client.complete('r',{checked:true,preview_token:'preview'},'same-key');expect(f.transport.mock.calls.at(-1)![1]!.headers).toMatchObject({'Idempotency-Key':'same-key'});
+ f.transport.mockResolvedValueOnce(response({actor_kind:'worker'}));await expect(f.client.complete('r',{},'k')).rejects.toMatchObject({code:'INVALID_RESPONSE'});
+});

@@ -15,7 +15,7 @@ export async function reserve(db:PoolClient,accounts:Awaited<ReturnType<typeof l
  for(const [id,kind,amount] of [[accounts.points.id,'invoice_points',points],[accounts.partner.id,'invoice_fee',fee]])if(BigInt(amount)>0n)
   await db.query('INSERT INTO holds(account_id,kind,reference_id,amount) VALUES($1,$2,$3,$4)',[id,kind,invoice,amount]);
 }
-export async function postSettlement(db:PoolClient,accounts:Awaited<ReturnType<typeof lockAccounts>>,invoice:string,user:string,c:{fee:string;points_used:string;reward:string}) {
+export async function postSettlement(db:PoolClient,accounts:Awaited<ReturnType<typeof lockAccounts>>,invoice:string,user:string,c:{fee:string;points_used:string;reward:string},actor:{kind:'worker'|'admin';report?:string;reason?:string}={kind:'worker'}) {
  const {rows:[tx]}=await db.query("INSERT INTO ledger_transactions(operation_key,kind,actor_id,correlation_id) VALUES($1,'invoice_settlement',$2,$3) RETURNING id",['invoice:'+invoice,user,randomUUID()]);
  const postings=[
   [accounts.partner,'invoice_net',BigInt(c.points_used)-BigInt(c.fee)],[accounts.systems.fee_revenue,'fee',BigInt(c.fee)],
@@ -25,5 +25,5 @@ export async function postSettlement(db:PoolClient,accounts:Awaited<ReturnType<t
  ] as const;
  for(const [account,code,delta] of postings)if(delta!==0n)await db.query('INSERT INTO ledger_entries(transaction_id,account_id,unit,delta,posting_code) VALUES($1,$2,$3,$4,$5)',[tx.id,account.id,account.unit,String(delta),code]);
  await db.query("UPDATE holds SET state='consumed',ended_at=now() WHERE reference_id=$1 AND state='active' AND kind IN ('invoice_fee','invoice_points')",[invoice]);
- const {rows:[s]}=await db.query("INSERT INTO settlements(invoice_id,transaction_id,actor_id,actor_kind) VALUES($1,$2,$3,'worker') RETURNING id",[invoice,tx.id,user]);return s.id as string;
+ const {rows:[s]}=await db.query("INSERT INTO settlements(invoice_id,transaction_id,actor_id,actor_kind,report_id,reason) VALUES($1,$2,$3,$4,$5,$6) RETURNING id",[invoice,tx.id,user,actor.kind,actor.report??null,actor.reason??null]);return s.id as string;
 }

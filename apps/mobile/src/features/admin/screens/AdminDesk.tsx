@@ -1,3 +1,4 @@
+import {AdminCompletion} from './AdminCompletion';
 import {useEffect,useRef,useState} from 'react';
 import {BackHandler,Image,View} from 'react-native';
 import {AppText} from '../../../components/ui/AppText';
@@ -49,6 +50,7 @@ export function AdminDesk({client,grants,t,locale,fail,lock}:{client:AdminApi;gr
  {selected.updates?.map((u,i)=><Card key={i}><AppText>{u.body}</AppText>{u.evidence_ids.map(id=><Photo key={id} id={id} client={client} t={t} fail={handle}/>)}<AppText variant="caption">{format(u.created_at)}</AppText></Card>)}
  <AppText tone="muted">{t(domain==='reports'?'noMoney':domain==='reviews'?'noEdit':'checked')}</AppText>
  {!!selected.history.length&&<AppText variant="card">{t('history')}</AppText>}{selected.history.map((h,i)=><Card key={i}><AppText>{t(h.action)}</AppText><AppText>{h.reason}</AppText><AppText variant="caption">{format(h.created_at)}</AppText></Card>)}
+ {domain==='reports'&&selected.invoice_id&&selected.state!=='closed'&&grants.includes('finance.review')&&!selected.history.some(h=>h.action==='complete_on_behalf')&&<AdminCompletion key={`complete:${selected.id}:${selected.version}`} item={selected} client={client} t={t} locale={locale} fail={handle} reload={()=>void open(selected.id)}/>}
  <AdminDecision key={`${domain}:${selected.id}:${selected.version}`} item={selected} domain={domain} client={client} t={t} allowed={domain!=='reports'||grants.includes('support.manage')} saved={r=>{setSelected(r);setItems(all=>all.map(x=>x.id===r.id?r:x));setNotice('saved');}} fail={handle} reload={()=>void open(selected.id)}/>
  </Card>:<Card testID="admin-queue"><Input testID="admin-search" label={t('q')} value={q} onChangeText={setQ} maxLength={200}/><AdminChoice id="admin-filter" label={t('filter')} value={state} choices={['all',...states[domain]]} onChange={setState} t={t}/>
  <Button testID="admin-search-submit" label={t('search')} disabled={busy} onPress={()=>{setItems([]);setCursor(null);params.current={q,state};setRequest(n=>n+1);}}/>

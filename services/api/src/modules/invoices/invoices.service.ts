@@ -7,23 +7,15 @@ import { AccountTransaction } from '../accounts/account-transaction.js';
 import { jobAccess, hasPermission, memberAccess } from '../jobs/jobs.access.js';
 import { event } from '../chat/chat.store.js';
 import { invoiceAmounts, RULE_VERSION } from './money.js';
-import { held, lockAccounts, postSettlement, reserve } from './ledger.js';
+import { held, lockAccounts, reserve } from './ledger.js';
 import type { DraftInput, ActionInput, InvoiceAction } from './invoices.input.js';
-const iso=(v:Date|null)=>v?.toISOString()??null;
+import {readInvoice} from './invoice-view.js';
+import {settleLockedInvoice} from './settlement.js';
 export class InvoicesService {
  private readonly tx:AccountTransaction;
  constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly cursor:Cursor){this.tx=new AccountTransaction(pool,auth);}
  private async invoice(db:PoolClient,job:string){return (await db.query('SELECT * FROM invoices WHERE job_id=$1 FOR UPDATE',[job])).rows[0];}
- private async read(db:PoolClient,job:string,customer=false){
-  const i=await this.invoice(db,job);if(!i)throw new NotFoundException();
-  const revising=customer&&i.state==='draft';
-  const v=revising?(await db.query('SELECT * FROM invoice_versions WHERE invoice_id=$1 AND sent_at IS NOT NULL ORDER BY version_no DESC LIMIT 1',[i.id])).rows[0]:(await db.query('SELECT * FROM invoice_versions WHERE id=$1',[i.current_version_id])).rows[0];
-  if(!v)throw new NotFoundException();
-  const c=(await db.query('SELECT * FROM invoice_confirmations WHERE invoice_id=$1',[i.id])).rows[0];
-  const assets=(await db.query('SELECT asset_id FROM invoice_assets WHERE version_id=$1 ORDER BY created_at,id',[v.id])).rows.map(x=>x.asset_id);
-  const money=invoiceAmounts(v.labor,v.materials,c?.points_used??'0');
-  return {id:i.id,job_id:job,version:i.version,version_id:v.id,state:revising?'revision_requested':i.state,labor:v.labor,materials:v.materials,total:money.total,points_used:c?.points_used??'0',cash_due:c?.cash_due??money.cash_due,reward:c?.reward??money.reward,customer_payment_reported_at:iso(i.customer_payment_reported_at),worker_receipt_confirmed_at:iso(i.worker_receipt_confirmed_at),settled:i.state==='settled',review_eligible:!!(i.state==='settled'&&i.customer_payment_reported_at&&i.worker_receipt_confirmed_at),result_asset_ids:assets,note:v.note,revision_reason:(await db.query('SELECT reason FROM invoice_revision_requests WHERE invoice_id=$1 ORDER BY created_at DESC,id DESC LIMIT 1',[i.id])).rows[0]?.reason??null};
- }
+ private read=readInvoice;
  private async access(db:PoolClient,id:string,user:string,byInvoice=false){
   const job=byInvoice?(await db.query('SELECT job_id FROM invoices WHERE id=$1',[id])).rows[0]?.job_id:id;
   if(!job)throw new NotFoundException();return jobAccess(db,job,user);
@@ -52,7 +44,6 @@ export class InvoicesService {
    const a=await this.access(db,id,actor.user.id,true),job=a.job.id,i=await this.invoice(db,job);
    if(i.version!==input.expected_version || (input.version_id && input.version_id!==i.current_version_id) || (input.draft_version_id && input.draft_version_id!==i.current_version_id))throw new ConflictException({code:'VERSION_CONFLICT'});
    const v=(await db.query('SELECT * FROM invoice_versions WHERE id=$1',[i.current_version_id])).rows[0];
-   let settlement:string|undefined;
    if(action==='send'){
     this.state(i.state,['draft']);if(a.job.state!=='accepted')throw new ConflictException({code:'STATE_CONFLICT'});
     const assets=(await db.query('SELECT a.status FROM invoice_assets ia JOIN assets a ON a.id=ia.asset_id WHERE version_id=$1 FOR SHARE OF a',[v.id])).rows;
@@ -69,18 +60,14 @@ export class InvoicesService {
     this.state(i.state,['locked','settled']);if(i.customer_payment_reported_at)throw new ConflictException({code:'STATE_CONFLICT'});
     await db.query('UPDATE invoices SET customer_payment_reported_at=now() WHERE id=$1',[id]);
    } else {
-    this.state(i.state,['locked']);const c=(await db.query('SELECT * FROM invoice_confirmations WHERE invoice_id=$1',[id])).rows[0];
-    const accounts=await lockAccounts(db,a.job.customer_id,a.job.partner_id);
-    for(const [kind,amount] of [['invoice_fee',c.fee],['invoice_points',c.points_used]])if(BigInt(amount)>0n){const h=(await db.query("SELECT amount FROM holds WHERE reference_id=$1 AND kind=$2 AND state='active' FOR UPDATE",[id,kind])).rows[0];if(!h||h.amount!==amount)throw new ConflictException({code:'STATE_CONFLICT'});}
-    settlement=await postSettlement(db,accounts,id,actor.user.id,c);
-    await db.query("UPDATE invoices SET state='settled',worker_receipt_confirmed_at=now(),worker_receipt_by=$2,settled_by_kind='worker' WHERE id=$1",[id,actor.user.id]);
+    const settlement=await settleLockedInvoice(db,a.job,i,{id:actor.user.id,kind:'worker'});
+    return {invoice:await this.read(db,job),settlement_id:settlement,actor_kind:'worker' as const};
    }
    await db.query('UPDATE invoices SET version=version+1 WHERE id=$1',[id]);
    const result=await this.read(db,job);
-   if(settlement)await db.query("UPDATE jobs SET state='completed',completed_at=now(),version=version+1 WHERE id=$1 AND state<>'completed'",[job]);
    const type={send:'sent','revision-requests':'revision_requested',confirm:'locked','payment-reported':'payment_reported',settle:'settled'}[action];
    await event(db,`invoice:${id}:${result.version}`,id,result.version,`invoice.${type}.v1`,{invoice_id:id,version_id:result.version_id,resource_version:result.version});
-   return settlement?{invoice:result,settlement_id:settlement,actor_kind:'worker' as const}:result;
+   return result;
   },async(db,actor)=>{const a=await this.access(db,id,actor.user.id,true);if(['send','settle'].includes(action)?!a.assigned:!a.customer)throw new ForbiddenException();});
  }
  private state(current:string,allowed:string[]){if(!allowed.includes(current))throw new ConflictException({code:'STATE_CONFLICT'});}

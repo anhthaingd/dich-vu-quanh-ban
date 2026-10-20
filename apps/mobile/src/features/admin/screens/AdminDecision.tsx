@@ -21,7 +21,7 @@ export function AdminDecision({item,domain,client,t,allowed,saved,fail,reload}:{
   catch(e){if(live.current){const c=codeOf(e);setError(c);if(!['NETWORK','TIMEOUT','SERVICE_UNAVAILABLE','INTERNAL','INVALID_RESPONSE'].includes(c))pending.current=null;if(['FORBIDDEN','REAUTH_REQUIRED','UNAUTHENTICATED'].includes(c))fail(e);}}
   finally{sending.current=false;if(live.current)setBusy(false);}
  };
- if(!allowed||domain==='reports'&&item.state==='closed'||domain==='verifications'&&item.state!=='pending')return <AppText>{t('readOnly')}</AppText>;
+ if(!allowed||domain==='reports'&&item.state==='closed'||domain==='verifications'&&item.state!=='pending')return <AppText>{t(!allowed&&domain==='reports'?'reportReadOnly':'readOnly')}</AppText>;
  return <View style={{gap:12}}><AdminChoice id="admin-action" label={t('decision')} value={action} choices={choices} onChange={setAction} disabled={busy||!!pending.current} t={t}/>
  <Input testID="admin-reason" label={t('reason')} multiline value={reason} onChangeText={setReason} maxLength={4000} editable={!busy&&!pending.current} style={{minHeight:110,textAlignVertical:'top'}}/>
  {domain==='verifications'&&<View><AppText>{t('checked')}</AppText><Switch testID="admin-checked" accessibilityLabel={t('checked')} value={checked} onValueChange={setChecked} disabled={busy||!!pending.current}/></View>}

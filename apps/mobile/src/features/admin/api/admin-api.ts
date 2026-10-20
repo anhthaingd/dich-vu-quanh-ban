@@ -2,14 +2,14 @@ import {ApiError} from '../../../lib/http/api-error';
 import {requestJson} from '../../../lib/http/request';
 import {record} from '../../jobs/api/jobs-api';
 import type {AuthSession} from '../../auth/state/auth-session';
-import {isItem, type Item, type Audit, type Page, type Domain} from '../models';
+import {isCompletionPreview,isCompletionResult,isItem, type Item, type Audit, type Page, type Domain} from '../models';
 
 type Mfa = {token:string;expires_at:string;fresh_until:string};
 export class AdminApi {
   private mfa:Mfa|null = null;
   private generation = 0;
   constructor(private readonly manager:AuthSession, private readonly owner:string,
-    private readonly base:string|undefined, private readonly transport:typeof fetch=fetch) {}
+    private readonly base:string|undefined, private readonly transport:typeof fetch=globalThis.fetch.bind(globalThis)) {}
   get expiresAt(){return this.mfa ? Date.parse(this.mfa.expires_at) : 0;}
   clear(){this.generation++;this.mfa=null;}
   private async call<T>(path:string,validate:(v:unknown)=>v is T,body?:unknown,key?:string):Promise<T> {
@@ -34,6 +34,8 @@ export class AdminApi {
   }
   item(domain:Domain,id:string){return this.call('/admin/'+domain+'/'+encodeURIComponent(id),isItem);}
   decision(domain:Domain,id:string,input:unknown,key:string):Promise<Item>{return this.call('/admin/'+domain+'/'+encodeURIComponent(id)+'/decision',isItem,input,key);}
+  completionPreview(id:string){return this.call('/admin/reports/'+encodeURIComponent(id)+'/completion-preview',isCompletionPreview);}
+  complete(id:string,input:unknown,key:string){return this.call('/admin/reports/'+encodeURIComponent(id)+'/complete-on-behalf',isCompletionResult,input,key);}
   audit(cursor?:string){return this.call('/admin/moderation-audit'+(cursor?'?cursor='+encodeURIComponent(cursor):''),(v):v is {items:Audit[];next_cursor:string|null}=>record(v)&&Array.isArray(v.items)&&v.items.every(i=>record(i)&&typeof i.id==='string'&&typeof i.domain==='string'&&typeof i.action==='string'&&typeof i.reason==='string'&&typeof i.created_at==='string')&&(v.next_cursor===null||typeof v.next_cursor==='string'));}
   async photo(id:string):Promise<string>{
     if(!this.base||!this.mfa)throw new ApiError('FORBIDDEN');

@@ -1,5 +1,7 @@
 # Thứ tự triển khai từng chức năng
 
+**20/10/2026 — P1-04:** tiếp tục P1-2 với admin hoàn tất thay thợ bằng tiền test. Chủ dự án duyệt bổ sung contract xem trước/đối chiếu và triển khai web/mobile. [Thiết kế](de-xuat/P1-04-admin-hoan-tat-thay.md) · [Báo cáo B09-04](bao-cao/B09-04-admin-hoan-tat-thay.md). Giữ Q01, không tự đóng báo cáo, không mở Q02/tiền thật.
+
 **19/10/2026 — P1-03:** admin DEMO với mật khẩu + TOTP, quyền độc lập, hàng đợi hỗ trợ/xác minh/đánh giá và nhật ký. App nộp ảnh xác minh riêng, bổ sung và đọc kết quả. [B09-02](bao-cao/B09-02-admin-ho-tro-va-kiem-duyet.md) · [B02-04](bao-cao/B02-04-nop-va-xet-xac-minh.md). Web hai vai đã đạt; bằng chứng SDD cuối ghi riêng. Chưa commit/push, CI mới, UAT hoặc production; chưa đóng toàn P1-2.
 
 **16/10/2026 — B09-01 / P1-2:** gửi/xem/bổ sung báo cáo riêng tư, tiêu đề và ảnh local đã được chủ dự án duyệt; liên kết đúng công việc/hóa đơn/đánh giá. [Báo cáo](bao-cao/B09-01-ho-tro-va-bao-cao.md). Admin/MFA để đợt riêng; chưa đóng toàn B09/P1-2.

@@ -3653,6 +3653,128 @@
       "qa": [
         "QA-102"
       ]
+    },
+    {
+      "id": "P1-04-AC-01",
+      "requirement": "FR-ADM-012",
+      "description": "Admin completion shares atomic invoice settlement, preserves both payment marks and report state, and posts at most once.",
+      "sources": [
+        "p1-04-approved",
+        "QA-034"
+      ],
+      "code": [
+        "services/api/src/modules/moderation/completion.service.ts",
+        "services/api/src/modules/invoices/settlement.ts",
+        "services/api/src/modules/invoices/ledger.ts",
+        "services/api/migrations/016_admin_completion.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-completion.test.ts",
+          "name": "admin completion previews and settles once with balanced postings, unchanged payment marks, report state and unrelated holds"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-completion.test.ts",
+          "name": "admin and worker settlement race yields one posting and rolls back atomically when the event fails"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-completion.test.ts",
+          "name": "admin full-point completion preserves an existing customer mark and rejects stale invoice versions or missing holds"
+        }
+      ],
+      "gaps": "Local/test funds only. QA remains partial; no production, real money, selected chat evidence, MFA recovery or UAT certification. Native checks recorded separately in B09-04.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-034"
+      ]
+    },
+    {
+      "id": "P1-04-AC-02",
+      "requirement": "FR-ADM-012",
+      "description": "Finance permission, fresh MFA, private report evidence and bound expiring preview gate completion.",
+      "sources": [
+        "p1-04-approved",
+        "QA-039"
+      ],
+      "code": [
+        "services/api/src/modules/moderation/completion.controller.ts",
+        "services/api/src/modules/moderation/completion.input.ts",
+        "services/api/src/modules/moderation/completion.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-completion.test.ts",
+          "name": "admin completion rejects stale previews, unreviewed or foreign evidence, expired MFA and changed report or account state"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-completion.test.ts",
+          "name": "admin completion requires attached evidence and supports zero cash and zero invoices without zero entries"
+        }
+      ],
+      "gaps": "Local/test funds only. QA remains partial; no production, real money, selected chat evidence, MFA recovery or UAT certification. Native checks recorded separately in B09-04.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-039"
+      ]
+    },
+    {
+      "id": "P1-04-AC-03",
+      "requirement": "FR-ADM-012",
+      "description": "Desktop and mobile admin review amounts/evidence, require explicit confirmation and retry captured requests without granting support decisions.",
+      "sources": [
+        "p1-04-approved",
+        "QA-034",
+        "QA-039"
+      ],
+      "code": [
+        "apps/admin/src/Completion.tsx",
+        "apps/mobile/src/features/admin/screens/AdminCompletion.tsx",
+        "apps/mobile/src/features/admin/api/admin-api.ts",
+        "apps/mobile/src/features/invoices/screens/InvoiceScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
+          "name": "completion displays amounts, requires evidence confirmation and retries the captured request after a lost response"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
+          "name": "completion conflict forces a reload and expired previews cannot submit"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
+          "name": "completion expires without sending a decision"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
+          "name": "completion rejects an MFA failure without sending a decision"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "completion controls require the separate finance grant and do not grant support decisions"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/admin-completion.spec.mjs",
+          "name": "admin completion on desktop and mobile previews money, retries once and preserves payment marks and report state"
+        }
+      ],
+      "gaps": "Local/test funds only. QA remains partial; no production, real money, selected chat evidence, MFA recovery or UAT certification. Native checks recorded separately in B09-04.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-034",
+        "QA-039"
+      ]
     }
   ]
 }

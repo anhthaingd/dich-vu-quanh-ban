@@ -1,3 +1,4 @@
+import {Completion} from './Completion';
 import {useEffect,useMemo,useRef,useState,type FormEvent} from 'react';
 import {AdminClient,ClientError,type Item,type Audit} from './client';
 import {translator,type Locale} from './i18n';
@@ -49,6 +50,7 @@ function Desk({client,t,locale,lock,fail}:{client:AdminClient;t:T;locale:Locale;
  {selected.updates?.map((u,i)=><article className="thread" key={i}><p>{u.body}</p>{u.evidence_ids.map(id=><Photo key={id} id={id} client={client} t={t}/>)}<small>{format(u.created_at)}</small></article>)}
  <p className="note">{t(domain==='reports'?'noMoney':domain==='reviews'?'noEdit':'checked')}</p>
  {selected.history.length>0&&<><h3>{t('history')}</h3>{selected.history.map((h,i)=><article className="thread" key={i}><strong>{t(h.action)}</strong><p>{h.reason}</p><small>{format(h.created_at)}</small></article>)}</>}
+ {domain==='reports'&&selected.invoice_id&&selected.state!=='closed'&&grants.includes('finance.review')&&!selected.history.some(h=>h.action==='complete_on_behalf')&&<Completion key={`complete:${selected.id}:${selected.version}`} item={selected} client={client} t={t} locale={locale} fail={handle} reload={()=>void open(selected.id)}/>}
  <Decision key={`${domain}:${selected.id}:${selected.version}`} item={selected} domain={domain} client={client} t={t} allowed={domain!=='reports'||grants.includes('support.manage')} saved={r=>{setSelected(r);setItems(all=>all.map(x=>x.id===r.id?r:x));setNotice('saved');}} fail={handle} reload={()=>void open(selected.id)}/>
  </section>:<section className="panel placeholder"><Shield/><h2>{t('choose')}</h2><p>{t('chooseHint')}</p></section>}</div>}
  </main>;
@@ -57,6 +59,6 @@ function Decision({item,domain,client,t,allowed,saved,fail,reload}:{item:Item;do
  const choices=domain==='reports'?['reviewing','awaiting_evidence','resolved','closed']:domain==='verifications'?['request_evidence','reject','approve']:['keep','hide','unhide'];
  const [action,setAction]=useState(choices[0]),[reason,setReason]=useState(''),[checked,setChecked]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[pending,setPending]=useState<{input:unknown;key:string}|null>(null);const live=useRef(true);useEffect(()=>()=>{live.current=false;},[]);
  const submit=async()=>{const task=pending??{key:crypto.randomUUID(),input:{expected_version:item.version,...(domain==='reports'?{state:action}:{action}),reason:reason.trim(),...(domain==='verifications'?{checked}:{})}};setBusy(true);setError('');setPending(task);try{const r=await client.decision(domain,item.id,task.input,task.key);if(live.current){setPending(null);saved(r);}}catch(e){if(live.current){const code=errorCode(e);setError(code);if(!['NETWORK','INVALID_RESPONSE'].includes(code))setPending(null);if(['FORBIDDEN','REAUTH_REQUIRED','UNAUTHENTICATED'].includes(code))fail(e);}}finally{if(live.current)setBusy(false);}};
- if(!allowed||domain==='reports'&&item.state==='closed'||domain==='verifications'&&item.state!=='pending')return <p>{t('readOnly')}</p>;
+ if(!allowed||domain==='reports'&&item.state==='closed'||domain==='verifications'&&item.state!=='pending')return <p>{t(!allowed&&domain==='reports'?'reportReadOnly':'readOnly')}</p>;
  return <form onSubmit={e=>{e.preventDefault();void submit();}}><fieldset disabled={busy||!!pending}><label>{t('decision')}<select aria-label={t('decision')} value={action} onChange={e=>setAction(e.target.value)}>{choices.map(s=><option key={s} value={s}>{t(s)}</option>)}</select></label><label>{t('reason')}<textarea rows={4} required maxLength={4000} value={reason} onChange={e=>setReason(e.target.value)}/></label>{domain==='verifications'&&<label className="check"><input type="checkbox" checked={checked} onChange={e=>setChecked(e.target.checked)}/>{t('checked')}</label>}</fieldset>{error&&<p role="alert">{message(error,t)}</p>}{['VERSION_CONFLICT','STATE_CONFLICT'].includes(error)?<button type="button" className="secondary" onClick={reload}>{t('refresh')}</button>:<button disabled={busy||!reason.trim()||domain==='verifications'&&action==='approve'&&!checked}>{t(busy?'load':pending?'retry':'save')}</button>}</form>;
 }

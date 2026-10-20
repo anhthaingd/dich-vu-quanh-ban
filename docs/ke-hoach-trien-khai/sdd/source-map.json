@@ -26,7 +26,7 @@
     {
       "id": "api-search",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
+      "sha256": "013d7fe20e5af770fab90fdf69c68ff257a82f8eb05af1387299243733dc3051",
       "pointer": "/paths/~1partners/get",
       "expected": {
         "operationId": "searchPartners"
@@ -1003,10 +1003,10 @@
     {
       "id": "api-project",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
+      "sha256": "013d7fe20e5af770fab90fdf69c68ff257a82f8eb05af1387299243733dc3051",
       "pointer": "/info",
       "expected": {
-        "version": "0.1.17"
+        "version": "0.1.18"
       }
     },
     {
@@ -1113,7 +1113,7 @@
     {
       "id": "api-review-metadata",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
+      "sha256": "013d7fe20e5af770fab90fdf69c68ff257a82f8eb05af1387299243733dc3051",
       "pointer": "/components/schemas/Review",
       "expected": {
         "required": [
@@ -1135,7 +1135,7 @@
     {
       "id": "api-review-reply",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
+      "sha256": "013d7fe20e5af770fab90fdf69c68ff257a82f8eb05af1387299243733dc3051",
       "pointer": "/paths/~1reviews~1{id}~1reply/put",
       "expected": {
         "operationId": "replyReview"
@@ -1144,7 +1144,7 @@
     {
       "id": "api-review-asset",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
+      "sha256": "013d7fe20e5af770fab90fdf69c68ff257a82f8eb05af1387299243733dc3051",
       "pointer": "/paths/~1assets~1{id}/get",
       "expected": {
         "operationId": "getAsset"
@@ -1153,7 +1153,7 @@
     {
       "id": "api-support-report",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
+      "sha256": "013d7fe20e5af770fab90fdf69c68ff257a82f8eb05af1387299243733dc3051",
       "pointer": "/components/schemas/Report",
       "expected": {
         "required": [
@@ -1173,7 +1173,7 @@
     {
       "id": "api-support-create",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "91139f9060b537fb231a907a5ab56bd0e5d57506d59cb9a036b5b349c51a426b",
+      "sha256": "013d7fe20e5af770fab90fdf69c68ff257a82f8eb05af1387299243733dc3051",
       "pointer": "/paths/~1reports/post",
       "expected": {
         "operationId": "createReport"
@@ -1251,6 +1251,12 @@
       "path": "docs/ke-hoach-trien-khai/bao-cao/B09-03-admin-tren-dien-thoai.md",
       "sha256": "9857f2bdf4e04f69023cb893456a735a78fa006c36283ec9cbd22c0aeb6eead3",
       "heading": "## Quyết định và phạm vi đã duyệt"
+    },
+    {
+      "id": "p1-04-approved",
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P1-04-admin-hoan-tat-thay.md",
+      "sha256": "29655e0a51691debf7daab554bddcd80096bbe53ae7333d2cbca42e822571c0a",
+      "heading": "## Kết quả và thiết kế đã chốt"
     }
   ],
   "domains": [

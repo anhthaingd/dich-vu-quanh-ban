@@ -58,5 +58,11 @@ test('admin setup requires confirmation and backgrounding clears the MFA secret 
  fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.changeText(screen.getByTestId('admin-code'),'123456');fireEvent.press(screen.getByTestId('admin-verify'));await screen.findByTestId('admin-queue');expect(f.enroll).toHaveBeenCalledTimes(1);expect(f.verify).toHaveBeenCalledWith('DEMO password','123456',true);
 });
 test('support read-only grants cannot decide and revoked MFA clears the loaded record',async()=>{
- const f=fixture(['support.read']);mount(f);await enter();expect(screen.queryByTestId('admin-tab-reviews')).toBeNull();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByText('Hồ sơ này chỉ đọc.');expect(screen.queryByTestId('admin-save')).toBeNull();fireEvent.press(screen.getByTestId('admin-close-detail'));f.item.mockRejectedValueOnce(new ApiError('FORBIDDEN'));fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-password');expect(screen.queryByTestId('admin-detail')).toBeNull();
+ const f=fixture(['support.read']);mount(f);await enter();expect(screen.queryByTestId('admin-tab-reviews')).toBeNull();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByText('Không có quyền đổi trạng thái báo cáo.');expect(screen.queryByTestId('admin-save')).toBeNull();fireEvent.press(screen.getByTestId('admin-close-detail'));f.item.mockRejectedValueOnce(new ApiError('FORBIDDEN'));fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-password');expect(screen.queryByTestId('admin-detail')).toBeNull();
+});
+test('completion controls require the separate finance grant and do not grant support decisions',async()=>{
+ const f=fixture(['support.read','finance.review']);f.item.mockResolvedValue({...report,invoice_id:'i',evidence_ids:['photo']});mount(f);await enter();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('completion-preview');expect(screen.queryByTestId('admin-save')).toBeNull();
+});
+test('support read access alone cannot display completion controls',async()=>{
+ const f=fixture(['support.read']);f.item.mockResolvedValue({...report,invoice_id:'i',evidence_ids:['photo']});mount(f);await enter();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByText('DEMO body');expect(screen.queryByTestId('completion-preview')).toBeNull();
 });
