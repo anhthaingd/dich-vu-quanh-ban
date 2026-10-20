@@ -41,10 +41,6 @@
       "kind": "documentation"
     },
     {
-      "path": "README.md",
-      "kind": "documentation"
-    },
-    {
       "path": "apps/admin/index.html",
       "kind": "product"
     },
@@ -61,7 +57,15 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/admin/src/CatalogEditor.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/admin/src/client.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/Completion.tsx",
       "kind": "product"
     },
     {
@@ -82,6 +86,10 @@
     },
     {
       "path": "apps/admin/src/main.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/operations-messages.ts",
       "kind": "product"
     },
     {
@@ -149,15 +157,15 @@
       "kind": "product"
     },
     {
-      "path": "apps/mobile/assets/icons/LICENSE",
-      "kind": "product"
-    },
-    {
       "path": "apps/mobile/assets/icons/Laptop.png",
       "kind": "product"
     },
     {
       "path": "apps/mobile/assets/icons/LayoutGrid.png",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/assets/icons/LICENSE",
       "kind": "product"
     },
     {
@@ -245,12 +253,12 @@
       "kind": "product"
     },
     {
-      "path": "apps/mobile/src/app/navigation/AppNavigator.tsx",
-      "kind": "product"
-    },
-    {
       "path": "apps/mobile/src/app/navigation/account-return.test.tsx",
       "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/app/navigation/AppNavigator.tsx",
+      "kind": "product"
     },
     {
       "path": "apps/mobile/src/app/navigation/routes.ts",
@@ -285,6 +293,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/components/ui/controls.test.tsx",
+      "kind": "test"
+    },
+    {
       "path": "apps/mobile/src/components/ui/Feedback.tsx",
       "kind": "product"
     },
@@ -299,10 +311,6 @@
     {
       "path": "apps/mobile/src/components/ui/Screen.tsx",
       "kind": "product"
-    },
-    {
-      "path": "apps/mobile/src/components/ui/controls.test.tsx",
-      "kind": "test"
     },
     {
       "path": "apps/mobile/src/features/accounts/api/accounts-api.test.ts",
@@ -397,11 +405,23 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/admin/operations-messages.ts",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
       "kind": "test"
     },
     {
       "path": "apps/mobile/src/features/admin/screens/AdminChoice.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/AdminCompletion.tsx",
       "kind": "product"
     },
     {
@@ -414,6 +434,10 @@
     },
     {
       "path": "apps/mobile/src/features/admin/screens/AdminScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/CatalogEditor.tsx",
       "kind": "product"
     },
     {
@@ -481,15 +505,15 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/mobile/src/features/chat/api/chat-api.ts",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
       "kind": "test"
     },
     {
       "path": "apps/mobile/src/features/chat/MessageUnreadProvider.tsx",
-      "kind": "product"
-    },
-    {
-      "path": "apps/mobile/src/features/chat/api/chat-api.ts",
       "kind": "product"
     },
     {
@@ -633,15 +657,15 @@
       "kind": "product"
     },
     {
-      "path": "apps/mobile/src/features/location/components/PublicLocation.tsx",
-      "kind": "product"
-    },
-    {
       "path": "apps/mobile/src/features/location/components/map-css.d.ts",
       "kind": "product"
     },
     {
       "path": "apps/mobile/src/features/location/components/map-model.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/location/components/PublicLocation.tsx",
       "kind": "product"
     },
     {
@@ -661,15 +685,15 @@
       "kind": "placeholder"
     },
     {
-      "path": "apps/mobile/src/features/notifications/NotificationsProvider.tsx",
-      "kind": "product"
-    },
-    {
       "path": "apps/mobile/src/features/notifications/api/notifications-api.test.ts",
       "kind": "test"
     },
     {
       "path": "apps/mobile/src/features/notifications/api/notifications-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/NotificationsProvider.tsx",
       "kind": "product"
     },
     {
@@ -797,6 +821,14 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/mobile/src/features/search/components/results-map-model.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/results-map-model.ts",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/search/components/ResultsMap.native.test.tsx",
       "kind": "test"
     },
@@ -826,14 +858,6 @@
     },
     {
       "path": "apps/mobile/src/features/search/components/ServiceFilter.tsx",
-      "kind": "product"
-    },
-    {
-      "path": "apps/mobile/src/features/search/components/results-map-model.test.ts",
-      "kind": "test"
-    },
-    {
-      "path": "apps/mobile/src/features/search/components/results-map-model.ts",
       "kind": "product"
     },
     {
@@ -1009,14 +1033,6 @@
       "kind": "placeholder"
     },
     {
-      "path": "docs/UI-comparison-v0.1.zip",
-      "kind": "compatibility"
-    },
-    {
-      "path": "docs/UI-comparison-v0.2.zip",
-      "kind": "compatibility"
-    },
-    {
       "path": "docs/design-audit-v0.21",
       "kind": "compatibility"
     },
@@ -1057,10 +1073,6 @@
       "kind": "documentation"
     },
     {
-      "path": "docs/huong-dan-mobile/README.md",
-      "kind": "documentation"
-    },
-    {
       "path": "docs/huong-dan-mobile/huong-dan-mobile-v1.0.zip",
       "kind": "documentation"
     },
@@ -1074,6 +1086,10 @@
     },
     {
       "path": "docs/huong-dan-mobile/huong-dan-mobile-v1.3.zip",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/huong-dan-mobile/README.md",
       "kind": "documentation"
     },
     {
@@ -1118,146 +1134,6 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/03-thu-tu-trien-khai.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/README.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-01-nen-tang-danh-muc.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-05-khung-giao-dien.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-06-trang-chinh-theo-storybook.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-07-bo-kiem-sdd-local.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-08-sdd-toan-du-an.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-04-ho-so-ten-hien-thi.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-04-phien-va-dia-chi.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-ra-soat-danh-muc.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-thay-du-lieu-danh-muc.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-04-nop-va-xet-xac-minh.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-01-chon-dia-diem-va-ban-do.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-03-bo-nhap-toa-do.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-01-thong-bao-va-nhac-lich.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-02-realtime-inbox-va-chat.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-03-tach-tin-nhan-va-thong-bao.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-04-lich-tong-hop-cong-viec.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-05-cap-nhat-tu-dong-va-keo-lam-moi.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B06-01-hoa-don-va-quyet-toan-test.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-01-ho-tro-va-bao-cao.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-02-admin-ho-tro-va-kiem-duyet.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-03-admin-tren-dien-thoai.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-01-danh-gia-sau-cong-viec.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-01-nen-da-ngon-ngu.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-04-danh-muc-da-ngon-ngu.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/MAU-BAO-CAO.md",
       "kind": "documentation"
     },
     {
@@ -1773,6 +1649,58 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/android-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/android-preview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/desktop-preview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/ios-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/ios-preview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/mobile-web-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-05/android-provider.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-05/desktop-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-05/desktop-catalog.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-05/ios-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-05/ios-catalog.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-05/ios-support.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-05/mobile-web-support.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-01/android-edited.png",
       "kind": "documentation"
     },
@@ -1797,7 +1725,151 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-01-nen-tang-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-05-khung-giao-dien.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-06-trang-chinh-theo-storybook.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-07-bo-kiem-sdd-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-08-sdd-toan-du-an.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-04-ho-so-ten-hien-thi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-04-phien-va-dia-chi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-ra-soat-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-thay-du-lieu-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-04-nop-va-xet-xac-minh.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-01-chon-dia-diem-va-ban-do.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-03-bo-nhap-toa-do.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-01-thong-bao-va-nhac-lich.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-02-realtime-inbox-va-chat.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-03-tach-tin-nhan-va-thong-bao.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-04-lich-tong-hop-cong-viec.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-05-cap-nhat-tu-dong-va-keo-lam-moi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B06-01-hoa-don-va-quyet-toan-test.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-01-ho-tro-va-bao-cao.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-02-admin-ho-tro-va-kiem-duyet.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-03-admin-tren-dien-thoai.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-04-admin-hoan-tat-thay.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-01-danh-gia-sau-cong-viec.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B03-01-geoapify-30-dia-chi.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-01-nen-da-ngon-ngu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-04-danh-muc-da-ngon-ngu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/MAU-BAO-CAO.md",
       "kind": "documentation"
     },
     {
@@ -1829,6 +1901,14 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P1-04-admin-hoan-tat-thay.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P1-05-admin-tai-khoan-partner-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/de-xuat/RT-01-websocket-va-sse.md",
       "kind": "documentation"
     },
@@ -1841,7 +1921,7 @@
       "kind": "documentation"
     },
     {
-      "path": "docs/ke-hoach-trien-khai/sdd/README.md",
+      "path": "docs/ke-hoach-trien-khai/README.md",
       "kind": "documentation"
     },
     {
@@ -1854,6 +1934,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/sdd/project-inventory.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/sdd/README.md",
       "kind": "documentation"
     },
     {
@@ -1929,11 +2013,11 @@
       "kind": "spec"
     },
     {
-      "path": "docs/project-docs/architecture/README.md",
+      "path": "docs/project-docs/architecture/architecture.json",
       "kind": "spec"
     },
     {
-      "path": "docs/project-docs/architecture/architecture.json",
+      "path": "docs/project-docs/architecture/README.md",
       "kind": "spec"
     },
     {
@@ -1965,10 +2049,6 @@
       "kind": "spec"
     },
     {
-      "path": "docs/technical-design/README.md",
-      "kind": "spec"
-    },
-    {
       "path": "docs/technical-design/backlog.json",
       "kind": "spec"
     },
@@ -1990,6 +2070,10 @@
     },
     {
       "path": "docs/technical-design/qa-cases.json",
+      "kind": "spec"
+    },
+    {
+      "path": "docs/technical-design/README.md",
       "kind": "spec"
     },
     {
@@ -2022,6 +2106,14 @@
     },
     {
       "path": "docs/ui-comparison",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/UI-comparison-v0.1.zip",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/UI-comparison-v0.2.zip",
       "kind": "compatibility"
     },
     {
@@ -2079,6 +2171,10 @@
     {
       "path": "packages/domain/src/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "README.md",
+      "kind": "documentation"
     },
     {
       "path": "scripts/build/api.mjs",
@@ -2222,6 +2318,14 @@
     },
     {
       "path": "services/api/migrations/015_admin_moderation.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/016_admin_completion.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/017_admin_operations.sql",
       "kind": "product"
     },
     {
@@ -2489,6 +2593,10 @@
       "kind": "product"
     },
     {
+      "path": "services/api/src/modules/invoices/invoice-view.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/modules/invoices/invoices.controller.ts",
       "kind": "product"
     },
@@ -2510,6 +2618,10 @@
     },
     {
       "path": "services/api/src/modules/invoices/money.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/invoices/settlement.ts",
       "kind": "product"
     },
     {
@@ -2561,6 +2673,18 @@
       "kind": "placeholder"
     },
     {
+      "path": "services/api/src/modules/moderation/completion.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/completion.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/completion.service.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/modules/moderation/history.ts",
       "kind": "product"
     },
@@ -2578,6 +2702,18 @@
     },
     {
       "path": "services/api/src/modules/moderation/moderation.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/operations.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/operations.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/moderation/operations.service.ts",
       "kind": "product"
     },
     {
@@ -2741,7 +2877,15 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/integration/admin-completion.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/integration/admin-moderation.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/admin-operations.test.ts",
       "kind": "test"
     },
     {
@@ -2909,7 +3053,15 @@
       "kind": "test"
     },
     {
+      "path": "tests/e2e/web/admin-completion.spec.mjs",
+      "kind": "test"
+    },
+    {
       "path": "tests/e2e/web/admin-moderation.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/admin-operations.spec.mjs",
       "kind": "test"
     },
     {
@@ -3009,10 +3161,6 @@
       "kind": "tooling"
     },
     {
-      "path": "ui-ux/README.md",
-      "kind": "reference"
-    },
-    {
       "path": "ui-ux/archive/design-audit-v0.21/counts.json",
       "kind": "reference"
     },
@@ -3037,10 +3185,6 @@
       "kind": "reference"
     },
     {
-      "path": "ui-ux/archive/figma/README.md",
-      "kind": "reference"
-    },
-    {
       "path": "ui-ux/archive/figma/button.png",
       "kind": "reference"
     },
@@ -3050,6 +3194,10 @@
     },
     {
       "path": "ui-ux/archive/figma/foundations.png",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/archive/figma/README.md",
       "kind": "reference"
     },
     {
@@ -3066,6 +3214,14 @@
     },
     {
       "path": "ui-ux/archive/ux-next-organization.md",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-comparison-v0.1.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-comparison-v0.2.zip",
       "kind": "reference"
     },
     {
@@ -3145,14 +3301,6 @@
       "kind": "reference"
     },
     {
-      "path": "ui-ux/exports/UI-comparison-v0.1.zip",
-      "kind": "reference"
-    },
-    {
-      "path": "ui-ux/exports/UI-comparison-v0.2.zip",
-      "kind": "reference"
-    },
-    {
       "path": "ui-ux/prototype/.storybook/main.js",
       "kind": "prototype"
     },
@@ -3173,39 +3321,7 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/App.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/App.stories.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/Journey.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/Membership.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/Partner.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/ProfileEditor.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/SkillPicker.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/Team.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/WorkArt.jsx",
+      "path": "ui-ux/prototype/src/account/account.css",
       "kind": "prototype"
     },
     {
@@ -3225,6 +3341,14 @@
       "kind": "prototype"
     },
     {
+      "path": "ui-ux/prototype/src/account/model.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/model.test.mjs",
+      "kind": "prototype"
+    },
+    {
       "path": "ui-ux/prototype/src/account/Onboarding.jsx",
       "kind": "prototype"
     },
@@ -3233,15 +3357,7 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/account/account.css",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/account/model.mjs",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/account/model.test.mjs",
+      "path": "ui-ux/prototype/src/activity/activity.css",
       "kind": "prototype"
     },
     {
@@ -3253,19 +3369,19 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/activity/NotificationBell.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/activity/activity.css",
-      "kind": "prototype"
-    },
-    {
       "path": "ui-ux/prototype/src/activity/model.mjs",
       "kind": "prototype"
     },
     {
       "path": "ui-ux/prototype/src/activity/model.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/activity/NotificationBell.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/admin/admin.css",
       "kind": "prototype"
     },
     {
@@ -3277,10 +3393,6 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/admin/admin.css",
-      "kind": "prototype"
-    },
-    {
       "path": "ui-ux/prototype/src/admin/model.mjs",
       "kind": "prototype"
     },
@@ -3289,11 +3401,15 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/finance/AdminFinance.jsx",
+      "path": "ui-ux/prototype/src/App.jsx",
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/finance/WalletPanel.jsx",
+      "path": "ui-ux/prototype/src/App.stories.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/finance/AdminFinance.jsx",
       "kind": "prototype"
     },
     {
@@ -3306,6 +3422,10 @@
     },
     {
       "path": "ui-ux/prototype/src/finance/model.test.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/finance/WalletPanel.jsx",
       "kind": "prototype"
     },
     {
@@ -3337,7 +3457,15 @@
       "kind": "prototype"
     },
     {
+      "path": "ui-ux/prototype/src/Journey.jsx",
+      "kind": "prototype"
+    },
+    {
       "path": "ui-ux/prototype/src/main.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/Membership.jsx",
       "kind": "prototype"
     },
     {
@@ -3357,7 +3485,19 @@
       "kind": "prototype"
     },
     {
+      "path": "ui-ux/prototype/src/Partner.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/ProfileEditor.jsx",
+      "kind": "prototype"
+    },
+    {
       "path": "ui-ux/prototype/src/skill-catalog.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/SkillPicker.jsx",
       "kind": "prototype"
     },
     {
@@ -3366,10 +3506,6 @@
     },
     {
       "path": "ui-ux/prototype/src/support/AdminOperations.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/support/SupportDesk.jsx",
       "kind": "prototype"
     },
     {
@@ -3385,6 +3521,10 @@
       "kind": "prototype"
     },
     {
+      "path": "ui-ux/prototype/src/support/SupportDesk.jsx",
+      "kind": "prototype"
+    },
+    {
       "path": "ui-ux/prototype/src/team-model.mjs",
       "kind": "prototype"
     },
@@ -3393,11 +3533,19 @@
       "kind": "prototype"
     },
     {
+      "path": "ui-ux/prototype/src/Team.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/WorkArt.jsx",
+      "kind": "prototype"
+    },
+    {
       "path": "ui-ux/prototype/vite.config.js",
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/research/README.md",
+      "path": "ui-ux/README.md",
       "kind": "reference"
     },
     {
@@ -3415,6 +3563,10 @@
     {
       "path": "ui-ux/research/react",
       "kind": "compatibility"
+    },
+    {
+      "path": "ui-ux/research/README.md",
+      "kind": "reference"
     },
     {
       "path": "ui-ux/research/research.md",
@@ -3517,10 +3669,6 @@
       "kind": "reference"
     },
     {
-      "path": "ui-ux/wireframes/technical-design/README.md",
-      "kind": "reference"
-    },
-    {
       "path": "ui-ux/wireframes/technical-design/backlog.json",
       "kind": "reference"
     },
@@ -3545,6 +3693,10 @@
       "kind": "reference"
     },
     {
+      "path": "ui-ux/wireframes/technical-design/README.md",
+      "kind": "reference"
+    },
+    {
       "path": "ui-ux/wireframes/technical-design/realtime.json",
       "kind": "reference"
     },
@@ -3559,82 +3711,6 @@
     {
       "path": "ui-ux/wireframes/technical-design/technical-design.html",
       "kind": "reference"
-    },
-    {
-      "path": "apps/admin/src/Completion.tsx",
-      "kind": "product"
-    },
-    {
-      "path": "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
-      "kind": "test"
-    },
-    {
-      "path": "apps/mobile/src/features/admin/screens/AdminCompletion.tsx",
-      "kind": "product"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/desktop-preview.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/mobile-web-completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-04-admin-hoan-tat-thay.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/de-xuat/P1-04-admin-hoan-tat-thay.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "services/api/migrations/016_admin_completion.sql",
-      "kind": "product"
-    },
-    {
-      "path": "services/api/src/modules/invoices/invoice-view.ts",
-      "kind": "product"
-    },
-    {
-      "path": "services/api/src/modules/invoices/settlement.ts",
-      "kind": "product"
-    },
-    {
-      "path": "services/api/src/modules/moderation/completion.controller.ts",
-      "kind": "product"
-    },
-    {
-      "path": "services/api/src/modules/moderation/completion.input.ts",
-      "kind": "product"
-    },
-    {
-      "path": "services/api/src/modules/moderation/completion.service.ts",
-      "kind": "product"
-    },
-    {
-      "path": "services/api/test/integration/admin-completion.test.ts",
-      "kind": "test"
-    },
-    {
-      "path": "tests/e2e/web/admin-completion.spec.mjs",
-      "kind": "test"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/ios-preview.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/ios-completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/android-preview.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-04/android-completed.png",
-      "kind": "documentation"
     }
   ],
   "tests": {
@@ -3723,7 +3799,8 @@
       "services/api/test/unit/organizations.test.ts",
       "services/api/test/unit/output.test.ts",
       "services/api/test/unit/totp.test.ts",
-      "services/api/test/integration/admin-completion.test.ts"
+      "services/api/test/integration/admin-completion.test.ts",
+      "services/api/test/integration/admin-operations.test.ts"
     ],
     "web": [
       "tests/e2e/web/account-management.spec.mjs",
@@ -3746,7 +3823,8 @@
       "tests/e2e/web/search-service.spec.mjs",
       "tests/e2e/web/shell.spec.mjs",
       "tests/e2e/web/support.spec.mjs",
-      "tests/e2e/web/admin-completion.spec.mjs"
+      "tests/e2e/web/admin-completion.spec.mjs",
+      "tests/e2e/web/admin-operations.spec.mjs"
     ],
     "tooling": [
       "scripts/diagnostics/export.test.mjs",
@@ -3874,7 +3952,12 @@
     "P1-03-MOBILE-01",
     "P1-04-AC-01",
     "P1-04-AC-02",
-    "P1-04-AC-03"
+    "P1-04-AC-03",
+    "P1-05-AC-01",
+    "P1-05-AC-02",
+    "P1-05-AC-03",
+    "P1-05-AC-04",
+    "P1-05-AC-05"
   ],
   "qa": [
     {
@@ -4276,15 +4359,22 @@
     },
     {
       "id": "QA-048",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P1-05-AC-01",
+        "P1-05-AC-02",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 approved local/test account and catalog scenarios mapped. Full malformed-input vectors, production and UAT remain outside this evidence."
     },
     {
       "id": "QA-049",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P1-05-AC-04",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 approved local/test account and catalog scenarios mapped. Full malformed-input vectors, production and UAT remain outside this evidence."
     },
     {
       "id": "QA-050",
@@ -4758,6 +4848,14 @@
         "P1-03-MOBILE-01"
       ],
       "reason": "P1-03 local/test criteria only; physical devices, UAT, production and full operational edge matrix not certified."
+    },
+    {
+      "id": "QA-103",
+      "status": "partial",
+      "criteria": [
+        "P1-05-AC-03"
+      ],
+      "reason": "Approved local/test provider warning/suspend/restore preserves work and money; full production/UAT not proven."
     }
   ],
   "operations": [
@@ -5819,33 +5917,47 @@
       "id": "queuePartner",
       "method": "GET",
       "path": "/admin/partners",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-03",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
     },
     {
       "id": "decidePartner",
       "method": "POST",
       "path": "/admin/partners/{id}/decision",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-03",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
     },
     {
       "id": "queueUser",
       "method": "GET",
       "path": "/admin/users",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-01",
+        "P1-05-AC-02",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
     },
     {
       "id": "decideUser",
       "method": "POST",
       "path": "/admin/users/{id}/decision",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-01",
+        "P1-05-AC-02",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
     },
     {
       "id": "queueReview",
@@ -5873,17 +5985,23 @@
       "id": "editCategory",
       "method": "PUT",
       "path": "/admin/categories/{id}",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-04",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
     },
     {
       "id": "editSkill",
       "method": "PUT",
       "path": "/admin/skills/{id}",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-04",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
     },
     {
       "id": "getAudit",
@@ -6071,17 +6189,23 @@
       "id": "createCategory",
       "method": "POST",
       "path": "/admin/categories",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-04",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
     },
     {
       "id": "createSkill",
       "method": "POST",
       "path": "/admin/skills",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-04",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
     },
     {
       "id": "liveness",
@@ -6323,6 +6447,73 @@
         "P1-03-AC-04"
       ],
       "reason": "P1-03 approved local/test admin/verification controller and targeted tests. Scope excludes production, MFA recovery, financial admin and selected chat evidence."
+    },
+    {
+      "id": "adminUsersDetail",
+      "method": "GET",
+      "path": "/admin/users/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-01",
+        "P1-05-AC-02",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
+    },
+    {
+      "id": "adminPartnersDetail",
+      "method": "GET",
+      "path": "/admin/partners/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-03",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
+    },
+    {
+      "id": "adminCategories",
+      "method": "GET",
+      "path": "/admin/categories",
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-04",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
+    },
+    {
+      "id": "adminCategoriesDetail",
+      "method": "GET",
+      "path": "/admin/categories/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-04",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
+    },
+    {
+      "id": "adminSkills",
+      "method": "GET",
+      "path": "/admin/skills",
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-04",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
+    },
+    {
+      "id": "adminSkillsDetail",
+      "method": "GET",
+      "path": "/admin/skills/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P1-05-AC-04",
+        "P1-05-AC-05"
+      ],
+      "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
     }
   ],
   "routes": [
@@ -6870,6 +7061,76 @@
       "method": "POST",
       "path": "/admin/reports/{id}/complete-on-behalf",
       "file": "services/api/src/modules/moderation/completion.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/users",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/users/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/users/{id}/decision",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/partners",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/partners/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/partners/{id}/decision",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/categories",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/categories/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/categories/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/categories",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/skills",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/skills/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/skills/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/skills",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
     }
   ],
   "contractGaps": [
@@ -6904,7 +7165,7 @@
     "QA-034/038/039 admin completion/locked overdue holds Q02",
     "QA-040/041/042 banking/topup/payout",
     "QA-044/045/046: B10-01 core and B10-03 local images/replies mapped; admin and customer history via other jobs remain open",
-    "QA-047/048/049 support/admin moderation/catalog management",
+    "QA-047/048/049: P1-03/P1-05 local/test support/account/catalog mapped partially; full business QA, account recovery/deletion, admin grant UI and UAT remain open.",
     "QA-050 notifications worker",
     "QA-051 getOperation endpoint",
     "QA-052/087 full image security vectors, metadata/size/quota/provider",

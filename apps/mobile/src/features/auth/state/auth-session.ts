@@ -27,7 +27,7 @@ export class AuthSession {
   private readonly listeners = new Set<() => void>();
   constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi, private readonly notifications?:NotificationsApi, private readonly reviews?:ReviewsApi,private readonly support?:SupportApi,private readonly verification?:VerificationApi) {}
   bindRealtime(client:RealtimeClient){
-    const update=()=>client.setSession(this.session?{owner:this.session.user.id,token:this.session.access_token,expiresAt:Date.parse(this.session.expires_at)}:null);
+    const update=()=>client.setSession(this.session&&this.snapshot.user?.status==='active'?{owner:this.session.user.id,token:this.session.access_token,expiresAt:Date.parse(this.session.expires_at)}:null);
     client.setRefresh(async()=>{const owner=this.session?.user.id;if(!owner)throw new ApiError('UNAUTHENTICATED');await this.accountOperation(owner,async()=>{await this.rotate();});});
     const unsubscribe=this.subscribe(update);update();return unsubscribe;
   }

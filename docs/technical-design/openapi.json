@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Dịch vụ quanh bạn — API thiết kế",
-    "version": "0.1.18",
+    "version": "0.1.19",
     "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local. B01-04 (06/10/2026): Me.version bat buoc >=1, PATCH /me sua ten theo expected_version va Idempotency-Key da duyet. MAP-01 (07/10/2026): thử MapLibre + Geoapify Free và bộ chọn 4 nơi theo yêu cầu triển khai; chưa billing/production. MAP-02 (07/10/2026): ghim địa điểm công khai trong kết quả; không công khai tâm vùng. P0-2: Job includes service mode, time mode, location ID, note and ETA. PartnerProfile includes public location IDs and skill service modes. HTTP chat pilot; OTP and WebSocket remain Pending. MAP-03/P0-2: bỏ nhập tọa độ; Job có chi tiết nơi/giờ/ETA; PartnerProfile có public_locations/service_modes; HTTP chat local/test, WebSocket Pending. P0-3: Invoice.note/revision_reason; adapter ảnh local/test đã duyệt, chưa production. P1-01: xác minh local/test và vòng đời đội ngũ được duyệt 13/10/2026; chưa gửi thật."
   },
   "servers": [
@@ -166,7 +166,7 @@
           "Tài khoản"
         ],
         "summary": "Đăng nhập email",
-        "description": "Quyền: Public, rate limit. Thông báo lỗi chung, không lộ tài khoản tồn tại.",
+        "description": "Quyền: Public, rate limit. Thông báo lỗi chung, không lộ tài khoản tồn tại. P1-05 approved: suspended account authenticates with support-only session; all business/admin/socket access denied. /me and logout remain available; reopening revokes support sessions.",
         "security": [],
         "parameters": [],
         "responses": {
@@ -638,7 +638,7 @@
           "Tài khoản"
         ],
         "summary": "Làm mới phiên",
-        "description": "Quyền: Refresh token hợp lệ. Rotation; reuse thu hồi family.",
+        "description": "Quyền: Refresh token hợp lệ. Rotation; reuse thu hồi family. P1-05 approved: suspended account authenticates with support-only session; all business/admin/socket access denied. /me and logout remain available; reopening revokes support sessions.",
         "security": [],
         "parameters": [],
         "responses": {
@@ -875,7 +875,7 @@
           "Tài khoản"
         ],
         "summary": "Tài khoản và quyền",
-        "description": "Quyền: Chính mình. ",
+        "description": "Quyền: Chính mình.  P1-05 approved: suspended account authenticates with support-only session; all business/admin/socket access denied. /me and logout remain available; reopening revokes support sessions.",
         "security": [
           {
             "bearerAuth": []
@@ -10242,7 +10242,7 @@
           "Hỗ trợ"
         ],
         "summary": "Gửi báo cáo",
-        "description": "Quyền: User và tài nguyên đúng quyền.  B09-01: non-blank subject and body; referenced resources must be currently accessible. Invoice reports bind the exact invoice version. Ready evidence images must belong to the reporter. Retry does not create duplicate reports.",
+        "description": "Quyền: User và tài nguyên đúng quyền.  B09-01: non-blank subject and body; referenced resources must be currently accessible. Invoice reports bind the exact invoice version. Ready evidence images must belong to the reporter. Retry does not create duplicate reports. P1-05: support-only sessions may create account reports without job/invoice/review links. Own report history/replies and evidence images remain accessible.",
         "security": [
           {
             "bearerAuth": []
@@ -12467,14 +12467,37 @@
         "tags": [
           "Admin"
         ],
-        "summary": "Tra cứu đình chỉ partner",
-        "description": "Quyền: moderation.manage. ",
+        "summary": "Admin partners",
+        "description": "P1-05 approved: current permission and MFA; masked contacts; stable cursor bound to actor and filters; read audit.",
         "security": [
           {
             "bearerAuth": []
           }
         ],
         "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "cursor",
             "in": "query",
@@ -12501,7 +12524,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/queuePartnerPage"
+                  "$ref": "#/components/schemas/AdminOperationPage"
                 }
               }
             }
@@ -12598,7 +12621,7 @@
           "Admin"
         ],
         "summary": "Xử lý đình chỉ partner",
-        "description": "Quyền: moderation.manage. Lý do bắt buộc; không sửa tiền/sao; kiểm action phù hợp tài nguyên.",
+        "description": "P1-05 approved: reason, expected version, idempotency and fresh MFA. No money changes. Preserve existing work and invoice history; restore does not enable availability.",
         "security": [
           {
             "bearerAuth": []
@@ -12623,19 +12646,17 @@
               "format": "uuid"
             },
             "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Thành công; đọc state/version trả về.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Ack"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Request không hợp lệ",
             "content": {
@@ -12715,6 +12736,16 @@
                 }
               }
             }
+          },
+          "201": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOperationItem"
+                }
+              }
+            }
           }
         },
         "x-authorization": "moderation.manage",
@@ -12724,7 +12755,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ModerationInput"
+                "$ref": "#/components/schemas/AdminPartnerDecision"
               }
             }
           }
@@ -12737,14 +12768,37 @@
         "tags": [
           "Admin"
         ],
-        "summary": "Tra cứu khóa tài khoản",
-        "description": "Quyền: accounts.manage. ",
+        "summary": "Admin users",
+        "description": "P1-05 approved: current permission and MFA; masked contacts; stable cursor bound to actor and filters; read audit.",
         "security": [
           {
             "bearerAuth": []
           }
         ],
         "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "cursor",
             "in": "query",
@@ -12771,7 +12825,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/queueUserPage"
+                  "$ref": "#/components/schemas/AdminOperationPage"
                 }
               }
             }
@@ -12868,7 +12922,7 @@
           "Admin"
         ],
         "summary": "Xử lý khóa tài khoản",
-        "description": "Quyền: accounts.manage. Lý do bắt buộc; không sửa tiền/sao; kiểm action phù hợp tài nguyên.",
+        "description": "P1-05 approved: reason, expected version, idempotency and fresh MFA. No money changes. Lock revokes all sessions; suspended account can sign in only to isolated support. Cannot target self or an administrator.",
         "security": [
           {
             "bearerAuth": []
@@ -12893,19 +12947,17 @@
               "format": "uuid"
             },
             "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Thành công; đọc state/version trả về.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Ack"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Request không hợp lệ",
             "content": {
@@ -12985,6 +13037,16 @@
                 }
               }
             }
+          },
+          "201": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOperationItem"
+                }
+              }
+            }
           }
         },
         "x-authorization": "accounts.manage",
@@ -12994,7 +13056,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ModerationInput"
+                "$ref": "#/components/schemas/AdminAccountDecision"
               }
             }
           }
@@ -13317,7 +13379,7 @@
           "Admin"
         ],
         "summary": "Sửa/ẩn ngành",
-        "description": "Quyền: catalog.manage. Mã ổn định không tái dùng; không xóa ngành đã tham chiếu.",
+        "description": "P1-05 approved: reason, expected version, idempotency and fresh MFA. No money changes. Stable code and parent; preserve job snapshots and form schema.",
         "security": [
           {
             "bearerAuth": []
@@ -13342,19 +13404,17 @@
               "format": "uuid"
             },
             "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Thành công; đọc state/version trả về.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Category"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Request không hợp lệ",
             "content": {
@@ -13431,6 +13491,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOperationItem"
                 }
               }
             }
@@ -13443,27 +13513,33 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CatalogInput"
+                "$ref": "#/components/schemas/AdminCatalogEdit"
               }
             }
           }
         }
-      }
-    },
-    "/admin/skills/{id}": {
-      "put": {
-        "operationId": "editSkill",
+      },
+      "get": {
+        "operationId": "adminCategoriesDetail",
         "tags": [
           "Admin"
         ],
-        "summary": "Sửa/ẩn kỹ năng",
-        "description": "Quyền: catalog.manage. Tăng schema_version khi form đổi; không sửa snapshot job.",
+        "summary": "Admin categories",
+        "description": "P1-05 approved: current permission and MFA; masked contacts; stable cursor bound to actor and filters; read audit.",
         "security": [
           {
             "bearerAuth": []
           }
         ],
         "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -13472,16 +13548,6 @@
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
           }
         ],
         "responses": {
@@ -13490,7 +13556,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Skill"
+                  "$ref": "#/components/schemas/AdminOperationItem"
                 }
               }
             }
@@ -13577,17 +13643,281 @@
           }
         },
         "x-authorization": "catalog.manage",
+        "x-rules": ""
+      }
+    },
+    "/admin/skills/{id}": {
+      "put": {
+        "operationId": "editSkill",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Sửa/ẩn kỹ năng",
+        "description": "P1-05 approved: reason, expected version, idempotency and fresh MFA. No money changes. Stable code and parent; preserve job snapshots and form schema.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOperationItem"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "catalog.manage",
         "x-rules": "Tăng schema_version khi form đổi; không sửa snapshot job.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CatalogInput"
+                "$ref": "#/components/schemas/AdminCatalogEdit"
               }
             }
           }
         }
+      },
+      "get": {
+        "operationId": "adminSkillsDetail",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Admin skills",
+        "description": "P1-05 approved: current permission and MFA; masked contacts; stable cursor bound to actor and filters; read audit.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOperationItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "catalog.manage",
+        "x-rules": ""
       }
     },
     "/admin/audit": {
@@ -16105,7 +16435,7 @@
           "Admin"
         ],
         "summary": "Thêm ngành",
-        "description": "Quyền: catalog.manage. Audit, CAS và idempotency; không sửa dữ liệu lịch sử.",
+        "description": "P1-05 approved: catalog.manage and fresh MFA, reason and unique stable code; category depth is industry/group; skill belongs to exactly one active group. No automatic translations or executable form designer.",
         "security": [
           {
             "bearerAuth": []
@@ -16121,6 +16451,14 @@
               "format": "uuid"
             },
             "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -16129,7 +16467,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Category"
+                  "$ref": "#/components/schemas/AdminOperationItem"
                 }
               }
             }
@@ -16222,11 +16560,162 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CategoryCreate"
+                "$ref": "#/components/schemas/AdminCategoryCreate"
               }
             }
           }
         }
+      },
+      "get": {
+        "operationId": "adminCategories",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Admin categories",
+        "description": "P1-05 approved: current permission and MFA; masked contacts; stable cursor bound to actor and filters; read audit.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque cursor ký, gắn bộ lọc và actor; thứ tự created_at,id."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "Giới hạn kỹ thuật đề xuất, không giới hạn nghiệp vụ."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOperationPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "catalog.manage",
+        "x-rules": ""
       }
     },
     "/admin/skills": {
@@ -16236,7 +16725,7 @@
           "Admin"
         ],
         "summary": "Thêm kỹ năng đa ngành",
-        "description": "Quyền: catalog.manage. Audit, CAS và idempotency; không sửa dữ liệu lịch sử.",
+        "description": "P1-05 approved: catalog.manage and fresh MFA, reason and unique stable code; category depth is industry/group; skill belongs to exactly one active group. No automatic translations or executable form designer.",
         "security": [
           {
             "bearerAuth": []
@@ -16252,6 +16741,14 @@
               "format": "uuid"
             },
             "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -16260,7 +16757,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Skill"
+                  "$ref": "#/components/schemas/AdminOperationItem"
                 }
               }
             }
@@ -16353,11 +16850,162 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SkillCreate"
+                "$ref": "#/components/schemas/AdminSkillCreate"
               }
             }
           }
         }
+      },
+      "get": {
+        "operationId": "adminSkills",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Admin skills",
+        "description": "P1-05 approved: current permission and MFA; masked contacts; stable cursor bound to actor and filters; read audit.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque cursor ký, gắn bộ lọc và actor; thứ tự created_at,id."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "Giới hạn kỹ thuật đề xuất, không giới hạn nghiệp vụ."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOperationPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "catalog.manage",
+        "x-rules": ""
       }
     },
     "/health": {
@@ -18990,6 +19638,262 @@
         },
         "x-authorization": "support.read for submitted report evidence; moderation.manage for attached verification/review images",
         "x-rules": "No money/job transitions; no private chat. Failed auth attempts persist. No production authorization."
+      }
+    },
+    "/admin/users/{id}": {
+      "get": {
+        "operationId": "adminUsersDetail",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Admin users",
+        "description": "P1-05 approved: current permission and MFA; masked contacts; stable cursor bound to actor and filters; read audit.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOperationItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "accounts.manage",
+        "x-rules": ""
+      }
+    },
+    "/admin/partners/{id}": {
+      "get": {
+        "operationId": "adminPartnersDetail",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Admin partners",
+        "description": "P1-05 approved: current permission and MFA; masked contacts; stable cursor bound to actor and filters; read audit.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOperationItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "moderation.manage",
+        "x-rules": ""
       }
     }
   },
@@ -24374,6 +25278,269 @@
         "required": [
           "items",
           "next_cursor"
+        ]
+      },
+      "AdminOperationItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModerationHistoryEntry"
+            }
+          },
+          "contacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "kind",
+                "value"
+              ]
+            }
+          },
+          "kind": {
+            "type": "string"
+          },
+          "accepting_jobs": {
+            "type": "boolean"
+          },
+          "open_jobs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "code": {
+            "type": "string"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "category_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "name",
+          "state",
+          "history"
+        ]
+      },
+      "AdminOperationPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminOperationItem"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "AdminAccountDecision": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "suspend_all",
+              "restore"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "expected_version",
+          "action",
+          "reason"
+        ]
+      },
+      "AdminPartnerDecision": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "warn",
+              "suspend_new",
+              "restore"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "expected_version",
+          "action",
+          "reason"
+        ]
+      },
+      "AdminCatalogEdit": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name_vi": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "expected_version",
+          "name_vi",
+          "active",
+          "reason"
+        ]
+      },
+      "AdminCategoryCreate": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name_vi": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,79}$"
+          },
+          "parent_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "code",
+          "name_vi",
+          "reason"
+        ]
+      },
+      "AdminSkillCreate": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name_vi": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,79}$"
+          },
+          "category_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "code",
+          "name_vi",
+          "reason",
+          "category_ids"
         ]
       }
     }

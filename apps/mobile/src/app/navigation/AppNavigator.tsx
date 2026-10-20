@@ -1,7 +1,7 @@
 import {AdminScreen} from '../../features/admin/screens/AdminScreen';
 import {useAuth} from '../providers/AuthProvider';
 import {VerificationScreen} from '../../features/verification/screens/VerificationScreen';
-import {SupportScreen} from '../../features/support/screens/SupportScreen';
+import {SupportScreen,RestrictedSupportScreen} from '../../features/support/screens/SupportScreen';
 import {ReviewsScreen} from '../../features/reviews/screens/ReviewsScreen';
 import {NotificationsScreen,NotificationSettingsScreen} from '../../features/notifications/screens/NotificationsScreen';
 import {OrganizationsScreen} from '../../features/organizations/screens/OrganizationsScreen';
@@ -34,10 +34,11 @@ const navigationTheme = { ...DefaultTheme, colors: { ...DefaultTheme.colors,
 } };
 export function AppNavigator() {
   const {state} = useAuth();
+  if(state.phase==='authenticated'&&state.user?.status==='suspended')return <NavigationContainer key={"support:"+state.user.id}><Stack.Navigator screenOptions={{headerShown:false}}><Stack.Screen name="Support" component={RestrictedSupportScreen}/></Stack.Navigator></NavigationContainer>;
   if (state.phase === 'authenticated' && state.user?.admin_permissions?.length) {
     return <AdminScreen key={state.user.id} />;
   }
-  return <NavigationContainer theme={navigationTheme}>
+  return <NavigationContainer key="ordinary" theme={navigationTheme}>
     <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}>
       <Stack.Screen name="CatalogHome" component={SearchScreen} />
       <Stack.Screen name="CatalogCategory" component={CatalogScreen} getId={({ params }) => params.categoryId} />

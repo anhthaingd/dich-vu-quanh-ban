@@ -1,5 +1,16 @@
 # Checklist chức năng và bằng chứng
 
+## P1-05 — Admin tài khoản, người cung cấp và danh mục, 20/10/2026
+
+- [x] Chủ dự án duyệt cả ba contract bổ sung; [thiết kế](de-xuat/P1-05-admin-tai-khoan-partner-danh-muc.md) ghi phạm vi và phần hoãn.
+- [x] DB/API/web/mobile: danh sách/chi tiết có quyền, lọc, phiên bản, lịch sử; khóa/mở tài khoản; cảnh báo/đình chỉ/khôi phục người cung cấp; thêm/sửa/ngừng/khôi phục ngành–nhóm–kỹ năng.
+- [x] Tài khoản bị khóa có phiên hỗ trợ riêng; API nghiệp vụ/socket từ chối, thu hồi phiên cũ; polling thông báo/chat và realtime client không dùng phiên hỗ trợ.
+- [x] Kiểm tập trung API, mobile và hành trình web nối DB; chống gửi trùng và xung đột phiên bản. Bằng chứng cuối, ảnh native và Mermaid ở [B09-05](bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md).
+- [x] Native: iOS simulator khóa tài khoản/tạo ngành/hỗ trợ hạn chế; Android emulator đình chỉ người cung cấp và kiểm MFA hết hạn. Đã đối chiếu DB, ảnh DEMO và Mermaid trong B09-05.
+- SDD: giữ 117 tiêu chí cũ, thêm 5 tiêu chí có review, QA-048/049 chỉ `partial`; dùng bằng chứng `SDD-PROJECT` cùng dấu băm, không lấy lượt tập trung thay toàn gói.
+- [ ] CI trên commit mới, thiết bị thật, UAT, production. Chọn tin nhắn chứng cứ để sau; khôi phục/xóa tài khoản, cấp quyền admin và tài chính P2 ngoài đợt. Không đóng toàn B09/P1-2.
+
+
 ## P1-04 — Admin hoàn tất thay, 20/10/2026
 
 - [x] Chủ dự án duyệt bổ sung trường xem trước và xác nhận đối chiếu; phạm vi tiền test, web/mobile.
@@ -305,7 +316,7 @@ Nguồn: [spec](../../ui-ux/specs/support-moderation.md), [backlog](../technical
 |---|---|---|---|
 | [ ] | B09-01 | Báo cáo, chứng cứ, trao đổi và hàng đợi hỗ trợ | Phía người gửi/ảnh local có B09-01; web admin/MFA có B09-02, khu quản trị mobile có B09-03. Giữ trạng thái một phần do chưa UAT và còn giới hạn ghi trong báo cáo. Không sinh bút toán |
 | [~] | B09-02 | Admin hoàn tất thay: preview/fresh auth/lý do/recheck | Lát tiền test [B09-04](bao-cao/B09-04-admin-hoan-tat-thay.md): quyết toán chung, giữ hai dấu và báo cáo; native/CI/UAT ghi riêng |
-| [ ] | B09-03 | Xử lý khôi phục/xóa, user/partner/verification/admin grants | Nối các luồng B01/B02; nguyên tắc tối thiểu quyền và lịch sử quyết định |
+| [~] | B09-03 | Xử lý khôi phục/xóa, user/partner/verification/admin grants | User/partner/danh mục local có [B09-05](bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md), verification có B02-04. Khôi phục/xóa và admin grants ngoài đợt; chưa UAT/production |
 
 ## B10 — Đánh giá và gọi — đánh giá sao/nội dung đã có lát local
 

@@ -1222,5 +1222,17 @@
     "level": "E2E web",
     "priority": "P0",
     "status": "Mapped local tests; see SDD evidence. Not production/native/UAT certification."
+  },
+  {
+    "id": "QA-103",
+    "group": "Admin P1-05 local/test",
+    "requirement": "P1-05-PARTNER",
+    "operation": "decidePartner",
+    "setup": "Admin có moderation.manage và MFA mới; người cung cấp DEMO có việc đang nhận.",
+    "steps": "Cảnh báo, đình chỉ nhận việc mới, thử bật nhận việc rồi khôi phục; đối chiếu công việc và bút toán.",
+    "expected": "Ghi lý do và lịch sử theo phiên bản; đình chỉ tắt nhận việc và chặn bật lại; khôi phục không tự bật nhận việc. Giữ công việc/hóa đơn và tiền. Chỉ chứng minh local/test, chưa UAT/production.",
+    "level": "Integration",
+    "priority": "P1",
+    "status": "Đã ánh xạ P1-05; kết quả thực thi theo SDD cùng phiên bản."
   }
 ]

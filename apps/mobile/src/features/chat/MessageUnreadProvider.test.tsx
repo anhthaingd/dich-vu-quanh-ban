@@ -6,7 +6,7 @@ let mockOwner:string|undefined='a',mockBusy=false;
 const mockList=jest.fn(),mockListen=jest.fn(),mockUnlisten=jest.fn();
 const mockManager={unreadConversations:mockList,getSnapshot:()=>({busy:mockBusy})};
 const mockClient={connected:true,listen:mockListen};
-jest.mock('../../app/providers/AuthProvider',()=>({useAuth:()=>({manager:mockManager,state:{phase:mockOwner?'authenticated':'anonymous',user:mockOwner?{id:mockOwner}:null}})}));
+jest.mock('../../app/providers/AuthProvider',()=>({useAuth:()=>({manager:mockManager,state:{phase:mockOwner?'authenticated':'anonymous',user:mockOwner?{id:mockOwner,status:'active'}:null}})}));
 jest.mock('../../app/providers/RealtimeProvider',()=>({useRealtime:()=>mockClient}));
 function Count(){const {unread,invalidate}=useMessageUnread();return <Pressable testID="invalidate" onPress={invalidate}><Text testID="count">{unread}</Text></Pressable>;}
 const tree=()=> <MessageUnreadProvider><Count/></MessageUnreadProvider>;

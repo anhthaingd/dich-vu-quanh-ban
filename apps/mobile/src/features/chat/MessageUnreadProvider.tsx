@@ -10,7 +10,7 @@ export const useMessageUnread=()=>useContext(Context);
 // HTTP is authoritative. Events only invalidate, so duplicate/reordered frames cannot add badges.
 export function MessageUnreadProvider({children}:PropsWithChildren){
   const {manager,state}=useAuth(),realtime=useRealtime();
-  const owner=state.phase==='authenticated'?state.user?.id:undefined;
+  const owner=state.phase==='authenticated'&&state.user?.status==='active'?state.user.id:undefined;
   const [data,setData]=useState<{owner?:string;unread:number}>({unread:0});
   const current=useRef(owner),generation=useRef(0),running=useRef(false),dirty=useRef(true),last=useRef(0),failures=useRef(0);
   current.current=owner;

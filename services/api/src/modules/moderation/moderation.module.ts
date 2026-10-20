@@ -1,3 +1,5 @@
+import {OperationsService} from './operations.service.js';
+import {OperationsController} from './operations.controller.js';
 import {CompletionService} from './completion.service.js';
 import {CompletionController} from './completion.controller.js';
 import {Module,type DynamicModule} from '@nestjs/common';
@@ -10,4 +12,4 @@ import {Cursor} from '../../common/http/cursor.js';
 import {ModerationService} from './moderation.service.js';
 import {ModerationController} from './moderation.controller.js';
 @Module({})
-export class ModerationModule {static register(secret:string):DynamicModule{return {module:ModerationModule,imports:[SupportModule.register(secret)],controllers:[ModerationController,CompletionController],exports:[ModerationService],providers:[{provide:CompletionService,inject:[Pool,AuthService,AdminAuthService],useFactory:(p:Pool,a:AuthService,m:AdminAuthService)=>new CompletionService(p,a,m)},{provide:ModerationService,inject:[Pool,AuthService,AdminAuthService,SupportService],useFactory:(p:Pool,a:AuthService,m:AdminAuthService,s:SupportService)=>new ModerationService(p,a,m,new Cursor(secret),s)}]};}}
+export class ModerationModule {static register(secret:string):DynamicModule{return {module:ModerationModule,imports:[SupportModule.register(secret)],controllers:[ModerationController,CompletionController,OperationsController],exports:[ModerationService],providers:[{provide:OperationsService,inject:[Pool,AuthService,AdminAuthService],useFactory:(p:Pool,a:AuthService,m:AdminAuthService)=>new OperationsService(p,a,m,new Cursor(secret))},{provide:CompletionService,inject:[Pool,AuthService,AdminAuthService],useFactory:(p:Pool,a:AuthService,m:AdminAuthService)=>new CompletionService(p,a,m)},{provide:ModerationService,inject:[Pool,AuthService,AdminAuthService,SupportService],useFactory:(p:Pool,a:AuthService,m:AdminAuthService,s:SupportService)=>new ModerationService(p,a,m,new Cursor(secret),s)}]};}}

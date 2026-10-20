@@ -36,5 +36,5 @@ export class AuthController {
   @Post('auth/logout') @HttpCode(200) @Header('Cache-Control', 'no-store')
   logout(@Headers('authorization') header: string | undefined) { return this.auth.logout(header); }
   @Get('me') @Header('Cache-Control', 'no-store')
-  async me(@Headers('authorization') header: string | undefined) { return (await this.auth.authenticate(header)).user; }
+  async me(@Headers('authorization') header: string | undefined) { return (await this.auth.authenticate(header,undefined,true)).user; }
 }

@@ -58,7 +58,7 @@ test('real registration/login/rotation/logout: hashes, unverified contact, revoc
     assert.ok(f.logs.records().some(x => x.route === '/v1/auth/register'));
   } finally { await f.close(); }
 });
-test('unknown/wrong/suspended accounts share safe login errors; duplicate registration is atomic', async () => {
+test('unknown/wrong accounts share safe login errors and suspended login is support-only; duplicate registration is atomic', async () => {
   const f = await databaseFixture(secret);
   try {
     await post(f.base, '/auth/register', account);
@@ -68,7 +68,10 @@ test('unknown/wrong/suspended accounts share safe login errors; duplicate regist
     const wrong = await post(f.base, '/auth/login', { email: account.email, password: 'a wrong PASSWORD_CANARY phrase' });
     await f.pool.query("UPDATE users SET status='suspended'");
     const locked = await post(f.base, '/auth/login', { email: account.email, password });
-    for (const response of [unknown,wrong,locked]) {
+    assert.equal(locked.status,200);
+    const restricted=await locked.json();assert.equal(restricted.user.status,'suspended');
+    assert.equal((await fetch(f.base+'/me/sessions',{headers:{Authorization:'Bearer '+restricted.access_token}})).status,401);
+    for (const response of [unknown,wrong]) {
       assert.equal(response.status, 401); const body = await response.json();
       assert.equal(body.code, 'UNAUTHENTICATED'); assert.equal(body.message, 'Không thể xác thực. Vui lòng đăng nhập lại.');
       assert.equal(body.correlation_id, response.headers.get('x-request-id'));

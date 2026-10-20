@@ -1,5 +1,7 @@
 # Kế hoạch triển khai và học code
 
+**20/10/2026 — P1-05 / B09-05:** triển khai các chức năng admin P1-2 còn lại đã duyệt: tài khoản/người cung cấp, ngành–nhóm–kỹ năng và khu hỗ trợ hạn chế khi bị khóa. [Báo cáo, ảnh và giới hạn](bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md) · [Ba contract đã chốt](de-xuat/P1-05-admin-tai-khoan-partner-danh-muc.md). Chọn tin nhắn chứng cứ để sau; khôi phục/xóa tài khoản, cấp quyền admin và tài chính P2 ngoài đợt. Bằng chứng SDD local không thay CI/UAT/production.
+
 **20/10/2026 — P1-04 / B09-04:** admin hoàn tất thay bằng tiền test theo contract bổ sung đã duyệt. [Báo cáo luồng và bằng chứng](bao-cao/B09-04-admin-hoan-tat-thay.md) · [Thiết kế đã chốt](de-xuat/P1-04-admin-hoan-tat-thay.md). Giữ hai dấu thanh toán và trạng thái báo cáo; chưa CI/UAT/production.
 
 **19/10/2026 — B09-03:** admin có khu quản trị riêng trên app điện thoại, MFA và bốn mục hỗ trợ/xác minh/đánh giá/nhật ký; không có tab khách trong khu admin. [Báo cáo, ảnh iOS và cách mở DEMO](bao-cao/B09-03-admin-tren-dien-thoai.md). Chưa native Android/UAT/CI mới/production.
@@ -60,6 +62,7 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 
 ## Báo cáo đã có
 
+- [B09-05 — Admin tài khoản và danh mục](bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md): quyền, trạng thái, ngành–nhóm–kỹ năng và hỗ trợ hạn chế khi bị khóa.
 - [B09-04 — Admin hoàn tất thay thợ](bao-cao/B09-04-admin-hoan-tat-thay.md): xem trước, MFA, quyết toán một lần và chứng cứ; tiền test.
 - [B09-01 — Hỗ trợ và báo cáo](bao-cao/B09-01-ho-tro-va-bao-cao.md): người gửi, tiêu đề/ảnh riêng tư và lịch sử; admin/MFA để riêng.
 - [B10-03 — Ảnh và phản hồi đánh giá](bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md): một ảnh, phản hồi bên nhận và quyền server; API/local/native/test.

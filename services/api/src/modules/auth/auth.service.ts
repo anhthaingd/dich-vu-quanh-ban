@@ -22,11 +22,11 @@ export class AuthService {
       ARRAY(SELECT m.partner_id FROM memberships m JOIN partners p ON p.id=m.partner_id
         WHERE m.user_id=$1 AND m.active AND p.archived_at IS NULL ORDER BY m.partner_id) AS partner_ids`, [user.id]);
     const grants=await db.query('SELECT permission FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL ORDER BY permission',[user.id]);
-    return { ...user, ...flags, admin_permissions: grants.rows.map(r=>r.permission as string) };
+    return { ...user, ...flags, ...(user.status==='suspended'?{partner_ids:[],admin_permissions:[]}:{admin_permissions: grants.rows.map(r=>r.permission as string)}) };
   }
   private async issue(db: PoolClient, user: User, family = randomUUID(), expiry = new Date(Date.now() + 30 * 86400000)) {
     const refresh = randomBytes(32).toString('hex');
-    const { rows: [session] } = await db.query('INSERT INTO sessions(user_id,refresh_hash,family_id,expires_at,last_seen_at) VALUES($1,$2,$3,$4,now()) RETURNING id', [user.id,digest(refresh),family,expiry]);
+    const { rows: [session] } = await db.query('INSERT INTO sessions(user_id,refresh_hash,family_id,expires_at,last_seen_at,scope) VALUES($1,$2,$3,$4,now(),$5) RETURNING id', [user.id,digest(refresh),family,expiry,user.status==='suspended'?'support':'app']);
     const expires = Math.min(Math.floor(Date.now() / 1000) + 900, Math.floor(expiry.getTime() / 1000));
     const access = await new SignJWT({ sid: session.id }).setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .setSubject(user.id).setIssuer(issuer).setAudience(audience).setIssuedAt().setExpirationTime(expires).sign(this.key);
@@ -57,7 +57,7 @@ export class AuthService {
     if (!identity || !valid) throw new UnauthorizedException();
     return this.transaction(async db => {
       const { rows: [user] } = await db.query<User>('SELECT id,display_name,status,locale,version FROM users WHERE id=$1 FOR UPDATE', [identity.user_id]);
-      if (!user || user.status !== 'active') throw new UnauthorizedException();
+      if (!user || !['active','suspended'].includes(user.status)) throw new UnauthorizedException();
       return this.issue(db, user);
     });
   }
@@ -71,7 +71,7 @@ export class AuthService {
       // rotation. Commit that revocation before returning 401.
       const { rows: [user] } = await db.query<User>('SELECT id,display_name,status,locale,version FROM users WHERE id=$1 FOR UPDATE', [owner.user_id]);
       const { rows: [session] } = await db.query('SELECT * FROM sessions WHERE refresh_hash=$1', [hash]);
-      if (session.revoked_at || session.expires_at <= new Date() || user.status !== 'active') {
+      if (session.revoked_at || session.expires_at <= new Date() || !['active','suspended'].includes(user.status) || session.scope !== (user.status==='suspended'?'support':'app')) {
         await db.query('UPDATE sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE family_id=$1', [session.family_id]);
         return null;
       }
@@ -82,7 +82,7 @@ export class AuthService {
     if (!result) throw new UnauthorizedException();
     return result;
   }
-  async authenticate(header: string | undefined, db: Pool | PoolClient = this.pool) {
+  async authenticate(header: string | undefined, db: Pool | PoolClient = this.pool, allowSupport=false) {
     if (!header?.startsWith('Bearer ') || header.length > 4096) throw new UnauthorizedException();
     let claims;
     try {
@@ -90,12 +90,12 @@ export class AuthService {
     } catch { throw new UnauthorizedException(); }
     if (typeof claims.sid !== 'string' || !uuid.test(claims.sid) || !claims.sub || !uuid.test(claims.sub)) throw new UnauthorizedException();
     const { rows: [user] } = await db.query<User>(`UPDATE sessions s SET last_seen_at=clock_timestamp() FROM users u
-      WHERE s.user_id=u.id AND s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND u.status='active' RETURNING u.id,u.display_name,u.status,u.locale,u.version`, [claims.sid,claims.sub]);
+      WHERE s.user_id=u.id AND s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND ((u.status='active' AND s.scope='app') OR ($3::boolean AND u.status='suspended' AND s.scope='support')) RETURNING u.id,u.display_name,u.status,u.locale,u.version`, [claims.sid,claims.sub,allowSupport]);
     if (!user) throw new UnauthorizedException();
     return { user: await this.me(user, db), sessionId: claims.sid, expiresAt: Number(claims.exp)*1000 };
   }
   async logout(header: string | undefined) {
-    const { sessionId, user } = await this.authenticate(header);
+    const { sessionId, user } = await this.authenticate(header,this.pool,true);
     await this.transaction(async db => {
       await db.query('SELECT id FROM users WHERE id=$1 FOR UPDATE', [user.id]);
       await db.query('UPDATE sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE family_id=(SELECT family_id FROM sessions WHERE id=$1)', [sessionId]);

@@ -9,7 +9,7 @@ import type {reportInput,reportReply} from './support.input.js';
 type ReportRow={id:string;reporter_id:string;job_id:string|null;invoice_id:string|null;state:string;version:number;kind:string;subject:string;body:string;created_at:Date};
 export class SupportService {
  private readonly tx:AccountTransaction;
- constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly cursor:Cursor){this.tx=new AccountTransaction(pool,auth);}
+ constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly cursor:Cursor){this.tx=new AccountTransaction(pool,auth,true);}
  private async own(db:PoolClient,id:string,user:string,lock=false):Promise<ReportRow>{
   const r=(await db.query(`SELECT * FROM reports WHERE id=$1 AND reporter_id=$2${lock?' FOR UPDATE':''}`,[id,user])).rows[0];
   if(!r)throw new NotFoundException();return r;
@@ -52,6 +52,8 @@ export class SupportService {
    const r=(await db.query('INSERT INTO reports(reporter_id,job_id,invoice_id,invoice_version_id,review_id,kind,body,subject) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',[a.user.id,job,input.invoice_id,input.invoice_version_id,input.review_id,input.kind,input.body,input.subject])).rows[0];
    await this.evidence(db,r.id,input.evidence_ids,a.user.id);await this.audit(db,a.user.id,r.id,'report.create',r.version);
    return this.dto(db,r);
+  },async(_db,a)=>{
+   if(a.user.status==='suspended'&&(input.job_id||input.invoice_id||input.review_id||input.kind!=='account'))throw new BadRequestException();
   });
  }
  reply(header:string|undefined,id:string,input:ReturnType<typeof reportReply>,key:string){
@@ -64,7 +66,7 @@ export class SupportService {
   },async(db,a)=>{await this.own(db,id,a.user.id);});
  }
  private async read<T>(header:string|undefined,work:(db:PoolClient,user:string)=>Promise<T>){
-  const db=await this.pool.connect();try{await db.query('BEGIN');const a=await this.auth.authenticate(header,db);const result=await work(db,a.user.id);await db.query('COMMIT');return result;}catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
+  const db=await this.pool.connect();try{await db.query('BEGIN');const a=await this.auth.authenticate(header,db,true);const result=await work(db,a.user.id);await db.query('COMMIT');return result;}catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
  }
  get(header:string|undefined,id:string){return this.read(header,async(db,user)=>this.dto(db,await this.own(db,id,user)));}
  list(header:string|undefined,q:PageInput){return this.read(header,async(db,user)=>{

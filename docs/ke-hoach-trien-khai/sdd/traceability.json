@@ -226,7 +226,7 @@
         {
           "suite": "api",
           "file": "services/api/test/integration/auth.test.ts",
-          "name": "unknown/wrong/suspended accounts share safe login errors; duplicate registration is atomic"
+          "name": "unknown/wrong accounts share safe login errors and suspended login is support-only; duplicate registration is atomic"
         },
         {
           "suite": "api",
@@ -3774,6 +3774,170 @@
       "qa": [
         "QA-034",
         "QA-039"
+      ]
+    },
+    {
+      "id": "P1-05-AC-01",
+      "requirement": "FR-ADM-024",
+      "description": "Account lock revokes ordinary sessions and sockets; suspended login/refresh remain isolated to own support and evidence.",
+      "sources": [
+        "p1-05-approved",
+        "QA-048"
+      ],
+      "code": [
+        "services/api/src/modules/auth/auth.service.ts",
+        "services/api/src/modules/accounts/account-transaction.ts",
+        "services/api/src/modules/support/support.service.ts",
+        "services/api/src/modules/assets/assets.service.ts",
+        "services/api/migrations/017_admin_operations.sql",
+        "apps/mobile/src/features/auth/state/auth-session.ts",
+        "apps/mobile/src/features/notifications/NotificationsProvider.tsx",
+        "apps/mobile/src/features/chat/MessageUnreadProvider.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "restricted support disables notification chat polling and realtime without expiring its session"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-operations.test.ts",
+          "name": "account administration revokes app and socket access while isolated support can only access own reports and evidence"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "suspended account routes only to private support without customer or admin navigation"
+        }
+      ],
+      "gaps": "Local/test only. Account recovery/deletion, admin grant UI, chat evidence, financial P2, production and UAT excluded. Native scope recorded separately in B09-05. QA remains partial.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-048"
+      ]
+    },
+    {
+      "id": "P1-05-AC-02",
+      "requirement": "FR-ADM-024",
+      "description": "Directories and account decisions enforce masked output, independent grants, MFA, scoped cursor, CAS, retry and immutable history.",
+      "sources": [
+        "p1-05-approved",
+        "QA-048"
+      ],
+      "code": [
+        "services/api/src/modules/moderation/operations.controller.ts",
+        "services/api/src/modules/moderation/operations.input.ts",
+        "services/api/src/modules/moderation/operations.service.ts",
+        "services/api/src/modules/moderation/history.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-operations.test.ts",
+          "name": "admin directories enforce permission MFA cursor scope CAS retry and immutable decision history"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "account admin uses versioned lock decisions and catalog controls require their own grant"
+        }
+      ],
+      "gaps": "Local/test only. Account recovery/deletion, admin grant UI, chat evidence, financial P2, production and UAT excluded. Native scope recorded separately in B09-05. QA remains partial.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-048"
+      ]
+    },
+    {
+      "id": "P1-05-AC-03",
+      "requirement": "P1-05-PARTNER",
+      "description": "Partner warning/suspension/restore preserves existing work and money and does not automatically enable availability.",
+      "sources": [
+        "p1-05-approved",
+        "QA-103"
+      ],
+      "code": [
+        "services/api/src/modules/moderation/operations.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-operations.test.ts",
+          "name": "partner warning suspension and restore retain existing work and money while preventing new availability"
+        }
+      ],
+      "gaps": "Local/test only. Account recovery/deletion, admin grant UI, chat evidence, financial P2, production and UAT excluded. Native scope recorded separately in B09-05. QA remains partial.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-103"
+      ]
+    },
+    {
+      "id": "P1-05-AC-04",
+      "requirement": "FR-CAT-002",
+      "description": "Admin catalog keeps stable industry/group/skill identities and historical snapshots while deactivation prevents new selection.",
+      "sources": [
+        "p1-05-approved",
+        "QA-049"
+      ],
+      "code": [
+        "services/api/src/modules/moderation/operations.service.ts",
+        "services/api/src/modules/moderation/operations.input.ts",
+        "services/api/src/modules/jobs/jobs.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-operations.test.ts",
+          "name": "admin catalog creates a stable tree and stops new selection without changing historical job snapshots"
+        }
+      ],
+      "gaps": "Local/test only. Account recovery/deletion, admin grant UI, chat evidence, financial P2, production and UAT excluded. Native scope recorded separately in B09-05. QA remains partial.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-049"
+      ]
+    },
+    {
+      "id": "P1-05-AC-05",
+      "requirement": "FR-ADM-024; FR-CAT-002",
+      "description": "Desktop/mobile operation editors retain captured retries and reload stale versions; restricted support has no customer or admin tabs.",
+      "sources": [
+        "p1-05-approved",
+        "QA-048",
+        "QA-049"
+      ],
+      "code": [
+        "apps/admin/src/CatalogEditor.tsx",
+        "apps/admin/src/App.tsx",
+        "apps/mobile/src/features/admin/screens/CatalogEditor.tsx",
+        "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
+        "apps/mobile/src/app/navigation/AppNavigator.tsx",
+        "apps/mobile/src/features/support/screens/SupportScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "catalog editing retries the captured request and retains stable record identity"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "catalog version conflict reloads the record before a new decision"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/admin-operations.spec.mjs",
+          "name": "admin account partner and catalog flows preserve history and provide isolated support after lock"
+        }
+      ],
+      "gaps": "Local/test only. Account recovery/deletion, admin grant UI, chat evidence, financial P2, production and UAT excluded. Native scope recorded separately in B09-05. QA remains partial.",
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "qa": [
+        "QA-048",
+        "QA-049"
       ]
     }
   ]

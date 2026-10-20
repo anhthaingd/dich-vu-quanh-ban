@@ -1,3 +1,7 @@
+import {ScrollView} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {LanguageSettings} from '../../accounts/components/LanguageSettings';
+import {translator} from '../../admin/messages';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {View} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -84,4 +88,9 @@ function Desk({owner,context}:{owner:string;context?:ReportContext}){
   <JobFeedback error={state.error} pending={state.pending} busy={state.busy||auth.busy} retry={state.pending?()=>void mutation.run().then(finish):undefined}/>
   {state.error==='STATE_CONFLICT'&&<Button label={t('accountTools.reload')} disabled={blocked} onPress={()=>{setMutation(new Mutation<Report>());reload();}}/>}
  </>;
+}
+
+export function RestrictedSupportScreen(){
+ const {manager,state}=useAuth(),{locale}=useLocale(),t=translator(locale);
+ return <SafeAreaView style={{flex:1}}><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{padding:16,gap:16}}><AppText variant="title">{t('reports')}</AppText><AppText>{t('supportOnly')}</AppText><LanguageSettings/><Button label={t('logout')} onPress={()=>void manager.logout()} disabled={state.busy}/>{state.user&&<Desk key={state.user.id} owner={state.user.id}/>}</ScrollView></SafeAreaView>;
 }

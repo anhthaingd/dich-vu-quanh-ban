@@ -12,11 +12,11 @@ export class AdminApi {
     private readonly base:string|undefined, private readonly transport:typeof fetch=globalThis.fetch.bind(globalThis)) {}
   get expiresAt(){return this.mfa ? Date.parse(this.mfa.expires_at) : 0;}
   clear(){this.generation++;this.mfa=null;}
-  private async call<T>(path:string,validate:(v:unknown)=>v is T,body?:unknown,key?:string):Promise<T> {
+  private async call<T>(path:string,validate:(v:unknown)=>v is T,body?:unknown,key?:string,method:'POST'|'PUT'='POST'):Promise<T> {
     if (!this.base || !/^https?:\/\//.test(this.base)) throw new ApiError('CONFIG');
     const generation=this.generation, mfa=this.mfa;
     const result=await this.manager.adminOperation(this.owner,token=>requestJson(this.base!.replace(/\/$/,'')+path,this.transport,undefined,undefined,validate,{
-      ...(body===undefined?{method:'GET'}:{method:'POST',body}),
+      ...(body===undefined?{method:'GET'}:{method,body}),
       headers:{Authorization:'Bearer '+token,...(mfa?{'X-Admin-Session':mfa.token}:{}),...(key?{'Idempotency-Key':key}:{})}
     }) as Promise<T>,body===undefined);
     if(generation!==this.generation)throw new ApiError('CANCELLED');
@@ -34,6 +34,7 @@ export class AdminApi {
   }
   item(domain:Domain,id:string){return this.call('/admin/'+domain+'/'+encodeURIComponent(id),isItem);}
   decision(domain:Domain,id:string,input:unknown,key:string):Promise<Item>{return this.call('/admin/'+domain+'/'+encodeURIComponent(id)+'/decision',isItem,input,key);}
+  saveCatalog(domain:Domain,id:string|null,input:unknown,key:string){return this.call('/admin/'+domain+(id?'/'+encodeURIComponent(id):''),isItem,input,key,id?'PUT':'POST');}
   completionPreview(id:string){return this.call('/admin/reports/'+encodeURIComponent(id)+'/completion-preview',isCompletionPreview);}
   complete(id:string,input:unknown,key:string){return this.call('/admin/reports/'+encodeURIComponent(id)+'/complete-on-behalf',isCompletionResult,input,key);}
   audit(cursor?:string){return this.call('/admin/moderation-audit'+(cursor?'?cursor='+encodeURIComponent(cursor):''),(v):v is {items:Audit[];next_cursor:string|null}=>record(v)&&Array.isArray(v.items)&&v.items.every(i=>record(i)&&typeof i.id==='string'&&typeof i.domain==='string'&&typeof i.action==='string'&&typeof i.reason==='string'&&typeof i.created_at==='string')&&(v.next_cursor===null||typeof v.next_cursor==='string'));}

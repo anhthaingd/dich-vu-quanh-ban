@@ -10,7 +10,7 @@ const Context=createContext<Inbox>({items:[],loading:false,loaded:false,error:nu
 export const useNotifications=()=>useContext(Context);
 export function NotificationsProvider({children}:PropsWithChildren){
   const realtime=useRealtime();
-  const {manager,state}=useAuth(),owner=state.phase==='authenticated'?state.user?.id:undefined;
+  const {manager,state}=useAuth(),owner=state.phase==='authenticated'&&state.user?.status==='active'?state.user.id:undefined;
   const [data,setData]=useState<{owner?:string;items:Notice[];loading:boolean;loaded:boolean;error:ApiErrorCode|null}>({items:[],loading:false,loaded:false,error:null});
   const current=useRef(owner),running=useRef(false),last=useRef(0),dirty=useRef(false),generation=useRef(0),failures=useRef(0);current.current=owner;
   const refresh=useCallback(async()=>{

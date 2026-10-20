@@ -1,5 +1,7 @@
 # Thứ tự triển khai từng chức năng
 
+**20/10/2026 — P1-05 / B09-05:** triển khai các chức năng admin P1-2 còn lại đã duyệt: tài khoản/người cung cấp, ngành–nhóm–kỹ năng và khu hỗ trợ hạn chế khi bị khóa. [Báo cáo, ảnh và giới hạn](bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md) · [Ba contract đã chốt](de-xuat/P1-05-admin-tai-khoan-partner-danh-muc.md). Chọn tin nhắn chứng cứ để sau; khôi phục/xóa tài khoản, cấp quyền admin và tài chính P2 ngoài đợt. Bằng chứng SDD local không thay CI/UAT/production.
+
 **20/10/2026 — P1-04:** tiếp tục P1-2 với admin hoàn tất thay thợ bằng tiền test. Chủ dự án duyệt bổ sung contract xem trước/đối chiếu và triển khai web/mobile. [Thiết kế](de-xuat/P1-04-admin-hoan-tat-thay.md) · [Báo cáo B09-04](bao-cao/B09-04-admin-hoan-tat-thay.md). Giữ Q01, không tự đóng báo cáo, không mở Q02/tiền thật.
 
 **19/10/2026 — P1-03:** admin DEMO với mật khẩu + TOTP, quyền độc lập, hàng đợi hỗ trợ/xác minh/đánh giá và nhật ký. App nộp ảnh xác minh riêng, bổ sung và đọc kết quả. [B09-02](bao-cao/B09-02-admin-ho-tro-va-kiem-duyet.md) · [B02-04](bao-cao/B02-04-nop-va-xet-xac-minh.md). Web hai vai đã đạt; bằng chứng SDD cuối ghi riêng. Chưa commit/push, CI mới, UAT hoặc production; chưa đóng toàn P1-2.

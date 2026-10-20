@@ -1,3 +1,6 @@
+import {NotificationsProvider} from '../../notifications/NotificationsProvider';
+import {MessageUnreadProvider} from '../../chat/MessageUnreadProvider';
+import {RealtimeClient} from '../../../lib/realtime/realtime-client';
 import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
 import {AppState,type AppStateStatus} from 'react-native';
 import {AppProviders} from '../../../app/providers/AppProviders';
@@ -65,4 +68,39 @@ test('completion controls require the separate finance grant and do not grant su
 });
 test('support read access alone cannot display completion controls',async()=>{
  const f=fixture(['support.read']);f.item.mockResolvedValue({...report,invoice_id:'i',evidence_ids:['photo']});mount(f);await enter();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByText('DEMO body');expect(screen.queryByTestId('completion-preview')).toBeNull();
+});
+test('account admin uses versioned lock decisions and catalog controls require their own grant',async()=>{
+ const f=fixture(['accounts.manage']);const account:Item={id:'account',version:4,name:'DEMO Account',state:'active',contacts:[{kind:'email',value:'d***@example.test'}],history:[]};
+ f.page.mockResolvedValue({items:[account],next_cursor:null});f.item.mockResolvedValue(account);f.decision.mockResolvedValue({...account,state:'suspended',version:5});mount(f);await enter();
+ expect(screen.queryByTestId('admin-tab-categories')).toBeNull();expect(screen.queryByTestId('admin-tab-partners')).toBeNull();
+ fireEvent.press(screen.getByTestId('admin-item-account'));await screen.findByText('d***@example.test');fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO lock');fireEvent.press(screen.getByTestId('admin-save'));
+ await waitFor(()=>expect(f.decision).toHaveBeenCalledWith('users','account',{expected_version:4,action:'suspend_all',reason:'DEMO lock'},expect.any(String)));
+});
+test('catalog editing retries the captured request and retains stable record identity',async()=>{
+ const f=fixture(['catalog.manage']);const category:Item={id:'category',version:2,name:'DEMO Category',code:'demo_category',state:'active',parent_id:null,history:[]};f.page.mockResolvedValue({items:[category],next_cursor:null});f.item.mockResolvedValue(category);
+ const save=jest.spyOn(AdminApi.prototype,'saveCatalog').mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValue({...category,name:'DEMO Updated',version:3});mount(f);await enter();fireEvent.press(screen.getByTestId('admin-item-category'));await screen.findByTestId('catalog-name');expect(screen.queryByTestId('catalog-code')).toBeNull();fireEvent.changeText(screen.getByTestId('catalog-name'),'DEMO Updated');fireEvent.changeText(screen.getByTestId('catalog-reason'),'DEMO change');fireEvent.press(screen.getByTestId('catalog-save'));
+ await waitFor(()=>expect(screen.getByTestId('catalog-name')).toHaveProp('editable',false));fireEvent.press(screen.getByTestId('catalog-save'));await waitFor(()=>expect(save).toHaveBeenCalledTimes(2));expect(save.mock.calls[0]).toEqual(save.mock.calls[1]);await screen.findByDisplayValue('DEMO Updated');
+});
+test('suspended account routes only to private support without customer or admin navigation',async()=>{
+ const f=fixture([]),user={...session.user,status:'suspended',admin_permissions:[]};f.api.refresh.mockResolvedValue({...session,user});f.api.me.mockResolvedValue(user);jest.spyOn(f.manager,'listReports').mockResolvedValue({items:[],next_cursor:null});mount(f);
+ await screen.findByTestId('support-create');expect(screen.queryByTestId('nav-catalog')).toBeNull();expect(screen.queryByTestId('nav-jobs')).toBeNull();expect(screen.queryByTestId('admin-root')).toBeNull();
+});
+
+test('catalog version conflict reloads the record before a new decision',async()=>{
+ const f=fixture(['catalog.manage']);const category:Item={id:'category',version:2,name:'DEMO Category',code:'demo_category',state:'active',parent_id:null,history:[]};
+ f.page.mockResolvedValue({items:[category],next_cursor:null});f.item.mockResolvedValue(category);
+ const save=jest.spyOn(AdminApi.prototype,'saveCatalog').mockRejectedValueOnce(new ApiError('VERSION_CONFLICT')).mockResolvedValue({...category,version:4});
+ mount(f);await enter();fireEvent.press(screen.getByTestId('admin-item-category'));await screen.findByTestId('catalog-name');fireEvent.changeText(screen.getByTestId('catalog-reason'),'DEMO first');fireEvent.press(screen.getByTestId('catalog-save'));
+ await waitFor(()=>expect(screen.getByTestId('catalog-save')).toBeDisabled());f.item.mockResolvedValueOnce({...category,name:'DEMO external edit',version:3});fireEvent.press(screen.getByText('Tải lại dữ liệu'));await screen.findByDisplayValue('DEMO external edit');expect(screen.getByTestId('catalog-reason')).toHaveProp('value','');
+ fireEvent.changeText(screen.getByTestId('catalog-reason'),'DEMO reviewed');fireEvent.press(screen.getByTestId('catalog-save'));await waitFor(()=>expect(save).toHaveBeenCalledTimes(2));expect(save.mock.calls[1][2]).toMatchObject({expected_version:3,name_vi:'DEMO external edit'});expect(save.mock.calls[1][3]).not.toBe(save.mock.calls[0][3]);
+});
+
+test('restricted support disables notification chat polling and realtime without expiring its session',async()=>{
+ jest.useFakeTimers();const f=fixture([]),user={...session.user,status:'suspended',admin_permissions:[]};f.api.refresh.mockResolvedValue({...session,user});f.api.me.mockResolvedValue(user);
+ jest.spyOn(f.manager,'listReports').mockResolvedValue({items:[],next_cursor:null});
+ const notices=jest.spyOn(f.manager,'listNotifications').mockRejectedValue(new ApiError('UNAUTHENTICATED')),messages=jest.spyOn(f.manager,'unreadConversations').mockRejectedValue(new ApiError('UNAUTHENTICATED'));
+ const client=new RealtimeClient(undefined,false),setSession=jest.spyOn(client,'setSession'),unbind=f.manager.bindRealtime(client);
+ try{render(<AppProviders api={{categories:jest.fn(),skills:jest.fn()}}><AuthProvider manager={f.manager}><MessageUnreadProvider><NotificationsProvider><AppNavigator/></NotificationsProvider></MessageUnreadProvider></AuthProvider></AppProviders>);
+ await screen.findByTestId('support-create');await act(async()=>{await jest.advanceTimersByTimeAsync(1000);});expect(notices).not.toHaveBeenCalled();expect(messages).not.toHaveBeenCalled();expect(setSession).toHaveBeenLastCalledWith(null);expect(f.manager.getSnapshot().user?.status).toBe('suspended');expect(screen.queryByTestId('nav-jobs')).toBeNull();
+ }finally{unbind();client.dispose();jest.useRealTimers();}
 });
