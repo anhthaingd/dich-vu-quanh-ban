@@ -55,7 +55,7 @@ test('profile rejects forged owner/privileges, bad fields/keys and revoked/suspe
   const f = await databaseFixture(secret);
   try {
     const a = await signup(f.base), key = randomUUID(), input = { expected_version: 1, display_name: 'New' };
-    for (const bad of [null, [], {}, { ...input, user_id: randomUUID() }, { ...input, email_verified: true }, { ...input, locale: 'en' }, { ...input, expected_version: 0 }, { ...input, expected_version: 1.2 }, { ...input, display_name: ' ' }, { ...input, display_name: 'x'.repeat(101) }, { ...input, display_name: 'bad\nname' }]) {
+    for (const bad of [null, [], {}, { ...input, user_id: randomUUID() }, { ...input, email_verified: true }, { ...input, locale: 'fr' }, { ...input, expected_version: 0 }, { ...input, expected_version: 1.2 }, { ...input, display_name: ' ' }, { ...input, display_name: 'x'.repeat(101) }, { ...input, display_name: 'bad\nname' }]) {
       assert.equal((await patch(f.base, a.access_token, bad)).status, 400);
     }
     assert.equal((await patch(f.base, a.access_token, input, 'bad-key')).status, 400);

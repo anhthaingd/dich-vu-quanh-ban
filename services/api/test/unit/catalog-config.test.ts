@@ -27,3 +27,10 @@ test('admin pilot is disabled by default and restricted to isolated local databa
  assert.equal(config(base).admin,undefined);assert.ok(config({...base,ADMIN_LOCAL_SECRET:'a'.repeat(32)}).admin);
  for(const change of [{NODE_ENV:'production'},{DATABASE_URL:'postgresql://remote.example/dvqb_test'},{DATABASE_URL:'postgresql://localhost/dvqb_local'},{ADMIN_LOCAL_SECRET:'short'}])assert.throws(()=>config({...base,ADMIN_LOCAL_SECRET:'a'.repeat(32),...change}));
 });
+test('P2 finance and media require explicit local credentials and cannot target external services',()=>{
+ const base={DATABASE_URL:'postgresql://localhost/dvqb_test',CURSOR_SECRET:'c'.repeat(32),NODE_ENV:'test'};
+ assert.equal(config(base).finance,undefined);assert.equal(config(base).calls,undefined);
+ const pilot={...base,FINANCE_LOCAL_SECRET:'f'.repeat(32),LIVEKIT_URL:'ws://127.0.0.1:7880',LIVEKIT_API_KEY:'devkey',LIVEKIT_API_SECRET:'secret'};
+ assert.ok(config(pilot).finance);assert.equal(config(pilot).calls?.url,'ws://127.0.0.1:7880');
+ for(const change of [{NODE_ENV:'production'},{DATABASE_URL:'postgresql://remote.example/dvqb_test'},{FINANCE_LOCAL_SECRET:'short'},{LIVEKIT_URL:'wss://cloud.example'},{LIVEKIT_URL:'ws://user:secret@localhost:7880'},{LIVEKIT_URL:'ws://localhost:7880/path'},{LIVEKIT_API_SECRET:''}])assert.throws(()=>config({...pilot,...change}));
+});

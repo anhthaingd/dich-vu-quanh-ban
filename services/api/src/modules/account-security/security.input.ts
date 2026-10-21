@@ -1,0 +1,21 @@
+import {BadRequestException} from '@nestjs/common';
+import {object,identifier,pageInput} from '../accounts/accounts.input.js';
+import {contactInput,verifyInput} from '../auth/challenge.input.js';
+export function text(v:unknown,max=4000){if(typeof v!=='string'||!v.trim()||v.length>max||Array.from(v).some(c=>c.charCodeAt(0)<32&&![9,10,13].includes(c.charCodeAt(0))))throw new BadRequestException();return v.trim();}
+export function password(v:unknown){if(typeof v!=='string')throw new BadRequestException();const p=v.normalize('NFC');if(Array.from(p).length<15||Array.from(p).length>128)throw new BadRequestException();return p;}
+function currentPassword(v:unknown){if(typeof v!=='string'||!v||Array.from(v).length>128)throw new BadRequestException();return v.normalize('NFC');}
+export function challenge(v:unknown){const b=object(v,['purpose','contact','password']);if(!['login','reset','identity'].includes(String(b.purpose)))throw new BadRequestException();return {...contactInput(b.contact),purpose:b.purpose as 'login'|'reset'|'identity',password:b.password===undefined?undefined:currentPassword(b.password)};}
+export function confirm(v:unknown){const b=object(v,['purpose','challenge_id','code','new_password']);if(!['login','reset','identity','recovery'].includes(String(b.purpose)))throw new BadRequestException();return {...verifyInput({challenge_id:b.challenge_id,code:b.code}),purpose:b.purpose as 'login'|'reset'|'identity'|'recovery',new_password:['reset','recovery'].includes(String(b.purpose))?password(b.new_password):undefined};}
+export function changePassword(v:unknown){const b=object(v,['password','new_password']);return {password:currentPassword(b.password),new_password:password(b.new_password)};}
+export function recovery(v:unknown){const b=object(v,['old_contact','new_contact','evidence']);return {old:contactInput(b.old_contact),next:contactInput(b.new_contact),evidence:text(b.evidence)};}
+export function decision(v:unknown){const b=object(v,['action','expected_version','reason']);if(!['approve','reject','evidence'].includes(String(b.action))||!Number.isSafeInteger(b.expected_version)||Number(b.expected_version)<1)throw new BadRequestException();return {action:b.action as 'approve'|'reject'|'evidence',expected_version:Number(b.expected_version),reason:text(b.reason,1000)};}
+export function deletion(v:unknown){const b=object(v,['expected_version','reason','password','forfeit_points']);if(!Number.isSafeInteger(b.expected_version)||Number(b.expected_version)<1||typeof b.forfeit_points!=='boolean')throw new BadRequestException();return {expected_version:Number(b.expected_version),reason:text(b.reason,1000),password:currentPassword(b.password),forfeit_points:b.forfeit_points};}
+export {identifier,object};
+
+export function identityChange(v:unknown){const b=object(v,['expected_version','kind','new_contact','password']);if(!Number.isSafeInteger(b.expected_version)||Number(b.expected_version)<1)throw new BadRequestException();const contact=contactInput(b.new_contact);if(contact.provider!==b.kind)throw new BadRequestException();return {...contact,purpose:'identity' as const,password:currentPassword(b.password),expected_version:Number(b.expected_version)};}
+export function identityConfirm(v:unknown){return {...verifyInput(v),purpose:'identity' as const,new_password:undefined};}
+export function reset(v:unknown){const b=object(v,['challenge_id','code','new_password']);return confirm({...b,purpose:'reset'});}
+export function recoveryReport(v:unknown){const b=object(v,['contact_claim','reachable_contact','description']);return recovery({old_contact:b.contact_claim,new_contact:b.reachable_contact,evidence:b.description});}
+export function recoveryDecision(v:unknown){const b=object(v,['expected_version','decision','reason']);return decision({expected_version:b.expected_version,action:b.decision==='request_evidence'?'evidence':b.decision,reason:b.reason});}
+
+export function queueInput(v:Record<string,unknown>){object(v,['cursor','limit','state']);if(v.state!==undefined&&!['all','pending'].includes(String(v.state)))throw new BadRequestException();return {...pageInput({...(v.cursor===undefined?{}:{cursor:v.cursor}),...(v.limit===undefined?{}:{limit:v.limit})}),state:v.state==='pending'?'pending' as const:'all' as const};}

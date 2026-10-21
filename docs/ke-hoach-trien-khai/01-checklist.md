@@ -1,5 +1,8 @@
 # Checklist chức năng và bằng chứng
 
+**21/10/2026 — P2 đang được triển khai theo yêu cầu mới nhất:** chủ dự án đã chốt OTP/khôi phục/xóa và locale tài khoản, quyền admin, LiveKit local để thử âm thanh thật, ngân hàng mô phỏng local chỉ tiền test. [Kế hoạch đã duyệt](de-xuat/P2-01-trien-khai-tron-dot.md). Các ghi chú “chưa chuyển P2” bên dưới là lịch sử; giới hạn APNs/thiết bị thật/UAT của P1-2 vẫn giữ. Kết quả cuối và phạm vi từng lượt kiểm nằm trong [báo cáo tổng P2](bao-cao/B11-03-tong-ket-p2.md). Chủ dự án đã yêu cầu push ngày 21/10; CI phải kiểm trên đúng commit. Chưa phát hành. Phần còn thiếu đã đối chiếu code được gom tại mục “Rà soát phần còn thiếu trước push” trong báo cáo tổng P2.
+
+
 **20/10/2026 — P1-06, hoàn thiện cùng đợt P1-2:** ghi chú hỗ trợ nội bộ; lịch sử đánh giá khách theo quyền việc; người thực hiện bổ sung dấu nhận tiền sau admin; vùng đa giác/điểm đại diện, gom cụm theo zoom và xếp hạng ổn định; sự kiện hỗ trợ/xác minh/đánh giá; tích hợp Expo Push Service. [Quyết định đã chốt](de-xuat/P1-06-hoan-thien-cung-dot.md). Code và kiểm local được ghi theo từng báo cáo bên dưới. **Đã liên kết Expo, build và thử thông báo mô phỏng trên Android/iOS; iOS đã đăng ký token, gửi thật bị Expo từ chối InvalidCredentials. Còn cấu hình FCM/APNs và nghiệm thu chuyển phát thật; chưa đóng toàn P1-2.** Chọn tin nhắn chứng cứ tiếp tục hoãn; chưa chuyển P2. Chưa commit/push, CI mới hoặc UAT.
 
 - [B09-06 — Ghi chú nội bộ hỗ trợ](bao-cao/B09-06-ghi-chu-noi-bo.md).
@@ -219,7 +222,7 @@ Nguồn: [spec](../../ui-ux/specs/ux-scope-current.md), [backlog](../technical-d
 |---|---|---|---|
 | [x] | I18N-01 | Message keys và trạng thái lỗi độc lập ngôn ngữ | i18n-js, typed keys/params, đủ khóa VI/EN/JA, fallback/số nhiều; lỗi auth là mã. [Báo cáo I18N-01/02](bao-cao/I18N-01-nen-da-ngon-ngu.md), kiểm local 01/10, đã push `844e1d2` |
 | [x] | I18N-02 | VI/EN/JA cho các màn đã có + chọn/lưu locale local | Giữ form/route/session, lưu local; i18n/auth và cỡ chữ lớn đạt Android/iOS; web 3 hồi quy + 1 i18n đạt. [Báo cáo](bao-cao/I18N-01-nen-da-ngon-ngu.md). CI `844e1d2` đạt; chưa UAT |
-| [ ] | I18N-03 | Locale tài khoản và đồng bộ đa thiết bị | Cần chốt ưu tiên locale local/tài khoản; mở rộng enum Me/ProfileEdit theo quyết định |
+| [~] | I18N-03 | Locale tài khoản và đồng bộ đa thiết bị | VI/EN/JA lưu server; account thắng khi login, logout phục hồi guest; replay cũ không ghi đè phiên bản mới. Local API/app/web đã kiểm; xem I18N-05, chưa UAT. |
 | [ ] | I18N-04 | Bản dịch danh mục/kỹ năng và tìm kiếm theo ngôn ngữ | **Một phần:** lát đọc tên VI/EN/JA, fallback, cursor theo locale; 10 ngành/39 nhóm/128 kỹ năng sau thay dữ liệu đã kiểm kỹ thuật local. [Báo cáo](bao-cao/I18N-04-danh-muc-da-ngon-ngu.md). Phân loại đã thay bằng bộ mới theo [báo cáo](bao-cao/B02-01-thay-du-lieu-danh-muc.md); CI `1c80f67` đạt. Tìm kiếm theo ngôn ngữ B03 chưa làm, chưa UAT toàn app. |
 
 ## B01 — Tài khoản — đã có email/mật khẩu, sửa tên, phiên và địa chỉ; toàn nhóm còn một phần
@@ -229,11 +232,11 @@ Nguồn: [spec](../../ui-ux/specs/account-batch.md), [backlog](../technical-desi
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
 | [x] | B01-01 | Email/mật khẩu + phiên local | Đăng ký/login, SecureStore, access 15 phút, phiên tối đa 30 ngày, rotation/replay/logout; email chưa xác minh; xem [báo cáo](bao-cao/B01-01-email-mat-khau.md) |
-| [~] | B01-02 | OTP điện thoại và xác minh email | P1-01 đã mở verify local bằng Mailpit/SMS mô phỏng; không verified từ client. OTP login/recover/provider thật còn Pending; xem B04-01 |
-| [ ] | B01-03 | Quên/đổi mật khẩu, liên kết/đổi định danh | Chứng minh kênh mới; giữ kênh cũ đến commit; revoke phiên theo spec |
+| [~] | B01-02 | OTP điện thoại và xác minh email | Verify/login/reset local qua Mailpit/SMS mô phỏng, mục đích và hạn dùng riêng; chưa provider thương mại. Xem B01-08. |
+| [~] | B01-03 | Quên/đổi mật khẩu, liên kết/đổi định danh | Đã nối DB/API/app/test local; giữ liên hệ cũ tới xác minh mới, thu hồi phiên và kiểm cạnh tranh. Xem B01-08; provider/UAT riêng. |
 | [ ] | B01-04 | Hồ sơ tài khoản, quản lý phiên và địa chỉ | get/editMe, list/revokeSessions; địa chỉ mặc định; snapshot việc cũ bất biến. **Một phần:** đã implement lát sửa tên có version/idempotency; [báo cáo](bao-cao/B01-04-ho-so-ten-hien-thi.md). Đã có list/thu hồi từng phiên và địa chỉ thêm/sửa/gỡ/mặc định, [báo cáo gói](bao-cao/B01-04-phien-va-dia-chi.md). Gói đã push `4a98dc0`/CI đạt. Đã code [thu hồi các phiên khác](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md) bằng API từng phiên; Android/iOS và kiểm lỗi/thử lại đã đạt. Còn nối địa chỉ tìm/thuê và kiểm snapshot jobs; phần bổ sung đã push `a823d0e`, [CI 37428334396](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/37428334396) đạt cả 3 jobs, chưa UAT |
-| [ ] | B01-05 | Guard và quyền nền, fresh auth/MFA admin | Đổi UI vai không cấp quyền; từ chối cross-user/tenant; phương thức MFA cần chọn |
-| [ ] | B01-06 | Khôi phục thủ công và yêu cầu xóa tài khoản | Kiểm nghĩa vụ server, không xóa lịch sử tài chính; đóng toàn luồng sau màn admin B09/B11 |
+| [~] | B01-05 | Guard và quyền nền, fresh auth/MFA admin | MFA TOTP và phiên admin đã có; P2 thêm cấp quyền không tự sửa/vượt quyền/mất manager cuối. Xem B11-01; UAT riêng. |
+| [~] | B01-06 | Khôi phục thủ công và yêu cầu xóa tài khoản | Admin xét, applicant xác minh kênh mới; xóa kiểm lại nghĩa vụ, vô hiệu phiên/ẩn danh, giữ chứng từ. Xem B01-08; chưa xóa vật lý/chốt thời hạn lưu. |
 | [ ] | B01-07 | Tiếp tục hành động sau đăng nhập và deep link có quyền | **Một phần:** [trở lại Profile/Sessions/Addresses sau login](bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md), đọc lại theo tài khoản, không tự gửi mutation. Chat/thuê và deep link ngoài app còn mở |
 
 ## B02 — Nguồn cung — P0-1 đã có phần chạy thật
@@ -304,14 +307,14 @@ Nguồn: [spec](../../ui-ux/specs/finance-batch.md), [backlog](../technical-desi
 
 ¹ B06/B07: đánh dấu phần P0-3 trong B06-01, không gồm provider ảnh production, native picker, admin/Q02, giao diện ví/ngân hàng đầy đủ hoặc UAT.
 
-## B08 — Ngân hàng/nạp/rút sandbox — chưa có code sản phẩm
+## B08 — Ngân hàng/nạp/rút — đã có mô phỏng local, tiền test
 
 Nguồn: [spec](../../ui-ux/specs/finance-batch.md), [backlog](../technical-design/04-backlog.md), [API](../technical-design/openapi.json), [QA](../technical-design/03-qa-plan.md). Ánh xạ: F12; QA-040…042.
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B08-01 | Ngân hàng đã xác minh, topup/payout và hàng đợi duyệt | Một ngân hàng; mức rút 50.000 theo spec; quyền tài chính riêng, không rút credit |
-| [ ] | B08-02 | Đối soát, idempotency và kết quả unknown | Giữ tiền khi chưa rõ; không ghi có/chuyển lại hai lần; nhà cung cấp/ngân sách chưa chọn |
+| [~] | B08-01 | Ngân hàng đã xác minh, topup/payout và hàng đợi duyệt | Đã nối DB/API/app/admin/test, một bank đang dùng, rút tối thiểu50.000, giữ tiền/chặn rút credit. Chỉ bộ mô phỏng local; xem B08-01. |
+| [~] | B08-02 | Đối soát, idempotency và kết quả unknown | Đã kiểm mất phản hồi sau chuyển, giữ hold, đối soát giao dịch gốc một lần và source reference đúng chứng cứ. Chưa ngân hàng bên ngoài. |
 
 ## B09 — Hỗ trợ/admin — người gửi và quản trị local/test
 
@@ -332,7 +335,7 @@ Nguồn: [spec](../../ui-ux/specs/activity-batch.md), [backlog](../technical-des
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
 | [~] | B10-01 | Đánh giá hai chiều, sửa/ẩn/phản hồi, tính sao | Chỉ sau đủ hai dấu Q01; mỗi chiều một đánh giá; ẩn/gỡ không tính sao |
-| [ ] | B10-02 | Gọi trong app, đầu mối hiện hành và sau hoàn tất | Adapter/provider cần chọn; recheck quyền; không coi nút gọi hoặc mock là cuộc gọi thật |
+| [~] | B10-02 | Gọi trong app, đầu mối hiện hành và sau hoàn tất | LiveKit local có âm thanh tổng hợp hai chiều qua2browser, mute và server disconnect/cached-token denial. Android/iOS build có SDK; microphone/thiết bị, nền/đóng/APNs chưa nghiệm thu. Xem B10-05. |
 
 ## B11 — UAT và vận hành — chưa nghiệm thu
 
@@ -340,9 +343,9 @@ Nguồn: [spec](../../ui-ux/specs/admin-operations.md), [backlog](../technical-d
 
 | Xong | Mã | Chức năng | Tiêu chí / phần còn thiếu |
 |---|---|---|---|
-| [ ] | B11-01 | Admin tra cứu/hóa đơn/audit/metrics và permission matrix | Không bỏ sót workflow từ RTM; thông tin nhạy cảm chỉ trả đúng quyền |
+| [~] | B11-01 | Admin tra cứu/hóa đơn/audit/metrics và permission matrix | Đã nối DB/API/web/mobile với quyền/MFA riêng, kỳ metrics nửa mở, tiền chuỗi chính xác và tra thao tác đúng actor. Xem B11-01; UAT riêng. |
 | [ ] | B11-02 | UAT khách/partner/doanh nghiệp/admin xuyên toàn hành trình | Từng nền tảng, VI/EN/JA, accessibility, offline, nhiều tài khoản; chủ dự án xác nhận riêng |
-| [ ] | B11-03 | Runbook môi trường, deploy/backup/restore/rollback/giám sát | Diễn tập và bằng chứng ở môi trường được cho phép; kế hoạch không tự cho deploy |
+| [~] | B11-03 | Runbook môi trường, deploy/backup/restore/rollback/giám sát | Đã có guard và diễn tập dump/restore schema DEMO, so dữ liệu/cấu trúc/ledger, chạy lại migration. Xem B11-02; chưa restore private assets/keys, production hoặc RPO/RTO. |
 
 ## G-MONEY — Cổng tiền thật — CHƯA ĐƯỢC PHÉP
 

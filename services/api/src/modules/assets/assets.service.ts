@@ -101,7 +101,13 @@ export class AssetsService {
  private async bytes(a:{object_key:string;purpose:string}){const data=await readFile(join(this.configured().directory,a.object_key+'.png'));return a.purpose==='verification'?Buffer.from(this.admin!.secrets.decrypt(data.toString()),'base64'):data;}
  async adminContent(header:string|undefined,token:string|undefined,id:string){if(!this.admin)throw new ServiceUnavailableException();return this.admin.read(header,token,undefined,async(db,actor)=>{
   const a=(await db.query("SELECT * FROM assets WHERE id=$1 AND status='ready'",[id])).rows[0];if(!a)throw new NotFoundException();
-  if(a.purpose==='evidence'){await this.admin!.grants(db,actor,'support.read');if(!(await db.query('SELECT 1 FROM report_evidence WHERE asset_id=$1',[id])).rowCount)throw new NotFoundException();}
+  if(a.purpose==='evidence'){
+   const finance=(await db.query('SELECT 1 FROM finance_topups WHERE evidence_id=$1 UNION ALL SELECT 1 FROM finance_history WHERE $1=ANY(evidence_ids) LIMIT 1',[id])).rowCount;
+   const support=(await db.query("SELECT 1 FROM report_evidence e WHERE e.asset_id=$1 AND EXISTS(SELECT 1 FROM admin_grants g WHERE g.user_id=$2 AND g.permission='support.read' AND g.revoked_at IS NULL)",[id,actor.user.id])).rowCount;
+   if(support){await this.admin!.grants(db,actor,'support.read');}
+   else if(finance){await this.admin!.check(db,actor,token,'finance.read',true);}
+   else{await this.admin!.grants(db,actor,'support.read');if(!(await db.query('SELECT 1 FROM report_evidence WHERE asset_id=$1',[id])).rowCount)throw new NotFoundException();}
+  }
   else if(a.purpose==='verification'){await this.admin!.grants(db,actor,'moderation.manage');if(!(await db.query('SELECT 1 FROM verification_assets WHERE asset_id=$1',[id])).rowCount)throw new NotFoundException();}
   else if(a.purpose==='review'){await this.admin!.grants(db,actor,'moderation.manage');if(!(await db.query('SELECT 1 FROM reviews WHERE asset_id=$1',[id])).rowCount)throw new NotFoundException();}
   else throw new NotFoundException();const bytes=await this.bytes(a);await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.asset.read',$2,'Submitted evidence read','{}')",[actor.user.id,id]);return bytes;

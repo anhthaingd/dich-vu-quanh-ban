@@ -1,5 +1,8 @@
 # Thứ tự triển khai từng chức năng
 
+**21/10/2026 — P2 đang được triển khai theo yêu cầu mới nhất:** chủ dự án đã chốt OTP/khôi phục/xóa và locale tài khoản, quyền admin, LiveKit local để thử âm thanh thật, ngân hàng mô phỏng local chỉ tiền test. [Kế hoạch đã duyệt](de-xuat/P2-01-trien-khai-tron-dot.md). Các ghi chú “chưa chuyển P2” bên dưới là lịch sử; giới hạn APNs/thiết bị thật/UAT của P1-2 vẫn giữ. Kết quả cuối và phạm vi từng lượt kiểm nằm trong [báo cáo tổng P2](bao-cao/B11-03-tong-ket-p2.md). Chưa commit/push hoặc phát hành.
+
+
 **20/10/2026 — P1-06, hoàn thiện cùng đợt P1-2:** ghi chú hỗ trợ nội bộ; lịch sử đánh giá khách theo quyền việc; người thực hiện bổ sung dấu nhận tiền sau admin; vùng đa giác/điểm đại diện, gom cụm theo zoom và xếp hạng ổn định; sự kiện hỗ trợ/xác minh/đánh giá; tích hợp Expo Push Service. [Quyết định đã chốt](de-xuat/P1-06-hoan-thien-cung-dot.md). Code và kiểm local được ghi theo từng báo cáo bên dưới. **Đã liên kết Expo, build và thử thông báo mô phỏng trên Android/iOS; iOS đã đăng ký token, gửi thật bị Expo từ chối InvalidCredentials. Còn cấu hình FCM/APNs và nghiệm thu chuyển phát thật; chưa đóng toàn P1-2.** Chọn tin nhắn chứng cứ tiếp tục hoãn; chưa chuyển P2. Chưa commit/push, CI mới hoặc UAT.
 
 - [B09-06 — Ghi chú nội bộ hỗ trợ](bao-cao/B09-06-ghi-chu-noi-bo.md).

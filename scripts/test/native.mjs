@@ -30,7 +30,7 @@ import { requireTestDatabase } from './native-options.mjs';
 const platform = process.argv[2];
 if (!['android', 'ios'].includes(platform)) throw Error('Use android or ios');
 const flow = process.argv[3] ?? 'catalog';
-if (!['catalog', 'auth', 'i18n', 'i18n-layout', 'shell', 'profile', 'accounts', 'partners', 'jobs', 'invoices', 'search-service'].includes(flow)) throw Error('Use catalog, auth, i18n, i18n-layout shell, profile, accounts, partners, jobs or search-service flow');
+if (!['p2-screens', 'catalog', 'auth', 'i18n', 'i18n-layout', 'shell', 'profile', 'accounts', 'partners', 'jobs', 'invoices', 'search-service'].includes(flow)) throw Error('Use catalog, auth, i18n, i18n-layout shell, profile, accounts, partners, jobs or search-service flow');
 const directory = resolve('test-results/native', platform, flow === 'catalog' ? '.' : flow);
 await mkdir(directory, { recursive: true });
 const run = (cmd, args) => spawnSync(cmd, args, { encoding: 'utf8', timeout: 30000, env: { ...process.env, MAESTRO_CLI_NO_ANALYTICS: '1' } });
@@ -98,7 +98,7 @@ const listen = (server, port = 0, host = '127.0.0.1') => new Promise((done, reje
 const close = server => new Promise((done, reject) => server.close(error => error ? reject(error) : done()));
 const devLink = port => `exp+dich-vu-quanh-ban://expo-development-client/?url=${encodeURIComponent(`http://${platform === 'ios' ? 'localhost' : host}:${port}`)}`;
 try {
-  if (platform === 'android' && ['profile','accounts','partners','jobs','invoices'].includes(flow)) {
+  if (platform === 'android' && ['p2-screens','profile','accounts','partners','jobs','invoices'].includes(flow)) {
     // Gboard's stylus tutorial can intercept Maestro typing in name fields.
     originalHandwriting = check('adb', ['-s', device, 'shell', 'settings', 'get', 'secure', 'stylus_handwriting_enabled']).trim();
     check('adb', ['-s', device, 'shell', 'settings', 'put', 'secure', 'stylus_handwriting_enabled', '0']);
@@ -115,7 +115,7 @@ try {
   await migrate(pool); await seed(pool);
   const active = (await pool.query('SELECT id FROM categories WHERE active=true')).rows.map(row => row.id);
   const localAssets={directory:resolve('.local',schema+'-assets'),origin:'http://127.0.0.1'};
-  app = await createApp({ localAssets, databaseUrl: url, cursorSecret: randomUUID().repeat(2), authSecret: randomUUID().repeat(2), port: 0, host: '127.0.0.1' }, pool, new AppLog(apiLog, 'info', 'test'));
+  app = await createApp({ ...(flow==='p2-screens'?{finance:{secret:randomUUID().repeat(2)}}:{}), localAssets, databaseUrl: url, cursorSecret: randomUUID().repeat(2), authSecret: randomUUID().repeat(2), port: 0, host: '127.0.0.1' }, pool, new AppLog(apiLog, 'info', 'test'));
   if (['accounts', 'partners', 'jobs'].includes(flow)) {
     app.get(GeoapifyProvider).lookup = async (action, input) => {
       const point = action === 'reverse' ? input.point : flow === 'partners' ? {latitude:21.0285,longitude:105.8542} : {latitude:10.77,longitude:106.7};
@@ -136,7 +136,12 @@ try {
   const original = service.list.bind(service);
   const key = randomUUID();
   const testEmail = `native-${randomUUID()}@example.test`;
-  if (['profile','accounts','partners','jobs','invoices'].includes(flow)) await app.get(AuthService).register(testEmail, 'native-test-only-password', 'Native profile');
+  if (['p2-screens','profile','accounts','partners','jobs','invoices'].includes(flow)) await app.get(AuthService).register(testEmail, 'native-test-only-password', 'Native profile');
+  if (flow === 'p2-screens') {
+    const session=await app.get(AuthService).login(testEmail,'native-test-only-password');
+    await pool.query("INSERT INTO identities(user_id,provider,subject,verified_at) VALUES($1,'phone',$2,now())",[session.user.id,`native:${session.user.id}`]);
+    await app.get(PartnersService).create('Bearer '+session.access_token,{kind:'solo',name:'DEMO P2 Wallet',bio:''},randomUUID());
+  }
   if (flow === 'partners') {
     const auth = app.get(AuthService);
     const session = await auth.login(testEmail, 'native-test-only-password');
@@ -212,7 +217,7 @@ try {
     maestroProcess.once('close', code => { clearTimeout(timeout); done(code ?? 1); });
   });
   if (aborted || result !== 0) throw Error(`Maestro failed (${result}); inspect ${directory}`);
-  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'invoices' ? ['result-image-from-local-api','edit-and-send-invoice','customer-confirm-via-test-control','worker-confirm-receipt'] : flow === 'search-service' ? ['storybook-home','protected-jobs-messages-tabs','guest-industry-group-skill-selection','cancel-preserves-service','clear-service-filter','search-filters','location-picker'] : flow === 'jobs' ? ['provider-job-list','accept-with-eta','private-chat-send-read',...(platform==='android'?['locale-switch']:[])] : flow === 'partners' ? ['manage-draft-profile', 'publish-and-enable', 'address-picker-distance-search', 'public-profile', 'locale-switch'] : flow === 'accounts' ? ['address-create-edit-default-archive', 'locale-draft-retention', 'address-cold-start', 'revoke-all-other-and-current-sessions', 'return-after-login'] : flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['storybook-home', 'protected-jobs-messages-tabs', 'service-selection', 'search-filters', 'location-picker', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
+  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'p2-screens' ? ['native-account-security','native-wallet-overview','native-bank-form','livekit-native-module-load'] : flow === 'invoices' ? ['result-image-from-local-api','edit-and-send-invoice','customer-confirm-via-test-control','worker-confirm-receipt'] : flow === 'search-service' ? ['storybook-home','protected-jobs-messages-tabs','guest-industry-group-skill-selection','cancel-preserves-service','clear-service-filter','search-filters','location-picker'] : flow === 'jobs' ? ['provider-job-list','accept-with-eta','private-chat-send-read',...(platform==='android'?['locale-switch']:[])] : flow === 'partners' ? ['manage-draft-profile', 'publish-and-enable', 'address-picker-distance-search', 'public-profile', 'locale-switch'] : flow === 'accounts' ? ['address-create-edit-default-archive', 'locale-draft-retention', 'address-cold-start', 'revoke-all-other-and-current-sessions', 'return-after-login'] : flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['storybook-home', 'protected-jobs-messages-tabs', 'service-selection', 'search-filters', 'location-picker', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
 } catch (error) {
   outcome = { status: 'FAIL', platform, device, reason: error.message };
   console.error(error.message); process.exitCode = 1;

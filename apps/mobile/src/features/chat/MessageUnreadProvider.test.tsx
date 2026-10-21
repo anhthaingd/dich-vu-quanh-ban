@@ -1,7 +1,8 @@
-import {act,render,screen} from '@testing-library/react-native';
+import {act,fireEvent,render,screen} from '@testing-library/react-native';
 import {Text,Pressable} from 'react-native';
 import {MessageUnreadProvider,useMessageUnread} from './MessageUnreadProvider';
 import type {Signal} from '../../lib/realtime/realtime-client';
+import {ApiError} from '../../lib/http/api-error';
 let mockOwner:string|undefined='a',mockBusy=false;
 const mockList=jest.fn(),mockListen=jest.fn(),mockUnlisten=jest.fn();
 const mockManager={unreadConversations:mockList,getSnapshot:()=>({busy:mockBusy})};
@@ -40,4 +41,15 @@ test('message badge waits for forms and retries failed or cyclic pages without p
 test('message badge reconciles by HTTP while transport is disabled',async()=>{
  mockClient.connected=false;mockList.mockResolvedValue({items:[],next_cursor:null});render(tree());await tick();
  mockList.mockResolvedValue({items:[{id:'one',unread:1}],next_cursor:null});await tick(15000);expect(screen.getByTestId('count')).toHaveTextContent('1');
+});
+test.each(['sync','message','local'])('fresh %s invalidation bypasses a failed poll cooldown',async(source)=>{
+ mockList.mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValue({items:[{id:'one',unread:1}],next_cursor:null});
+ render(tree());await tick();await tick(1000);expect(mockList).toHaveBeenCalledTimes(1);expect(screen.getByTestId('count')).toHaveTextContent('0');
+ act(()=>{if(source==='local')fireEvent.press(screen.getByTestId('invalidate'));else mockListen.mock.calls.at(-1)![0](source==='sync'?{kind:'sync'}:{kind:'event',event:{type:'conversation.message_created.v1'}});});
+ await tick();expect(mockList).toHaveBeenCalledTimes(2);expect(screen.getByTestId('count')).toHaveTextContent('1');
+});
+test('fresh invalidation during a failing poll remains eligible for the next tick',async()=>{
+ let reject!:(error:unknown)=>void;mockList.mockImplementationOnce(()=>new Promise((_resolve,fail)=>{reject=fail;})).mockResolvedValue({items:[{id:'one',unread:1}],next_cursor:null});
+ render(tree());await tick();act(()=>event());await act(async()=>reject(new ApiError('NETWORK')));
+ await tick();expect(mockList).toHaveBeenCalledTimes(2);expect(screen.getByTestId('count')).toHaveTextContent('1');
 });

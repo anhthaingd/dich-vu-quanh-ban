@@ -9,6 +9,7 @@ export function LocaleProvider({ manager, children }: PropsWithChildren<{ manage
   useEffect(() => { void value.restore(); }, [value]);
   return <Context.Provider value={value}><DocumentLanguage />{children}</Context.Provider>;
 }
+export function useLocaleManager() { return useContext(Context); }
 export function useLocale() {
   const manager = useContext(Context);
   if (!manager) throw new Error('LocaleProvider is required');

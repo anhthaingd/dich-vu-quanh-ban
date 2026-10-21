@@ -1,3 +1,7 @@
+import {BackofficeModule} from './modules/backoffice/backoffice.module.js';
+import {AccountSecurityModule} from './modules/account-security/security.module.js';
+import {FinanceModule} from './modules/finance/finance.module.js';
+import {CallsModule} from './modules/calls/calls.module.js';
 import {VerificationModule} from './modules/verification/verification.module.js';
 import {ModerationModule} from './modules/moderation/moderation.module.js';
 import {AdminAuthModule} from './modules/admin-auth/admin-auth.module.js';
@@ -29,7 +33,7 @@ export class AppModule {
     return {
       module: AppModule,
       imports: [LocationsModule.register(settings.geoapifyKey), LoggingModule.register(log), DatabaseModule.register(settings, database, log), CatalogModule.register(settings.cursorSecret), HealthModule,
-        ...(settings.authSecret ? [AuthModule.register(settings.authSecret,settings.localMessages), AdminAuthModule.register(settings.admin), ModerationModule.register(settings.cursorSecret), VerificationModule.register(settings.cursorSecret), ...(settings.realtimeEnabled?[RealtimeModule]:[]), SupportModule.register(settings.cursorSecret), ReviewsModule.register(settings.cursorSecret), NotificationsModule.register(settings.cursorSecret,settings.push), AccountsModule.register(settings.cursorSecret), OrganizationsModule.register(settings.cursorSecret), InvoicesModule.register(settings.cursorSecret), AssetsModule.register(settings.authSecret,settings.localAssets), PartnersModule.register(settings.cursorSecret), JobsModule.register(settings.cursorSecret), ChatModule.register(settings.cursorSecret)] : [])],
+        ...(settings.authSecret ? [AuthModule.register(settings.authSecret,settings.localMessages), AdminAuthModule.register(settings.admin), AccountSecurityModule.register(settings.cursorSecret), FinanceModule.register(settings.cursorSecret,settings.finance), CallsModule.register(settings.cursorSecret,settings.calls), ModerationModule.register(settings.cursorSecret), BackofficeModule.register(settings.cursorSecret), VerificationModule.register(settings.cursorSecret), ...(settings.realtimeEnabled?[RealtimeModule]:[]), SupportModule.register(settings.cursorSecret), ReviewsModule.register(settings.cursorSecret), NotificationsModule.register(settings.cursorSecret,settings.push), AccountsModule.register(settings.cursorSecret), OrganizationsModule.register(settings.cursorSecret), InvoicesModule.register(settings.cursorSecret), AssetsModule.register(settings.authSecret,settings.localAssets), PartnersModule.register(settings.cursorSecret), JobsModule.register(settings.cursorSecret), ChatModule.register(settings.cursorSecret)] : [])],
     };
   }
 }

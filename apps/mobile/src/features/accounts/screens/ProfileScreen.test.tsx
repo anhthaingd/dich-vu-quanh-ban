@@ -24,6 +24,7 @@ test('edit through navigation, keep draft across VI/EN/JA, retry lost response a
   expect(screen.getByTestId('profile-name').props.value).toBe('New name');
   fireEvent.press(screen.getByRole('button', { name: 'Tiếng Việt' }));
   await waitFor(() => expect(screen.getByTestId('locale-en')).not.toBeDisabled());
+  f.accounts.edit.mockClear();
   f.accounts.edit.mockRejectedValueOnce(new ApiError('NETWORK'));
   fireEvent.press(screen.getByTestId('profile-save')); await screen.findByRole('alert');
   expect(screen.getByTestId('profile-name').props.editable).toBe(false);

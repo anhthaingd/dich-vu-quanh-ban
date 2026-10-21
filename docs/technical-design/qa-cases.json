@@ -1234,5 +1234,65 @@
     "level": "Integration",
     "priority": "P1",
     "status": "Đã ánh xạ P1-05; kết quả thực thi theo SDD cùng phiên bản."
+  },
+  {
+    "id": "QA-104",
+    "group": "P2 local đã duyệt 21/10/2026",
+    "requirement": "P2-LOCALE",
+    "operation": "editMe",
+    "setup": "Khách JA; tài khoản VI; hai phiên tài khoản",
+    "steps": "Đổi EN mất phản hồi, phiên khác đổi JA, foreground đọc mới rồi retry cũ; đổi tài khoản/logout",
+    "expected": "Locale server mới nhất thắng; không áp snapshot retry cũ hoặc locale tài khoản trước; logout phục hồi guest.",
+    "level": "API DB + mobile + web",
+    "priority": "P2",
+    "status": "Ánh xạ kiểm thử local; chưa chứng nhận provider/native/UAT. Căn cứ P2-01."
+  },
+  {
+    "id": "QA-105",
+    "group": "P2 local đã duyệt 21/10/2026",
+    "requirement": "P2-BANK",
+    "operation": "requestBankChange, adminDecideBank",
+    "setup": "Ngân hàng verified và đề nghị thay mới; payout mở",
+    "steps": "Reauth, tạo/hủy/duyệt đề nghị; retry; tranh chấp payout và đổi bank",
+    "expected": "Giữ bank cũ tới khi verified; token reauth một lần đúng scope; payout mở chặn đổi; số đầy đủ mã hóa và che trên response.",
+    "level": "API DB + mobile + web",
+    "priority": "P2",
+    "status": "Ánh xạ kiểm thử local; chưa chứng nhận provider/native/UAT. Căn cứ P2-01."
+  },
+  {
+    "id": "QA-106",
+    "group": "P2 local đã duyệt 21/10/2026",
+    "requirement": "P2-FINANCE-AUTH",
+    "operation": "createTopup, createPayout, adminDecideTopups, adminDecidePayouts",
+    "setup": "Membership có quyền ví ở trang2; admin MFA; response sau commit bị hỏng",
+    "steps": "Thu hồi quyền rồi retry; trả INVALID_RESPONSE sau commit; đọc ảnh receipt ở partner khác",
+    "expected": "Quyền kiểm lại server; UI tải hết membership cần thiết; retry giữ nguyên key/payload/grant; chứng cứ riêng không rò; không tạo khoản giữ thứ hai.",
+    "level": "API DB + mobile + web",
+    "priority": "P2",
+    "status": "Ánh xạ kiểm thử local; chưa chứng nhận provider/native/UAT. Căn cứ P2-01."
+  },
+  {
+    "id": "QA-107",
+    "group": "P2 local đã duyệt 21/10/2026",
+    "requirement": "P2-GRANTS",
+    "operation": "adminUserGrants",
+    "setup": "Hai admin có tập quyền khác nhau; một grant manager cuối",
+    "steps": "Thử tự cấp, vượt quyền, thu hồi manager cuối, thao tác đồng thời và retry sau thu hồi",
+    "expected": "MFA mới; cấm tự sửa/vượt quyền; không mất grant manager cuối; version bảo vệ và audit bất biến; thu hồi có hiệu lực cả retry.",
+    "level": "API DB + mobile + web",
+    "priority": "P2",
+    "status": "Ánh xạ kiểm thử local; chưa chứng nhận provider/native/UAT. Căn cứ P2-01."
+  },
+  {
+    "id": "QA-108",
+    "group": "P2 local đã duyệt 21/10/2026",
+    "requirement": "P2-METRICS",
+    "operation": "getMetrics, adminJobs, adminInvoices",
+    "setup": "Ledger test có phí/point và hóa đơn số tiền lớn; kỳ [from,to)",
+    "steps": "Tra cứu theo quyền, đổi bộ lọc với cursor cũ; kiểm biên from/to",
+    "expected": "Chỉ đọc và MFA; số tiền chuỗi chính xác; metrics dùng kỳ nửa mở/định nghĩa riêng; cursor gắn actor/bộ lọc; không sinh bút toán.",
+    "level": "API DB + mobile + web",
+    "priority": "P2",
+    "status": "Ánh xạ kiểm thử local; chưa chứng nhận provider/native/UAT. Căn cứ P2-01."
   }
 ]

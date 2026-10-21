@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-21T06:57:56.951Z",
+  "platform": "Chromium desktop engine, mobile viewport430x932",
+  "data": "DEMO accounts and accepted job, disposable schema",
+  "media": "Actual local LiveKit7880, Chromium fake microphone; not a human microphone or native device",
+  "steps": [
+    "incoming UI",
+    "answer UI",
+    "both connected",
+    "mute UI",
+    "end UI"
+  ],
+  "screenshots": [
+    "01-incoming-web.png",
+    "02-connected-customer-web.png",
+    "03-connected-worker-web.png",
+    "04-muted-web.png",
+    "05-ended-web.png"
+  ],
+  "identity": "Peer display_name resolved from current job targets; localized contact fallback; no internal UUID shown."
+}

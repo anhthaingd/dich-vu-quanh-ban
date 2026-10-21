@@ -32,7 +32,7 @@ export class ChallengesService {
    if((input.provider==='email'&&!existing)||existing&&existing.subject!==input.contact)throw new BadRequestException();
    const hash=this.messages.secrets.hash(input.contact);
    await this.rate(db,a.user.id,hash,this.messages.secrets.hash(ip),'verify');
-   await db.query('UPDATE auth_challenges SET invalidated_at=clock_timestamp() WHERE user_id=$1 AND provider=$2 AND consumed_at IS NULL',[a.user.id,input.provider]);
+   await db.query("UPDATE auth_challenges SET invalidated_at=clock_timestamp() WHERE user_id=$1 AND provider=$2 AND purpose='verify' AND consumed_at IS NULL",[a.user.id,input.provider]);
    const code=String(randomInt(0,1000000)).padStart(6,'0');
    const c=(await db.query(`INSERT INTO auth_challenges(user_id,provider,contact_hash,contact_cipher,code_hash,family_id,expires_at)
     VALUES($1,$2,$3,$4,$5,$6,clock_timestamp()+interval '5 minutes') RETURNING id,expires_at`,[a.user.id,input.provider,hash,this.messages.secrets.encrypt(input.contact),this.messages.secrets.hash(code),family])).rows[0];
@@ -43,7 +43,7 @@ export class ChallengesService {
  async verify(header:string|undefined,input:ReturnType<typeof verifyInput>) {
   const result=await this.tx(header,async(db,a,family)=>{
    const c=(await db.query('SELECT * FROM auth_challenges WHERE id=$1 AND user_id=$2 FOR UPDATE',[input.challenge_id,a.user.id])).rows[0];
-   if(!c||c.family_id!==family||c.consumed_at||c.invalidated_at||c.attempts>=5)return 'CHALLENGE_INVALID';
+   if(!c||c.purpose!=='verify'||c.family_id!==family||c.consumed_at||c.invalidated_at||c.attempts>=5)return 'CHALLENGE_INVALID';
    if(c.expires_at<=new Date())return 'CHALLENGE_EXPIRED';
    if(c.code_hash!==this.messages.secrets.hash(input.code)){
     await db.query('UPDATE auth_challenges SET attempts=attempts+1 WHERE id=$1',[c.id]);return 'CHALLENGE_INVALID';

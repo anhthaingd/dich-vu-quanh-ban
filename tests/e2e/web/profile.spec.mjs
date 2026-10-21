@@ -10,6 +10,11 @@ test('profile persists to DB, protects concurrent edits and replays a lost respo
   await page.getByRole('button', { name: 'English', exact: true }).click(); await expect(page.getByTestId('profile-name')).toHaveValue('My draft');
   await page.getByRole('button', { name: '日本語', exact: true }).click(); await expect(page.getByTestId('profile-name')).toHaveValue('My draft');
   await page.getByRole('button', { name: 'Tiếng Việt', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+  const localeBaseline = (await environment.pool.query('SELECT version,locale FROM users')).rows[0];
+  expect(localeBaseline).toEqual({ version: 4, locale: 'vi' });
+  const localeKeys = (await environment.pool.query("SELECT count(*)::int n FROM idempotency_keys WHERE operation='editMe'")).rows[0].n;
+  expect(localeKeys).toBe(3);
   // Represent a second authenticated device changing this same row.
   await environment.pool.query("UPDATE users SET display_name='Other device',version=version+1");
   await page.getByTestId('profile-save').click(); await expect(page.getByRole('alert')).toContainText('Hồ sơ đã thay đổi');
@@ -26,8 +31,9 @@ test('profile persists to DB, protects concurrent edits and replays a lost respo
   await expect(page.getByTestId('profile-name')).not.toBeEditable();
   await page.getByTestId('profile-save').click(); await expect(page.getByTestId('profile-saved')).toBeVisible();
   expect(attempts).toHaveLength(2); expect(attempts[0]).toEqual(attempts[1]);
-  expect((await environment.pool.query('SELECT display_name,version FROM users')).rows[0]).toEqual({ display_name: 'My draft', version: 3 });
-  expect((await environment.pool.query('SELECT count(*)::int n FROM idempotency_keys')).rows[0].n).toBe(1);
+  expect((await environment.pool.query('SELECT display_name,version FROM users')).rows[0]).toEqual({ display_name: 'My draft', version: localeBaseline.version + 2 });
+  expect((await environment.pool.query("SELECT count(*)::int n FROM idempotency_keys WHERE operation='editMe'")).rows[0].n).toBe(localeKeys + 1);
+  expect((await environment.pool.query("SELECT count(*)::int n FROM idempotency_keys WHERE operation='editMe' AND response_snapshot->>'display_name'='My draft'")).rows[0].n).toBe(1);
   await page.getByRole('button', { name: 'Quay lại', exact: true }).click(); await expect(page.getByText('My draft', { exact: true })).toBeVisible();
   await page.getByTestId('auth-logout').click();
   await page.getByTestId('auth-toggle').click(); await page.getByTestId('auth-email').fill('profile-web@example.test');

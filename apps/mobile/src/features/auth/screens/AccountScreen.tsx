@@ -1,3 +1,4 @@
+import {securityMessages} from '../../account-security/messages';
 import { useLocale } from '../../../app/providers/LocaleProvider';
 import { LanguageSettings } from '../../accounts/components/LanguageSettings';
 import type { AuthErrorCode } from '../state/auth-session';
@@ -21,7 +22,8 @@ const errorMessages: Record<AuthErrorCode, MessageKey & `errors.${string}`> = {
   UNAUTHENTICATED: 'errors.authentication', RATE_LIMITED: 'errors.rateLimited', VALIDATION: 'errors.validation', SESSION_UNAVAILABLE: 'errors.session',
 };
 export function AccountScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'Account'>) {
-  const { t } = useLocale();
+  const { t,locale } = useLocale();
+  const security=securityMessages(locale);
   const { manager, state } = useAuth();
   const focused = useIsFocused();
   const destination = accountDestination(route.params?.returnTo);
@@ -53,6 +55,7 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
     {state.phase === 'authenticated' && <Card>
       <AppText variant="section">{state.user!.display_name}</AppText>
       <AppText>{t(state.user!.email_verified ? 'auth.verified' : 'auth.unverified')}</AppText>
+      <Button testID="security-open" label={security.title} disabled={state.busy} onPress={()=>navigation.navigate('AccountSecurity')} />
       <Button testID="support-open" label={t('support.title')} disabled={state.busy} onPress={() => navigation.navigate('Support')} />
       <Button testID="notification-settings-open" label={t('notices.settings')} disabled={state.busy} onPress={() => navigation.navigate('NotificationSettings')} />
       <Button testID="team-open" label={t('team.title')} disabled={state.busy} onPress={() => navigation.navigate('Organizations')} />
@@ -77,6 +80,8 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
         returnKeyType="done" onSubmitEditing={() => void submit()}
         hint={register ? t('auth.passwordHint', { min: 15, max: 128 }) : undefined} />
       <Button testID="auth-submit" label={t(register ? 'auth.register' : 'auth.login')} loading={state.busy} disabled={!canSubmit} onPress={() => void submit()} />
+      <Button testID="otp-open" label={security.login+' / '+security.reset} disabled={state.busy} onPress={()=>navigation.navigate('AccountSecurity')} />
+      <Button testID="recovery-open" label={security.recovery} disabled={state.busy} onPress={()=>navigation.navigate('AccountRecovery')} />
       <Button testID="auth-toggle" label={t(register ? 'auth.switchToLogin' : 'auth.switchToRegister')} variant="link" disabled={state.busy}
         onPress={() => { setRegister(!register); setPassword(''); }} />
     </Card>}

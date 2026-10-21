@@ -12,10 +12,25 @@ test('language changes keep form/session/category, translate errors and persist 
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
   await page.getByRole('button', { name: 'English', exact: true }).click();
   await page.getByRole('button', { name: 'Sign up', exact: true }).click();
-  await expect(page.getByText('Email not verified', { exact: true })).toBeVisible();
+  // The new account starts in VI; its locale takes precedence over guest EN.
+  await expect(page.getByText('Email chưa xác minh', { exact: true })).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+  const account = (await environment.pool.query("SELECT id,locale,version FROM users WHERE id=(SELECT user_id FROM identities WHERE provider='email' AND subject='locale@example.test')")).rows[0];
+  expect(account).toMatchObject({ locale: 'vi', version: 1 });
+  expect(await page.evaluate(() => globalThis.localStorage.getItem('dvqb.locale.v1'))).toBe('en');
   await page.getByRole('button', { name: '日本語', exact: true }).click();
   await expect(page.getByText('メールアドレスは未確認です', { exact: true })).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
+  expect((await environment.pool.query('SELECT locale,version FROM users WHERE id=$1', [account.id])).rows[0]).toEqual({ locale: 'ja', version: 2 });
+  expect(await page.evaluate(() => globalThis.localStorage.getItem('dvqb.locale.v1'))).toBe('en');
   await page.getByRole('button', { name: 'ログアウト', exact: true }).click();
+  // Logout restores guest EN; choose guest JA before the original error checks.
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.getByTestId('auth-toggle')).toBeVisible();
+  expect(await page.evaluate(() => globalThis.localStorage.getItem('dvqb.locale.v1'))).toBe('en');
+  expect((await environment.pool.query('SELECT locale FROM users WHERE id=$1', [account.id])).rows[0].locale).toBe('ja');
+  await page.getByRole('button', { name: '日本語', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
   await page.getByRole('button', { name: 'アカウントをお持ちですか？ログイン', exact: true }).click();
   await page.getByLabel('パスワード', { exact: true }).fill('wrong-test-password');
   await page.getByRole('button', { name: 'ログイン', exact: true }).click();
@@ -34,6 +49,7 @@ test('language changes keep form/session/category, translate errors and persist 
   await expect(page.getByRole('heading', { name: /暮らしの困りごとに/  })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
   expect(await page.evaluate(() => ({ ...globalThis.localStorage }))).toEqual({ 'dvqb.locale.v1': 'ja' });
+  expect((await environment.pool.query('SELECT locale,version FROM users WHERE id=$1', [account.id])).rows[0]).toEqual({ locale: 'ja', version: 2 });
   const horizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
   expect(horizontalOverflow).toBe(false);
 });

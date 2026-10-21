@@ -4,6 +4,9 @@ export type AccountDestination = 'Support' | 'Notifications' | 'NotificationSett
 export const accountDestination = (value: unknown): AccountDestination | null =>
   value === 'Support' || value === 'Notifications' || value === 'NotificationSettings' || value === 'Organizations' || value === 'VerifyContact' || value === 'Profile' || value === 'Sessions' || value === 'Addresses' || value === 'Partners' || value === 'Jobs' || value === 'Conversations' ? value : null;
 export type RootStackParamList = {
+  AccountSecurity: undefined;
+  AccountRecovery: undefined;
+  Finance: {id:string};
   Verification: {id:string};
   Support: {id?:string;context?:ReportContext}|undefined;
   Notifications: undefined;

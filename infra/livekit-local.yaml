@@ -1,0 +1,20 @@
+# P2 local/test audio only. Never run this public development key on production.
+port: 7880
+bind_addresses: ["127.0.0.1"]
+keys:
+  devkey: secret
+rtc:
+  tcp_port: 7881
+  udp_port: 7882
+  use_external_ip: false
+room:
+  # Security requirement: a cached media JWT must not recreate a deleted room.
+  # NestJS explicitly creates authorized accepted rooms using its server key.
+  auto_create: false
+  max_participants: 2
+  empty_timeout: 30
+  departure_timeout: 5
+  enabled_codecs:
+    - mime: audio/opus
+logging:
+  level: warn

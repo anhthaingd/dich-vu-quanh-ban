@@ -3,7 +3,7 @@ import { ApiError } from '../../../lib/http/api-error';
 import { isMe } from '../../auth/api/auth-api';
 import type { Me } from '../../auth/models/auth.types';
 import { isAck, isAddress, isLoginSession, isPage, type Ack, type AddressInput, type LoginSession, type Page, type SavedAddress } from '../models';
-export type ProfileEdit = { expected_version: number; display_name: string };
+export type ProfileEdit = { expected_version: number; display_name?: string; locale?: 'vi'|'en'|'ja' };
 export interface AccountsApi {
   edit(token: string, input: ProfileEdit, key: string): Promise<Me>;
   addresses(token: string, cursor?: string): Promise<Page<SavedAddress>>;

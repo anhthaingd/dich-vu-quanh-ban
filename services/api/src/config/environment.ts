@@ -1,5 +1,5 @@
 import type {LocalMessagesConfig} from '../integrations/local-messages.js';
-export interface Config { push?:{accessToken?:string}; admin?:{secret:string}; realtimeEnabled?:boolean; localMessages?:LocalMessagesConfig; databaseUrl: string; cursorSecret: string; authSecret?: string; port: number; host: string; corsOrigin?: string; geoapifyKey?: string; localAssets?: { directory:string; origin:string } }
+export interface Config { finance?:{secret:string}; calls?:{url:string;apiKey:string;apiSecret:string}; push?:{accessToken?:string}; admin?:{secret:string}; realtimeEnabled?:boolean; localMessages?:LocalMessagesConfig; databaseUrl: string; cursorSecret: string; authSecret?: string; port: number; host: string; corsOrigin?: string; geoapifyKey?: string; localAssets?: { directory:string; origin:string } }
 export function config(env = process.env): Config {
   if (!env.DATABASE_URL || !env.CURSOR_SECRET || env.CURSOR_SECRET.length < 32) {
     throw new Error('DATABASE_URL and CURSOR_SECRET (at least 32 characters) are required');
@@ -28,6 +28,14 @@ export function config(env = process.env): Config {
     if(!['development','test'].includes(env.NODE_ENV??'')||!['localhost','127.0.0.1','[::1]'].includes(url.hostname)||!['/dvqb_p1_demo','/dvqb_test'].includes(url.pathname)||env.ADMIN_LOCAL_SECRET.length<32)throw new Error('Admin pilot requires isolated local/test database and a separate secret');
     admin={secret:env.ADMIN_LOCAL_SECRET};
   }
+  const localP2=()=>{if(!['development','test'].includes(env.NODE_ENV??'')||!['localhost','127.0.0.1','[::1]'].includes(url.hostname)||!['/dvqb_p1_demo','/dvqb_test'].includes(url.pathname))throw new Error('P2 pilots require isolated local/test database');};
+  let finance:Config['finance'],calls:Config['calls'];
+  if(env.FINANCE_LOCAL_SECRET){localP2();if(env.FINANCE_LOCAL_SECRET.length<32)throw new Error('Finance local secret must have at least 32 characters');finance={secret:env.FINANCE_LOCAL_SECRET};}
+  if(env.LIVEKIT_URL||env.LIVEKIT_API_KEY||env.LIVEKIT_API_SECRET){
+    localP2();const media=new URL(env.LIVEKIT_URL??'');
+    if(!['ws:','wss:'].includes(media.protocol)||!['localhost','127.0.0.1','[::1]'].includes(media.hostname)||media.username||media.password||media.pathname!=='/'||media.search||media.hash||!env.LIVEKIT_API_KEY||!env.LIVEKIT_API_SECRET)throw new Error('LiveKit pilot requires loopback URL and explicit local credentials');
+    calls={url:media.origin,apiKey:env.LIVEKIT_API_KEY,apiSecret:env.LIVEKIT_API_SECRET};
+  }
   if(env.EXPO_PUSH_ENABLED==='1'&&!['test','development'].includes(env.NODE_ENV??''))throw new Error('Expo push pilot requires local/test mode');
-  return { push:env.EXPO_PUSH_ENABLED==='1'?{accessToken:env.EXPO_ACCESS_TOKEN}:undefined,admin, realtimeEnabled:env.REALTIME_ENABLED==='1', localMessages, localAssets, databaseUrl: env.DATABASE_URL, cursorSecret: env.CURSOR_SECRET, authSecret: env.AUTH_SECRET || undefined, port, host: env.HOST ?? '127.0.0.1', geoapifyKey: env.GEOAPIFY_API_KEY?.trim() || undefined, corsOrigin: env.CORS_ORIGIN };
+  return { finance,calls,push:env.EXPO_PUSH_ENABLED==='1'?{accessToken:env.EXPO_ACCESS_TOKEN}:undefined,admin, realtimeEnabled:env.REALTIME_ENABLED==='1', localMessages, localAssets, databaseUrl: env.DATABASE_URL, cursorSecret: env.CURSOR_SECRET, authSecret: env.AUTH_SECRET || undefined, port, host: env.HOST ?? '127.0.0.1', geoapifyKey: env.GEOAPIFY_API_KEY?.trim() || undefined, corsOrigin: env.CORS_ORIGIN };
 }

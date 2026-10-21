@@ -19,9 +19,10 @@ export class PushWorker implements OnModuleInit,OnModuleDestroy {
     AND p.created_at>clock_timestamp()-interval '24 hours'`,[id])).rows[0];
    if(!d){await db.query('COMMIT');return null;}
    const settings=(await db.query('SELECT * FROM notification_settings WHERE user_id=$1',[d.user_id])).rows[0];
-   const field=d.kind.startsWith('conversation.')?'message_push':d.kind.startsWith('reminder.')?'reminder_push':'service_push';
+   const field=d.kind.startsWith('call.')?'call_push':d.kind.startsWith('conversation.')?'message_push':d.kind.startsWith('reminder.')?'reminder_push':'service_push';
    if(settings?.[field]===false){await db.query('COMMIT');return null;}
    const r:Resource=d.resource_ref;
+   if(d.kind==='call.incoming.v1'&&!(await db.query("SELECT 1 FROM calls WHERE id::text=split_part($1,':',2) AND state='ringing' AND recipient_id=$2 AND ring_until>clock_timestamp()",[d.event_key,d.user_id])).rowCount){await db.query('COMMIT');return null;}
    const resource=r.report_id?{type:'report' as const,id:r.report_id}:r.verification_id?{type:'verification' as const,id:r.verification_id}:r.conversation_id?{type:'conversation' as const,id:r.conversation_id}:r.job_id?{type:'job' as const,id:r.job_id}:null;
    if(!resource){await db.query('COMMIT');return null;}
    await resourceAccess(db,d.user_id,resource);
@@ -47,7 +48,7 @@ export class PushWorker implements OnModuleInit,OnModuleDestroy {
      const response=await this.api('getReceipts',{ids:[d.ticket_id]});result=(response.data as Record<string,typeof result>)?.[d.ticket_id];
      if(!result){if(d.attempts>=8)await finish('failed','RECEIPT_TIMEOUT');else await finish('ticket');continue;}
     }else{
-     const response=await this.api('send',[{to:target.token,title:'Dịch vụ quanh bạn',body:target.locale==='ja'?'新しい更新があります。':target.locale==='en'?'You have a new update.':'Bạn có cập nhật mới.',sound:'default',data:{recipient_id:target.user_id,...target.resource_ref,event_key:target.event_key}}]);result=Array.isArray(response.data)?response.data[0]:undefined;
+     const response=await this.api('send',[{to:target.token,title:'Dịch vụ quanh bạn',body:target.kind==='call.incoming.v1'?(target.locale==='ja'?'着信があります。':target.locale==='en'?'Incoming call.':'Bạn có cuộc gọi đến.'):(target.locale==='ja'?'新しい更新があります。':target.locale==='en'?'You have a new update.':'Bạn có cập nhật mới.'),sound:'default',data:{recipient_id:target.user_id,...target.resource_ref,event_key:target.event_key}}]);result=Array.isArray(response.data)?response.data[0]:undefined;
     }
     if(result?.status==='ok'){
      if(d.state==='ticket')await finish('delivered');else if(typeof result.id==='string')await finish('ticket',null,result.id);else throw new Error('PUSH_RESPONSE');

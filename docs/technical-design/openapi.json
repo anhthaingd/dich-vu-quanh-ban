@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Dịch vụ quanh bạn — API thiết kế",
-    "version": "0.1.20",
-    "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local. B01-04 (06/10/2026): Me.version bat buoc >=1, PATCH /me sua ten theo expected_version va Idempotency-Key da duyet. MAP-01 (07/10/2026): thử MapLibre + Geoapify Free và bộ chọn 4 nơi theo yêu cầu triển khai; chưa billing/production. MAP-02 (07/10/2026): ghim địa điểm công khai trong kết quả; không công khai tâm vùng. P0-2: Job includes service mode, time mode, location ID, note and ETA. PartnerProfile includes public location IDs and skill service modes. HTTP chat pilot; OTP and WebSocket remain Pending. MAP-03/P0-2: bỏ nhập tọa độ; Job có chi tiết nơi/giờ/ETA; PartnerProfile có public_locations/service_modes; HTTP chat local/test, WebSocket Pending. P0-3: Invoice.note/revision_reason; adapter ảnh local/test đã duyệt, chưa production. P1-01: xác minh local/test và vòng đời đội ngũ được duyệt 13/10/2026; chưa gửi thật."
+    "version": "0.1.21",
+    "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local. B01-04 (06/10/2026): Me.version bat buoc >=1, PATCH /me sua ten theo expected_version va Idempotency-Key da duyet. MAP-01 (07/10/2026): thử MapLibre + Geoapify Free và bộ chọn 4 nơi theo yêu cầu triển khai; chưa billing/production. MAP-02 (07/10/2026): ghim địa điểm công khai trong kết quả; không công khai tâm vùng. P0-2: Job includes service mode, time mode, location ID, note and ETA. PartnerProfile includes public location IDs and skill service modes. HTTP chat pilot; OTP and WebSocket remain Pending. MAP-03/P0-2: bỏ nhập tọa độ; Job có chi tiết nơi/giờ/ETA; PartnerProfile có public_locations/service_modes; HTTP chat local/test, WebSocket Pending. P0-3: Invoice.note/revision_reason; adapter ảnh local/test đã duyệt, chưa production. P1-01: xác minh local/test và vòng đời đội ngũ được duyệt 13/10/2026; chưa gửi thật. P2-01 (21/10/2026): OTP/recovery/deletion/locale/admin grants, bank simulator TEST money, local LiveKit calls and admin reporting implemented for approved local testing; external providers, physical deletion and production remain unverified."
   },
   "servers": [
     {
@@ -522,12 +522,11 @@
           "Tài khoản"
         ],
         "summary": "Đặt lại mật khẩu",
-        "description": "Quyền: Public, verified recovery challenge. Thu hồi session cũ; token recovery một lần.",
         "security": [],
         "parameters": [],
         "responses": {
           "201": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Kết quả local DEMO/test",
             "content": {
               "application/json": {
                 "schema": {
@@ -586,16 +585,6 @@
               }
             }
           },
-          "422": {
-            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "429": {
             "description": "Giới hạn tần suất; Retry-After",
             "content": {
@@ -615,10 +604,20 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         },
-        "x-authorization": "Public, verified recovery challenge",
-        "x-rules": "Thu hồi session cũ; token recovery một lần.",
+        "x-authorization": "Public, không tiết lộ tồn tại tài khoản",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -628,7 +627,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Quyền: Public, verified recovery challenge. Thu hồi session cũ; token recovery một lần."
       }
     },
     "/auth/refresh": {
@@ -1374,7 +1374,6 @@
           "Tài khoản"
         ],
         "summary": "Yêu cầu xóa tài khoản",
-        "description": "Quyền: Chính mình, fresh auth. Chặn khi có nghĩa vụ tiền/việc hoặc sở hữu doanh nghiệp; không cascade ledger. Retention còn cần chốt.",
         "security": [
           {
             "bearerAuth": []
@@ -1388,13 +1387,12 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
           }
         ],
         "responses": {
           "201": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Kết quả local DEMO/test",
             "content": {
               "application/json": {
                 "schema": {
@@ -1453,16 +1451,6 @@
               }
             }
           },
-          "422": {
-            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "429": {
             "description": "Giới hạn tần suất; Retry-After",
             "content": {
@@ -1482,20 +1470,31 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         },
-        "x-authorization": "Chính mình, fresh auth",
-        "x-rules": "Chặn khi có nghĩa vụ tiền/việc hoặc sở hữu doanh nghiệp; không cascade ledger. Retention còn cần chốt.",
+        "x-authorization": "Phiên hiện hành",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReasonInput"
+                "$ref": "#/components/schemas/AccountDeletionInput"
               }
             }
           }
-        }
+        },
+        "description": "Quyền: Chính mình, fresh auth. Chặn khi có nghĩa vụ tiền/việc hoặc sở hữu doanh nghiệp; không cascade ledger. Retention còn cần chốt."
       }
     },
     "/me/addresses": {
@@ -7813,7 +7812,7 @@
           "Hóa đơn và tiền"
         ],
         "summary": "Yêu cầu nạp",
-        "description": "Quyền: wallet.topup. Không tự ghi có từ request/ảnh.",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -7827,13 +7826,12 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
           }
         ],
         "responses": {
           "201": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
@@ -7923,8 +7921,7 @@
             }
           }
         },
-        "x-authorization": "wallet.topup",
-        "x-rules": "Không tự ghi có từ request/ảnh.",
+        "x-authorization": "wallet.read + wallet.topup",
         "requestBody": {
           "required": true,
           "content": {
@@ -7944,7 +7941,7 @@
           "Hóa đơn và tiền"
         ],
         "summary": "Yêu cầu rút",
-        "description": "Quyền: wallet.withdraw. Hold cùng account lock; max(0,B-Hf-Hw); credit không được rút.",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -7958,13 +7955,12 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
           }
         ],
         "responses": {
           "201": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
@@ -8054,8 +8050,7 @@
             }
           }
         },
-        "x-authorization": "wallet.withdraw",
-        "x-rules": "Hold cùng account lock; max(0,B-Hf-Hw); credit không được rút.",
+        "x-authorization": "wallet.read + wallet.withdraw",
         "requestBody": {
           "required": true,
           "content": {
@@ -8075,7 +8070,7 @@
           "Hóa đơn và tiền"
         ],
         "summary": "Theo dõi rút",
-        "description": "Quyền: wallet.read đúng partner. ",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -8094,7 +8089,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
@@ -8184,8 +8179,7 @@
             }
           }
         },
-        "x-authorization": "wallet.read đúng partner",
-        "x-rules": ""
+        "x-authorization": "wallet.read"
       }
     },
     "/partners/{id}/bank": {
@@ -8195,7 +8189,7 @@
           "Hóa đơn và tiền"
         ],
         "summary": "Ngân hàng hiện tại",
-        "description": "Quyền: wallet.read. ",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -8214,7 +8208,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
@@ -8304,8 +8298,7 @@
             }
           }
         },
-        "x-authorization": "wallet.read",
-        "x-rules": ""
+        "x-authorization": "wallet.read"
       },
       "put": {
         "operationId": "setBank",
@@ -8313,7 +8306,7 @@
           "Hóa đơn và tiền"
         ],
         "summary": "Đăng ký/đổi ngân hàng",
-        "description": "Quyền: bank.manage. Một current; chặn khi payout chưa kết thúc; xác minh mới trước rút; số lưu mã hóa.",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -8336,13 +8329,12 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
@@ -8432,8 +8424,7 @@
             }
           }
         },
-        "x-authorization": "bank.manage",
-        "x-rules": "Một current; chặn khi payout chưa kết thúc; xác minh mới trước rút; số lưu mã hóa.",
+        "x-authorization": "wallet.read + bank.manage + one-use finance reauth",
         "requestBody": {
           "required": true,
           "content": {
@@ -9139,7 +9130,6 @@
           "Chat và gọi"
         ],
         "summary": "Gọi thợ/cửa hàng",
-        "description": "Quyền: Khách/thợ có quan hệ việc đã nhận. Chọn contact/assignment mới nhất; opt-out; sau hoàn tất vẫn gọi; không ghi âm.",
         "security": [
           {
             "bearerAuth": []
@@ -9147,23 +9137,23 @@
         ],
         "parameters": [
           {
-            "name": "Idempotency-Key",
             "in": "header",
+            "name": "Idempotency-Key",
             "required": true,
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
           }
         ],
+        "description": "Local LiveKit only; authorization and current assignment/contact checked server-side. Tokens are returned only by the non-idempotent media endpoint after acceptance.",
         "responses": {
           "201": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local call result",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CallGrant"
+                  "$ref": "#/components/schemas/Call"
                 }
               }
             }
@@ -9249,14 +9239,73 @@
             }
           }
         },
-        "x-authorization": "Khách/thợ có quan hệ việc đã nhận",
-        "x-rules": "Chọn contact/assignment mới nhất; opt-out; sau hoàn tất vẫn gọi; không ghi âm.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/CallRequest"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listCalls",
+        "tags": [
+          "Chat và gọi"
+        ],
+        "summary": "listCalls",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "active",
+            "schema": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "conversation_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "description": "Local LiveKit only; authorization and current assignment/contact checked server-side. Tokens are returned only by the non-idempotent media endpoint after acceptance.",
+        "responses": {
+          "200": {
+            "description": "Local call result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallPage"
+                }
               }
             }
           }
@@ -9270,7 +9319,6 @@
           "Chat và gọi"
         ],
         "summary": "Nhận/từ chối/kết thúc",
-        "description": "Quyền: Đúng caller/recipient. Chỉ recipient accept/decline; cả hai end; provider event không tự cấp quyền.",
         "security": [
           {
             "bearerAuth": []
@@ -9278,8 +9326,8 @@
         ],
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string",
@@ -9287,23 +9335,23 @@
             }
           },
           {
-            "name": "Idempotency-Key",
             "in": "header",
+            "name": "Idempotency-Key",
             "required": true,
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
           }
         ],
+        "description": "Local LiveKit only; authorization and current assignment/contact checked server-side. Tokens are returned only by the non-idempotent media endpoint after acceptance.",
         "responses": {
           "201": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local call result",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Ack"
+                  "$ref": "#/components/schemas/Call"
                 }
               }
             }
@@ -9389,8 +9437,6 @@
             }
           }
         },
-        "x-authorization": "Đúng caller/recipient",
-        "x-rules": "Chỉ recipient accept/decline; cả hai end; provider event không tự cấp quyền.",
         "requestBody": {
           "required": true,
           "content": {
@@ -11348,7 +11394,7 @@
           "Admin"
         ],
         "summary": "Hàng đợi topups",
-        "description": "Quyền: finance.read. ",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -11356,12 +11402,34 @@
         ],
         "parameters": [
           {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
             "name": "cursor",
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "description": "Opaque cursor ký, gắn bộ lọc và actor; thứ tự created_at,id."
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "limit",
@@ -11371,17 +11439,16 @@
               "minimum": 1,
               "maximum": 100,
               "default": 20
-            },
-            "description": "Giới hạn kỹ thuật đề xuất, không giới hạn nghiệp vụ."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/adminListTopupsPage"
+                  "$ref": "#/components/schemas/FinanceMoneyPage"
                 }
               }
             }
@@ -11467,8 +11534,7 @@
             }
           }
         },
-        "x-authorization": "finance.read",
-        "x-rules": ""
+        "x-authorization": "finance.read + MFA"
       }
     },
     "/admin/topups/{id}/decision": {
@@ -11478,7 +11544,7 @@
           "Admin"
         ],
         "summary": "Duyệt/đối soát topups",
-        "description": "Quyền: finance.review + fresh auth. State guard, evidence, bank ref unique, audit. Timeout=unknown, không retry chuyển mù.",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -11501,13 +11567,21 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
@@ -11597,8 +11671,7 @@
             }
           }
         },
-        "x-authorization": "finance.review + fresh auth",
-        "x-rules": "State guard, evidence, bank ref unique, audit. Timeout=unknown, không retry chuyển mù.",
+        "x-authorization": "finance.review + fresh MFA",
         "requestBody": {
           "required": true,
           "content": {
@@ -11618,7 +11691,7 @@
           "Admin"
         ],
         "summary": "Hàng đợi payouts",
-        "description": "Quyền: finance.read. ",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -11626,12 +11699,34 @@
         ],
         "parameters": [
           {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
             "name": "cursor",
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "description": "Opaque cursor ký, gắn bộ lọc và actor; thứ tự created_at,id."
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "limit",
@@ -11641,17 +11736,16 @@
               "minimum": 1,
               "maximum": 100,
               "default": 20
-            },
-            "description": "Giới hạn kỹ thuật đề xuất, không giới hạn nghiệp vụ."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/adminListPayoutsPage"
+                  "$ref": "#/components/schemas/FinanceMoneyPage"
                 }
               }
             }
@@ -11737,8 +11831,7 @@
             }
           }
         },
-        "x-authorization": "finance.read",
-        "x-rules": ""
+        "x-authorization": "finance.read + MFA"
       }
     },
     "/admin/payouts/{id}/decision": {
@@ -11748,7 +11841,7 @@
           "Admin"
         ],
         "summary": "Duyệt/đối soát payouts",
-        "description": "Quyền: finance.review + fresh auth. State guard, evidence, bank ref unique, audit. Timeout=unknown, không retry chuyển mù.",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -11771,13 +11864,21 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
@@ -11867,8 +11968,7 @@
             }
           }
         },
-        "x-authorization": "finance.review + fresh auth",
-        "x-rules": "State guard, evidence, bank ref unique, audit. Timeout=unknown, không retry chuyển mù.",
+        "x-authorization": "finance.review + fresh MFA",
         "requestBody": {
           "required": true,
           "content": {
@@ -11888,7 +11988,7 @@
           "Admin"
         ],
         "summary": "Tra cứu ngân hàng",
-        "description": "Quyền: finance.review. ",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -11896,12 +11996,34 @@
         ],
         "parameters": [
           {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
             "name": "cursor",
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "description": "Opaque cursor ký, gắn bộ lọc và actor; thứ tự created_at,id."
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "limit",
@@ -11911,17 +12033,16 @@
               "minimum": 1,
               "maximum": 100,
               "default": 20
-            },
-            "description": "Giới hạn kỹ thuật đề xuất, không giới hạn nghiệp vụ."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/queueBankPage"
+                  "$ref": "#/components/schemas/FinanceBankPage"
                 }
               }
             }
@@ -12007,8 +12128,7 @@
             }
           }
         },
-        "x-authorization": "finance.review",
-        "x-rules": ""
+        "x-authorization": "finance.read + MFA"
       }
     },
     "/admin/bank-accounts/{id}/decision": {
@@ -12018,7 +12138,7 @@
           "Admin"
         ],
         "summary": "Xử lý ngân hàng",
-        "description": "Quyền: finance.review. Lý do bắt buộc; không sửa tiền/sao; kiểm action phù hợp tài nguyên.",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
         "security": [
           {
             "bearerAuth": []
@@ -12041,17 +12161,25 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Local result",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Bank"
+                  "$ref": "#/components/schemas/FinanceBankRequest"
                 }
               }
             }
@@ -12137,14 +12265,13 @@
             }
           }
         },
-        "x-authorization": "finance.review",
-        "x-rules": "Lý do bắt buộc; không sửa tiền/sao; kiểm action phù hợp tài nguyên.",
+        "x-authorization": "finance.review + fresh MFA",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ModerationInput"
+                "$ref": "#/components/schemas/AdminFinanceDecision"
               }
             }
           }
@@ -14067,7 +14194,7 @@
           "Admin"
         ],
         "summary": "Funnel vận hành",
-        "description": "Quyền: reports.read. Phân biệt số yêu cầu/việc/settlement; không cộng payment-reported vào doanh thu hoặc settlement.",
+        "description": "P2 local/test. Read uses current permissions and MFA. Mutations require fresh MFA, version and unchanged retry key.",
         "security": [
           {
             "bearerAuth": []
@@ -14075,14 +14202,22 @@
         ],
         "parameters": [
           {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
             "name": "from",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string",
               "format": "date-time"
-            },
-            "description": "Đầu kỳ UTC"
+            }
           },
           {
             "name": "to",
@@ -14091,40 +14226,10 @@
             "schema": {
               "type": "string",
               "format": "date-time"
-            },
-            "description": "Cuối kỳ exclusive"
-          },
-          {
-            "name": "cursor",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Opaque cursor ký, gắn bộ lọc và actor; thứ tự created_at,id."
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
-            },
-            "description": "Giới hạn kỹ thuật đề xuất, không giới hạn nghiệp vụ."
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Thành công; đọc state/version trả về.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/getMetricsPage"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Request không hợp lệ",
             "content": {
@@ -14204,10 +14309,20 @@
                 }
               }
             }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getMetricsPage"
+                }
+              }
+            }
           }
         },
         "x-authorization": "reports.read",
-        "x-rules": "Phân biệt số yêu cầu/việc/settlement; không cộng payment-reported vào doanh thu hoặc settlement."
+        "x-rules": "Exact decimal strings for money; no balance mutation from lookup."
       }
     },
     "/admin/invoices": {
@@ -14217,7 +14332,7 @@
           "Admin"
         ],
         "summary": "Hóa đơn treo/chờ",
-        "description": "Quyền: finance.read. Chỉ tra cứu; route không tự release, đảo hoặc sửa.",
+        "description": "P2 local/test. Read uses current permissions and MFA. Mutations require fresh MFA, version and unchanged retry key.",
         "security": [
           {
             "bearerAuth": []
@@ -14225,12 +14340,34 @@
         ],
         "parameters": [
           {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "cursor",
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "description": "Opaque cursor ký, gắn bộ lọc và actor; thứ tự created_at,id."
+            }
           },
           {
             "name": "limit",
@@ -14238,23 +14375,11 @@
             "schema": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 100,
-              "default": 20
-            },
-            "description": "Giới hạn kỹ thuật đề xuất, không giới hạn nghiệp vụ."
+              "maximum": 100
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Thành công; đọc state/version trả về.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/adminInvoicesPage"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Request không hợp lệ",
             "content": {
@@ -14334,10 +14459,20 @@
                 }
               }
             }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/adminInvoicesPage"
+                }
+              }
+            }
           }
         },
         "x-authorization": "finance.read",
-        "x-rules": "Chỉ tra cứu; route không tự release, đảo hoặc sửa."
+        "x-rules": "Exact decimal strings for money; no balance mutation from lookup."
       }
     },
     "/assets/upload-grants": {
@@ -15369,7 +15504,7 @@
           "Hạ tầng"
         ],
         "summary": "Tra thao tác mất response",
-        "description": "Quyền: Đúng actor. ",
+        "description": "Only current actor; no response snapshot or credentials. Operation may be omitted when key matches one operation; ambiguity returns409.",
         "security": [
           {
             "bearerAuth": []
@@ -15387,7 +15522,7 @@
           {
             "name": "operation",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             },
@@ -15497,7 +15632,6 @@
           "Tài khoản"
         ],
         "summary": "Đổi điện thoại/email",
-        "description": "Quyền: Chính mình + fresh auth. Audit, CAS và idempotency; không sửa dữ liệu lịch sử.",
         "security": [
           {
             "bearerAuth": []
@@ -15511,13 +15645,12 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
           }
         ],
         "responses": {
           "201": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Kết quả local DEMO/test",
             "content": {
               "application/json": {
                 "schema": {
@@ -15576,16 +15709,6 @@
               }
             }
           },
-          "422": {
-            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "429": {
             "description": "Giới hạn tần suất; Retry-After",
             "content": {
@@ -15605,10 +15728,20 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         },
-        "x-authorization": "Chính mình + fresh auth",
-        "x-rules": "Đối chiếu phiên bản và quyền hiện hành; quyền admin khác quyền doanh nghiệp.",
+        "x-authorization": "Phiên hiện hành, fresh password proof, family-bound challenge",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -15618,7 +15751,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Quyền: Chính mình + fresh auth. Audit, CAS và idempotency; không sửa dữ liệu lịch sử."
       }
     },
     "/me/identity-change/confirm": {
@@ -15628,7 +15762,6 @@
           "Tài khoản"
         ],
         "summary": "Xác nhận định danh mới",
-        "description": "Quyền: Chính mình + new contact challenge. Audit, CAS và idempotency; không sửa dữ liệu lịch sử.",
         "security": [
           {
             "bearerAuth": []
@@ -15642,13 +15775,12 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
           }
         ],
         "responses": {
           "201": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Kết quả local DEMO/test",
             "content": {
               "application/json": {
                 "schema": {
@@ -15707,16 +15839,6 @@
               }
             }
           },
-          "422": {
-            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "429": {
             "description": "Giới hạn tần suất; Retry-After",
             "content": {
@@ -15736,10 +15858,20 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         },
-        "x-authorization": "Chính mình + new contact challenge",
-        "x-rules": "Đối chiếu phiên bản và quyền hiện hành; quyền admin khác quyền doanh nghiệp.",
+        "x-authorization": "Phiên hiện hành, fresh password proof, family-bound challenge",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -15749,7 +15881,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Quyền: Chính mình + new contact challenge. Audit, CAS và idempotency; không sửa dữ liệu lịch sử."
       }
     },
     "/auth/recovery-reports": {
@@ -15759,16 +15892,26 @@
           "Tài khoản"
         ],
         "summary": "Mất mọi kênh đăng nhập",
-        "description": "Quyền: Public; challenge chống spam; chứng cứ riêng. Audit, CAS và idempotency; không sửa dữ liệu lịch sử.",
         "security": [],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Recovery-Token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "description": "Applicant-generated secret retained for uncertain retry. Same body+secret returns same receipt; never stored as raw snapshot. Without this header server generates a new receipt secret."
+          }
+        ],
         "responses": {
           "201": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Kết quả local DEMO/test",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Ack"
+                  "$ref": "#/components/schemas/AccountReceipt"
                 }
               }
             }
@@ -15823,16 +15966,6 @@
               }
             }
           },
-          "422": {
-            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "429": {
             "description": "Giới hạn tần suất; Retry-After",
             "content": {
@@ -15852,10 +15985,20 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         },
-        "x-authorization": "Public; challenge chống spam; chứng cứ riêng",
-        "x-rules": "Đối chiếu phiên bản và quyền hiện hành; quyền admin khác quyền doanh nghiệp.",
+        "x-authorization": "Public, không tiết lộ tồn tại tài khoản",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -15865,17 +16008,17 @@
               }
             }
           }
-        }
+        },
+        "description": "Quyền: Public; challenge chống spam; chứng cứ riêng. Audit, CAS và idempotency; không sửa dữ liệu lịch sử."
       }
     },
     "/admin/recovery-reports/{id}/decision": {
       "post": {
         "operationId": "decideRecovery",
         "tags": [
-          "Admin"
+          "Tài khoản"
         ],
         "summary": "Xử lý khôi phục",
-        "description": "Quyền: accounts.manage + fresh auth; không tự chuyển chủ. Audit, CAS và idempotency; không sửa dữ liệu lịch sử.",
         "security": [
           {
             "bearerAuth": []
@@ -15892,19 +16035,27 @@
             }
           },
           {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
             "name": "Idempotency-Key",
             "in": "header",
             "required": true,
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
           }
         ],
         "responses": {
           "201": {
-            "description": "Thành công; đọc state/version trả về.",
+            "description": "Kết quả local DEMO/test",
             "content": {
               "application/json": {
                 "schema": {
@@ -15963,16 +16114,6 @@
               }
             }
           },
-          "422": {
-            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "429": {
             "description": "Giới hạn tần suất; Retry-After",
             "content": {
@@ -15992,10 +16133,20 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         },
-        "x-authorization": "accounts.manage + fresh auth; không tự chuyển chủ",
-        "x-rules": "Đối chiếu phiên bản và quyền hiện hành; quyền admin khác quyền doanh nghiệp.",
+        "x-authorization": "accounts.manage + fresh MFA; không tự xét chính mình",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
         "requestBody": {
           "required": true,
           "content": {
@@ -16005,7 +16156,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Quyền: accounts.manage + fresh auth; không tự chuyển chủ. Audit, CAS và idempotency; không sửa dữ liệu lịch sử."
       }
     },
     "/partners/{id}/deactivation": {
@@ -16295,13 +16447,22 @@
           "Admin"
         ],
         "summary": "Cấp/thu hồi quyền admin",
-        "description": "Quyền: Admin có grant.manage; fresh auth; không tự nâng quyền. Audit, CAS và idempotency; không sửa dữ liệu lịch sử.",
+        "description": "P2 local/test. Read uses current permissions and MFA. Mutations require fresh MFA, version and unchanged retry key.",
         "security": [
           {
             "bearerAuth": []
           }
         ],
         "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -16318,21 +16479,10 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+            }
           }
         ],
         "responses": {
-          "201": {
-            "description": "Thành công; đọc state/version trả về.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Ack"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Request không hợp lệ",
             "content": {
@@ -16412,20 +16562,157 @@
                 }
               }
             }
+          },
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminGrantProfile"
+                }
+              }
+            }
           }
         },
-        "x-authorization": "Admin có grant.manage; fresh auth; không tự nâng quyền",
-        "x-rules": "Đối chiếu phiên bản và quyền hiện hành; quyền admin khác quyền doanh nghiệp.",
+        "x-authorization": "grant.manage",
+        "x-rules": "Exact decimal strings for money; no balance mutation from lookup.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GrantsEdit"
+                "$ref": "#/components/schemas/AdminGrantInput"
               }
             }
           }
         }
+      },
+      "get": {
+        "operationId": "getAdminGrants",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "getAdminGrants",
+        "description": "P2 local/test. Read uses current permissions and MFA. Mutations require fresh MFA, version and unchanged retry key.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminGrantProfile"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "grant.manage",
+        "x-rules": "Exact decimal strings for money; no balance mutation from lookup."
       }
     },
     "/admin/categories": {
@@ -20323,6 +20610,2724 @@
           }
         }
       }
+    },
+    "/auth/security/challenges": {
+      "post": {
+        "operationId": "requestAccountSecurityChallenge",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "requestAccountSecurityChallenge",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Challenge"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Public, không tiết lộ tồn tại tài khoản",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SecurityChallengeInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/security/confirm": {
+      "post": {
+        "operationId": "confirmAccountSecurityChallenge",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "confirmAccountSecurityChallenge",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Session"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Ack"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Public, không tiết lộ tồn tại tài khoản",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SecurityConfirmInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/password": {
+      "post": {
+        "operationId": "changeAccountPassword",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "changeAccountPassword",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ack"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Phiên hiện hành",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordChangeInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/deletion-preview": {
+      "get": {
+        "operationId": "previewAccountDeletion",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "previewAccountDeletion",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountObligations"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Phiên hiện hành",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật."
+      }
+    },
+    "/admin/account-deletions": {
+      "get": {
+        "operationId": "listAdminAccountDeletions",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "listAdminAccountDeletions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "pending"
+              ],
+              "default": "all"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountCasePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "accounts.manage + MFA",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật."
+      }
+    },
+    "/admin/account-deletions/{id}": {
+      "get": {
+        "operationId": "getAdminAccountDeletions",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "getAdminAccountDeletions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDeletionDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "accounts.manage + MFA",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật."
+      }
+    },
+    "/admin/account-deletions/{id}/decision": {
+      "post": {
+        "operationId": "decideAdminAccountDeletions",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "decideAdminAccountDeletions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ack"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "accounts.manage + fresh MFA; không tự xét chính mình",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCaseDecision"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/recovery-reports/{id}": {
+      "get": {
+        "operationId": "getAccountRecoveryReceipt",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "getAccountRecoveryReceipt",
+        "security": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Recovery-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountRecoveryStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Bí mật hồ sơ",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật."
+      }
+    },
+    "/auth/recovery-reports/{id}/evidence": {
+      "post": {
+        "operationId": "supplementAccountRecovery",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "supplementAccountRecovery",
+        "security": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Recovery-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ack"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Bí mật hồ sơ",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountEvidenceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/recovery-reports/{id}/challenge": {
+      "post": {
+        "operationId": "requestRecoveryVerification",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "requestRecoveryVerification",
+        "security": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Recovery-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Challenge"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Bí mật hồ sơ",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật."
+      }
+    },
+    "/admin/recovery-reports": {
+      "get": {
+        "operationId": "listAdminAccountRecoveries",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "listAdminAccountRecoveries",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "pending"
+              ],
+              "default": "all"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountCasePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "accounts.manage + MFA",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật."
+      }
+    },
+    "/admin/recovery-reports/{id}": {
+      "get": {
+        "operationId": "getAdminAccountRecoveries",
+        "tags": [
+          "Tài khoản"
+        ],
+        "summary": "getAdminAccountRecoveries",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kết quả local DEMO/test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountRecoveryDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không hợp lệ hoặc bị chặn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "accounts.manage + MFA",
+        "x-rules": "P2-01 đã chốt; chỉ local DEMO/test. Challenge 5 phút, 5 lần thử, purpose-bound, single-use. Không log bí mật."
+      }
+    },
+    "/finance/reauthenticate": {
+      "post": {
+        "operationId": "financeReauthenticate",
+        "tags": [
+          "Hóa đơn và tiền"
+        ],
+        "summary": "financeReauthenticate",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinanceReauthResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinanceReauthInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/partners/{id}/bank/cancel": {
+      "post": {
+        "operationId": "cancelBank",
+        "tags": [
+          "Hóa đơn và tiền"
+        ],
+        "summary": "cancelBank",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bank"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "wallet.read + bank.manage",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinanceCancelInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topups/{id}": {
+      "get": {
+        "operationId": "getTopup",
+        "tags": [
+          "Hóa đơn và tiền"
+        ],
+        "summary": "getTopup",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MoneyRequest"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "wallet.read"
+      }
+    },
+    "/topups/{id}/cancel": {
+      "post": {
+        "operationId": "cancelTopup",
+        "tags": [
+          "Hóa đơn và tiền"
+        ],
+        "summary": "cancelTopup",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MoneyRequest"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "wallet.read + wallet.topup",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinanceCancelInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/topups/{id}": {
+      "get": {
+        "operationId": "adminGetTopup",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "adminGetTopup",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MoneyRequest"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "finance.read + MFA"
+      }
+    },
+    "/payouts/{id}/cancel": {
+      "post": {
+        "operationId": "cancelPayout",
+        "tags": [
+          "Hóa đơn và tiền"
+        ],
+        "summary": "cancelPayout",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MoneyRequest"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "wallet.read + wallet.withdraw",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinanceCancelInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/payouts/{id}": {
+      "get": {
+        "operationId": "adminGetPayout",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "adminGetPayout",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MoneyRequest"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "finance.read + MFA"
+      }
+    },
+    "/partners/{id}/finance-history/{domain}": {
+      "get": {
+        "operationId": "financeHistory",
+        "tags": [
+          "Hóa đơn và tiền"
+        ],
+        "summary": "financeHistory",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "domain",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "topups",
+                "payouts",
+                "bank-accounts"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/FinanceMoneyPage"
+                    },
+                    {
+                      "$ref": "#/components/schemas/FinanceBankPage"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "wallet.read"
+      }
+    },
+    "/admin/bank-accounts/{id}": {
+      "get": {
+        "operationId": "adminGetBank",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "adminGetBank",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinanceBankRequest"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "finance.read + MFA"
+      }
+    },
+    "/admin/finance-simulator/deposits": {
+      "post": {
+        "operationId": "localBankDeposit",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "localBankDeposit",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalBankDepositResult"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "finance.review + fresh MFA + configured local bank simulator",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalBankDepositInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{id}/call-targets": {
+      "get": {
+        "operationId": "callTargets",
+        "tags": [
+          "Chat và gọi"
+        ],
+        "summary": "callTargets",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "description": "Local LiveKit only; authorization and current assignment/contact checked server-side. Tokens are returned only by the non-idempotent media endpoint after acceptance.",
+        "responses": {
+          "200": {
+            "description": "Local call result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallTargets"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calls/{id}": {
+      "get": {
+        "operationId": "getCall",
+        "tags": [
+          "Chat và gọi"
+        ],
+        "summary": "getCall",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "description": "Local LiveKit only; authorization and current assignment/contact checked server-side. Tokens are returned only by the non-idempotent media endpoint after acceptance.",
+        "responses": {
+          "200": {
+            "description": "Local call result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Call"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calls/{id}/media": {
+      "post": {
+        "operationId": "callMedia",
+        "tags": [
+          "Chat và gọi"
+        ],
+        "summary": "callMedia",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "description": "Local LiveKit only; authorization and current assignment/contact checked server-side. Tokens are returned only by the non-idempotent media endpoint after acceptance.",
+        "responses": {
+          "201": {
+            "description": "Local call result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallMedia"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calls/{id}/heartbeat": {
+      "post": {
+        "operationId": "callHeartbeat",
+        "tags": [
+          "Chat và gọi"
+        ],
+        "summary": "callHeartbeat",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "description": "Local LiveKit only; authorization and current assignment/contact checked server-side. Tokens are returned only by the non-idempotent media endpoint after acceptance.",
+        "responses": {
+          "201": {
+            "description": "Local call result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Call"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/invoices/{id}": {
+      "get": {
+        "operationId": "getAdminInvoice",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "getAdminInvoice",
+        "description": "P2 local/test. Read uses current permissions and MFA. Mutations require fresh MFA, version and unchanged retry key.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Invoice"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "finance.read",
+        "x-rules": "Exact decimal strings for money; no balance mutation from lookup."
+      }
+    },
+    "/admin/jobs": {
+      "get": {
+        "operationId": "listAdminJobs",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "listAdminJobs",
+        "description": "P2 local/test. Read uses current permissions and MFA. Mutations require fresh MFA, version and unchanged retry key.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminJobsPage"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "reports.read",
+        "x-rules": "Exact decimal strings for money; no balance mutation from lookup."
+      }
+    },
+    "/admin/jobs/{id}": {
+      "get": {
+        "operationId": "getAdminJob",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "getAdminJob",
+        "description": "P2 local/test. Read uses current permissions and MFA. Mutations require fresh MFA, version and unchanged retry key.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminJob"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "reports.read",
+        "x-rules": "Exact decimal strings for money; no balance mutation from lookup."
+      }
+    },
+    "/admin/grant-users": {
+      "get": {
+        "operationId": "listGrantUsers",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "listGrantUsers",
+        "description": "P2 local/test. Read uses current permissions and MFA. Mutations require fresh MFA, version and unchanged retry key.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminGrantPage"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "grant.manage",
+        "x-rules": "Exact decimal strings for money; no balance mutation from lookup."
+      }
+    },
+    "/bank-accounts/{id}": {
+      "get": {
+        "operationId": "getBankRequest",
+        "tags": [
+          "Hóa đơn và tiền"
+        ],
+        "summary": "Read bank proposal and decision history",
+        "description": "Local bank simulator / test money only. Current authorization is rechecked before idempotent replay.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinanceBankRequest"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "wallet.read"
+      }
     }
   },
   "components": {
@@ -20502,7 +23507,9 @@
           "locale": {
             "type": "string",
             "enum": [
-              "vi"
+              "vi",
+              "en",
+              "ja"
             ]
           },
           "partner_ids": {
@@ -20689,7 +23696,9 @@
           "locale": {
             "type": "string",
             "enum": [
-              "vi"
+              "vi",
+              "en",
+              "ja"
             ]
           }
         },
@@ -20701,15 +23710,23 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "verified_challenge_token": {
-            "type": "string"
+          "challenge_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
           },
           "new_password": {
-            "type": "string"
+            "type": "string",
+            "minLength": 15,
+            "maxLength": 128
           }
         },
         "required": [
-          "verified_challenge_token",
+          "challenge_id",
+          "code",
           "new_password"
         ]
       },
@@ -22296,15 +25313,36 @@
             "type": "string",
             "format": "uuid"
           },
-          "amount": {
-            "$ref": "#/components/schemas/Amount"
-          },
-          "state": {
-            "type": "string"
-          },
           "version": {
             "type": "integer",
             "minimum": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "transferring",
+              "unknown",
+              "succeeded",
+              "failed",
+              "rejected",
+              "cancelled",
+              "confirmed"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FinanceHistory"
+            }
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Amount"
           },
           "bank_last4": {
             "anyOf": [
@@ -22315,15 +25353,68 @@
                 "type": "null"
               }
             ]
+          },
+          "bank_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "bank_code": {
+                    "type": "string"
+                  },
+                  "account_last4": {
+                    "type": "string"
+                  },
+                  "holder_name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "bank_code",
+                  "account_last4",
+                  "holder_name"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bank_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
           "id",
           "partner_id",
-          "amount",
-          "state",
           "version",
-          "bank_last4"
+          "state",
+          "created_at",
+          "history",
+          "amount",
+          "bank_last4",
+          "bank_snapshot",
+          "bank_reference",
+          "evidence_id"
         ]
       },
       "PayoutInput": {
@@ -22335,19 +25426,25 @@
             "format": "uuid"
           },
           "amount": {
-            "$ref": "#/components/schemas/Amount"
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "At least 50000 VND; no fee credit withdrawal."
           },
           "bank_account_id": {
             "type": "string",
             "format": "uuid"
+          },
+          "reauth_grant": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
           }
         },
         "required": [
           "partner_id",
           "amount",
-          "bank_account_id"
-        ],
-        "description": "Amount >=50000; bank current verified; không rút credit; phí platform 0."
+          "bank_account_id",
+          "reauth_grant"
+        ]
       },
       "BankInput": {
         "type": "object",
@@ -22358,59 +25455,76 @@
             "minimum": 1
           },
           "bank_code": {
-            "type": "string"
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 40
           },
           "account_number": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[0-9]{6,20}$"
           },
           "holder_name": {
-            "type": "string"
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "reauth_grant": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
           }
         },
         "required": [
           "expected_version",
           "bank_code",
           "account_number",
-          "holder_name"
+          "holder_name",
+          "reason",
+          "reauth_grant"
         ]
       },
       "Bank": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "id": {
+          "partner_id": {
             "type": "string",
             "format": "uuid"
-          },
-          "bank_code": {
-            "type": "string"
-          },
-          "account_last4": {
-            "type": "string"
-          },
-          "holder_name": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "pending",
-              "verified",
-              "rejected"
-            ]
           },
           "version": {
             "type": "integer",
             "minimum": 1
+          },
+          "current": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FinanceBankAccount"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pending": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FinanceBankAccount"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
-          "id",
-          "bank_code",
-          "account_last4",
-          "holder_name",
-          "status",
-          "version"
+          "partner_id",
+          "version",
+          "current",
+          "pending"
         ]
       },
       "ConversationCreate": {
@@ -22592,30 +25706,6 @@
               "worker",
               "business"
             ]
-          }
-        },
-        "required": [
-          "job_id",
-          "target"
-        ]
-      },
-      "CallGrant": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "provider": {
-            "type": "string"
-          },
-          "join_token": {
-            "type": "string"
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
           },
           "recipient_id": {
             "type": "string",
@@ -22623,13 +25713,33 @@
           }
         },
         "required": [
-          "id",
-          "provider",
-          "join_token",
-          "expires_at",
-          "recipient_id"
+          "job_id"
         ],
-        "description": "Kiểm lại assignment/contact, job accepted/completed, opt-out; token ngắn hạn; provider chưa chọn."
+        "oneOf": [
+          {
+            "required": [
+              "target"
+            ],
+            "not": {
+              "required": [
+                "recipient_id"
+              ]
+            }
+          },
+          {
+            "required": [
+              "recipient_id"
+            ],
+            "not": {
+              "required": [
+                "target"
+              ]
+            }
+          }
+        ]
+      },
+      "CallGrant": {
+        "$ref": "#/components/schemas/Call"
       },
       "CallAction": {
         "type": "object",
@@ -22644,7 +25754,8 @@
             "enum": [
               "accept",
               "decline",
-              "end"
+              "end",
+              "fail"
             ]
           }
         },
@@ -23173,31 +26284,46 @@
               "approve",
               "reject",
               "transferring",
-              "unknown",
               "succeeded",
               "failed_verified"
             ]
           },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
           "bank_reference": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
           },
           "evidence_ids": {
             "type": "array",
+            "maxItems": 10,
             "items": {
               "type": "string",
               "format": "uuid"
             }
           },
-          "reason": {
-            "type": "string"
+          "checked": {
+            "type": "boolean"
+          },
+          "simulator_scenario": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failure",
+              "timeout_after_success",
+              "timeout_after_failure"
+            ]
           }
         },
         "required": [
           "expected_version",
           "decision",
           "reason"
-        ],
-        "description": "State machine riêng từng route; succeeded/failed_verified bắt buộc chứng cứ, unique bank ref cho success. Ảnh đơn lẻ không đủ ghi có."
+        ]
       },
       "ModerationInput": {
         "type": "object",
@@ -23412,7 +26538,15 @@
             "type": "string"
           },
           "value": {
-            "type": "number"
+            "type": "string",
+            "pattern": "^-?[0-9]+$"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "count",
+              "VND"
+            ]
           },
           "definition": {
             "type": "string"
@@ -23421,6 +26555,7 @@
         "required": [
           "name",
           "value",
+          "unit",
           "definition"
         ]
       },
@@ -23428,10 +26563,10 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "operation": {
+          "key": {
             "type": "string"
           },
-          "key": {
+          "operation": {
             "type": "string"
           },
           "state": {
@@ -23442,24 +26577,24 @@
             ]
           },
           "resource_id": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
-          "operation",
           "key",
+          "operation",
           "state",
-          "resource_id"
-        ],
-        "description": "Chỉ đúng actor; không chứa raw response riêng tư của vai khác."
+          "resource_id",
+          "created_at"
+        ]
       },
       "listSessionsPage": {
         "type": "object",
@@ -24070,19 +27205,31 @@
             }
           },
           "next_cursor": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "null"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scope": {
+            "const": "local_test"
           }
         },
         "required": [
           "items",
-          "next_cursor"
+          "next_cursor",
+          "from",
+          "to",
+          "as_of",
+          "scope"
         ]
       },
       "adminInvoicesPage": {
@@ -24096,13 +27243,9 @@
             }
           },
           "next_cursor": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           }
         },
@@ -24187,24 +27330,26 @@
             "minimum": 1
           },
           "kind": {
+            "type": "string",
             "enum": [
               "email",
               "phone"
-            ],
-            "type": "string"
+            ]
           },
           "new_contact": {
             "type": "string"
           },
-          "fresh_auth_token": {
-            "type": "string"
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
           }
         },
         "required": [
           "expected_version",
           "kind",
           "new_contact",
-          "fresh_auth_token"
+          "password"
         ]
       },
       "IdentityConfirm": {
@@ -24216,7 +27361,8 @@
             "format": "uuid"
           },
           "code": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
           }
         },
         "required": [
@@ -24234,11 +27380,10 @@
           "reachable_contact": {
             "type": "string"
           },
-          "proof_upload_token": {
-            "type": "string"
-          },
           "description": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
           }
         },
         "required": [
@@ -24263,18 +27408,10 @@
               "reject"
             ]
           },
-          "verified_contact": {
-            "type": "string"
-          },
-          "evidence_ids": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
           "reason": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
           }
         },
         "required": [
@@ -26069,6 +29206,1131 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CustomerReview"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "SecurityChallengeInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "purpose": {
+            "enum": [
+              "login",
+              "reset"
+            ]
+          },
+          "contact": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "purpose",
+          "contact"
+        ]
+      },
+      "SecurityConfirmInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "purpose": {
+            "enum": [
+              "login",
+              "recovery"
+            ]
+          },
+          "challenge_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
+          },
+          "new_password": {
+            "type": "string",
+            "minLength": 15,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "purpose",
+          "challenge_id",
+          "code"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "purpose": {
+                  "const": "recovery"
+                }
+              },
+              "required": [
+                "purpose"
+              ]
+            },
+            "then": {
+              "required": [
+                "new_password"
+              ]
+            }
+          }
+        ]
+      },
+      "PasswordChangeInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "new_password": {
+            "type": "string",
+            "minLength": 15,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "password",
+          "new_password"
+        ]
+      },
+      "AccountRecoveryInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "old_contact": {
+            "type": "string"
+          },
+          "new_contact": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          }
+        },
+        "required": [
+          "old_contact",
+          "new_contact",
+          "evidence"
+        ]
+      },
+      "AccountCase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "enum": [
+              "pending",
+              "awaiting_evidence",
+              "approved",
+              "rejected",
+              "completed"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "user_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "version"
+        ]
+      },
+      "AccountReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "receipt_token": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "version",
+          "receipt_token"
+        ]
+      },
+      "AccountRecoveryStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "version"
+        ]
+      },
+      "AccountRecoveryDetail": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "contact": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "state",
+          "version",
+          "contact",
+          "evidence",
+          "reason"
+        ]
+      },
+      "AccountObligations": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "blocked": {
+            "type": "boolean"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "OWNER",
+                "ADMIN",
+                "JOB",
+                "INVOICE",
+                "REPORT",
+                "HOLD",
+                "TOPUP",
+                "PAYOUT",
+                "BANK",
+                "BALANCE"
+              ]
+            }
+          },
+          "points": {
+            "type": "string",
+            "pattern": "^-?[0-9]+$"
+          }
+        },
+        "required": [
+          "blocked",
+          "reasons",
+          "points"
+        ]
+      },
+      "AccountDeletionInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "forfeit_points": {
+            "type": "boolean"
+          },
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "password",
+          "forfeit_points",
+          "expected_version",
+          "reason"
+        ]
+      },
+      "AccountCaseDecision": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "approve",
+              "reject",
+              "evidence"
+            ]
+          },
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "action",
+          "expected_version",
+          "reason"
+        ]
+      },
+      "AccountEvidenceInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "evidence": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          }
+        },
+        "required": [
+          "evidence"
+        ]
+      },
+      "AccountCasePage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountCase"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "AccountDeletionDetail": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "forfeit_points": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reviewer_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "obligations": {
+            "$ref": "#/components/schemas/AccountObligations"
+          },
+          "application_reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "forfeit_points",
+          "state",
+          "version",
+          "reviewer_id",
+          "reason",
+          "created_at",
+          "obligations",
+          "application_reason"
+        ]
+      },
+      "FinanceBankAccount": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bank_code": {
+            "type": "string"
+          },
+          "account_last4": {
+            "type": "string",
+            "pattern": "^[0-9]{4}$"
+          },
+          "holder_name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "verified",
+              "approved",
+              "rejected",
+              "cancelled"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "bank_code",
+          "account_last4",
+          "holder_name",
+          "status",
+          "version"
+        ]
+      },
+      "FinanceHistory": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "actor_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "action": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "bank_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "actor_id",
+          "action",
+          "reason",
+          "version",
+          "bank_reference",
+          "created_at"
+        ]
+      },
+      "FinanceBankRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "partner_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "transferring",
+              "unknown",
+              "succeeded",
+              "failed",
+              "rejected",
+              "cancelled",
+              "confirmed"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FinanceHistory"
+            }
+          },
+          "bank_code": {
+            "type": "string"
+          },
+          "account_last4": {
+            "type": "string"
+          },
+          "holder_name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "partner_id",
+          "version",
+          "state",
+          "created_at",
+          "history",
+          "bank_code",
+          "account_last4",
+          "holder_name",
+          "reason"
+        ]
+      },
+      "FinanceMoneyPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MoneyRequest"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "FinanceBankPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FinanceBankRequest"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "FinanceCancelInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "expected_version",
+          "reason"
+        ]
+      },
+      "FinanceReauthInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "bank",
+              "payout"
+            ]
+          }
+        },
+        "required": [
+          "password",
+          "scope"
+        ]
+      },
+      "FinanceReauthResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "grant": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "grant",
+          "expires_at"
+        ]
+      },
+      "LocalBankDepositInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "partner_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Amount"
+          },
+          "reference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "partner_id",
+          "amount",
+          "reference"
+        ]
+      },
+      "LocalBankDepositResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "partner_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Amount"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "state": {
+            "const": "recorded"
+          },
+          "environment": {
+            "const": "local-test"
+          }
+        },
+        "required": [
+          "partner_id",
+          "amount",
+          "reference",
+          "state",
+          "environment"
+        ]
+      },
+      "Call": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "job_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conversation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "caller_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recipient_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "ringing",
+              "accepted",
+              "declined",
+              "ended",
+              "busy",
+              "no_answer",
+              "failed",
+              "revoked"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "answered_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ring_until": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "job_id",
+          "conversation_id",
+          "caller_id",
+          "recipient_id",
+          "state",
+          "version",
+          "created_at",
+          "answered_at",
+          "ended_at",
+          "ring_until"
+        ]
+      },
+      "CallPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Call"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "CallTargets": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "user_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "display_name": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "assigned",
+                    "contact",
+                    "customer"
+                  ]
+                }
+              },
+              "required": [
+                "user_id",
+                "display_name",
+                "role"
+              ]
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "CallMedia": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "call_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^wss?://"
+          },
+          "token": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "call_id",
+          "url",
+          "token",
+          "expires_at"
+        ]
+      },
+      "AdminGrantProfile": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "support.read",
+                "support.manage",
+                "moderation.manage",
+                "audit.read",
+                "finance.review",
+                "accounts.manage",
+                "catalog.manage",
+                "finance.read",
+                "reports.read",
+                "grant.manage"
+              ]
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "version",
+          "permissions"
+        ]
+      },
+      "AdminGrantInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "support.read",
+                "support.manage",
+                "moderation.manage",
+                "audit.read",
+                "finance.review",
+                "accounts.manage",
+                "catalog.manage",
+                "finance.read",
+                "reports.read",
+                "grant.manage"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          }
+        },
+        "required": [
+          "expected_version",
+          "permissions",
+          "reason"
+        ]
+      },
+      "AdminJob": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "state": {
+            "type": "string"
+          },
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "partner_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "service_mode": {
+            "type": "string"
+          },
+          "time_mode": {
+            "type": "string"
+          },
+          "scheduled_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "accepted_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "completed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "state",
+          "customer_id",
+          "partner_id",
+          "service_mode",
+          "time_mode",
+          "scheduled_at",
+          "accepted_at",
+          "completed_at",
+          "created_at"
+        ]
+      },
+      "AdminJobsPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminJob"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "AdminGrantPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminGrantProfile"
             }
           },
           "next_cursor": {

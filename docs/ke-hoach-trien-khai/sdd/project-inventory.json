@@ -57,6 +57,14 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/admin/src/backoffice-messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/BackofficePanel.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/admin/src/CatalogEditor.tsx",
       "kind": "product"
     },
@@ -77,6 +85,18 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/admin/src/finance-client.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/finance-messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/FinancePanel.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/admin/src/i18n.ts",
       "kind": "product"
     },
@@ -90,6 +110,14 @@
     },
     {
       "path": "apps/admin/src/operations-messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/P2Desk.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/RecoveryPanel.tsx",
       "kind": "product"
     },
     {
@@ -241,6 +269,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/plugins/with-call-audio-only.cjs",
+      "kind": "tooling"
+    },
+    {
       "path": "apps/mobile/plugins/with-debug-http.cjs",
       "kind": "product"
     },
@@ -275,6 +307,10 @@
     {
       "path": "apps/mobile/src/app/providers/AppProviders.tsx",
       "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/app/providers/AuthLocale.test.tsx",
+      "kind": "test"
     },
     {
       "path": "apps/mobile/src/app/providers/AuthProvider.tsx",
@@ -318,6 +354,30 @@
     },
     {
       "path": "apps/mobile/src/components/ui/Screen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/account-security/api/security-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/account-security/api/security-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/account-security/messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/account-security/screens/RecoveryScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/account-security/screens/SecurityScreen.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/account-security/screens/SecurityScreen.tsx",
       "kind": "product"
     },
     {
@@ -397,6 +457,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/admin/api/account-security-api.ts",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/admin/api/admin-api.test.ts",
       "kind": "test"
     },
@@ -449,7 +513,19 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/admin/screens/P2Desk.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/admin/screens/presentation.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/RecoveryPanel.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/RecoveryPanel.tsx",
       "kind": "product"
     },
     {
@@ -486,6 +562,62 @@
     },
     {
       "path": "apps/mobile/src/features/auth/state/token-storage.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/backoffice/BackofficePanel.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/backoffice/BackofficePanel.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/backoffice/messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/api/calls-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/api/calls-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/CallHistory.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/CallsProvider.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/media.native.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/media.native.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/media.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/media.types.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/models.ts",
       "kind": "product"
     },
     {
@@ -534,6 +666,42 @@
     },
     {
       "path": "apps/mobile/src/features/chat/screens/ConversationsScreen.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/finance/api/finance-admin-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/finance/api/finance-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/finance/api/finance-api.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/finance/messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/finance/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/finance/screens/AdminFinance.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/finance/screens/AdminFinance.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/finance/screens/FinanceScreen.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/finance/screens/FinanceScreen.tsx",
       "kind": "product"
     },
     {
@@ -699,6 +867,10 @@
     {
       "path": "apps/mobile/src/features/notifications/api/notifications-api.ts",
       "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/NotificationsProvider.test.tsx",
+      "kind": "test"
     },
     {
       "path": "apps/mobile/src/features/notifications/NotificationsProvider.tsx",
@@ -1225,6 +1397,26 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B01-08/01-security-web.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B01-08/02-recovery-web.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B01-08/03-admin-recovery-web.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B01-08/android-security.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B01-08/ios-security.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-03/android-partner-areas.png",
       "kind": "documentation"
     },
@@ -1661,6 +1853,62 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/android-bank.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/android-wallet.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/desktop-bank-review.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/desktop-payout-unknown.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/desktop-topup-confirmed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/ios-bank.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/ios-wallet.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/mobile-web-bank-pending.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/mobile-web-payout-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/mobile-web-payout-form.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/mobile-web-payout-unknown.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/mobile-web-topup-form.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/mobile-web-wallet.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B08-01/responsive-admin-payout.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B09-01/ios-report.png",
       "kind": "documentation"
     },
@@ -1773,6 +2021,50 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-05/01-incoming-web.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-05/02-connected-customer-web.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-05/03-connected-worker-web.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-05/04-muted-web.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-05/05-ended-web.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-05/am-thanh-local.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B10-05/ui-evidence.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B11-01/desktop-grants.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B11-01/desktop-metrics.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/I18N-05/01-account-en-web.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/I18N-05/02-guest-ja-web.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/admin-internal-note.png",
       "kind": "documentation"
     },
@@ -1869,6 +2161,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-08-bao-mat-khoi-phuc-va-xoa.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-ra-soat-danh-muc.md",
       "kind": "documentation"
     },
@@ -1945,6 +2241,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B08-01-ngan-hang-va-nap-rut-test.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B09-01-ho-tro-va-bao-cao.md",
       "kind": "documentation"
     },
@@ -1981,6 +2281,22 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-05-cuoc-goi-livekit-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-01-quyen-tra-cuu-va-bao-cao.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-02-dien-tap-phuc-hoi-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-03-tong-ket-p2.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B03-01-geoapify-30-dia-chi.json",
       "kind": "documentation"
     },
@@ -1990,6 +2306,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-04-danh-muc-da-ngon-ngu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-05-ngon-ngu-tai-khoan.md",
       "kind": "documentation"
     },
     {
@@ -2034,6 +2354,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/de-xuat/P1-06-hoan-thien-cung-dot.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P2-01-trien-khai-tron-dot.md",
       "kind": "documentation"
     },
     {
@@ -2273,6 +2597,10 @@
       "kind": "infra"
     },
     {
+      "path": "infra/livekit-local.yaml",
+      "kind": "infra"
+    },
+    {
       "path": "infra/observability/.gitkeep",
       "kind": "placeholder"
     },
@@ -2325,6 +2653,14 @@
       "kind": "test"
     },
     {
+      "path": "scripts/ops/local-safety.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/ops/restore-drill.mjs",
+      "kind": "tooling"
+    },
+    {
       "path": "scripts/sdd/check.mjs",
       "kind": "tooling"
     },
@@ -2370,6 +2706,10 @@
     },
     {
       "path": "scripts/test/native.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/restore-safety.test.mjs",
       "kind": "test"
     },
     {
@@ -2461,6 +2801,26 @@
       "kind": "product"
     },
     {
+      "path": "services/api/migrations/019_p2_accounts.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/020_p2_finance.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/021_p2_calls.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/022_p2_backoffice.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/023_p2_finance_reference_repair.sql",
+      "kind": "product"
+    },
+    {
       "path": "services/api/package.json",
       "kind": "product"
     },
@@ -2549,6 +2909,10 @@
       "kind": "placeholder"
     },
     {
+      "path": "services/api/src/integrations/livekit/livekit.adapter.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/integrations/local-messages.ts",
       "kind": "product"
     },
@@ -2578,6 +2942,22 @@
     },
     {
       "path": "services/api/src/main.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/account-security/security.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/account-security/security.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/account-security/security.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/account-security/security.service.ts",
       "kind": "product"
     },
     {
@@ -2677,6 +3057,42 @@
       "kind": "product"
     },
     {
+      "path": "services/api/src/modules/backoffice/backoffice.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/backoffice/backoffice.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/backoffice/backoffice.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/backoffice/backoffice.service.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/calls/calls.access.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/calls/calls.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/calls/calls.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/calls/calls.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/calls/calls.service.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/modules/catalog/catalog.controller.ts",
       "kind": "product"
     },
@@ -2714,6 +3130,22 @@
     },
     {
       "path": "services/api/src/modules/chat/chat.store.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/finance/finance.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/finance/finance.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/finance/finance.module.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/finance/finance.service.ts",
       "kind": "product"
     },
     {
@@ -3013,6 +3445,10 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/integration/account-security.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/integration/admin-completion.test.ts",
       "kind": "test"
     },
@@ -3033,7 +3469,19 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/integration/backoffice.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/calls.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/integration/catalog.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/finance.test.ts",
       "kind": "test"
     },
     {
@@ -3089,6 +3537,10 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/manual/calls-media.manual.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/unit/catalog-config.test.ts",
       "kind": "test"
     },
@@ -3102,6 +3554,10 @@
     },
     {
       "path": "services/api/test/unit/invoice-money.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/livekit.adapter.test.ts",
       "kind": "test"
     },
     {
@@ -3165,6 +3621,10 @@
       "kind": "test"
     },
     {
+      "path": "tests/e2e/native/p2-screens.yaml",
+      "kind": "test"
+    },
+    {
       "path": "tests/e2e/native/partners.yaml",
       "kind": "test"
     },
@@ -3209,6 +3669,10 @@
       "kind": "test"
     },
     {
+      "path": "tests/e2e/web/backoffice.spec.mjs",
+      "kind": "test"
+    },
+    {
       "path": "tests/e2e/web/calendar.spec.mjs",
       "kind": "test"
     },
@@ -3218,6 +3682,10 @@
     },
     {
       "path": "tests/e2e/web/failure-probe.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/finance.spec.mjs",
       "kind": "test"
     },
     {
@@ -3250,6 +3718,10 @@
     },
     {
       "path": "tests/e2e/web/organizations.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/p2-account-security.spec.mjs",
       "kind": "test"
     },
     {
@@ -3858,7 +4330,10 @@
       "apps/mobile/src/app/App.test.tsx",
       "apps/mobile/src/app/layout/ProductShell.test.tsx",
       "apps/mobile/src/app/navigation/account-return.test.tsx",
+      "apps/mobile/src/app/providers/AuthLocale.test.tsx",
       "apps/mobile/src/components/ui/controls.test.tsx",
+      "apps/mobile/src/features/account-security/api/security-api.test.ts",
+      "apps/mobile/src/features/account-security/screens/SecurityScreen.test.tsx",
       "apps/mobile/src/features/accounts/api/accounts-api.test.ts",
       "apps/mobile/src/features/accounts/components/AccountPage.test.tsx",
       "apps/mobile/src/features/accounts/components/LanguageSettings.test.tsx",
@@ -3869,13 +4344,22 @@
       "apps/mobile/src/features/accounts/state/session-revocation.test.ts",
       "apps/mobile/src/features/admin/api/admin-api.test.ts",
       "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+      "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
+      "apps/mobile/src/features/admin/screens/RecoveryPanel.test.tsx",
       "apps/mobile/src/features/auth/api/auth-api.test.ts",
       "apps/mobile/src/features/auth/screens/AccountScreen.test.tsx",
       "apps/mobile/src/features/auth/state/auth-session.test.ts",
       "apps/mobile/src/features/auth/state/token-storage.test.ts",
+      "apps/mobile/src/features/backoffice/BackofficePanel.test.tsx",
+      "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+      "apps/mobile/src/features/calls/api/calls-api.test.ts",
+      "apps/mobile/src/features/calls/media.native.test.ts",
       "apps/mobile/src/features/catalog/api/catalog-api.test.ts",
       "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
       "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
+      "apps/mobile/src/features/finance/api/finance-api.test.ts",
+      "apps/mobile/src/features/finance/screens/AdminFinance.test.tsx",
+      "apps/mobile/src/features/finance/screens/FinanceScreen.test.tsx",
       "apps/mobile/src/features/invoices/api/invoices-api.test.ts",
       "apps/mobile/src/features/invoices/format-amount.test.ts",
       "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
@@ -3886,6 +4370,9 @@
       "apps/mobile/src/features/location/api/locations-api.test.ts",
       "apps/mobile/src/features/location/components/LocationField.test.tsx",
       "apps/mobile/src/features/location/state/location-draft.test.ts",
+      "apps/mobile/src/features/notifications/NotificationsProvider.test.tsx",
+      "apps/mobile/src/features/notifications/PushControl.native.test.tsx",
+      "apps/mobile/src/features/notifications/PushListener.native.test.tsx",
       "apps/mobile/src/features/notifications/api/notifications-api.test.ts",
       "apps/mobile/src/features/notifications/screens/Notifications.test.tsx",
       "apps/mobile/src/features/organizations/api/organizations-api.test.ts",
@@ -3909,17 +4396,20 @@
       "apps/mobile/src/lib/i18n/locale-state.test.ts",
       "apps/mobile/src/lib/i18n/locale-storage.test.ts",
       "apps/mobile/src/lib/logging/logger.test.ts",
-      "apps/mobile/src/lib/realtime/realtime-client.test.ts",
-      "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
-      "apps/mobile/src/features/notifications/PushControl.native.test.tsx",
-      "apps/mobile/src/features/notifications/PushListener.native.test.tsx"
+      "apps/mobile/src/lib/realtime/realtime-client.test.ts"
     ],
     "api": [
       "services/api/test/integration/account-management.test.ts",
+      "services/api/test/integration/account-security.test.ts",
+      "services/api/test/integration/admin-completion.test.ts",
       "services/api/test/integration/admin-moderation.test.ts",
+      "services/api/test/integration/admin-operations.test.ts",
       "services/api/test/integration/assets.test.ts",
       "services/api/test/integration/auth.test.ts",
+      "services/api/test/integration/backoffice.test.ts",
+      "services/api/test/integration/calls.test.ts",
       "services/api/test/integration/catalog.test.ts",
+      "services/api/test/integration/finance.test.ts",
       "services/api/test/integration/invoices.test.ts",
       "services/api/test/integration/jobs-chat.test.ts",
       "services/api/test/integration/lifecycle.test.ts",
@@ -3929,6 +4419,7 @@
       "services/api/test/integration/organizations.test.ts",
       "services/api/test/integration/partners.test.ts",
       "services/api/test/integration/profile.test.ts",
+      "services/api/test/integration/push.test.ts",
       "services/api/test/integration/realtime.test.ts",
       "services/api/test/integration/reviews.test.ts",
       "services/api/test/integration/support.test.ts",
@@ -3936,28 +4427,31 @@
       "services/api/test/unit/catalog-seed.test.ts",
       "services/api/test/unit/demo-options.test.ts",
       "services/api/test/unit/invoice-money.test.ts",
+      "services/api/test/unit/livekit.adapter.test.ts",
       "services/api/test/unit/locations.test.ts",
       "services/api/test/unit/logging.test.ts",
       "services/api/test/unit/organizations.test.ts",
       "services/api/test/unit/output.test.ts",
-      "services/api/test/unit/totp.test.ts",
-      "services/api/test/integration/admin-completion.test.ts",
-      "services/api/test/integration/admin-operations.test.ts",
-      "services/api/test/integration/push.test.ts"
+      "services/api/test/unit/totp.test.ts"
     ],
     "web": [
       "tests/e2e/web/account-management.spec.mjs",
       "tests/e2e/web/account-security.spec.mjs",
+      "tests/e2e/web/admin-completion.spec.mjs",
       "tests/e2e/web/admin-moderation.spec.mjs",
+      "tests/e2e/web/admin-operations.spec.mjs",
       "tests/e2e/web/auth.spec.mjs",
+      "tests/e2e/web/backoffice.spec.mjs",
       "tests/e2e/web/calendar.spec.mjs",
       "tests/e2e/web/catalog.spec.mjs",
+      "tests/e2e/web/finance.spec.mjs",
       "tests/e2e/web/i18n.spec.mjs",
       "tests/e2e/web/invoices.spec.mjs",
       "tests/e2e/web/jobs-chat.spec.mjs",
       "tests/e2e/web/locations.spec.mjs",
       "tests/e2e/web/notifications.spec.mjs",
       "tests/e2e/web/organizations.spec.mjs",
+      "tests/e2e/web/p2-account-security.spec.mjs",
       "tests/e2e/web/partners.spec.mjs",
       "tests/e2e/web/profile.spec.mjs",
       "tests/e2e/web/realtime.spec.mjs",
@@ -3965,15 +4459,14 @@
       "tests/e2e/web/search-map.spec.mjs",
       "tests/e2e/web/search-service.spec.mjs",
       "tests/e2e/web/shell.spec.mjs",
-      "tests/e2e/web/support.spec.mjs",
-      "tests/e2e/web/admin-completion.spec.mjs",
-      "tests/e2e/web/admin-operations.spec.mjs"
+      "tests/e2e/web/support.spec.mjs"
     ],
     "tooling": [
       "scripts/diagnostics/export.test.mjs",
       "scripts/test/admin-client.test.mjs",
       "scripts/test/coverage-gate.test.mjs",
       "scripts/test/native-options.test.mjs",
+      "scripts/test/restore-safety.test.mjs",
       "scripts/test/sdd-check.test.mjs",
       "scripts/test/sdd-project.test.mjs"
     ]
@@ -4107,23 +4600,41 @@
     "P1-06-AC-04",
     "P1-06-AC-05",
     "P1-06-AC-06",
-    "P1-06-AC-07"
+    "P1-06-AC-07",
+    "P2-ACCOUNT-01",
+    "P2-ACCOUNT-02",
+    "P2-ACCOUNT-03",
+    "P2-ACCOUNT-04",
+    "P2-LOCALE-01",
+    "P2-FINANCE-01",
+    "P2-FINANCE-02",
+    "P2-FINANCE-03",
+    "P2-FINANCE-04",
+    "P2-CALL-01",
+    "P2-CALL-02",
+    "P2-CALL-03",
+    "P2-ADMIN-01",
+    "P2-ADMIN-02",
+    "P2-OPS-01"
   ],
   "qa": [
     {
       "id": "QA-001",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-ACCOUNT-01"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-002",
       "status": "partial",
       "criteria": [
         "AUTH-AC-01",
-        "AUTH-AC-03"
+        "AUTH-AC-03",
+        "P2-ACCOUNT-01"
       ],
-      "reason": "Không chứng minh OTP, email verification hoặc khôi phục mật khẩu | QA-002 chỉ một phần: OTP và contact/IP distributed limit chưa chứng minh"
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-003",
@@ -4136,21 +4647,27 @@
     },
     {
       "id": "QA-004",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-ACCOUNT-02"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-005",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-ACCOUNT-03"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-006",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-007",
@@ -4297,9 +4814,13 @@
     },
     {
       "id": "QA-024",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-CALL-01",
+        "P2-CALL-02",
+        "P2-CALL-03"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-025",
@@ -4379,9 +4900,11 @@
     },
     {
       "id": "QA-033",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-FINANCE-03"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-034",
@@ -4439,21 +4962,27 @@
     },
     {
       "id": "QA-040",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-FINANCE-02"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-041",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-FINANCE-03"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-042",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-FINANCE-03"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-043",
@@ -4546,9 +5075,11 @@
     },
     {
       "id": "QA-051",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-OPS-01"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-052",
@@ -4572,9 +5103,11 @@
     },
     {
       "id": "QA-055",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "P2-OPS-01"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
       "id": "QA-056",
@@ -5014,6 +5547,46 @@
         "P1-05-AC-03"
       ],
       "reason": "Approved local/test provider warning/suspend/restore preserves work and money; full production/UAT not proven."
+    },
+    {
+      "id": "QA-104",
+      "status": "partial",
+      "criteria": [
+        "P2-LOCALE-01"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
+    },
+    {
+      "id": "QA-105",
+      "status": "partial",
+      "criteria": [
+        "P2-FINANCE-01"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
+    },
+    {
+      "id": "QA-106",
+      "status": "partial",
+      "criteria": [
+        "P2-FINANCE-04"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
+    },
+    {
+      "id": "QA-107",
+      "status": "partial",
+      "criteria": [
+        "P2-ADMIN-01"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
+    },
+    {
+      "id": "QA-108",
+      "status": "partial",
+      "criteria": [
+        "P2-ADMIN-02"
+      ],
+      "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     }
   ],
   "operations": [
@@ -5071,9 +5644,14 @@
       "id": "resetPassword",
       "method": "POST",
       "path": "/auth/password/reset",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "refreshSession",
@@ -5145,9 +5723,14 @@
       "id": "requestDeletion",
       "method": "POST",
       "path": "/me/deletion-request",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "listAddresses",
@@ -5710,41 +6293,66 @@
       "id": "createTopup",
       "method": "POST",
       "path": "/topups",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "createPayout",
       "method": "POST",
       "path": "/payouts",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "getPayout",
       "method": "GET",
       "path": "/payouts/{id}",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "getBank",
       "method": "GET",
       "path": "/partners/{id}/bank",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "setBank",
       "method": "PUT",
       "path": "/partners/{id}/bank",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "openConversation",
@@ -5807,17 +6415,23 @@
       "id": "startCall",
       "method": "POST",
       "path": "/calls",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-CALL-01",
+        "P2-CALL-02"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "actOnCall",
       "method": "POST",
       "path": "/calls/{id}/actions",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-CALL-01",
+        "P2-CALL-02"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "listPartnerReviews",
@@ -6007,49 +6621,79 @@
       "id": "adminListTopups",
       "method": "GET",
       "path": "/admin/topups",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "adminDecideTopups",
       "method": "POST",
       "path": "/admin/topups/{id}/decision",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "adminListPayouts",
       "method": "GET",
       "path": "/admin/payouts",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "adminDecidePayouts",
       "method": "POST",
       "path": "/admin/payouts/{id}/decision",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "queueBank",
       "method": "GET",
       "path": "/admin/bank-accounts",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "decideBank",
       "method": "POST",
       "path": "/admin/bank-accounts/{id}/decision",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "queueVerification",
@@ -6175,17 +6819,25 @@
       "id": "getMetrics",
       "method": "GET",
       "path": "/admin/metrics",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-ADMIN-01",
+        "P2-ADMIN-02",
+        "P2-OPS-01"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "adminInvoices",
       "method": "GET",
       "path": "/admin/invoices",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-ADMIN-01",
+        "P2-ADMIN-02",
+        "P2-OPS-01"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "createUpload",
@@ -6283,41 +6935,65 @@
       "id": "getOperation",
       "method": "GET",
       "path": "/operations/{key}",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-ADMIN-01",
+        "P2-ADMIN-02",
+        "P2-OPS-01"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "changeIdentity",
       "method": "POST",
       "path": "/me/identity-change",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "confirmIdentityChange",
       "method": "POST",
       "path": "/me/identity-change/confirm",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "openRecovery",
       "method": "POST",
       "path": "/auth/recovery-reports",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "decideRecovery",
       "method": "POST",
       "path": "/admin/recovery-reports/{id}/decision",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "deactivatePartner",
@@ -6343,9 +7019,13 @@
       "id": "editAdminGrants",
       "method": "POST",
       "path": "/admin/users/{id}/grants",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P2-ADMIN-01",
+        "P2-ADMIN-02",
+        "P2-OPS-01"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     },
     {
       "id": "createCategory",
@@ -6706,6 +7386,420 @@
         "P1-06-AC-02"
       ],
       "reason": "Reviewed approved P1-06 local/test route. No production or real push delivery evidence."
+    },
+    {
+      "id": "listCalls",
+      "method": "GET",
+      "path": "/calls",
+      "status": "implemented",
+      "criteria": [
+        "P2-CALL-01",
+        "P2-CALL-02"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "getAdminGrants",
+      "method": "GET",
+      "path": "/admin/users/{id}/grants",
+      "status": "implemented",
+      "criteria": [
+        "P2-ADMIN-01",
+        "P2-ADMIN-02",
+        "P2-OPS-01"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "requestAccountSecurityChallenge",
+      "method": "POST",
+      "path": "/auth/security/challenges",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "confirmAccountSecurityChallenge",
+      "method": "POST",
+      "path": "/auth/security/confirm",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "changeAccountPassword",
+      "method": "POST",
+      "path": "/me/password",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "previewAccountDeletion",
+      "method": "GET",
+      "path": "/me/deletion-preview",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "listAdminAccountDeletions",
+      "method": "GET",
+      "path": "/admin/account-deletions",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "getAdminAccountDeletions",
+      "method": "GET",
+      "path": "/admin/account-deletions/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "decideAdminAccountDeletions",
+      "method": "POST",
+      "path": "/admin/account-deletions/{id}/decision",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "getAccountRecoveryReceipt",
+      "method": "GET",
+      "path": "/auth/recovery-reports/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "supplementAccountRecovery",
+      "method": "POST",
+      "path": "/auth/recovery-reports/{id}/evidence",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "requestRecoveryVerification",
+      "method": "POST",
+      "path": "/auth/recovery-reports/{id}/challenge",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "listAdminAccountRecoveries",
+      "method": "GET",
+      "path": "/admin/recovery-reports",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "getAdminAccountRecoveries",
+      "method": "GET",
+      "path": "/admin/recovery-reports/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-ACCOUNT-01",
+        "P2-ACCOUNT-02",
+        "P2-ACCOUNT-03",
+        "P2-ACCOUNT-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "financeReauthenticate",
+      "method": "POST",
+      "path": "/finance/reauthenticate",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "cancelBank",
+      "method": "POST",
+      "path": "/partners/{id}/bank/cancel",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "getTopup",
+      "method": "GET",
+      "path": "/topups/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "cancelTopup",
+      "method": "POST",
+      "path": "/topups/{id}/cancel",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "adminGetTopup",
+      "method": "GET",
+      "path": "/admin/topups/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "cancelPayout",
+      "method": "POST",
+      "path": "/payouts/{id}/cancel",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "adminGetPayout",
+      "method": "GET",
+      "path": "/admin/payouts/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "financeHistory",
+      "method": "GET",
+      "path": "/partners/{id}/finance-history/{domain}",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "adminGetBank",
+      "method": "GET",
+      "path": "/admin/bank-accounts/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "localBankDeposit",
+      "method": "POST",
+      "path": "/admin/finance-simulator/deposits",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "callTargets",
+      "method": "GET",
+      "path": "/jobs/{id}/call-targets",
+      "status": "implemented",
+      "criteria": [
+        "P2-CALL-01",
+        "P2-CALL-02"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "getCall",
+      "method": "GET",
+      "path": "/calls/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-CALL-01",
+        "P2-CALL-02"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "callMedia",
+      "method": "POST",
+      "path": "/calls/{id}/media",
+      "status": "implemented",
+      "criteria": [
+        "P2-CALL-01",
+        "P2-CALL-02"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "callHeartbeat",
+      "method": "POST",
+      "path": "/calls/{id}/heartbeat",
+      "status": "implemented",
+      "criteria": [
+        "P2-CALL-01",
+        "P2-CALL-02"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "getAdminInvoice",
+      "method": "GET",
+      "path": "/admin/invoices/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-ADMIN-01",
+        "P2-ADMIN-02",
+        "P2-OPS-01"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "listAdminJobs",
+      "method": "GET",
+      "path": "/admin/jobs",
+      "status": "implemented",
+      "criteria": [
+        "P2-ADMIN-01",
+        "P2-ADMIN-02",
+        "P2-OPS-01"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "getAdminJob",
+      "method": "GET",
+      "path": "/admin/jobs/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-ADMIN-01",
+        "P2-ADMIN-02",
+        "P2-OPS-01"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "listGrantUsers",
+      "method": "GET",
+      "path": "/admin/grant-users",
+      "status": "implemented",
+      "criteria": [
+        "P2-ADMIN-01",
+        "P2-ADMIN-02",
+        "P2-OPS-01"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
+    },
+    {
+      "id": "getBankRequest",
+      "method": "GET",
+      "path": "/bank-accounts/{id}",
+      "status": "implemented",
+      "criteria": [
+        "P2-FINANCE-01",
+        "P2-FINANCE-02",
+        "P2-FINANCE-03",
+        "P2-FINANCE-04"
+      ],
+      "reason": "Implemented in approved P2 local/test. Linked criteria prove listed branches only; native, UAT and external providers require separate evidence."
     }
   ],
   "routes": [
@@ -6718,6 +7812,96 @@
       "method": "GET",
       "path": "/ready",
       "file": "services/api/src/health/health.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/security/challenges",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/security/confirm",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/password/reset",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/me/identity-change",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/me/identity-change/confirm",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/me/password",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/recovery-reports",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/recovery-reports/{id}",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/recovery-reports/{id}/evidence",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/recovery-reports/{id}/challenge",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/me/deletion-preview",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/me/deletion-request",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/recovery-reports",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/account-deletions",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/recovery-reports/{id}",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/account-deletions/{id}",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/recovery-reports/{id}/decision",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/account-deletions/{id}/decision",
+      "file": "services/api/src/modules/account-security/security.controller.ts"
     },
     {
       "method": "PATCH",
@@ -6851,6 +8035,86 @@
     },
     {
       "method": "GET",
+      "path": "/admin/metrics",
+      "file": "services/api/src/modules/backoffice/backoffice.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/grant-users",
+      "file": "services/api/src/modules/backoffice/backoffice.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/users/{id}/grants",
+      "file": "services/api/src/modules/backoffice/backoffice.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/users/{id}/grants",
+      "file": "services/api/src/modules/backoffice/backoffice.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/jobs",
+      "file": "services/api/src/modules/backoffice/backoffice.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/jobs/{id}",
+      "file": "services/api/src/modules/backoffice/backoffice.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/invoices",
+      "file": "services/api/src/modules/backoffice/backoffice.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/invoices/{id}",
+      "file": "services/api/src/modules/backoffice/backoffice.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/operations/{key}",
+      "file": "services/api/src/modules/backoffice/backoffice.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/jobs/{id}/call-targets",
+      "file": "services/api/src/modules/calls/calls.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/calls",
+      "file": "services/api/src/modules/calls/calls.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/calls",
+      "file": "services/api/src/modules/calls/calls.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/calls/{id}",
+      "file": "services/api/src/modules/calls/calls.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/calls/{id}/actions",
+      "file": "services/api/src/modules/calls/calls.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/calls/{id}/media",
+      "file": "services/api/src/modules/calls/calls.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/calls/{id}/heartbeat",
+      "file": "services/api/src/modules/calls/calls.controller.ts"
+    },
+    {
+      "method": "GET",
       "path": "/categories",
       "file": "services/api/src/modules/catalog/catalog.controller.ts"
     },
@@ -6885,6 +8149,116 @@
       "file": "services/api/src/modules/chat/chat.controller.ts"
     },
     {
+      "method": "POST",
+      "path": "/finance/reauthenticate",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/bank",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/partners/{id}/bank",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/partners/{id}/bank/cancel",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/topups",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/payouts",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/bank-accounts/{id}",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/topups/{id}",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/payouts/{id}",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/topups/{id}/cancel",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/payouts/{id}/cancel",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/finance-history/{domain}",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/topups",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/payouts",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/bank-accounts",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/topups/{id}",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/payouts/{id}",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/bank-accounts/{id}",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/topups/{id}/decision",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/payouts/{id}/decision",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/bank-accounts/{id}/decision",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/finance-simulator/deposits",
+      "file": "services/api/src/modules/finance/finance.controller.ts"
+    },
+    {
       "method": "GET",
       "path": "/jobs/{id}/invoice",
       "file": "services/api/src/modules/invoices/invoices.controller.ts"
@@ -6917,6 +8291,11 @@
     {
       "method": "POST",
       "path": "/invoices/{id}/settle",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/invoices/{id}/receipt-confirmed",
       "file": "services/api/src/modules/invoices/invoices.controller.ts"
     },
     {
@@ -7006,6 +8385,16 @@
     },
     {
       "method": "GET",
+      "path": "/admin/reports/{id}/completion-preview",
+      "file": "services/api/src/modules/moderation/completion.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/reports/{id}/complete-on-behalf",
+      "file": "services/api/src/modules/moderation/completion.controller.ts"
+    },
+    {
+      "method": "GET",
       "path": "/admin/moderation-audit",
       "file": "services/api/src/modules/moderation/moderation.controller.ts"
     },
@@ -7022,6 +8411,11 @@
     {
       "method": "POST",
       "path": "/admin/reports/{id}/decision",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/reports/{id}/notes",
       "file": "services/api/src/modules/moderation/moderation.controller.ts"
     },
     {
@@ -7053,6 +8447,81 @@
       "method": "POST",
       "path": "/admin/reviews/{id}/decision",
       "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/users",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/users/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/users/{id}/decision",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/partners",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/partners/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/partners/{id}/decision",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/categories",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/categories/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/categories/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/categories",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/skills",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/skills/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/skills/{id}",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/skills",
+      "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/me/devices",
+      "file": "services/api/src/modules/notifications/notifications.controller.ts"
     },
     {
       "method": "GET",
@@ -7191,6 +8660,11 @@
     },
     {
       "method": "GET",
+      "path": "/jobs/{id}/customer-reviews",
+      "file": "services/api/src/modules/reviews/reviews.controller.ts"
+    },
+    {
+      "method": "GET",
       "path": "/jobs/{id}/reviews",
       "file": "services/api/src/modules/reviews/reviews.controller.ts"
     },
@@ -7243,106 +8717,6 @@
       "method": "POST",
       "path": "/partners/{id}/verification",
       "file": "services/api/src/modules/verification/verification.controller.ts"
-    },
-    {
-      "method": "GET",
-      "path": "/admin/reports/{id}/completion-preview",
-      "file": "services/api/src/modules/moderation/completion.controller.ts"
-    },
-    {
-      "method": "POST",
-      "path": "/admin/reports/{id}/complete-on-behalf",
-      "file": "services/api/src/modules/moderation/completion.controller.ts"
-    },
-    {
-      "method": "GET",
-      "path": "/admin/users",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "GET",
-      "path": "/admin/users/{id}",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "POST",
-      "path": "/admin/users/{id}/decision",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "GET",
-      "path": "/admin/partners",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "GET",
-      "path": "/admin/partners/{id}",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "POST",
-      "path": "/admin/partners/{id}/decision",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "GET",
-      "path": "/admin/categories",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "GET",
-      "path": "/admin/categories/{id}",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "PUT",
-      "path": "/admin/categories/{id}",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "POST",
-      "path": "/admin/categories",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "GET",
-      "path": "/admin/skills",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "GET",
-      "path": "/admin/skills/{id}",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "PUT",
-      "path": "/admin/skills/{id}",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "POST",
-      "path": "/admin/skills",
-      "file": "services/api/src/modules/moderation/operations.controller.ts"
-    },
-    {
-      "method": "POST",
-      "path": "/invoices/{id}/receipt-confirmed",
-      "file": "services/api/src/modules/invoices/invoices.controller.ts"
-    },
-    {
-      "method": "POST",
-      "path": "/admin/reports/{id}/notes",
-      "file": "services/api/src/modules/moderation/moderation.controller.ts"
-    },
-    {
-      "method": "POST",
-      "path": "/me/devices",
-      "file": "services/api/src/modules/notifications/notifications.controller.ts"
-    },
-    {
-      "method": "GET",
-      "path": "/jobs/{id}/customer-reviews",
-      "file": "services/api/src/modules/reviews/reviews.controller.ts"
     }
   ],
   "contractGaps": [

@@ -72,6 +72,7 @@ export class AuthSession {
     }
   });
   login = (input: Credentials) => this.run(async () => { await this.accept(await this.api.login(input)); });
+  loginWithCode = (exchange: () => Promise<Session>) => this.run(async () => { await this.accept(await exchange()); });
   register = (input: Registration) => this.run(async () => { await this.accept(await this.api.register(input)); });
   private async rotate() {
     if (!this.session) return;
@@ -126,6 +127,9 @@ export class AuthSession {
     return user;
   }
   // Admin uses the same refresh family; MFA stays in memory in its own client.
+  featureOperation<T>(owner: string, work: (token: string) => Promise<T>, read = false): Promise<T> {
+    return read ? this.passiveRead(owner, work) : this.accountOperation(owner, work);
+  }
   adminOperation<T>(owner: string, work: (token: string) => Promise<T>, read = false): Promise<T> {
     if (!this.snapshot.user?.admin_permissions?.length) return Promise.reject(new ApiError('FORBIDDEN'));
     return read ? this.passiveRead(owner, work) : this.accountOperation(owner, work);

@@ -7,7 +7,7 @@ import { uuid } from '../../logging/sanitize.js';
 
 const digest = (token: string) => createHash('sha256').update(token).digest('hex');
 const issuer = 'dvqb-api', audience = 'dvqb-mobile';
-type User = { id: string; display_name: string; status: string; locale: 'vi'; version: number };
+type User = { id: string; display_name: string; status: string; locale: 'vi' | 'en' | 'ja'; version: number };
 export class AuthService {
   private readonly key: Uint8Array;
   private readonly changes = new Set<()=>Promise<void>>();
@@ -24,7 +24,7 @@ export class AuthService {
     const grants=await db.query('SELECT permission FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL ORDER BY permission',[user.id]);
     return { ...user, ...flags, ...(user.status==='suspended'?{partner_ids:[],admin_permissions:[]}:{admin_permissions: grants.rows.map(r=>r.permission as string)}) };
   }
-  private async issue(db: PoolClient, user: User, family = randomUUID(), expiry = new Date(Date.now() + 30 * 86400000)) {
+  async issue(db: PoolClient, user: User, family = randomUUID(), expiry = new Date(Date.now() + 30 * 86400000)) {
     const refresh = randomBytes(32).toString('hex');
     const { rows: [session] } = await db.query('INSERT INTO sessions(user_id,refresh_hash,family_id,expires_at,last_seen_at,scope) VALUES($1,$2,$3,$4,now(),$5) RETURNING id', [user.id,digest(refresh),family,expiry,user.status==='suspended'?'support':'app']);
     const expires = Math.min(Math.floor(Date.now() / 1000) + 900, Math.floor(expiry.getTime() / 1000));
@@ -58,6 +58,8 @@ export class AuthService {
     return this.transaction(async db => {
       const { rows: [user] } = await db.query<User>('SELECT id,display_name,status,locale,version FROM users WHERE id=$1 FOR UPDATE', [identity.user_id]);
       if (!user || !['active','suspended'].includes(user.status)) throw new UnauthorizedException();
+      const current = (await db.query("SELECT password_hash FROM identities WHERE user_id=$1 AND provider='email' AND subject=$2", [user.id,email])).rows[0];
+      if (!current || !await verifyPassword(password,current.password_hash)) throw new UnauthorizedException();
       return this.issue(db, user);
     });
   }

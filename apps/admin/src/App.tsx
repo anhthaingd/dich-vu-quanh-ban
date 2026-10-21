@@ -1,3 +1,4 @@
+import {P2Desk} from './P2Desk';
 import {CatalogEditor} from './CatalogEditor';
 import {Completion} from './Completion';
 import {useEffect,useMemo,useRef,useState,type FormEvent} from 'react';
@@ -10,7 +11,7 @@ const states:Record<string,string[]>={users:['active','suspended','deletion_requ
 export function App({client}:{client:AdminClient}){
  const [locale,setLocale]=useState<Locale>('vi'),[phase,setPhase]=useState<'login'|'mfa'|'desk'>('login'),[enrolled,setEnrolled]=useState(false),[setup,setSetup]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[epoch,setEpoch]=useState(0);
  const t=useMemo(()=>translator(locale),[locale]);
- const fail=(e:unknown)=>{const c=errorCode(e);setError(c);if(c==='UNAUTHENTICATED'){client.clear();setSetup('');setPhase('login');}else if(c==='FORBIDDEN'){client.mfa=null;setSetup('');setPhase('mfa');}};
+ const fail=(e:unknown)=>{const c=errorCode(e);setError(c);if(c==='UNAUTHENTICATED'){client.clear();setSetup('');setPhase('login');}else if(c==='FORBIDDEN'||c==='REAUTH_REQUIRED'){client.mfa=null;setSetup('');setPhase('mfa');}};
  const lock=async()=>{setBusy(true);try{await client.lock();setError('');}catch(e){setError(errorCode(e));}finally{setPhase('mfa');setSetup('');setEpoch(n=>n+1);setBusy(false);}};
  useEffect(()=>{if(phase!=='desk'||!client.mfa)return;const timer=setTimeout(()=>{client.mfa=null;setPhase('mfa');setEpoch(n=>n+1);},Math.max(0,Date.parse(client.mfa.expires_at)-Date.now()));return()=>clearTimeout(timer);},[phase,client,epoch]);
  const submit=async(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();const form=e.currentTarget,data=new FormData(form);setBusy(true);setError('');try{
@@ -25,7 +26,7 @@ export function App({client}:{client:AdminClient}){
   <form key={phase} onSubmit={e=>void submit(e)}>{phase==='login'&&<label>{t('email')}<input name="email" type="email" autoComplete="username" required/></label>}<label>{t('password')}<input name="password" type="password" autoComplete="current-password" required maxLength={128}/></label>{phase==='mfa'&&(enrolled||setup)&&<label>{t('code')}<input name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" required maxLength={6}/></label>}
   {error&&<p role="alert">{message(error,t)}</p>}<button disabled={busy}>{t(busy?'load':phase==='login'?'login':!enrolled&&!setup?'enroll':'verify')}</button></form>
   {phase==='mfa'&&<button className="secondary" disabled={busy} onClick={()=>{setBusy(true);void client.logout().catch(e=>setError(errorCode(e))).finally(()=>{setSetup('');setPhase('login');setBusy(false);});}}>{t('logout')}</button>}
- </section></main>:<Desk key={epoch} client={client} t={t} locale={locale} lock={()=>void lock()} fail={e=>{fail(e);if(errorCode(e)==='REAUTH_REQUIRED'){client.mfa=null;setPhase('mfa');}}}/>}
+ </section></main>:<P2Desk key={epoch} client={client} locale={locale} fail={fail} lock={()=>void lock()}><Desk key={epoch} client={client} t={t} locale={locale} lock={()=>void lock()} fail={e=>{fail(e);if(errorCode(e)==='REAUTH_REQUIRED'){client.mfa=null;setPhase('mfa');}}}/></P2Desk>}
  </>;
 }
 function Shield(){return <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M12 3l8 4v5c0 5-8 9-8 9s-8-4-8-9V7z"/><path d="m8 12 3 3 5-5"/></svg>;}

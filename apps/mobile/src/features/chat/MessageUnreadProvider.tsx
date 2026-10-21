@@ -12,14 +12,14 @@ export function MessageUnreadProvider({children}:PropsWithChildren){
   const {manager,state}=useAuth(),realtime=useRealtime();
   const owner=state.phase==='authenticated'&&state.user?.status==='active'?state.user.id:undefined;
   const [data,setData]=useState<{owner?:string;unread:number}>({unread:0});
-  const current=useRef(owner),generation=useRef(0),running=useRef(false),dirty=useRef(true),last=useRef(0),failures=useRef(0);
+  const current=useRef(owner),generation=useRef(0),running=useRef(false),dirty=useRef(true),last=useRef(0),failures=useRef(0),invalidations=useRef(0);
   current.current=owner;
-  const invalidate=useCallback(()=>{dirty.current=true;},[]);
+  const invalidate=useCallback(()=>{invalidations.current++;dirty.current=true;failures.current=0;},[]);
   useEffect(()=>{
     const epoch=++generation.current;dirty.current=true;last.current=0;failures.current=0;setData({owner,unread:0});
     const refresh=async()=>{
       if(!owner||running.current||manager.getSnapshot().busy)return;
-      running.current=true;dirty.current=false;
+      running.current=true;dirty.current=false;const invalidation=invalidations.current;
       try{
         let cursor:string|undefined;const found=new Map<string,number>(),seen=new Set<string>();
         do{
@@ -33,7 +33,9 @@ export function MessageUnreadProvider({children}:PropsWithChildren){
       }catch(e){
         if(current.current!==owner||generation.current!==epoch)return;
         if(e instanceof ApiError&&['UNAUTHENTICATED','FORBIDDEN','NOT_FOUND'].includes(e.code))setData({owner,unread:0});
-        failures.current=Math.min(4,failures.current+1);dirty.current=true;
+        // A new message/reconnect/read is fresh evidence to reconcile now. A
+        // failed request started before that signal must not restore its delay.
+        failures.current=invalidations.current===invalidation?Math.min(4,failures.current+1):0;dirty.current=true;
       }finally{running.current=false;if(generation.current===epoch)last.current=Date.now();}
     };
     const unlisten=realtime?.listen(s=>{if(s.kind==='sync'||s.kind==='revoked'||s.kind==='event'&&s.event.type.startsWith('conversation.'))invalidate();});

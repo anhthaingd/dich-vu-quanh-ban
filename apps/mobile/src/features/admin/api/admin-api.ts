@@ -22,6 +22,7 @@ export class AdminApi {
     if(generation!==this.generation)throw new ApiError('CANCELLED');
     return result;
   }
+  request<T>(path:string,validate:(v:unknown)=>v is T,body?:unknown,key?:string,method:'POST'|'PUT'='POST'){return this.call(path,validate,body,key,method);}
   async status(){return (await this.call('/admin/auth/status',(v):v is {enrolled:boolean}=>record(v)&&typeof v.enrolled==='boolean')).enrolled;}
   enroll(password:string){return this.call('/admin/auth/enrollment',(v):v is {secret:string;uri:string}=>record(v)&&typeof v.secret==='string'&&typeof v.uri==='string',{password});}
   async verify(password:string,code:string,enrollment:boolean){

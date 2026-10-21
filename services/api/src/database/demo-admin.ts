@@ -16,7 +16,7 @@ const pool=new Pool({connectionString:settings.databaseUrl,connectionTimeoutMill
 try{
  await db.query('BEGIN');const user=(await db.query("INSERT INTO users(display_name) VALUES('DEMO Admin') RETURNING id")).rows[0];
  await db.query("INSERT INTO identities(user_id,provider,subject,password_hash) VALUES($1,'email',$2,$3)",[user.id,email,await hashPassword(password)]);
- for(const permission of ['support.read','support.manage','moderation.manage','audit.read','accounts.manage','catalog.manage'])await db.query('INSERT INTO admin_grants(user_id,permission) VALUES($1,$2)',[user.id,permission]);
+ for(const permission of ['support.read','support.manage','moderation.manage','audit.read','accounts.manage','catalog.manage','finance.read','finance.review','reports.read','grant.manage'])await db.query('INSERT INTO admin_grants(user_id,permission) VALUES($1,$2)',[user.id,permission]);
  await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.demo.bootstrap',$1,'Local DEMO fixture','{}')",[user.id]);
  await db.query('COMMIT');process.stdout.write('Created separate DEMO admin. Credentials: .local/demo-admin.json (0600). Complete TOTP setup in the admin UI.\n');
 }catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();await pool.end();}

@@ -1,0 +1,35 @@
+import * as Crypto from 'expo-crypto';
+import {useEffect,useRef,useState} from 'react';
+import {Pressable,View} from 'react-native';
+import {useAuth} from '../../../app/providers/AuthProvider';
+import {useLocale} from '../../../app/providers/LocaleProvider';
+import {ProductShell} from '../../../app/layout/ProductShell';
+import {AppText} from '../../../components/ui/AppText';
+import {Input} from '../../../components/ui/Input';
+import {Button} from '../../../components/ui/Button';
+import {Card} from '../../../components/ui/Card';
+import {createSecurityApi,type Challenge,type Obligations} from '../api/security-api';
+import {securityMessages,securityState} from '../messages';
+const api=createSecurityApi();
+type Mode='login'|'reset'|'identity'|'password'|'delete';
+export function SecurityScreen({back,recovery}:{back:()=>void;recovery:()=>void}){
+ const {manager,state}=useAuth(),{locale}=useLocale(),t=securityMessages(locale),owner=state.user?.id;
+ const [mode,setMode]=useState<Mode>(owner?'password':'login'),[contact,setContact]=useState(''),[password,setPassword]=useState(''),[next,setNext]=useState(''),[code,setCode]=useState(''),[challenge,setChallenge]=useState<Challenge|null>(null),[preview,setPreview]=useState<Obligations|null>(null),[reason,setReason]=useState(''),[forfeit,setForfeit]=useState(false),[busy,setBusy]=useState(false),[result,setResult]=useState<'success'|'failed'|'pending'|null>(null);
+ const [now,setNow]=useState(Date.now());useEffect(()=>{if(!challenge)return;const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer);},[challenge]);
+ const identityRetry=useRef<{key:string;contact:string;password:string;version:number}|null>(null),confirmRetry=useRef<{key:string;id:string;code:string}|null>(null);
+ const generation=useRef(0);useEffect(()=>{generation.current++;identityRetry.current=null;confirmRetry.current=null;setBusy(false);setPassword('');setNext('');setCode('');setChallenge(null);setPreview(null);setResult(null);setMode(owner?'password':'login');},[owner]);useEffect(()=>()=>{generation.current++;},[]);
+ async function work(task:()=>Promise<void>){const gen=generation.current;setBusy(true);setResult(null);try{await task();}catch{if(gen===generation.current)setResult('failed');}finally{if(gen===generation.current)setBusy(false);}}
+ const change=(m:Mode)=>{generation.current++;identityRetry.current=null;confirmRetry.current=null;setBusy(false);setMode(m);setPassword('');setNext('');setCode('');setChallenge(null);setResult(null);};
+ return <ProductShell onBack={back}><AppText variant="title">{t.title}</AppText><AppText tone="muted">{t.notice}</AppText><View style={{gap:12}}>
+  <View style={{flexDirection:'row',flexWrap:'wrap',gap:12}}>{(owner?['password','identity','delete']:['login','reset'] as Mode[]).map(m=><Button key={m} variant={m===mode?'secondary':'link'} label={t[m as Mode]} disabled={busy} onPress={()=>change(m as Mode)}/>)}</View>
+  <Card><AppText variant="section">{t[mode]}</AppText>
+   {(mode==='login'||mode==='reset'||mode==='identity')&&<Input label={t.contact} value={contact} editable={!busy&&!challenge} onChangeText={setContact} autoCapitalize="none"/>}
+   {(mode==='identity'||mode==='password'||mode==='delete')&&<Input label={t.currentPassword} value={password} onChangeText={setPassword} secureTextEntry editable={!busy}/>}
+   {(mode==='password'||mode==='reset')&&<Input label={t.newPassword} value={next} onChangeText={setNext} secureTextEntry editable={!busy}/>}
+   {mode==='password'&&<Button label={t.confirm} disabled={busy||!password||next.length<15} onPress={()=>void work(async()=>{await manager.featureOperation(owner!,token=>api.password(token,password,next));setPassword('');setNext('');await manager.logout();setResult('success');})}/>}
+   {['login','reset','identity'].includes(mode)&&(!challenge?<Button label={t.send} disabled={busy||!contact.trim()||mode==='identity'&&!password} onPress={()=>void work(async()=>{const gen=generation.current;let c:Challenge;if(mode==='identity'){const previous=identityRetry.current,task=previous?.contact===contact&&previous.password===password?previous:{key:Crypto.randomUUID(),contact,password,version:state.user!.version};identityRetry.current=task;c=await manager.featureOperation(owner!,token=>api.challenge('identity',contact,token,password,task.version,task.key));identityRetry.current=null;}else c=await api.challenge(mode as 'login'|'reset',contact);if(gen===generation.current){setChallenge(c);setPassword('');}})}/>:<><AppText>{t.expired}</AppText><Button variant="link" label={t.send} disabled={busy||now<Date.parse(challenge.expires_at)-240000} onPress={()=>{setChallenge(null);setCode('');}}/><Input label={t.code} value={code} onChangeText={setCode} keyboardType="number-pad" maxLength={6} editable={!busy}/><Button label={t.confirm} disabled={busy||code.length!==6||mode==='reset'&&next.length<15} onPress={()=>void work(async()=>{const gen=generation.current;if(mode==='login'){await manager.loginWithCode(()=>api.login(challenge.id,code));if(manager.getSnapshot().phase!=='authenticated')throw new Error('LOGIN_FAILED');}else if(mode==='identity'){const previous=confirmRetry.current,task=previous?.id===challenge.id&&previous.code===code?previous:{key:Crypto.randomUUID(),id:challenge.id,code};confirmRetry.current=task;await manager.featureOperation<unknown>(owner!,token=>api.confirm('identity',challenge.id,code,undefined,token,undefined,task.key));confirmRetry.current=null;await manager.loadProfile(owner!);}else await api.confirm('reset',challenge.id,code,next);if(gen===generation.current){setCode('');setNext('');setChallenge(null);setResult('success');}})}/></>)}
+   {mode==='delete'&&<><AppText>{t.deleteHint}</AppText><Input label={t.reason} value={reason} onChangeText={setReason} maxLength={1000} editable={!busy}/><Button label={t.preview} disabled={busy} onPress={()=>void work(async()=>{const gen=generation.current,p=await manager.featureOperation(owner!,token=>api.preview(token));if(gen===generation.current)setPreview(p);})}/>{preview&&<><AppText>{t.points}: {preview.points}</AppText>{preview.reasons.filter(x=>x!=='BALANCE').length>0&&<AppText tone="error">{t.blocked}: {preview.reasons.map(r=>securityState(locale,r)).join(', ')}</AppText>}<Pressable accessibilityRole="checkbox" accessibilityLabel={t.forfeit} accessibilityState={{checked:forfeit}} onPress={()=>setForfeit(!forfeit)} style={{minHeight:48,padding:12}}><AppText>{`${forfeit?'☑':'☐'} ${t.forfeit}`}</AppText></Pressable><Button label={t.delete} disabled={busy||!password||!reason.trim()||preview.reasons.some(x=>x!=='BALANCE')||BigInt(preview.points)>0n&&!forfeit} onPress={()=>void work(async()=>{await manager.featureOperation(owner!,token=>api.deletion(token,password,forfeit,state.user!.version,reason));setPassword('');setResult('pending');})}/></>}</>}
+   {result&&<AppText accessibilityRole={result==='failed'?'alert':'text'} tone={result==='failed'?'error':'primary'}>{t[result]}</AppText>}
+  </Card>{!owner&&<Button label={t.recovery} variant="link" onPress={recovery}/>}<Button label={t.back} variant="link" onPress={back}/>
+ </View></ProductShell>;
+}

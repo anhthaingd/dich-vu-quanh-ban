@@ -6,11 +6,11 @@ export function isMe(value: unknown): value is Me {
   if (!value || typeof value !== 'object') return false;
   const m = value as Me;
   return Number.isSafeInteger(m.version) && m.version >= 1 && typeof m.id === 'string' && uuid.test(m.id) && typeof m.display_name === 'string'
-    && typeof m.email_verified === 'boolean' && typeof m.phone_verified === 'boolean' && m.locale === 'vi' && ['active','suspended'].includes(m.status)
+    && typeof m.email_verified === 'boolean' && typeof m.phone_verified === 'boolean' && ['vi','en','ja'].includes(m.locale) && ['active','suspended'].includes(m.status)
     && Array.isArray(m.partner_ids) && m.partner_ids.every(x => typeof x === 'string' && uuid.test(x))
     && Array.isArray(m.admin_permissions) && m.admin_permissions.every(x => typeof x === 'string');
 }
-function isSession(value: unknown): value is Session {
+export function isSession(value: unknown): value is Session {
   if (!value || typeof value !== 'object') return false;
   const s = value as Session;
   return typeof s.access_token === 'string' && s.access_token.length > 0 && s.access_token.length <= 4096

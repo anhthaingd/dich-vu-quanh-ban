@@ -2939,7 +2939,8 @@
         "apps/mobile/src/app/layout/ProductShell.tsx",
         "services/api/src/modules/notifications/notifications.store.ts",
         "services/api/src/modules/notifications/notifications.service.ts",
-        "services/api/src/modules/notifications/notifications.worker.ts"
+        "services/api/src/modules/notifications/notifications.worker.ts",
+        "apps/mobile/src/features/notifications/NotificationsProvider.tsx"
       ],
       "tests": [
         {
@@ -2961,6 +2962,26 @@
           "suite": "mobile",
           "file": "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
           "name": "message badge reconciles by HTTP while transport is disabled"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
+          "name": "fresh invalidation during a failing poll remains eligible for the next tick"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/NotificationsProvider.test.tsx",
+          "name": "notification invalidation during a failing poll remains eligible for the next tick"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/NotificationsProvider.test.tsx",
+          "name": "notification failure retains cooldown without a fresh signal and explicit refresh still reconciles"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/NotificationsProvider.test.tsx",
+          "name": "notification reconciliation preserves a local read mark and discards the previous account snapshot"
         }
       ],
       "sources": [
@@ -4197,6 +4218,478 @@
       ],
       "evidenceStatus": "mapping-reviewed-not-executed",
       "gaps": "Native/provider evidence is in B05-06: Android Emulator received real Expo/FCM pushes on 2026-10-21 with four successful receipts and authorized report opening. One initial cold-start opened home; diagnostic and clean reruns opened the report, so stability across the full matrix is unverified. iOS injected notifications opened reports, but live APNs remains blocked by InvalidCredentials. Physical devices, Doze/offline, full provider authorization matrix and UAT remain unverified. Chat evidence deferred; P2, production and real money excluded."
+    },
+    {
+      "id": "P2-ACCOUNT-01",
+      "requirement": "FR-AUTH-001",
+      "description": "OTP local gắn mục đích, hết hạn, giới hạn thử và thu hồi phiên khi reset.",
+      "sources": [
+        "p2-approved",
+        "QA-001",
+        "QA-002"
+      ],
+      "code": [
+        "services/api/src/modules/account-security/security.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-security.test.ts",
+          "name": "purpose-bound OTP login anti-enumeration, attempts, expiry, replay and reset revocation"
+        }
+      ],
+      "qa": [
+        "QA-001",
+        "QA-002"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-ACCOUNT-02",
+      "requirement": "FR-AUTH-005; FR-AUTH-006",
+      "description": "Giữ liên hệ cũ tới xác minh mới, khóa phiên và chống chiếm liên hệ đồng thời.",
+      "sources": [
+        "p2-approved",
+        "QA-004"
+      ],
+      "code": [
+        "services/api/src/modules/account-security/security.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-security.test.ts",
+          "name": "identity retains old contact until verification, rejects other family and concurrent claim, stale old contact cannot login"
+        }
+      ],
+      "qa": [
+        "QA-004"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-ACCOUNT-03",
+      "requirement": "FR-AUTH-007; FR-ADM-024",
+      "description": "Khôi phục qua admin không đăng nhập thay, receipt riêng và xác minh kênh mới.",
+      "sources": [
+        "p2-approved",
+        "QA-005"
+      ],
+      "code": [
+        "services/api/src/modules/account-security/security.service.ts",
+        "apps/mobile/src/features/account-security/screens/RecoveryScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-security.test.ts",
+          "name": "receipt privacy, recovery approval is not login, applicant proof revokes all old sessions without restoring suspension"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/account-security/screens/SecurityScreen.test.tsx",
+          "name": "public recovery does not log in after submission or admin approval; applicant must verify"
+        }
+      ],
+      "qa": [
+        "QA-005"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-ACCOUNT-04",
+      "requirement": "FR-AUTH-003; FR-ADM-025",
+      "description": "Xóa kiểm nghĩa vụ ở thời điểm duyệt, giữ chứng từ và forfeiture cân bằng.",
+      "sources": [
+        "p2-approved",
+        "QA-006"
+      ],
+      "code": [
+        "services/api/src/modules/account-security/security.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-security.test.ts",
+          "name": "deletion rechecks obligations at approval, point forfeiture balanced, history retained, credentials revoked"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-security.test.ts",
+          "name": "deletion waits for in-flight assignment membership lock and observes the committed job obligation"
+        }
+      ],
+      "qa": [
+        "QA-006"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-LOCALE-01",
+      "requirement": "P2-LOCALE",
+      "description": "Locale tài khoản thắng khi đăng nhập, lưu server và trả locale khách khi logout.",
+      "sources": [
+        "p2-approved",
+        "QA-104"
+      ],
+      "code": [
+        "apps/mobile/src/app/providers/LocaleProvider.tsx",
+        "apps/mobile/src/lib/i18n/locale-state.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-security.test.ts",
+          "name": "server locale is per-account, version/idempotency protected and reloaded by fresh session"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/p2-account-security.spec.mjs",
+          "name": "P2 account locale overrides guest, persists before display, restores guest; local OTP login and recovery UI"
+        }
+      ],
+      "qa": [
+        "QA-104"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-FINANCE-01",
+      "requirement": "P2-BANK",
+      "description": "Ngân hàng chờ không thay ngân hàng đang dùng, reauth một lần và cấm đổi khi payout mở.",
+      "sources": [
+        "p2-approved",
+        "QA-105"
+      ],
+      "code": [
+        "services/api/src/modules/finance/finance.service.ts",
+        "apps/mobile/src/features/finance/screens/FinanceScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/finance.test.ts",
+          "name": "bank proposal keeps current, encrypts number, one-use reauth, cancellation/version/retry and payout blocker"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/finance.test.ts",
+          "name": "pending bank approval is blocked by a newly created payout; cancellation frees hold and reauth is scope-bound"
+        }
+      ],
+      "qa": [
+        "QA-105"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-FINANCE-02",
+      "requirement": "FR-WAL-004",
+      "description": "Nạp chỉ ghi tiền sau đối soát test, mã giao dịch nguồn không dùng hai lần.",
+      "sources": [
+        "p2-approved",
+        "QA-040"
+      ],
+      "code": [
+        "services/api/src/modules/finance/finance.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/finance.test.ts",
+          "name": "topup pending/image never credits; bank amount/partner/ref required and source ref globally unique"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/finance.test.ts",
+          "name": "failed ledger projection rolls back request state, postings, history and idempotency before an exact retry"
+        }
+      ],
+      "qa": [
+        "QA-040"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-FINANCE-03",
+      "requirement": "FR-WAL-002; FR-WAL-005",
+      "description": "Unknown giữ hold, đối soát chuyển gốc một lần, chỉ thất bại đã kiểm mới release.",
+      "sources": [
+        "p2-approved",
+        "QA-033",
+        "QA-041",
+        "QA-042"
+      ],
+      "code": [
+        "services/api/src/modules/finance/finance.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/finance.test.ts",
+          "name": "timeout after bank transfer retains hold; original transfer is reconciled once across retries and bank changes remain blocked"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/finance.test.ts",
+          "name": "verified bank failure and pre-send rejection release funds; credit and amount minimum cannot be withdrawn"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/finance.test.ts",
+          "name": "payout and invoice fee reservation serialize on the same account without overdrawing withdrawable funds"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/finance.spec.mjs",
+          "name": "wallet bank topup payout and fresh admin reconcile survive response loss with durable local test money"
+        }
+      ],
+      "qa": [
+        "QA-033",
+        "QA-041",
+        "QA-042"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-FINANCE-04",
+      "requirement": "P2-FINANCE-AUTH",
+      "description": "Quyền ví và MFA kiểm lại cả khi retry, ảnh riêng và tài khoản không lẫn nhau.",
+      "sources": [
+        "p2-approved",
+        "QA-106"
+      ],
+      "code": [
+        "services/api/src/modules/finance/finance.service.ts",
+        "apps/mobile/src/features/organizations/screens/OrganizationsScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/finance.test.ts",
+          "name": "membership revocation rechecks even old retry; admin fresh MFA/cursor scope and private receipts remain isolated"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
+          "name": "wallet-only staff has a wallet entry without profile or membership administration"
+        }
+      ],
+      "qa": [
+        "QA-106"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-CALL-01",
+      "requirement": "FR-CALL-001",
+      "description": "Cuộc gọi đúng quan hệ việc, hai người riêng, nhận chỉ bởi người được gọi và độc quyền active.",
+      "sources": [
+        "p2-approved",
+        "QA-024"
+      ],
+      "code": [
+        "services/api/src/modules/calls/calls.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/calls.test.ts",
+          "name": "current job targets, both directions, recipient-only acceptance, private history and token isolation"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/calls.test.ts",
+          "name": "racing callers and accepting/declining share exclusivity and version checks"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/calls.test.ts",
+          "name": "configured contact and assignment are separate, manager cannot join and removed worker keeps only history"
+        }
+      ],
+      "qa": [
+        "QA-024"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-CALL-02",
+      "requirement": "FR-CALL-001",
+      "description": "Đăng xuất/mất quyền ngắt phòng, replay kiểm quan hệ, LiveKit không tự tạo phòng.",
+      "sources": [
+        "p2-approved",
+        "QA-024"
+      ],
+      "code": [
+        "services/api/src/modules/calls/calls.service.ts",
+        "services/api/src/integrations/livekit/livekit.adapter.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/calls.test.ts",
+          "name": "logout invalidates active media, refresh-family binding survives rotation and second session cannot steal media"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/calls.test.ts",
+          "name": "replay checks current relationship, mismatch and stale actions fail; cleanup failure remains durable"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/livekit.adapter.test.ts",
+          "name": "adapter fails closed on auto-created room policy, issues only microphone bound grants and deletes room"
+        }
+      ],
+      "qa": [
+        "QA-024"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-CALL-03",
+      "requirement": "FR-CALL-001",
+      "description": "UI xin mic, retry cùng key, hủy audio khi đổi tài khoản và báo lỗi media.",
+      "sources": [
+        "p2-approved",
+        "QA-024"
+      ],
+      "code": [
+        "apps/mobile/src/features/calls/CallsProvider.tsx",
+        "apps/mobile/src/features/calls/media.native.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+          "name": "incoming recipient accepts, enables media and actual controls, then closes tracks when ending"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+          "name": "switching account drops late media credentials and ends native audio lifecycle"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+          "name": "media disconnect marks failure and polling cannot keep a dead media call accepted"
+        }
+      ],
+      "qa": [
+        "QA-024"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-ADMIN-01",
+      "requirement": "P2-GRANTS",
+      "description": "MFA mới, không tự cấp/vượt quyền, version cạnh tranh, thu hồi trước retry.",
+      "sources": [
+        "p2-approved",
+        "QA-107"
+      ],
+      "code": [
+        "services/api/src/modules/backoffice/backoffice.service.ts",
+        "apps/mobile/src/features/backoffice/BackofficePanel.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/backoffice.test.ts",
+          "name": "admin grants enforce MFA self boundary least privilege concurrency and replay authorization"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/backoffice/BackofficePanel.test.tsx",
+          "name": "admin permission form preserves retry input and key after lost response and cannot edit beyond held grants"
+        }
+      ],
+      "qa": [
+        "QA-107"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-ADMIN-02",
+      "requirement": "P2-METRICS",
+      "description": "Tra cứu chỉ đọc, kỳ nửa mở và số tiền chính xác từ ledger.",
+      "sources": [
+        "p2-approved",
+        "QA-108"
+      ],
+      "code": [
+        "services/api/src/modules/backoffice/backoffice.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/backoffice.test.ts",
+          "name": "admin metrics and lookup use separate read permissions and do not mutate money"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/backoffice.test.ts",
+          "name": "metrics use a half-open period and admin invoice lookups preserve versions and isolate cursors"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/backoffice.spec.mjs",
+          "name": "P2 admin metrics and permission editor use exact retry and clear private data when locked"
+        }
+      ],
+      "qa": [
+        "QA-108"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "P2-OPS-01",
+      "requirement": "FR-INV-006; Q03",
+      "description": "Tra thao tác đúng người và công cụ restore từ chối mục tiêu ngoài local test.",
+      "sources": [
+        "p2-approved",
+        "QA-051",
+        "QA-055"
+      ],
+      "code": [
+        "services/api/src/modules/backoffice/backoffice.service.ts",
+        "scripts/ops/local-safety.mjs",
+        "scripts/ops/restore-drill.mjs"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/backoffice.test.ts",
+          "name": "lost response lookup never exposes response snapshots or another actor operation"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/restore-safety.test.mjs",
+          "name": "restore drill rejects production remote database and non-disposable schema targets"
+        }
+      ],
+      "qa": [
+        "QA-051",
+        "QA-055"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
     }
   ]
 }

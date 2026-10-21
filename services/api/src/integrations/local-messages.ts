@@ -29,6 +29,7 @@ export class LocalMessages implements OnModuleInit, OnModuleDestroy {
   private readonly transport?: (id: string, message: LocalMessage) => Promise<void>) {
   this.secrets = new MessageSecrets(settings?.secret ?? randomBytes(32).toString('hex'));
  }
+ requireConfigured() { if (!this.settings) throw new ServiceUnavailableException(); }
  requireContact(contact: string) {
   if (!this.settings || !this.settings.contacts.includes(contact)) throw new ServiceUnavailableException();
  }

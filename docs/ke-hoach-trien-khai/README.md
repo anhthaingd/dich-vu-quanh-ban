@@ -1,5 +1,8 @@
 # Kế hoạch triển khai và học code
 
+**21/10/2026 — P2 đang được triển khai theo yêu cầu mới nhất:** chủ dự án đã chốt OTP/khôi phục/xóa và locale tài khoản, quyền admin, LiveKit local để thử âm thanh thật, ngân hàng mô phỏng local chỉ tiền test. [Kế hoạch đã duyệt](de-xuat/P2-01-trien-khai-tron-dot.md). Các ghi chú “chưa chuyển P2” bên dưới là lịch sử; giới hạn APNs/thiết bị thật/UAT của P1-2 vẫn giữ. Kết quả cuối và phạm vi từng lượt kiểm nằm trong [báo cáo tổng P2](bao-cao/B11-03-tong-ket-p2.md). Chưa commit/push hoặc phát hành.
+
+
 **20/10/2026 — P1-06, hoàn thiện cùng đợt P1-2:** ghi chú hỗ trợ nội bộ; lịch sử đánh giá khách theo quyền việc; người thực hiện bổ sung dấu nhận tiền sau admin; vùng đa giác/điểm đại diện, gom cụm theo zoom và xếp hạng ổn định; sự kiện hỗ trợ/xác minh/đánh giá; tích hợp Expo Push Service. [Quyết định đã chốt](de-xuat/P1-06-hoan-thien-cung-dot.md). Code và kiểm local được ghi theo từng báo cáo bên dưới. **Cập nhật 21/10: đã cấu hình FCM, build Android và nhận thông báo thật qua Expo/FCM trên Emulator, mở đúng báo cáo ở nền. Cold-start kiểm lại đạt nhưng giữ một lần chỉ mở trang chủ cần theo dõi. iOS còn thiếu APNs; chưa thiết bị vật lý/UAT, chưa đóng toàn P1-2.** Chọn tin nhắn chứng cứ tiếp tục hoãn; chưa chuyển P2. Chưa commit/push, CI mới hoặc UAT.
 
 - [B09-06 — Ghi chú nội bộ hỗ trợ](bao-cao/B09-06-ghi-chu-noi-bo.md).
@@ -68,6 +71,14 @@ Theo yêu cầu mới nhất ngày 07/10/2026, thứ tự là **nguồn cung và
 Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Markdown Preview có hỗ trợ Mermaid như các tài liệu khác của dự án; tab sửa văn bản hiển thị mã sơ đồ. Không cần các file nguồn/ảnh riêng. Nếu sơ đồ không hiện, kiểm lỗi cú pháp và trình xem hiện có trước khi cài thêm công cụ.
 
 ## Báo cáo đã có
+
+- [B01-08 — Bảo mật, khôi phục và xóa tài khoản](bao-cao/B01-08-bao-mat-khoi-phuc-va-xoa.md).
+- [I18N-05 — Ngôn ngữ tài khoản](bao-cao/I18N-05-ngon-ngu-tai-khoan.md).
+- [B08-01 — Ngân hàng, nạp/rút và đối soát tiền test](bao-cao/B08-01-ngan-hang-va-nap-rut-test.md).
+- [B10-05 — Cuộc gọi LiveKit local](bao-cao/B10-05-cuoc-goi-livekit-local.md).
+- [B11-01 — Quyền admin, tra cứu và báo cáo](bao-cao/B11-01-quyen-tra-cuu-va-bao-cao.md).
+- [B11-02 — Diễn tập phục hồi local](bao-cao/B11-02-dien-tap-phuc-hoi-local.md).
+- [P2-01 — Tổng kết đợt và giới hạn bằng chứng](bao-cao/B11-03-tong-ket-p2.md).
 
 - [B09-05 — Admin tài khoản và danh mục](bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md): quyền, trạng thái, ngành–nhóm–kỹ năng và hỗ trợ hạn chế khi bị khóa.
 - [B09-04 — Admin hoàn tất thay thợ](bao-cao/B09-04-admin-hoan-tat-thay.md): xem trước, MFA, quyết toán một lần và chứng cứ; tiền test.

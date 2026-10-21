@@ -56,10 +56,29 @@
         {
           "photosPermission": "Chọn ảnh kết quả công việc để gửi cùng hóa đơn.",
           "cameraPermission": false,
-          "microphonePermission": false
+          "microphonePermission": "Cho phép dùng micro khi bạn bắt đầu hoặc nhận cuộc gọi."
         }
       ],
-      "expo-notifications"
+      "expo-notifications",
+      [
+        "@livekit/react-native-expo-plugin",
+        {
+          "android": {
+            "audioType": "communication",
+            "enableScreenShareService": false
+          },
+          "ios": {
+            "enableMultitaskingCameraAccess": false
+          }
+        }
+      ],
+      [
+        "@config-plugins/react-native-webrtc",
+        {
+          "microphonePermission": "Cho phép dùng micro khi bạn bắt đầu hoặc nhận cuộc gọi."
+        }
+      ],
+      "./plugins/with-call-audio-only.cjs"
     ],
     "extra": {
       "eas": {

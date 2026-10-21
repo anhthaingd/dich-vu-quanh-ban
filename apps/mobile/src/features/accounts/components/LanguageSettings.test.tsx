@@ -33,10 +33,13 @@ test('VI → JA → EN retains form, translates a visible error without another 
   expect(screen.getByTestId('auth-email').props.value).toBe(credentials.email);
   fireEvent.changeText(screen.getByTestId('auth-password'), credentials.password);
   fireEvent.press(screen.getByTestId('auth-submit'));
+  await screen.findByText('Email chưa xác minh'); // Account locale wins over the guest English preference.
+  expect(f.accounts.edit).not.toHaveBeenCalled();
+  fireEvent.press(screen.getByTestId('locale-en'));
   await screen.findByText('Email not verified');
   fireEvent.press(screen.getByTestId('locale-vi'));
   await screen.findByText('Email chưa xác minh');
-  expect(f.manager.getSnapshot().user).toEqual(session.user);
+  expect(f.manager.getSnapshot().user).toMatchObject({...session.user,version:3});
   expect(f.api.logout).not.toHaveBeenCalled();
 });
 test('locale changes preserve the selected category and translate a catalog failure', async () => {

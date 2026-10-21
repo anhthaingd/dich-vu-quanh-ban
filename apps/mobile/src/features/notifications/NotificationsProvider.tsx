@@ -12,23 +12,24 @@ export function NotificationsProvider({children}:PropsWithChildren){
   const realtime=useRealtime();
   const {manager,state}=useAuth(),owner=state.phase==='authenticated'&&state.user?.status==='active'?state.user.id:undefined;
   const [data,setData]=useState<{owner?:string;items:Notice[];loading:boolean;loaded:boolean;error:ApiErrorCode|null}>({items:[],loading:false,loaded:false,error:null});
-  const current=useRef(owner),running=useRef(false),last=useRef(0),dirty=useRef(false),generation=useRef(0),failures=useRef(0);current.current=owner;
+  const current=useRef(owner),running=useRef(false),last=useRef(0),dirty=useRef(false),generation=useRef(0),failures=useRef(0),invalidations=useRef(0);current.current=owner;
+  const invalidate=useCallback(()=>{invalidations.current++;dirty.current=true;failures.current=0;},[]);
   const refresh=useCallback(async()=>{
     if(!owner||running.current||manager.getSnapshot().busy)return;
-    const epoch=generation.current;dirty.current=false;running.current=true;setData(d=>({...d,owner,loading:true,error:d.owner===owner?d.error:null,loaded:d.owner===owner?d.loaded:false,items:d.owner===owner?d.items:[]}));
+    const epoch=generation.current,invalidation=invalidations.current;dirty.current=false;running.current=true;setData(d=>({...d,owner,loading:true,error:d.owner===owner?d.error:null,loaded:d.owner===owner?d.loaded:false,items:d.owner===owner?d.items:[]}));
     try{let cursor:string|undefined;const found=new Map<string,Notice>(),seen=new Set<string>();
       do{const page=await manager.listNotifications(owner,cursor);if(current.current!==owner||epoch!==generation.current)return;
         page.items.filter(n=>!n.kind.startsWith('conversation.')).forEach(n=>found.set(n.id,n));cursor=page.next_cursor??undefined;
         if(cursor&&seen.has(cursor))throw new ApiError('INVALID_RESPONSE');if(cursor)seen.add(cursor);
       }while(cursor);
       if(current.current===owner&&epoch===generation.current){setData(previous=>({owner,items:[...found.values()].map(n=>({...n,read_at:n.read_at??(previous.owner===owner?previous.items.find(x=>x.id===n.id)?.read_at:null)??null})),loading:false,loaded:true,error:null}));last.current=Date.now();failures.current=0;}
-    }catch(e){if(current.current===owner&&epoch===generation.current){const code=e instanceof ApiError?e.code:'NETWORK';setData(d=>({...d,loading:false,error:code,items:['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)?[]:d.items}));last.current=Date.now();failures.current=Math.min(4,failures.current+1);}}
+    }catch(e){if(current.current===owner&&epoch===generation.current){const code=e instanceof ApiError?e.code:'NETWORK';setData(d=>({...d,loading:false,error:code,items:['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)?[]:d.items}));last.current=Date.now();failures.current=invalidations.current===invalidation?Math.min(4,failures.current+1):0;}}
     finally{running.current=false;}
   },[manager,owner]);
   useEffect(()=>{generation.current++;last.current=0;failures.current=0;dirty.current=true;
-    const unlisten=realtime?.listen(signal=>{if(signal.kind==='sync'||signal.kind==='event'&&signal.event.type.startsWith('notification.'))dirty.current=true;});
+    const unlisten=realtime?.listen(signal=>{if(signal.kind==='sync'||signal.kind==='event'&&signal.event.type.startsWith('notification.'))invalidate();});
     const timer=setInterval(()=>{if(AppState.currentState!=='background'&&Date.now()-last.current>=(failures.current?Math.min(120000,15000*2**failures.current):0)&&(dirty.current||Date.now()-last.current>=(realtime?.connected?60000:15000)))void refresh();},250);
-    return()=>{generation.current++;unlisten?.();clearInterval(timer);};},[refresh,realtime]);
+    return()=>{generation.current++;unlisten?.();clearInterval(timer);};},[refresh,realtime,invalidate]);
   // Stable per-notification UUIDs are retained on an uncertain result.
   const keys=useRef(new Map<string,string>());
   const markRead=useCallback(async(ids:string[])=>{

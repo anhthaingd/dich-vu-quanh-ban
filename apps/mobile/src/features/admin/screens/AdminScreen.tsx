@@ -12,7 +12,7 @@ import {codeOf,errorText} from './presentation';
 import {theme} from '../../../theme/tokens';
 import {AdminApi} from '../api/admin-api';
 import {translator} from '../messages';
-import {AdminDesk} from './AdminDesk';
+import {P2Desk} from './P2Desk';
 export function AdminScreen(){
  const {manager,state}=useAuth(),{locale}=useLocale();
  const client=useMemo(()=>new AdminApi(manager,state.user!.id,process.env.EXPO_PUBLIC_API_URL),[manager,state.user?.id]);
@@ -39,7 +39,7 @@ export function AdminScreen(){
  return <SafeAreaView style={styles.root} testID="admin-root"><KeyboardAvoidingView style={styles.root} behavior={Platform.OS==='ios'?'padding':undefined}>
   <View style={styles.top}><AppText tone="surface" variant="card">Dịch vụ quanh bạn</AppText><AppText tone="surface" variant="caption">{t('eyebrow')}</AppText></View>
   <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={styles.content}>
-   {ready?<AdminDesk key={epoch} client={client} grants={state.user!.admin_permissions} t={t} locale={locale} fail={fail} lock={()=>void lock()}/>:<Card>
+   {ready?<P2Desk key={epoch} owner={state.user!.id} client={client} grants={state.user!.admin_permissions} t={t} locale={locale} fail={fail} lock={()=>void lock()}/>:<Card>
     <AppText variant="title" accessibilityRole="header">{t(enrolled?'reauth':'setup')}</AppText>
     {enrolled===null?<Button label={t('retry')} onPress={()=>{setError('');setEpoch(n=>n+1);}}/>:<>
     {setup&&<><AppText>{t('setupHint')}</AppText><AppText>{t('secret')}</AppText><AppText selectable testID="admin-setup-secret">{setup}</AppText></>}

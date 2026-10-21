@@ -14,7 +14,8 @@ export const test = base.extend({
   realtime: [false, {option:true}],
   teamLocal: [false, {option:true}],
   adminLocal: [false, {option:true}],
-  environment: async ({teamLocal,realtime,adminLocal}, use, testInfo) => {
+  financeLocal: [false, {option:true}],
+  environment: async ({teamLocal,realtime,adminLocal,financeLocal}, use, testInfo) => {
     const url = process.env.TEST_DATABASE_URL ?? 'postgresql://dvqb_test:test-only-password@127.0.0.1:55433/dvqb_test';
     if (new URL(url).pathname !== '/dvqb_test') throw Error('E2E requires dvqb_test');
     const schema = `web_${randomUUID().replaceAll('-', '')}`;
@@ -40,7 +41,7 @@ export const test = base.extend({
       const webUrl = `http://127.0.0.1:${server.address().port}`;
       const localAssets = {directory: directory + '-assets', origin: 'http://127.0.0.1'};
       const localMessages = teamLocal ? {secret:'web-local-messages-secret-'.repeat(3),contacts:['owner@example.test','worker@example.test','+84900000001'],mailpit:'http://127.0.0.1:1',smsDirectory:directory+'-sms'} : undefined;
-      app = await createApp({admin:adminLocal?{secret:"web-admin-private-secret-".repeat(3)}:undefined,realtimeEnabled:realtime,localMessages,localAssets, databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), authSecret: 'isolated-web-auth-secret-'.repeat(3), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
+      app = await createApp({finance:financeLocal?{secret:"web-local-finance-secret-".repeat(3)}:undefined,admin:adminLocal?{secret:"web-admin-private-secret-".repeat(3)}:undefined,realtimeEnabled:realtime,localMessages,localAssets, databaseUrl: url, cursorSecret: 'test-secret-'.repeat(4), authSecret: 'isolated-web-auth-secret-'.repeat(3), port: 0, host: '127.0.0.1', corsOrigin: webUrl }, pool, log);
       await app.listen(0, '127.0.0.1');
       localAssets.origin = await app.getUrl();
       const apiUrl = await app.getUrl() + '/v1';

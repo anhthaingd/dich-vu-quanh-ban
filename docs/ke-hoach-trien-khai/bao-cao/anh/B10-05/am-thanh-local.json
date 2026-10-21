@@ -1,0 +1,65 @@
+{
+  "checked_at": "2026-10-21T06:54:24.653Z",
+  "livekit": "1.13.10",
+  "client": "2.23.0",
+  "room_auto_create": false,
+  "kind": "generated 440Hz/880Hz audio through actual local LiveKit SFU; no human microphone/device proof",
+  "checks": [
+    {
+      "reason": "end",
+      "samples": [
+        {
+          "peakHz": 878.90625,
+          "peakDb": -37.80295944213867,
+          "bytesReceived": 592
+        },
+        {
+          "peakHz": 433.59375,
+          "peakDb": -49.575836181640625,
+          "bytesReceived": 429
+        }
+      ],
+      "muting": "remote silence then audio recovered",
+      "server_disconnect": "both browsers disconnected",
+      "cached_token_rejoin": [
+        {
+          "attempts": 2,
+          "denied": 2
+        },
+        {
+          "attempts": 2,
+          "denied": 2
+        }
+      ],
+      "final_state": "ended"
+    },
+    {
+      "reason": "logout",
+      "samples": [
+        {
+          "peakHz": 878.90625,
+          "peakDb": -48.59047317504883,
+          "bytesReceived": 394
+        },
+        {
+          "peakHz": 433.59375,
+          "peakDb": -44.17964172363281,
+          "bytesReceived": 605
+        }
+      ],
+      "muting": "remote silence then audio recovered",
+      "server_disconnect": "both browsers disconnected",
+      "cached_token_rejoin": [
+        {
+          "attempts": 2,
+          "denied": 2
+        },
+        {
+          "attempts": 2,
+          "denied": 2
+        }
+      ],
+      "final_state": "revoked"
+    }
+  ]
+}

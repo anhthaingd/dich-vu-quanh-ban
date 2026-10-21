@@ -1,3 +1,4 @@
+import {CallsProvider} from '../features/calls/CallsProvider';
 import {createVerificationApi} from '../features/verification/api/verification-api';
 import {createSupportApi} from '../features/support/api/support-api';
 import {createReviewsApi} from '../features/reviews/api/reviews-api';
@@ -30,5 +31,5 @@ export default function App() {
     BeVietnamBold: require('../../assets/fonts/BeVietnamPro-Bold.ttf'),
   });
   if (!loaded && !error) return null;
-  return <AppProviders api={api} partners={partners}><AuthProvider manager={auth}><RealtimeProvider><MessageUnreadProvider><NotificationsProvider><AppNavigator /></NotificationsProvider></MessageUnreadProvider></RealtimeProvider></AuthProvider></AppProviders>;
+  return <AppProviders api={api} partners={partners}><AuthProvider manager={auth}><RealtimeProvider><MessageUnreadProvider><NotificationsProvider><CallsProvider><AppNavigator /></CallsProvider></NotificationsProvider></MessageUnreadProvider></RealtimeProvider></AuthProvider></AppProviders>;
 }

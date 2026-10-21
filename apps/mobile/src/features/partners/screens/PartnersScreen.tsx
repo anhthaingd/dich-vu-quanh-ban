@@ -1,3 +1,4 @@
+import {financeText} from '../../finance/messages';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -25,6 +26,7 @@ export function PartnersScreen({
           key={owner}
           owner={owner}
           open={(id) => navigation.navigate('PartnerEditor', { id })}
+          wallet={(id)=>navigation.navigate('Finance',{id})}
         />
       )}
     </AccountPage>
@@ -32,13 +34,15 @@ export function PartnersScreen({
 }
 function Profiles({
   owner,
+  wallet,
   open
 }: {
   owner: string;
+  wallet:(id:string)=>void;
   open: (id?: string) => void;
 }) {
   const { manager, state } = useAuth(),
-    { t } = useLocale();
+    { t,locale } = useLocale();
   const [items, setItems] = useState<Partner[]>([]),
     [busy, setBusy] = useState(true),
     [error, setError] = useState(false),
@@ -94,6 +98,7 @@ function Profiles({
               {t(`partners.${p.kind}`)} ·{' '}
               {t(`partners.${p.publication_status}`)}
             </AppText>
+            <Button testID={'wallet-open-'+p.id} label={financeText(locale,'wallet')} variant="secondary" onPress={()=>wallet(p.id)}/>
             <Button label={p.name} variant="link" onPress={() => open(p.id)} />
             <AppText>
               {t(p.accepting_jobs ? 'partners.accepting' : 'partners.paused')}

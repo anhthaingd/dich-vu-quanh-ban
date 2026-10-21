@@ -34,3 +34,10 @@ test('team follows member and invitation tabs, reauthenticates before grants and
 test('team clears private lists when access is revoked on reload',async()=>{
  const f=fixture();mount(f,'Team');await screen.findByTestId('team-remove-worker');f.team.memberships.mockResolvedValue({items:[],next_cursor:null});fireEvent.press(screen.getByTestId('team-reload'));await screen.findByRole('alert');expect(screen.queryByTestId('team-remove-worker')).toBeNull();
 });
+test('wallet-only staff has a wallet entry without profile or membership administration',async()=>{
+ const f=fixture();f.team.memberships.mockResolvedValue({items:[{...mine,is_owner:false,permissions:['wallet.read']}],next_cursor:null});mount(f,'Organizations');await screen.findByTestId('membership-wallet-partner');expect(screen.queryByTestId('team-open-partner')).toBeNull();
+ await waitFor(()=>expect(screen.getByTestId('memberships-reload')).toBeEnabled());
+ const reads=f.team.memberships.mock.calls.length;
+ f.team.memberships.mockResolvedValue({items:[{...mine,is_owner:false,permissions:[],active:false}],next_cursor:null});fireEvent.press(screen.getByTestId('memberships-reload'));
+ await waitFor(()=>expect(f.team.memberships).toHaveBeenCalledTimes(reads+1));await waitFor(()=>expect(screen.queryByTestId('membership-wallet-partner')).toBeNull());
+});

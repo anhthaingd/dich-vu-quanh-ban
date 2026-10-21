@@ -17,3 +17,9 @@ jest.mock('expo-notifications', () => ({
   getLastNotificationResponseAsync: jest.fn(async () => null),
   clearLastNotificationResponseAsync: jest.fn(async () => undefined),
 }));
+// UI tests do not own a microphone or a media server. Focused calls tests override
+// this boundary; actual LiveKit transport is verified by the local browser smoke.
+jest.mock('../../src/features/calls/media', () => ({
+  prepareMicrophone: jest.fn(async () => undefined),
+  createMediaSession: jest.fn(() => ({ supportsSpeaker: true, connect: jest.fn(async () => undefined), mute: jest.fn(async () => undefined), speaker: jest.fn(async () => undefined), resume: jest.fn(async () => undefined), close: jest.fn(async () => undefined) })),
+}));

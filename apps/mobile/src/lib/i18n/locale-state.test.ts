@@ -32,3 +32,17 @@ test('hydration runs once, early taps cannot race it and concurrent writes are b
   written(); await write; expect(manager.getSnapshot().locale).toBe('en');
   unsubscribe(); changed.mockClear(); await manager.select('vi'); expect(changed).not.toHaveBeenCalled();
 });
+
+test('account locale wins without overwriting the guest, logout restores guest and another account is independent', async () => {
+ const s=storage('ja'),manager=new LocaleState(s);await manager.restore();const save=jest.fn().mockResolvedValue('en');
+ manager.bindAccount('A','vi',save);expect(manager.getSnapshot().locale).toBe('vi');await manager.select('en');expect(save).toHaveBeenCalledWith('en');expect(s.write).not.toHaveBeenCalled();expect(manager.getSnapshot().locale).toBe('en');
+ manager.bindAccount(null);expect(manager.getSnapshot().locale).toBe('ja');manager.bindAccount('B','vi',jest.fn());expect(manager.getSnapshot().locale).toBe('vi');manager.bindAccount(null);expect(manager.getSnapshot().locale).toBe('ja');
+});
+test('server failure retains account locale and a late save cannot change the next account', async () => {
+ const manager=new LocaleState(storage('ja'));await manager.restore();let resolve!:(v:'en')=>void;const save=jest.fn().mockRejectedValueOnce(Error('PRIVATE_CANARY')).mockImplementationOnce(()=>new Promise(r=>{resolve=r;}));
+ manager.bindAccount('A','vi',save);await manager.select('en');expect(manager.getSnapshot()).toMatchObject({locale:'vi',error:'WRITE_FAILED'});
+ const pending=manager.select('en');manager.bindAccount('B','ja',jest.fn());resolve('en');await pending;expect(manager.getSnapshot()).toMatchObject({locale:'ja',busy:false,error:null});
+});
+test('late guest restoration never overwrites a logged in account locale', async()=>{
+ const s=storage();let resolve!:(v:string)=>void;s.read.mockImplementation(()=>new Promise(r=>{resolve=r;}));const manager=new LocaleState(s),pending=manager.restore();manager.bindAccount('A','en',jest.fn());resolve('ja');await pending;expect(manager.getSnapshot().locale).toBe('en');manager.bindAccount(null);expect(manager.getSnapshot().locale).toBe('ja');
+});

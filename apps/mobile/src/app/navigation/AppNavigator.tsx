@@ -1,3 +1,6 @@
+import {SecurityScreen} from '../../features/account-security/screens/SecurityScreen';
+import {RecoveryScreen} from '../../features/account-security/screens/RecoveryScreen';
+import {FinanceScreen} from '../../features/finance/screens/FinanceScreen';
 import {useState} from 'react';
 import {randomUUID} from 'expo-crypto';
 import {PushListener} from '../../features/notifications/PushListener';
@@ -78,6 +81,9 @@ export function AppNavigator() {
       <Stack.Screen name="Team" component={TeamScreen} />
       <Stack.Screen name="VerifyContact" component={VerifyContactScreen} />
       <Stack.Screen name="Account" component={AccountScreen} />
+      <Stack.Screen name="AccountSecurity">{({navigation})=><SecurityScreen back={()=>navigation.goBack()} recovery={()=>navigation.navigate('AccountRecovery')}/>}</Stack.Screen>
+      <Stack.Screen name="AccountRecovery">{({navigation})=><RecoveryScreen back={()=>navigation.goBack()}/>}</Stack.Screen>
+      <Stack.Screen name="Finance">{({navigation,route})=><FinanceScreen partnerId={route.params.id} onBack={()=>navigation.goBack()}/>}</Stack.Screen>
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Sessions" component={SessionsScreen} />
       <Stack.Screen name="Addresses" component={AddressesScreen} />

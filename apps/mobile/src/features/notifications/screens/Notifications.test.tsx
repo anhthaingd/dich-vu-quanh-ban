@@ -34,7 +34,7 @@ test('notification retry retains read key and denied target never navigates usin
 });
 test('reminder settings retain form across locale changes and retry the same immutable payload',async()=>{
  const f=fixture();mount(f,'NotificationSettings');const toggle=await screen.findByTestId('setting-reminder_push');fireEvent(toggle,'valueChange',false);
- fireEvent.press(screen.getByRole('button',{name:'English'}));expect(screen.getByTestId('setting-reminder_push').props.value).toBe(false);
+ fireEvent.press(screen.getByRole('button',{name:'English'}));await waitFor(()=>expect(screen.getByTestId('notices-save')).not.toBeDisabled());expect(screen.getByTestId('setting-reminder_push').props.value).toBe(false);
  f.notices.save.mockRejectedValueOnce(new ApiError('NETWORK'));fireEvent.press(screen.getByTestId('notices-save'));await screen.findByTestId('work-retry');expect(screen.getByTestId('setting-reminder_push')).toBeDisabled();
  fireEvent.press(screen.getByTestId('work-retry'));await screen.findByTestId('notices-saved');expect(f.notices.save.mock.calls[0]).toEqual(f.notices.save.mock.calls[1]);expect(f.notices.save.mock.calls[1][1]).toEqual({...settings,reminder_push:false});
 });
