@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { requestContext } from '../../logging/logger.js';
-import { jobRecipients, queueEventNotifications } from '../../modules/notifications/notifications.store.js';
-export type Resource = {type:'notification'|'conversation'|'job'|'invoice';id:string};
+import { jobRecipients, verificationRecipients, queueEventNotifications } from '../../modules/notifications/notifications.store.js';
+export type Resource = {type:'notification'|'conversation'|'job'|'invoice'|'report'|'verification'|'review';id:string};
 export async function event(db:PoolClient,key:string,id:string,version:number,type:string,payload:unknown) {
   const {rows:[e]}=await db.query(`INSERT INTO outbox_events(event_key,aggregate_id,aggregate_version,event_type,payload,correlation_id)
     VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT(event_key) DO NOTHING RETURNING id`,[key,id,version,type,JSON.stringify(payload),requestContext.getStore()?.request_id??randomUUID()]);
@@ -18,6 +18,12 @@ export async function event(db:PoolClient,key:string,id:string,version:number,ty
   }else if(type.startsWith('invoice.')){
     resource={type:'invoice',id};const j=(await db.query('SELECT job_id FROM invoices WHERE id=$1',[id])).rows[0];
     if(j)recipients=type==='invoice.sent.v1'?(await db.query('SELECT customer_id AS user_id FROM jobs WHERE id=$1',[j.job_id])).rows:await jobRecipients(db,j.job_id);
+  }else if(type==='report.updated.v1'){
+    resource={type:'report',id};recipients=(await db.query('SELECT reporter_id AS user_id FROM reports WHERE id=$1',[id])).rows;
+  }else if(type==='verification.updated.v1'){
+    resource={type:'verification',id};recipients=await verificationRecipients(db,id);
+  }else if(type==='review.updated.v1'){
+    resource={type:'review',id};const r=(await db.query('SELECT job_id FROM reviews WHERE id=$1',[id])).rows[0];if(r)recipients=await jobRecipients(db,r.job_id);
   }else if(type==='notification.created.v1'||type==='notification.read.v1'){
     resource={type:'notification',id};recipients=(await db.query('SELECT user_id FROM notifications WHERE id=$1',[id])).rows;
   }

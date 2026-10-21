@@ -1,5 +1,5 @@
 {
-  "version": "0.2.1",
+  "version": "0.2.2",
   "transport": "Socket.IO 4; websocket only; single NestJS instance; HTTP commands and recovery",
   "envelope": {
     "event_id": "uuid",
@@ -152,16 +152,6 @@
       "implementation_scope": "Not opened by RT-01A"
     },
     {
-      "name": "report.updated.v1",
-      "audience": "Participant case theo visibility",
-      "payload": [
-        "report_id",
-        "version"
-      ],
-      "recovery": "GET report với filter admin_only",
-      "implementation_scope": "Not opened by RT-01A"
-    },
-    {
       "name": "notification.created.v1",
       "audience": "Đúng user",
       "payload": [
@@ -189,6 +179,47 @@
       ],
       "recovery": "GET invoice; giữ bản đang nhập và yêu cầu tải lại khi xung đột",
       "implementation_scope": "RT-01A"
+    },
+    {
+      "name": "report.updated.v1",
+      "audience": "Report owner only",
+      "payload": [
+        "report_id",
+        "resource_version"
+      ],
+      "recovery": "GET /reports/{id}",
+      "implementation_scope": "P1-06; minimal invalidation, no body, documents, notes or reasons. Current authorization rechecked at delivery."
+    },
+    {
+      "name": "verification.updated.v1",
+      "audience": "Current profile.manage members",
+      "payload": [
+        "verification_id",
+        "resource_version"
+      ],
+      "recovery": "GET /partners/{id}/verification",
+      "implementation_scope": "P1-06; minimal invalidation, no body, documents, notes or reasons. Current authorization rechecked at delivery."
+    },
+    {
+      "name": "review.updated.v1",
+      "audience": "Current job participants",
+      "payload": [
+        "review_id",
+        "resource_version"
+      ],
+      "recovery": "GET /jobs/{id}/reviews",
+      "implementation_scope": "P1-06; minimal invalidation, no body, documents, notes or reasons. Current authorization rechecked at delivery."
+    },
+    {
+      "name": "invoice.receipt_confirmed.v1",
+      "audience": "Current job participants",
+      "payload": [
+        "invoice_id",
+        "version_id",
+        "resource_version"
+      ],
+      "recovery": "GET invoice; never settle from an event",
+      "implementation_scope": "P1-06"
     }
   ],
   "connection": {
@@ -228,5 +259,11 @@
     "messages": "conversation.* invalidates Conversation.unread; never creates notification inbox entries",
     "notifications": "non-chat events only; notification.read does not modify conversation_reads",
     "recovery": "Authoritative HTTP snapshot across all pages; no event-count arithmetic; independent read and badges"
+  },
+  "pushPilot": {
+    "provider": "Expo Push Service",
+    "approved": "2026-10-20",
+    "payload": "Generic title/body, recipient_id and resource IDs only. No private content.",
+    "delivery": "Independent persisted device deliveries; recheck session family, current resource permission and settings; revoke DeviceNotRegistered; retry transient failures with bounds. Receipt success means provider handoff, not device receipt. Unknown HTTP results can duplicate alerts; never trigger business mutations from push."
   }
 }

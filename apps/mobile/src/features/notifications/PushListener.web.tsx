@@ -1,0 +1,1 @@
+export function PushListener(_props:{ready?:boolean;owner:string|undefined;onRegister:(token:string,platform:string)=>Promise<void>;onOpen:(data:Record<string,unknown>)=>Promise<boolean>}){void _props;return null;}

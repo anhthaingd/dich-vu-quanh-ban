@@ -454,7 +454,7 @@ test("create transaction rolls back membership and partner if wallet creation fa
     "0",
   );
 });
-test("malformed requests and unsupported ranking/polygons fail safely", async () => {
+test("malformed requests, duplicate ranking parameters and invalid polygons fail safely", async () => {
   for (const path of [
     "/partners",
     "/partners?latitude=NaN&longitude=0",
@@ -546,4 +546,27 @@ test("management, distance results and localized public profile match approved c
     (await call("/partners", "POST", input, token, key)).status,
     404,
   );
+});
+test('polygon areas validate geometry, preserve the chosen representative and filter by boundary before ranking',async()=>{
+ let p=await ready('Polygon provider');const x=point.longitude,y=point.latitude;
+ const polygon={type:'MultiPolygon',coordinates:[[[[x-.01,y-.01],[x+.01,y-.01],[x+.01,y+.01],[x-.01,y+.01],[x-.01,y-.01]]]]};
+ p=await edit(p,'service-areas',{areas:[{label:'DEMO public region',center:point,radius_m:1,boundary_geojson:polygon}]});
+ assert.equal(p.areas[0].boundary_geojson.type,'MultiPolygon');for(let i=0;i<5;i++)for(let n=0;n<2;n++)assert.ok(Math.abs(p.areas[0].boundary_geojson.coordinates[0][0][i][n]-polygon.coordinates[0][0][i][n])<1e-8);assert.equal(p.areas[0].radius_m,null);
+ const search=await call(query());assert.equal(search.status,200,JSON.stringify(search));assert.equal(search.body.items.length,1);assert.deepEqual(search.body.items[0].map_location,{text:'DEMO public region',point});
+ assert.equal((await call(`/partners?latitude=${y+.02}&longitude=${x}&radius_m=100000`)).body.items.length,0);
+ const invalid={...polygon,coordinates:[[[[x-.01,y-.01],[x+.01,y+.01],[x+.01,y-.01],[x-.01,y+.01],[x-.01,y-.01]]]]};
+ assert.equal((await call(`/partners/${p.id}/service-areas`,'PUT',{expected_version:p.version,areas:[{label:'DEMO',center:point,radius_m:100,boundary_geojson:invalid}]})).status,400);
+ assert.equal((await call(`/partners/${p.id}/manage`)).status,404); // No accidental alternate management route.
+ assert.equal((await call(query())).body.items.length,1);
+});
+test('recommended and rating search preserve snapshot order across verification changes and recheck current visibility',async()=>{
+ const a=await ready('A'),b=await ready('B'),c=await ready('C');
+ await f.pool.query("UPDATE partners SET verification_status='verified' WHERE id=$1",[b.id]);
+ const url=`/partners?latitude=${point.latitude}&longitude=${point.longitude}&sort=recommended&limit=1`;
+ const first=await call(url);assert.equal(first.status,200,JSON.stringify(first));assert.equal(first.body.items[0].id,b.id);
+ await f.pool.query("UPDATE partners SET verification_status='verified' WHERE id=$1",[c.id]);await f.pool.query("UPDATE partners SET moderation_status='new_work_suspended' WHERE id=$1",[a.id]);
+ const next=await call(url+'&cursor='+encodeURIComponent(first.body.next_cursor));assert.equal(next.status,200);assert.deepEqual(next.body.items.map((p:{id:string})=>p.id),[c.id]);
+ assert.equal((await call(url.replace('recommended','rating')+'&cursor='+encodeURIComponent(first.body.next_cursor))).status,400);
+ assert.equal((await call(url.replace('recommended','rating'))).status,200);
+ await f.pool.query("UPDATE search_snapshots SET expires_at=now()-interval '1 second'");assert.equal((await call(url+'&cursor='+encodeURIComponent(first.body.next_cursor))).status,400);
 });

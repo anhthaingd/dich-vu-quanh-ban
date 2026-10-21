@@ -14,20 +14,20 @@ export function LocationMap(props: LocationMapProps) {
     map.current = instance;
     instance.on('error', () => latest.current.onError());
     instance.on('load', () => {
-      instance.addSource('choice', { type: 'geojson', data: mapFeatures(latest.current.point, latest.current.radius) });
+      instance.addSource('choice', { type: 'geojson', data: mapFeatures(latest.current.point, latest.current.radius,latest.current.polygon) });
       instance.addLayer({ id: 'area', type: 'fill', source: 'choice', filter: ['==', ['get', 'kind'], 'area'], paint: { 'fill-color': '#147d73', 'fill-opacity': 0.18 } });
       instance.addLayer({ id: 'area-border', type: 'line', source: 'choice', filter: ['==', ['get', 'kind'], 'area'], paint: { 'line-color': '#147d73', 'line-width': 2 } });
       instance.addLayer({ id: 'pin', type: 'circle', source: 'choice', filter: ['==', ['get', 'kind'], 'pin'], paint: { 'circle-radius': 9, 'circle-color': '#147d73', 'circle-stroke-width': 3, 'circle-stroke-color': '#fff' } });
     });
     instance.on('click', e => latest.current.onChoose?.({ latitude: e.lngLat.lat, longitude: e.lngLat.lng }));
-    instance.on('moveend', e => { if (e.originalEvent) { const p = instance.getCenter(); latest.current.onChoose?.({ latitude: p.lat, longitude: p.lng }); } });
+    instance.on('moveend', e => { if (e.originalEvent&&!latest.current.clickOnly) { const p = instance.getCenter(); latest.current.onChoose?.({ latitude: p.lat, longitude: p.lng }); } });
     const resize = new ResizeObserver(() => instance.resize()); resize.observe(host.current);
     return () => { resize.disconnect(); instance.remove(); map.current = null; };
   }, []);
   useEffect(() => {
     const instance = map.current;
-    (instance?.getSource('choice') as GeoJSONSource | undefined)?.setData(mapFeatures(props.point, props.radius));
-    if (props.point) instance?.jumpTo({ center: [props.point.longitude, props.point.latitude] });
-  }, [props.point, props.radius]);
+    (instance?.getSource('choice') as GeoJSONSource | undefined)?.setData(mapFeatures(props.point, props.radius,props.polygon));
+    if (props.point&&!props.clickOnly) instance?.jumpTo({ center: [props.point.longitude, props.point.latitude] });
+  }, [props.point, props.radius,props.polygon]);
   return <div ref={host} style={{ width: '100%', height: '100%', minHeight: 240 }} />;
 }

@@ -1,0 +1,53 @@
+import {act,render,waitFor} from '@testing-library/react-native';
+import * as Notifications from 'expo-notifications';
+import {PushListener} from './PushListener.native';
+jest.mock('expo-device',()=>({isDevice:false}));
+jest.mock('expo-constants',()=>({__esModule:true,default:{expoConfig:{extra:{eas:{projectId:'demo-project'}}}}}));
+jest.mock('expo-notifications',()=>({getPermissionsAsync:jest.fn(),getDevicePushTokenAsync:jest.fn(),getExpoPushTokenAsync:jest.fn(),addPushTokenListener:jest.fn(),addNotificationResponseReceivedListener:jest.fn(),getLastNotificationResponseAsync:jest.fn(),clearLastNotificationResponseAsync:jest.fn()}));
+const response=(owner:string,key:string)=>({actionIdentifier:'default',notification:{request:{identifier:key,content:{data:{recipient_id:owner,event_key:key,job_id:'job'}}}}} as unknown as Notifications.NotificationResponse);
+test('native push listener registers permitted devices, ignores another account and deduplicates authorized opens',async()=>{
+ const remove=jest.fn(),onOpen=jest.fn().mockResolvedValue(true),onRegister=jest.fn().mockResolvedValue(undefined);
+ jest.mocked(Notifications.getPermissionsAsync).mockResolvedValue({granted:true} as Notifications.NotificationPermissionsStatus);
+ jest.mocked(Notifications.getDevicePushTokenAsync).mockResolvedValue({type:'ios',data:'native-demo'});
+ jest.mocked(Notifications.getExpoPushTokenAsync).mockResolvedValue({type:'expo',data:'ExpoPushToken[demo]'});
+ jest.mocked(Notifications.addPushTokenListener).mockReturnValue({remove});jest.mocked(Notifications.addNotificationResponseReceivedListener).mockReturnValue({remove});
+ jest.mocked(Notifications.getLastNotificationResponseAsync).mockResolvedValue(response('other','old'));
+ const view=render(<PushListener owner="owner" onOpen={onOpen} onRegister={onRegister}/>);
+ await waitFor(()=>expect(onRegister).toHaveBeenCalledWith('ExpoPushToken[demo]',expect.any(String)));expect(onOpen).not.toHaveBeenCalled();
+ const receive=jest.mocked(Notifications.addNotificationResponseReceivedListener).mock.calls[0][0];
+ await act(async()=>{receive(response('owner','event'));});await act(async()=>{receive(response('owner','event'));});expect(onOpen).toHaveBeenCalledTimes(1);expect(Notifications.clearLastNotificationResponseAsync).toHaveBeenCalled();
+ onOpen.mockResolvedValueOnce(false);await act(async()=>{receive(response('owner','retry'));});await act(async()=>{receive(response('owner','retry'));});expect(onOpen).toHaveBeenCalledTimes(3);
+ view.unmount();expect(remove).toHaveBeenCalledTimes(2);
+});
+
+test('native token callbacks reuse the supplied token and do not create a registration loop',async()=>{
+ jest.clearAllMocks();
+ const remove=jest.fn(),onRegister=jest.fn().mockResolvedValue(undefined);
+ const token={type:'ios' as const,data:'native-demo'};
+ jest.mocked(Notifications.getPermissionsAsync).mockResolvedValue({granted:true} as Notifications.NotificationPermissionsStatus);
+ jest.mocked(Notifications.getDevicePushTokenAsync).mockResolvedValue(token);
+ jest.mocked(Notifications.getExpoPushTokenAsync).mockResolvedValue({type:'expo',data:'ExpoPushToken[demo]'});
+ jest.mocked(Notifications.addPushTokenListener).mockReturnValue({remove});jest.mocked(Notifications.addNotificationResponseReceivedListener).mockReturnValue({remove});
+ jest.mocked(Notifications.getLastNotificationResponseAsync).mockResolvedValue(null);
+ const view=render(<PushListener owner="owner" onOpen={jest.fn()} onRegister={onRegister}/>);
+ await waitFor(()=>expect(onRegister).toHaveBeenCalledTimes(1));
+ const changed=jest.mocked(Notifications.addPushTokenListener).mock.calls[0][0];
+ await act(async()=>{changed(token);});
+ expect(onRegister).toHaveBeenCalledTimes(1);
+ const next={type:'ios' as const,data:'native-rotated'};
+ await act(async()=>{changed(next);});
+ await waitFor(()=>expect(onRegister).toHaveBeenCalledTimes(2));
+ expect(Notifications.getDevicePushTokenAsync).toHaveBeenCalledTimes(1);
+ expect(Notifications.getExpoPushTokenAsync).toHaveBeenLastCalledWith({projectId:'demo-project',devicePushToken:next});
+ view.unmount();
+});
+test('cold-start notification waits until navigation and the restored session are ready',async()=>{
+ jest.clearAllMocks();const onOpen=jest.fn().mockResolvedValue(true),onRegister=jest.fn().mockResolvedValue(undefined);
+ jest.mocked(Notifications.getPermissionsAsync).mockResolvedValue({granted:false} as Notifications.NotificationPermissionsStatus);
+ jest.mocked(Notifications.addPushTokenListener).mockReturnValue({remove:jest.fn()});jest.mocked(Notifications.addNotificationResponseReceivedListener).mockReturnValue({remove:jest.fn()});
+ jest.mocked(Notifications.getLastNotificationResponseAsync).mockResolvedValue(response('owner','cold-start'));
+ const view=render(<PushListener owner="owner" ready={false} onOpen={onOpen} onRegister={onRegister}/>);
+ await waitFor(()=>expect(Notifications.getLastNotificationResponseAsync).toHaveBeenCalled());expect(onOpen).not.toHaveBeenCalled();
+ view.rerender(<PushListener owner="owner" ready onOpen={onOpen} onRegister={onRegister}/>);
+ await waitFor(()=>expect(onOpen).toHaveBeenCalledTimes(1));expect(Notifications.clearLastNotificationResponseAsync).toHaveBeenCalled();view.unmount();
+});

@@ -1,3 +1,4 @@
+import {event} from '../../common/events/event.store.js';
 import {ConflictException,NotFoundException,BadRequestException} from '@nestjs/common';
 import type {Pool,PoolClient} from 'pg';
 import {AuthService} from '../auth/auth.service.js';
@@ -8,7 +9,7 @@ import {Cursor} from '../../common/http/cursor.js';
 import {SupportService} from '../support/support.service.js';
 import {reviewDto} from '../reviews/reviews.service.js';
 import {decisionHistory,recordDecision} from './history.js';
-import type {Domain,decisionInput,queueInput} from './moderation.input.js';
+import type {Domain,decisionInput,queueInput,noteInput} from './moderation.input.js';
 export class ModerationService {
  private readonly tx:AccountTransaction;
  constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly admin:AdminAuthService,private readonly cursor:Cursor,private readonly support:SupportService){this.tx=new AccountTransaction(pool,auth);}
@@ -18,7 +19,7 @@ export class ModerationService {
   const table=d==='verifications'?'verification_requests':d;
   const r=(await db.query(`SELECT * FROM ${table} WHERE id=$1`,[id])).rows[0];if(!r)throw new NotFoundException();
   const history=await decisionHistory(db,d,id);
-  if(d==='reports')return {...await this.support.dto(db,r),reporter_id:r.reporter_id,reporter_name:(await db.query('SELECT display_name FROM users WHERE id=$1',[r.reporter_id])).rows[0].display_name,created_at:r.created_at.toISOString(),history};
+  if(d==='reports')return {...await this.support.dto(db,r),internal_notes:(await db.query("SELECT id,actor_id,body,created_at FROM report_updates WHERE report_id=$1 AND visibility='admin_only' ORDER BY created_at,id",[id])).rows.map(n=>({...n,created_at:n.created_at.toISOString()})),reporter_id:r.reporter_id,reporter_name:(await db.query('SELECT display_name FROM users WHERE id=$1',[r.reporter_id])).rows[0].display_name,created_at:r.created_at.toISOString(),history};
   if(d==='reviews')return {...reviewDto(r),history};
   const assets=(await db.query('SELECT asset_id FROM verification_assets WHERE request_id=$1 ORDER BY asset_id',[id])).rows;
   const partner=(await db.query('SELECT name FROM partners WHERE id=$1',[r.partner_id])).rows[0];
@@ -56,8 +57,20 @@ export class ModerationService {
     await db.query('UPDATE verification_requests SET state=$2,reason=$3,reviewer_id=$4,version=version+1 WHERE id=$1',[id,state,input.reason,a.user.id]);
     if(r.kind==='identity')await db.query('UPDATE partners SET verification_status=$2,version=version+1 WHERE id=$1',[r.partner_id,state==='approved'?'verified':state==='rejected'?'rejected':'pending']);
    }
+   const resource=d==='reports'?'report':d==='verifications'?'verification':'review';await event(db,`${resource}:${id}:${input.expected_version+1}`,id,input.expected_version+1,`${resource}.updated.v1`,{[`${resource}_id`]:id,resource_version:input.expected_version+1});
    await recordDecision(db,d,id,a.user.id,input.action,input.reason,input.expected_version+1);return {cipher:this.admin.secrets.encrypt(JSON.stringify(await this.detail(db,d,id)))};
   },async(db,a)=>{await this.admin.check(db,a,token,this.permission(d,true),true);if(d==='reports')await this.admin.grants(db,a,'support.read');}).then(r=>JSON.parse(this.admin.secrets.decrypt(r.cipher)));
+ }
+ note(header:string|undefined,token:string|undefined,id:string,input:ReturnType<typeof noteInput>,key:string){
+  return this.tx.run(header,`admin.reports.note:${id}`,key,input,async(db,a)=>{
+   const r=(await db.query('SELECT * FROM reports WHERE id=$1 FOR UPDATE',[id])).rows[0];if(!r)throw new NotFoundException();
+   if(r.version!==input.expected_version)throw new ConflictException({code:'VERSION_CONFLICT'});if(r.state==='closed')throw new ConflictException({code:'STATE_CONFLICT'});
+   await db.query("INSERT INTO report_updates(report_id,actor_id,body,visibility) VALUES($1,$2,$3,'admin_only')",[id,a.user.id,input.body]);
+   await db.query('UPDATE reports SET version=version+1 WHERE id=$1',[id]);
+   // Audit-only administrators must never receive private note content.
+   await recordDecision(db,'reports',id,a.user.id,'internal_note','Internal support note',r.version+1);
+   return {cipher:this.admin.secrets.encrypt(JSON.stringify(await this.detail(db,'reports',id)))};
+  },async(db,a)=>{await this.admin.check(db,a,token,'support.manage',true);await this.admin.grants(db,a,'support.read');}).then(r=>JSON.parse(this.admin.secrets.decrypt(r.cipher)));
  }
  audit(header:string|undefined,token:string|undefined,q:PageInput){return this.admin.read(header,token,'audit.read',async(db,a)=>{
   const scope=`admin:audit:${a.user.id}`,after=this.cursor.decode(q.cursor,scope);

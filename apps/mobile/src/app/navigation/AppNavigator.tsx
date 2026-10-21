@@ -1,3 +1,6 @@
+import {useState} from 'react';
+import {randomUUID} from 'expo-crypto';
+import {PushListener} from '../../features/notifications/PushListener';
 import {AdminScreen} from '../../features/admin/screens/AdminScreen';
 import {useAuth} from '../providers/AuthProvider';
 import {VerificationScreen} from '../../features/verification/screens/VerificationScreen';
@@ -17,7 +20,7 @@ import { PartnersScreen } from '../../features/partners/screens/PartnersScreen';
 import { PartnerEditorScreen } from '../../features/partners/screens/PartnerEditorScreen';
 import { PartnerProfileScreen } from '../../features/partners/screens/PartnerProfileScreen';
 import { SearchScreen } from '../../features/search/screens/SearchScreen';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer,useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CatalogScreen } from '../../features/catalog/screens/CatalogScreen';
 import { SessionsScreen } from '../../features/accounts/screens/SessionsScreen';
@@ -33,12 +36,26 @@ const navigationTheme = { ...DefaultTheme, colors: { ...DefaultTheme.colors,
   card: theme.colors.surface, text: theme.colors.text, border: theme.colors.border,
 } };
 export function AppNavigator() {
-  const {state} = useAuth();
+  const {state,manager} = useAuth();
+  const [navigationReady,setNavigationReady]=useState(false);
+  const ref=useNavigationContainerRef<RootStackParamList>();
+  const openPush=async(data:Record<string,unknown>)=>{
+    const owner=manager.getSnapshot().user?.id;if(!owner||data.recipient_id!==owner||!ref.isReady())return false;
+    const id=(key:string)=>typeof data[key]==='string'&&/^[0-9a-f-]{36}$/i.test(data[key] as string)?data[key] as string:undefined;
+    try{
+      const report=id('report_id'),partner=id('partner_id'),job=id('job_id'),conversation=id('conversation_id');
+      if(report){await manager.getReport(owner,report);ref.navigate('Support',{id:report});}
+      else if(id('verification_id')&&partner){await manager.listVerifications(owner,partner);ref.navigate('Verification',{id:partner});}
+      else if(job){await manager.getJob(owner,job);if(id('invoice_id')){await manager.getInvoice(owner,job);ref.navigate('Invoice',{id:job});}else if(id('review_id')){await manager.jobReviews(owner,job);ref.navigate('Reviews',{id:job});}else ref.navigate('JobDetail',{id:job});}
+      else if(conversation){await manager.listMessages(owner,conversation);ref.navigate('Conversation',{id:conversation});}
+      else return false;return true;
+    }catch{return false;}
+  };
   if(state.phase==='authenticated'&&state.user?.status==='suspended')return <NavigationContainer key={"support:"+state.user.id}><Stack.Navigator screenOptions={{headerShown:false}}><Stack.Screen name="Support" component={RestrictedSupportScreen}/></Stack.Navigator></NavigationContainer>;
   if (state.phase === 'authenticated' && state.user?.admin_permissions?.length) {
     return <AdminScreen key={state.user.id} />;
   }
-  return <NavigationContainer key="ordinary" theme={navigationTheme}>
+  return <NavigationContainer ref={ref} onReady={()=>setNavigationReady(true)} key="ordinary" theme={navigationTheme}>
     <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}>
       <Stack.Screen name="CatalogHome" component={SearchScreen} />
       <Stack.Screen name="CatalogCategory" component={CatalogScreen} getId={({ params }) => params.categoryId} />
@@ -65,5 +82,6 @@ export function AppNavigator() {
       <Stack.Screen name="Sessions" component={SessionsScreen} />
       <Stack.Screen name="Addresses" component={AddressesScreen} />
     </Stack.Navigator>
+    <PushListener ready={navigationReady&&!state.busy} owner={state.phase==='authenticated'?state.user?.id:undefined} onRegister={async(token,platform)=>{if(state.user)await manager.registerPushDevice(state.user.id,{token,platform},randomUUID());}} onOpen={openPush}/>
   </NavigationContainer>;
 }

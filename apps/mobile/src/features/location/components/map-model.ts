@@ -1,13 +1,13 @@
 import type { FeatureCollection } from 'geojson';
 import type { Point } from '../models';
-export type LocationMapProps = { point: Point | null; radius?: number; onChoose?: (point: Point) => void; onError: () => void };
+export type LocationMapProps = { point: Point | null; radius?: number; polygon?:number[][]; clickOnly?:boolean; onChoose?: (point: Point) => void; onError: () => void };
 export const mapStyle = () => {
   const key = process.env.EXPO_PUBLIC_GEOAPIFY_MAPS_KEY?.trim();
   return key ? `https://maps.geoapify.com/v1/styles/osm-carto/style.json?apiKey=${encodeURIComponent(key)}` : null;
 };
 // This is only a camera position; it never becomes a selected location automatically.
 export const initialCenter: [number, number] = [105.852, 21.028];
-export function mapFeatures(point: Point | null, radius?: number): FeatureCollection {
+export function mapFeatures(point: Point | null, radius?: number,polygon?:number[][]): FeatureCollection {
   if (!point) return { type: 'FeatureCollection', features: [] };
   const features: FeatureCollection['features'] = [{ type: 'Feature', properties: { kind: 'pin' }, geometry: { type: 'Point', coordinates: [point.longitude, point.latitude] } }];
   if (radius && Number.isFinite(radius) && radius > 0) {
@@ -21,5 +21,6 @@ export function mapFeatures(point: Point | null, radius?: number): FeatureCollec
     ring[64] = ring[0];
     features.unshift({ type: 'Feature', properties: { kind: 'area' }, geometry: { type: 'Polygon', coordinates: [ring] } });
   }
+  if(polygon?.length){const coordinates=polygon.length>=3?[...polygon,polygon[0]]:polygon;features.push({type:'Feature',properties:{kind:'area'},geometry:polygon.length>=3?{type:'Polygon',coordinates:[coordinates]}:{type:'LineString',coordinates}});for(const coordinates of polygon)features.push({type:'Feature',properties:{kind:'pin'},geometry:{type:'Point',coordinates}});}
   return { type: 'FeatureCollection', features };
 }

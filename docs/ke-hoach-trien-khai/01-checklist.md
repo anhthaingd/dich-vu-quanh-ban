@@ -1,5 +1,12 @@
 # Checklist chức năng và bằng chứng
 
+**20/10/2026 — P1-06, hoàn thiện cùng đợt P1-2:** ghi chú hỗ trợ nội bộ; lịch sử đánh giá khách theo quyền việc; người thực hiện bổ sung dấu nhận tiền sau admin; vùng đa giác/điểm đại diện, gom cụm theo zoom và xếp hạng ổn định; sự kiện hỗ trợ/xác minh/đánh giá; tích hợp Expo Push Service. [Quyết định đã chốt](de-xuat/P1-06-hoan-thien-cung-dot.md). Code và kiểm local được ghi theo từng báo cáo bên dưới. **Đã liên kết Expo, build và thử thông báo mô phỏng trên Android/iOS; iOS đã đăng ký token, gửi thật bị Expo từ chối InvalidCredentials. Còn cấu hình FCM/APNs và nghiệm thu chuyển phát thật; chưa đóng toàn P1-2.** Chọn tin nhắn chứng cứ tiếp tục hoãn; chưa chuyển P2. Chưa commit/push, CI mới hoặc UAT.
+
+- [B09-06 — Ghi chú nội bộ hỗ trợ](bao-cao/B09-06-ghi-chu-noi-bo.md).
+- [B10-04 — Lịch sử đánh giá khách và dấu nhận tiền](bao-cao/B10-04-lich-su-khach-va-dau-nhan-tien.md).
+- [B03-06 — Đa giác, gom cụm và xếp hạng](bao-cao/B03-06-da-giac-gom-cum-va-xep-hang.md).
+- [B05-06 — Sự kiện và push Expo](bao-cao/B05-06-su-kien-va-expo-push.md).
+
 ## P1-05 — Admin tài khoản, người cung cấp và danh mục, 20/10/2026
 
 - [x] Chủ dự án duyệt cả ba contract bổ sung; [thiết kế](de-xuat/P1-05-admin-tai-khoan-partner-danh-muc.md) ghi phạm vi và phần hoãn.
@@ -413,3 +420,20 @@ Báo cáo/ảnh/native và bằng chứng SDD: [B05-02](bao-cao/B05-02-realtime-
 - [ ] CI mới, UAT, điện thoại thật và push provider.
 
 Bằng chứng và giới hạn: [B05-03](bao-cao/B05-03-tach-tin-nhan-va-thong-bao.md). SDD-PROJECT vẫn giữ toàn bộ tiêu chí trước và QA partial/unmapped; evidence toàn repo tạo bằng sdd:run/verify trên nội dung cuối.
+
+## P1-06 — Phần còn lại P1-2 đã được duyệt trong cùng đợt
+
+- [x] DB/API/app ghi chú nội bộ, kiểm quyền và retry; không hiện cho người gửi hoặc admin chỉ đọc audit.
+- [x] Lịch sử đánh giá khách tối thiểu theo quan hệ việc và quyền hiện hành; ẩn đánh giá bị gỡ/kiểm duyệt.
+- [x] Bổ sung dấu nhận tiền sau admin hoàn tất một lần, không sinh quyết toán hoặc thưởng mới.
+- [x] Vẽ đa giác, chọn điểm đại diện riêng; gom cụm theo zoom; rating/recommended với thứ tự phân trang cố định.
+- [x] Sự kiện/inbox hỗ trợ, xác minh, đánh giá chỉ đúng người; sự kiện không mang nội dung riêng.
+- [x] Code Expo push: đăng ký/thu hồi token, hàng đợi, kiểm quyền/công tắc, ticket/receipt và mở đối tượng; test transport giả lập.
+- [x] Ảnh Expo web và admin web DEMO, báo cáo học code/Mermaid; không dùng ảnh web thay bằng chứng native.
+- [x] Build Android/iOS, thông báo mô phỏng hiện và mở đúng báo cáo; iOS mở từ app đã đóng, đăng ký token và gọi Expo thật bị từ chối `InvalidCredentials`. Chi tiết/ảnh ở B05-06.
+- [x] 21/10: FCM V1 gắn đúng app; Android Emulator nhận thật qua Expo/FCM, 4 receipt thành công, bấm từ nền mở đúng báo cáo. Cold-start lượt kiểm lại đạt, một lần chỉ mở trang chủ vẫn ghi nhận trong B05-06.
+- [ ] Kiểm thiết bị thật iOS/Android với native build mới và dự án Expo/FCM/APNs; gửi → nhận khi nền/đóng → mở đúng quyền.
+- [ ] Remote CI mới và UAT chủ dự án. Kết quả SDD local cuối đọc tại `test-results/sdd/SDD-PROJECT/`, không lấy mốc các đợt cũ.
+- [ ] Chọn tin nhắn làm chứng cứ: chủ dự án chủ động để sau, không thuộc tiêu chí đóng code đợt này.
+
+Các mục P1-2 cũ bên trên là lịch sử theo lát; tra bốn báo cáo P1-06 cho bổ sung mới. P2 vẫn chưa mở.

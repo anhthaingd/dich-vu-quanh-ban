@@ -163,3 +163,14 @@ test('review photos recheck public visibility and private membership at signed U
  const privateImage=await photo(worker);const privateReview=(await call(worker,`/jobs/${job}/reviews`,'POST',{stars:4,asset_id:privateImage.id})).body;
  assert.equal(privateReview.asset_id,privateImage.id);assert.equal((await anonymous(privateImage.id)).status,404);assert.equal((await call(customer,'/assets/'+privateImage.id)).status,200);assert.equal((await call(other,'/assets/'+privateImage.id)).status,404);
 });
+test('customer history is contextual, paginated, visibility filtered and omits unrelated job and provider identifiers',async()=>{
+ await ready();const written=await write(worker,4);assert.equal(written.status,201);
+ const context=(await f.pool.query("INSERT INTO jobs(customer_id,partner_id,state,service_mode,address_snapshot,point,time_mode) VALUES($1,$2,'requested','at_customer',$3,ST_SetSRID(ST_MakePoint(105,21),4326)::geography,'now') RETURNING id",[customer.id,partner,JSON.stringify({text:'OTHER PRIVATE ADDRESS',point:{latitude:21,longitude:105}})])).rows[0].id;
+ const path=`/jobs/${context}/customer-reviews`;assert.equal((await call(customer,path)).status,403);assert.equal((await call(other,path)).status,404);
+ const result=await call(worker,path+'?limit=1');assert.equal(result.status,200);assert.equal(result.body.items.length,1);
+ const row=result.body.items[0];assert.deepEqual(Object.keys(row).sort(),['body','created_at','id','reply','stars']);assert.equal(row.stars,4);
+ for(const secret of [job,partner,worker.id,'OTHER PRIVATE ADDRESS'])assert.ok(!JSON.stringify(result.body).includes(secret));
+ await f.pool.query('UPDATE reviews SET hidden_at=now() WHERE id=$1',[written.body.id]);assert.equal((await call(worker,path)).body.items.length,0);
+ await f.pool.query('UPDATE reviews SET hidden_at=NULL,removed_at=now() WHERE id=$1',[written.body.id]);assert.equal((await call(worker,path)).body.items.length,0);
+ await f.pool.query('UPDATE memberships SET active=false WHERE partner_id=$1 AND user_id=$2',[partner,worker.id]);assert.equal((await call(worker,path)).status,404);
+});

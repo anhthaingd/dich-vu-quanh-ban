@@ -26,7 +26,7 @@
     {
       "id": "api-search",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "dd937ab587cb1ffc6e32163f392e644190ca928ddf94bb6cd9ede2d214ebf4dc",
+      "sha256": "bf65ddcf5a99675b73a7901e59ea1d6ccc353289ede898df0f593fb3e85d8d95",
       "pointer": "/paths/~1partners/get",
       "expected": {
         "operationId": "searchPartners"
@@ -1003,10 +1003,10 @@
     {
       "id": "api-project",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "dd937ab587cb1ffc6e32163f392e644190ca928ddf94bb6cd9ede2d214ebf4dc",
+      "sha256": "bf65ddcf5a99675b73a7901e59ea1d6ccc353289ede898df0f593fb3e85d8d95",
       "pointer": "/info",
       "expected": {
-        "version": "0.1.19"
+        "version": "0.1.20"
       }
     },
     {
@@ -1103,7 +1103,7 @@
     {
       "id": "rt01-contract",
       "path": "docs/technical-design/realtime.json",
-      "sha256": "4a4d95c4e36a033a9c1956f6d78bc2e1e851a612bc858c814cddd0f1055482cc",
+      "sha256": "7307e7df981ee68513fdbb413cc1c05097523502dd02a49b41b3c6b5bb08663e",
       "pointer": "/connection",
       "expected": {
         "path": "/v1/realtime/socket.io",
@@ -1113,7 +1113,7 @@
     {
       "id": "api-review-metadata",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "dd937ab587cb1ffc6e32163f392e644190ca928ddf94bb6cd9ede2d214ebf4dc",
+      "sha256": "bf65ddcf5a99675b73a7901e59ea1d6ccc353289ede898df0f593fb3e85d8d95",
       "pointer": "/components/schemas/Review",
       "expected": {
         "required": [
@@ -1135,7 +1135,7 @@
     {
       "id": "api-review-reply",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "dd937ab587cb1ffc6e32163f392e644190ca928ddf94bb6cd9ede2d214ebf4dc",
+      "sha256": "bf65ddcf5a99675b73a7901e59ea1d6ccc353289ede898df0f593fb3e85d8d95",
       "pointer": "/paths/~1reviews~1{id}~1reply/put",
       "expected": {
         "operationId": "replyReview"
@@ -1144,7 +1144,7 @@
     {
       "id": "api-review-asset",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "dd937ab587cb1ffc6e32163f392e644190ca928ddf94bb6cd9ede2d214ebf4dc",
+      "sha256": "bf65ddcf5a99675b73a7901e59ea1d6ccc353289ede898df0f593fb3e85d8d95",
       "pointer": "/paths/~1assets~1{id}/get",
       "expected": {
         "operationId": "getAsset"
@@ -1153,7 +1153,7 @@
     {
       "id": "api-support-report",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "dd937ab587cb1ffc6e32163f392e644190ca928ddf94bb6cd9ede2d214ebf4dc",
+      "sha256": "bf65ddcf5a99675b73a7901e59ea1d6ccc353289ede898df0f593fb3e85d8d95",
       "pointer": "/components/schemas/Report",
       "expected": {
         "required": [
@@ -1173,7 +1173,7 @@
     {
       "id": "api-support-create",
       "path": "docs/technical-design/openapi.json",
-      "sha256": "dd937ab587cb1ffc6e32163f392e644190ca928ddf94bb6cd9ede2d214ebf4dc",
+      "sha256": "bf65ddcf5a99675b73a7901e59ea1d6ccc353289ede898df0f593fb3e85d8d95",
       "pointer": "/paths/~1reports/post",
       "expected": {
         "operationId": "createReport"
@@ -1274,6 +1274,12 @@
         "requirement": "P1-05-PARTNER",
         "operation": "decidePartner"
       }
+    },
+    {
+      "id": "p1-06-approved",
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P1-06-hoan-thien-cung-dot.md",
+      "heading": "## Quyết định đã chốt",
+      "sha256": "70646a05dfa72f4ac8a8f65508f8a6abed5dc85525308b35709c81e4f6569b73"
     }
   ],
   "domains": [

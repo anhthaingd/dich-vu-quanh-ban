@@ -225,6 +225,14 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/mobile/eas.json",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/google-services.json",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/index.ts",
       "kind": "product"
     },
@@ -697,6 +705,38 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/notifications/PushControl.native.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/PushControl.native.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/PushControl.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/PushControl.web.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/PushListener.native.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/PushListener.native.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/PushListener.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/PushListener.web.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/notifications/screens/Notifications.test.tsx",
       "kind": "test"
     },
@@ -757,6 +797,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/partners/components/PolygonEditor.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/partners/models.ts",
       "kind": "product"
     },
@@ -798,6 +842,10 @@
     },
     {
       "path": "apps/mobile/src/features/reviews/models.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/reviews/screens/CustomerReviews.tsx",
       "kind": "product"
     },
     {
@@ -1725,6 +1773,66 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/admin-internal-note.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/customer-history.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/polygon-editor.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-android-fcm-cold-open-report.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-android-fcm-notification.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-android-fcm-open-report.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-android-fcm-registered.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-android-local-notification.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-android-open-report.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-ios-cold-open-report.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-ios-open-report.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-ios-registered.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-ios-simulated-notification.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/push-settings-web.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/P1-06/worker-receipt.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B00-01-nen-tang-danh-muc.md",
       "kind": "documentation"
     },
@@ -1797,6 +1905,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-06-da-giac-gom-cum-va-xep-hang.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md",
       "kind": "documentation"
     },
@@ -1825,6 +1937,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-06-su-kien-va-expo-push.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B06-01-hoa-don-va-quyet-toan-test.md",
       "kind": "documentation"
     },
@@ -1849,11 +1965,19 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-06-ghi-chu-noi-bo.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B10-01-danh-gia-sau-cong-viec.md",
       "kind": "documentation"
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-04-lich-su-khach-va-dau-nhan-tien.md",
       "kind": "documentation"
     },
     {
@@ -1906,6 +2030,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/de-xuat/P1-05-admin-tai-khoan-partner-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/P1-06-hoan-thien-cung-dot.md",
       "kind": "documentation"
     },
     {
@@ -2329,6 +2457,10 @@
       "kind": "product"
     },
     {
+      "path": "services/api/migrations/018_p1_completion.sql",
+      "kind": "product"
+    },
+    {
       "path": "services/api/package.json",
       "kind": "product"
     },
@@ -2741,6 +2873,10 @@
       "kind": "product"
     },
     {
+      "path": "services/api/src/modules/notifications/push.worker.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/modules/organizations/.gitkeep",
       "kind": "placeholder"
     },
@@ -2934,6 +3070,10 @@
     },
     {
       "path": "services/api/test/integration/profile.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/push.test.ts",
       "kind": "test"
     },
     {
@@ -3770,7 +3910,9 @@
       "apps/mobile/src/lib/i18n/locale-storage.test.ts",
       "apps/mobile/src/lib/logging/logger.test.ts",
       "apps/mobile/src/lib/realtime/realtime-client.test.ts",
-      "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx"
+      "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
+      "apps/mobile/src/features/notifications/PushControl.native.test.tsx",
+      "apps/mobile/src/features/notifications/PushListener.native.test.tsx"
     ],
     "api": [
       "services/api/test/integration/account-management.test.ts",
@@ -3800,7 +3942,8 @@
       "services/api/test/unit/output.test.ts",
       "services/api/test/unit/totp.test.ts",
       "services/api/test/integration/admin-completion.test.ts",
-      "services/api/test/integration/admin-operations.test.ts"
+      "services/api/test/integration/admin-operations.test.ts",
+      "services/api/test/integration/push.test.ts"
     ],
     "web": [
       "tests/e2e/web/account-management.spec.mjs",
@@ -3957,7 +4100,14 @@
     "P1-05-AC-02",
     "P1-05-AC-03",
     "P1-05-AC-04",
-    "P1-05-AC-05"
+    "P1-05-AC-05",
+    "P1-06-AC-01",
+    "P1-06-AC-02",
+    "P1-06-AC-03",
+    "P1-06-AC-04",
+    "P1-06-AC-05",
+    "P1-06-AC-06",
+    "P1-06-AC-07"
   ],
   "qa": [
     {
@@ -4026,17 +4176,19 @@
       "id": "QA-010",
       "status": "partial",
       "criteria": [
-        "SEARCH-AC-02"
+        "SEARCH-AC-02",
+        "P1-06-AC-04"
       ],
-      "reason": "Không polygon hoặc tự mở radius; không claim đầy QA-010"
+      "reason": "Không polygon hoặc tự mở radius; không claim đầy QA-010 P1-06 validates drawn polygons and explicit representatives locally; native/UAT unverified."
     },
     {
       "id": "QA-011",
       "status": "partial",
       "criteria": [
-        "SEARCH-AC-01"
+        "SEARCH-AC-01",
+        "P1-06-AC-05"
       ],
-      "reason": "Chỉ distance trên tập ổn định; recommended/rating chưa triển khai"
+      "reason": "Chỉ distance trên tập ổn định; recommended/rating chưa triển khai P1-06 adds approved local/test scenarios only; native device, real provider and UAT remain open."
     },
     {
       "id": "QA-012",
@@ -4155,9 +4307,10 @@
       "criteria": [
         "P1-02-AC-01",
         "P1-02-AC-05",
-        "MSG-01-AC-02"
+        "MSG-01-AC-02",
+        "P1-06-AC-07"
       ],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng. P1-02 adds tested local inbox/settings/reminder branches only; provider push remains unverified."
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng. P1-02 adds tested local inbox/settings/reminder branches only; provider push remains unverified. P1-06 adds approved local/test scenarios only; native device, real provider and UAT remain open."
     },
     {
       "id": "QA-026",
@@ -4264,9 +4417,10 @@
       "criteria": [
         "INV-AC-04",
         "MONEY-AC-01",
-        "INV-AC-14"
+        "INV-AC-14",
+        "P1-06-AC-03"
       ],
-      "reason": "Vector QA-030 cụ thể ví -90000/phí30000/point100000 chưa thử; QA-031 biên credit và mọi holds chưa kiểm. | Unit không chứng minh đủ HTTP/DB âm/lẻ/NaN/Infinity của QA-027; toàn point test formula chứ chưa đủ settlement hai dấu. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT."
+      "reason": "Vector QA-030 cụ thể ví -90000/phí30000/point100000 chưa thử; QA-031 biên credit và mọi holds chưa kiểm. | Unit không chứng minh đủ HTTP/DB âm/lẻ/NaN/Infinity của QA-027; toàn point test formula chứ chưa đủ settlement hai dấu. | Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. P1-06 adds approved local/test scenarios only; native device, real provider and UAT remain open."
     },
     {
       "id": "QA-038",
@@ -4342,9 +4496,10 @@
       "status": "partial",
       "criteria": [
         "REV-01-AC-02",
-        "REV-03-AC-02"
+        "REV-03-AC-02",
+        "P1-06-AC-02"
       ],
-      "reason": "B10-01 core and B10-03 local photos/replies mapped. Admin/support and cross-job history remain open; QA partial."
+      "reason": "B10-01 core and B10-03 local photos/replies mapped. Admin/support and cross-job history remain open; QA partial. P1-06 adds approved local/test scenarios only; native device, real provider and UAT remain open."
     },
     {
       "id": "QA-047",
@@ -4353,9 +4508,10 @@
         "SUP-01-AC-01",
         "SUP-01-AC-02",
         "SUP-01-AC-03",
-        "P1-03-AC-02"
+        "P1-03-AC-02",
+        "P1-06-AC-01"
       ],
-      "reason": "B09-01 reporter/local image flow mapped. Admin decisions/MFA and selected chat evidence remain unimplemented; not full QA certification. P1-03 adds current MFA/permission decisions, submitted image access audit, version races and money invariants; selected chat and full expiry matrix remain partial."
+      "reason": "B09-01 reporter/local image flow mapped. Admin decisions/MFA and selected chat evidence remain unimplemented; not full QA certification. P1-03 adds current MFA/permission decisions, submitted image access audit, version races and money invariants; selected chat and full expiry matrix remain partial. P1-06 adds approved local/test scenarios only; native device, real provider and UAT remain open."
     },
     {
       "id": "QA-048",
@@ -4382,9 +4538,11 @@
       "criteria": [
         "P1-02-AC-02",
         "P1-02-AC-03",
-        "P1-02-AC-05"
+        "P1-02-AC-05",
+        "P1-06-AC-06",
+        "P1-06-AC-07"
       ],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng. P1-02 adds tested local inbox/settings/reminder branches only; provider push remains unverified."
+      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng. P1-02 adds tested local inbox/settings/reminder branches only; provider push remains unverified. P1-06 adds approved local/test scenarios only; native device, real provider and UAT remain open."
     },
     {
       "id": "QA-051",
@@ -5089,7 +5247,9 @@
         "SEARCH-AC-03",
         "SEARCH-AC-04",
         "LOCATION-AC-04",
-        "MAP-02-AC-07"
+        "MAP-02-AC-07",
+        "P1-06-AC-04",
+        "P1-06-AC-05"
       ],
       "reason": "Có controller hiện hành; các tiêu chí liên kết chỉ chứng minh nhánh mô tả, không toàn contract. "
     },
@@ -6089,9 +6249,11 @@
       "id": "registerDevice",
       "method": "POST",
       "path": "/me/devices",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "P1-06-AC-07"
+      ],
+      "reason": "Reviewed approved P1-06 local/test route. No production or real push delivery evidence."
     },
     {
       "id": "listNotifications",
@@ -6514,6 +6676,36 @@
         "P1-05-AC-05"
       ],
       "reason": "P1-05 reviewed local/test controller with current permission/MFA, version, retry and audit. Not full production/UAT certification."
+    },
+    {
+      "id": "confirmWorkerReceiptAfterAdmin",
+      "method": "POST",
+      "path": "/invoices/{id}/receipt-confirmed",
+      "status": "implemented",
+      "criteria": [
+        "P1-06-AC-03"
+      ],
+      "reason": "Reviewed approved P1-06 local/test route. No production or real push delivery evidence."
+    },
+    {
+      "id": "addInternalSupportNote",
+      "method": "POST",
+      "path": "/admin/reports/{id}/notes",
+      "status": "implemented",
+      "criteria": [
+        "P1-06-AC-01"
+      ],
+      "reason": "Reviewed approved P1-06 local/test route. No production or real push delivery evidence."
+    },
+    {
+      "id": "getCustomerReviewHistory",
+      "method": "GET",
+      "path": "/jobs/{id}/customer-reviews",
+      "status": "implemented",
+      "criteria": [
+        "P1-06-AC-02"
+      ],
+      "reason": "Reviewed approved P1-06 local/test route. No production or real push delivery evidence."
     }
   ],
   "routes": [
@@ -7131,6 +7323,26 @@
       "method": "POST",
       "path": "/admin/skills",
       "file": "services/api/src/modules/moderation/operations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/invoices/{id}/receipt-confirmed",
+      "file": "services/api/src/modules/invoices/invoices.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/reports/{id}/notes",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/me/devices",
+      "file": "services/api/src/modules/notifications/notifications.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/jobs/{id}/customer-reviews",
+      "file": "services/api/src/modules/reviews/reviews.controller.ts"
     }
   ],
   "contractGaps": [

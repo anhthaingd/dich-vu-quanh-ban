@@ -33,7 +33,7 @@ export function searchInput(value: Record<string, unknown>) {
   const radius = number(v.radius_m ?? '10000', 1, 2147483647);
   if (
     !Number.isInteger(radius) ||
-    (v.sort !== undefined && v.sort !== 'distance') ||
+    (v.sort !== undefined && !['distance','rating','recommended'].includes(String(v.sort))) ||
     (v.verified !== undefined &&
       v.verified !== 'true' &&
       v.verified !== 'false') ||
@@ -42,6 +42,7 @@ export function searchInput(value: Record<string, unknown>) {
   )
     throw new BadRequestException();
   return {
+    sort:(v.sort??'distance') as 'distance'|'rating'|'recommended',
     latitude,
     longitude,
     radius,
@@ -56,11 +57,12 @@ export function searchInput(value: Record<string, unknown>) {
   };
 }
 export type SearchQuery = ReturnType<typeof searchInput>;
-type Position = { distance_m: number; created_at: string; id: string };
+type Position = { snapshot?:string;offset?:number; distance_m: number; created_at: string; id: string };
 export class SearchCursor {
   constructor(private readonly secret: string) {}
   private scope(q: SearchQuery) {
     const filter = {
+      sort:q.sort,
       latitude: q.latitude,
       longitude: q.longitude,
       radius: q.radius,
@@ -102,7 +104,9 @@ export class SearchCursor {
         !Number.isFinite(Date.parse(p.created_at))
       )
         throw new Error();
+      if(p.snapshot!==undefined){identifier(p.snapshot);if(!Number.isSafeInteger(p.offset)||p.offset<0)throw new Error();}
       return {
+        snapshot:p.snapshot,offset:p.offset,
         distance_m: p.distance_m,
         created_at: p.created_at,
         id: identifier(p.id)

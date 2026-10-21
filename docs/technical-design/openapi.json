@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Dịch vụ quanh bạn — API thiết kế",
-    "version": "0.1.19",
+    "version": "0.1.20",
     "description": "Contract thiết kế toàn hệ thống; Đợt 1 đã triển khai local GET /categories, /skills, /health, /ready. Các endpoint khác chưa triển khai; không production/tiền thật. LOGTEST-01: request ID, safe 500/503 và CORS expose X-Request-Id đã triển khai local. B01-04 (06/10/2026): Me.version bat buoc >=1, PATCH /me sua ten theo expected_version va Idempotency-Key da duyet. MAP-01 (07/10/2026): thử MapLibre + Geoapify Free và bộ chọn 4 nơi theo yêu cầu triển khai; chưa billing/production. MAP-02 (07/10/2026): ghim địa điểm công khai trong kết quả; không công khai tâm vùng. P0-2: Job includes service mode, time mode, location ID, note and ETA. PartnerProfile includes public location IDs and skill service modes. HTTP chat pilot; OTP and WebSocket remain Pending. MAP-03/P0-2: bỏ nhập tọa độ; Job có chi tiết nơi/giờ/ETA; PartnerProfile có public_locations/service_modes; HTTP chat local/test, WebSocket Pending. P0-3: Invoice.note/revision_reason; adapter ảnh local/test đã duyệt, chưa production. P1-01: xác minh local/test và vòng đời đội ngũ được duyệt 13/10/2026; chưa gửi thật."
   },
   "servers": [
@@ -2678,13 +2678,13 @@
             "schema": {
               "type": "string",
               "enum": [
-                "recommended",
                 "distance",
-                "rating"
+                "rating",
+                "recommended"
               ],
               "default": "distance"
             },
-            "description": "P0-1 chỉ distance; recommended/rating còn Pending và trả400, không âm thầm đổi sort."
+            "description": "P1-06: rating descending; recommended verified → stars → review_count → distance. Signed filter-bound snapshot freezes IDs/order for 15 minutes; current eligibility and visible data rechecked every page. Restart search on expiry."
           }
         ],
         "responses": {
@@ -14978,7 +14978,7 @@
           "Hạ tầng"
         ],
         "summary": "Đăng ký thiết bị push",
-        "description": "Quyền: Chính mình. ",
+        "description": "P1-06 approved Expo Push Service pilot. Authenticated self, idempotency; device tokens are not returned or logged. Provider credentials and physical-device receipt remain separate evidence.",
         "security": [
           {
             "bearerAuth": []
@@ -19895,6 +19895,434 @@
         "x-authorization": "moderation.manage",
         "x-rules": ""
       }
+    },
+    "/admin/reports/{id}/notes": {
+      "post": {
+        "operationId": "addInternalSupportNote",
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Ghi chú nội bộ hỗ trợ",
+        "description": "P1-06 approved 2026-10-20. support.read + support.manage, fresh MFA, version and idempotency. Closed reports are read-only. Notes are excluded from reporter DTO, generic audit and events.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Admin-Session",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque MFA session token; bound to actor/login family. Read expiry 15 minutes, decision freshness 5 minutes. Rechecked on every request including retry."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminReport"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "support.manage + support.read + fresh MFA",
+        "x-rules": "No state or money transition. Audit records only the action, never note content.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalSupportNoteInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{id}/customer-reviews": {
+      "get": {
+        "operationId": "getCustomerReviewHistory",
+        "tags": [
+          "Đánh giá"
+        ],
+        "summary": "Lịch sử đánh giá khách theo quan hệ việc",
+        "description": "P1-06 approved: current provider-side job access required on every page. Visible reviews only, no other job/address/provider/author IDs or photos. Cursor scoped to actor and context job.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque cursor ký, gắn bộ lọc và actor; thứ tự created_at,id."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "Giới hạn kỹ thuật đề xuất, không giới hạn nghiệp vụ."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công; đọc state/version trả về.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerReviewPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Theo quan hệ việc; đánh giá khách riêng tư",
+        "x-rules": ""
+      }
+    },
+    "/invoices/{id}/receipt-confirmed": {
+      "post": {
+        "operationId": "confirmWorkerReceiptAfterAdmin",
+        "tags": [
+          "Hóa đơn và tiền"
+        ],
+        "summary": "Bổ sung dấu nhận tiền sau admin hoàn tất",
+        "description": "P1-06 approved. Current assigned worker, version, locked invoice version and idempotency. Admin-settled/completed only, once. No settlement, ledger posting, reward or hold changes.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Giữ nguyên key và payload khi retry; scope actor+operation."
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không đủ quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy hoặc tài nguyên riêng tư không được phép tiết lộ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VERSION_CONFLICT / STATE_CONFLICT / IDEMPOTENCY_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION / INSUFFICIENT_POINTS / PARTNER_FUNDING_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Giới hạn tần suất; Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Tạm thời; tra idempotency trước retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Receipt recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Invoice"
+                }
+              }
+            }
+          }
+        },
+        "x-authorization": "Người thực hiện hiện tại",
+        "x-rules": "Reviews require both actual payment marks. This operation never settles again.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkerReceipt"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -20802,14 +21230,7 @@
             "type": "string"
           },
           "center": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Point"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/Point"
           },
           "radius_m": {
             "anyOf": [
@@ -20835,9 +21256,12 @@
           }
         },
         "required": [
-          "label"
+          "label",
+          "center",
+          "radius_m",
+          "boundary_geojson"
         ],
-        "description": "Exactly one: center+radius hoặc boundary. API kiểm trước lưu."
+        "description": "P1-06: representative center required and chosen independently. Circle uses positive radius_m and null boundary; polygon uses one valid simple MultiPolygon exterior ring, 3-100 corners, no holes. Saved polygon radius_m is null; input may retain the positive circle draft radius. No automatic centroid or private address exposure."
       },
       "AreasEdit": {
         "type": "object",
@@ -22870,17 +23294,23 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "provider": {
-            "type": "string"
-          },
           "token": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^(ExponentPushToken|ExpoPushToken)\\[[a-zA-Z0-9_-]{10,200}\\]$"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "ios",
+              "android"
+            ]
           }
         },
         "required": [
-          "provider",
-          "token"
-        ]
+          "token",
+          "platform"
+        ],
+        "description": "P1-06 Expo Push Service pilot. Token belongs to current login family; registering on a different account retires old recipient deliveries. Logout and session revocation prevent delivery."
       },
       "Notification": {
         "type": "object",
@@ -24715,6 +25145,12 @@
             "items": {
               "$ref": "#/components/schemas/ModerationHistoryEntry"
             }
+          },
+          "internal_notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InternalSupportNote"
+            }
           }
         },
         "required": [
@@ -24731,7 +25167,8 @@
           "reporter_id",
           "reporter_name",
           "created_at",
-          "history"
+          "history",
+          "internal_notes"
         ],
         "description": "P1-03 approved 2026-10-19: admin support DTO, MFA and current support.read required. Only reporter-submitted evidence; no private chat access."
       },
@@ -25541,6 +25978,109 @@
           "name_vi",
           "reason",
           "category_ids"
+        ]
+      },
+      "InternalSupportNote": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actor_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "body": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "actor_id",
+          "body",
+          "created_at"
+        ]
+      },
+      "InternalSupportNoteInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          }
+        },
+        "required": [
+          "expected_version",
+          "body"
+        ]
+      },
+      "CustomerReview": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stars": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "body": {
+            "type": "string"
+          },
+          "reply": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "stars",
+          "body",
+          "reply",
+          "created_at"
+        ]
+      },
+      "CustomerReviewPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerReview"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
         ]
       }
     }

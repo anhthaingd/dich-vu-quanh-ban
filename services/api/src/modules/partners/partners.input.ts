@@ -12,8 +12,8 @@ export type PartnerSkill = {
 export type Area = {
   label: string;
   center: Point;
-  radius_m: number;
-  boundary_geojson: null;
+  radius_m: number|null;
+  boundary_geojson: {type:'MultiPolygon';coordinates:number[][][][]}|null;
 };
 export type Location = {
   address: { text: string; point: Point };
@@ -168,18 +168,18 @@ export function editInput(action: Edit["action"], value: unknown): Edit {
             "radius_m",
             "boundary_geojson",
           ]);
-          if (
+          const boundary=polygonInput(a.boundary_geojson);
+          if (!(boundary&&a.radius_m===null)&&(
             !Number.isSafeInteger(a.radius_m) ||
             Number(a.radius_m) < 1 ||
-            Number(a.radius_m) > 2147483647 ||
-            a.boundary_geojson != null
-          )
+            Number(a.radius_m) > 2147483647
+          ))
             throw new BadRequestException();
           return {
             label: textInput(a.label),
             center: pointInput(a.center),
-            radius_m: Number(a.radius_m),
-            boundary_geojson: null,
+            radius_m: a.radius_m===null?null:Number(a.radius_m),
+            boundary_geojson: boundary,
           };
         }),
       };
@@ -197,4 +197,13 @@ export function editInput(action: Edit["action"], value: unknown): Edit {
         }),
       };
   }
+}
+
+export function polygonInput(value:unknown):Area['boundary_geojson']{
+ if(value==null)return null;const v=object(value,['type','coordinates']);
+ if(v.type!=='MultiPolygon'||!Array.isArray(v.coordinates)||v.coordinates.length!==1||!Array.isArray(v.coordinates[0])||v.coordinates[0].length!==1)throw new BadRequestException();
+ const ring=v.coordinates[0][0];if(!Array.isArray(ring)||ring.length<4||ring.length>101)throw new BadRequestException();
+ for(const p of ring){if(!Array.isArray(p)||p.length!==2)throw new BadRequestException();pointInput({longitude:p[0],latitude:p[1]});}
+ if(ring[0][0]!==ring.at(-1)[0]||ring[0][1]!==ring.at(-1)[1]||new Set(ring.slice(0,-1).map(p=>JSON.stringify(p))).size!==ring.length-1||ring.some((p,i)=>i>0&&Math.abs(p[0]-ring[i-1][0])>180))throw new BadRequestException();
+ return {type:'MultiPolygon',coordinates:v.coordinates as number[][][][]};
 }

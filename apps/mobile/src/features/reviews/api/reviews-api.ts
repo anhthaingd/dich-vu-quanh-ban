@@ -1,7 +1,7 @@
 import {requestJson} from '../../../lib/http/request';
 import {ApiError} from '../../../lib/http/api-error';
 import {record} from '../../jobs/api/jobs-api';
-import type {Review,ReviewPage,ReviewInput,ReviewAsset} from '../models';
+import type {Review,ReviewPage,ReviewInput,ReviewAsset,CustomerReviewPage} from '../models';
 export function isReview(v:unknown):v is Review {return record(v)&&(v.moderation_history===undefined||Array.isArray(v.moderation_history)&&v.moderation_history.every(h=>record(h)&&typeof h.action==='string'&&typeof h.reason==='string'&&typeof h.created_at==='string'&&Number.isFinite(Date.parse(h.created_at))))&&['id','job_id','author_id','body'].every(k=>typeof v[k]==='string')&&['customer_to_partner','partner_to_customer'].includes(String(v.direction))&&Number.isInteger(v.stars)&&Number(v.stars)>=1&&Number(v.stars)<=5&&typeof v.hidden==='boolean'&&typeof v.removed==='boolean'&&Number.isSafeInteger(v.version)&&Number(v.version)>0&&(v.asset_id===null||typeof v.asset_id==='string')&&(v.reply===null||record(v.reply)&&typeof v.reply.body==='string'&&typeof v.reply.author_id==='string')&&Array.isArray(v.allowed_actions)&&v.allowed_actions.every(a=>['edit','visibility','reply'].includes(a));}
 export function isReviewPage(v:unknown):v is ReviewPage{return record(v)&&Array.isArray(v.items)&&v.items.every(isReview)&&(v.next_cursor===null||typeof v.next_cursor==='string');}
 export type ReviewsApi=ReturnType<typeof createReviewsApi>;
@@ -13,6 +13,7 @@ export function createReviewsApi(base:string|undefined,transport:typeof fetch=fe
  const page=(kind:'jobs'|'partners',id:string,cursor?:string)=>`/${kind}/${encodeURIComponent(id)}/reviews${cursor?'?cursor='+encodeURIComponent(cursor):''}`;
  const isAsset=(v:unknown):v is ReviewAsset=>record(v)&&typeof v.id==='string'&&['pending','ready','rejected'].includes(String(v.status))&&(v.download_url===null||typeof v.download_url==='string')&&(v.expires_at===null||typeof v.expires_at==='string'&&Number.isFinite(Date.parse(v.expires_at)));
  return {
+  customerHistory:(token:string,job:string,cursor?:string)=>call('/jobs/'+encodeURIComponent(job)+'/customer-reviews'+(cursor?'?cursor='+encodeURIComponent(cursor):''),token,(v):v is CustomerReviewPage=>record(v)&&Array.isArray(v.items)&&v.items.every(r=>record(r)&&typeof r.id==='string'&&Number.isInteger(r.stars)&&Number(r.stars)>=1&&Number(r.stars)<=5&&typeof r.body==='string'&&(r.reply===null||typeof r.reply==='string')&&typeof r.created_at==='string'&&Number.isFinite(Date.parse(r.created_at)))&&(v.next_cursor===null||typeof v.next_cursor==='string')),
   asset:(id:string)=>call('/assets/'+encodeURIComponent(id),undefined,isAsset),
   reply:(token:string,id:string,expected_version:number,body:string,key:string)=>call('/reviews/'+encodeURIComponent(id)+'/reply',token,isReview,'PUT',{expected_version,body},key),
   upload:async(token:string,blob:Blob,key:string)=>{

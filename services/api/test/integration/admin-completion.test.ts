@@ -85,3 +85,17 @@ test('admin full-point completion preserves an existing customer mark and reject
  const p2=await preview(next.report.id),done=await call(admin,`/admin/reports/${next.report.id}/complete-on-behalf`,'POST',input(next,p2));assert.equal(done.status,201,JSON.stringify(done));assert.equal(done.body.invoice.customer_payment_reported_at,next.i.customer_payment_reported_at);assert.equal(done.body.invoice.worker_receipt_confirmed_at,null);assert.equal(done.body.invoice.review_eligible,false);assert.equal(done.body.invoice.reward,'0');
  await assert.rejects(f.pool.query('DELETE FROM admin_completion_evidence'));assert.ok(!f.logs.text().includes(p2.preview_token));assert.ok(!f.logs.text().includes(admin.mfa!));
 });
+test('assigned worker adds receipt after admin completion once without ledger changes and opens reviews only after both marks',async()=>{
+ const r=await ready(),p=await preview(r.report.id);const completed=await call(admin,`/admin/reports/${r.report.id}/complete-on-behalf`,'POST',input(r,p));assert.equal(completed.status,201);
+ const i=completed.body.invoice,path=`/invoices/${i.id}/receipt-confirmed`,body={expected_version:i.version,version_id:i.version_id,received_in_full:true},key=randomUUID();
+ const ledger=JSON.stringify((await f.pool.query('SELECT * FROM ledger_entries ORDER BY id')).rows),settlements=JSON.stringify((await f.pool.query('SELECT * FROM settlements ORDER BY id')).rows);
+ assert.equal((await call(customer,path,'POST',body)).status,403);assert.equal((await call(other,path,'POST',body)).status,404);
+ assert.equal((await call(worker,path,'POST',{...body,version_id:randomUUID()})).status,409);
+ const results=await Promise.all([call(worker,path,'POST',body,key),call(worker,path,'POST',body,key)]);assert.equal(results[0].status,201,JSON.stringify(results));assert.deepEqual(results[0],results[1]);contract('Invoice',results[0].body);
+ assert.ok(results[0].body.worker_receipt_confirmed_at);assert.equal(results[0].body.review_eligible,false);
+ assert.equal((await call(worker,path,'POST',{...body,expected_version:results[0].body.version})).status,409);
+ const paid=await call(customer,`/invoices/${i.id}/payment-reported`,'POST',{expected_version:results[0].body.version,version_id:i.version_id,confirmed:true});assert.equal(paid.body.review_eligible,true);
+ assert.equal(JSON.stringify((await f.pool.query('SELECT * FROM ledger_entries ORDER BY id')).rows),ledger);assert.equal(JSON.stringify((await f.pool.query('SELECT * FROM settlements ORDER BY id')).rows),settlements);
+ assert.equal((await f.pool.query("SELECT count(*) FROM outbox_events WHERE event_type='invoice.receipt_confirmed.v1'")).rows[0].count,'1');
+ await f.pool.query('UPDATE memberships SET active=false WHERE partner_id=$1 AND user_id=$2',[partner,worker.id]);assert.equal((await call(worker,path,'POST',body,key)).status,404);
+});

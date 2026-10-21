@@ -1,3 +1,4 @@
+import {PushControl} from '../PushControl';
 import {useCallback,useState,useSyncExternalStore} from 'react';
 import {Pressable,StyleSheet,Switch,View} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
@@ -33,7 +34,10 @@ function Inbox({owner,navigation}:{owner:string;navigation:Navigation}){
   const run=async(work:()=>Promise<void>)=>{if(busy)return;setBusy(true);setFailure(null);setRetry(()=>work);try{await sessionReady(manager,owner);await work();setRetry(null);}catch(e){setFailure(e instanceof ApiError?e.code:'NETWORK');}finally{setBusy(false);}};
   const open=async(n:Notice)=>{await markRead([n.id]);const r=n.resource_ref;
     // Fetch the target with current authorization before navigation. No arbitrary URL from notification data.
-    if(r.invoice_id){if(!r.job_id)throw new ApiError('INVALID_RESPONSE');await manager.getInvoice(owner,r.job_id);navigation.navigate('Invoice',{id:r.job_id});}
+    if(r.report_id){await manager.getReport(owner,r.report_id);navigation.navigate('Support',{id:r.report_id});}
+    else if(r.verification_id&&r.partner_id){await manager.listVerifications(owner,r.partner_id);navigation.navigate('Verification',{id:r.partner_id});}
+    else if(r.review_id&&r.job_id){await manager.jobReviews(owner,r.job_id);navigation.navigate('Reviews',{id:r.job_id});}
+    else if(r.invoice_id){if(!r.job_id)throw new ApiError('INVALID_RESPONSE');await manager.getInvoice(owner,r.job_id);navigation.navigate('Invoice',{id:r.job_id});}
     else if(r.job_id){await manager.getJob(owner,r.job_id);navigation.navigate('JobDetail',{id:r.job_id});}
   };
   const visible=items.filter(n=>!unread||!n.read_at),disabled=busy||state.busy;
@@ -54,7 +58,7 @@ function Settings({owner}:{owner:string}){
   const [mutation]=useState(()=>new Mutation<NotificationSettings>()),m=useSyncExternalStore(mutation.subscribe,mutation.getSnapshot);
   useFocusEffect(useCallback(()=>{let active=true;setError(null);void (async()=>{await sessionReady(manager,owner);const s=await manager.notificationSettings(owner);if(active)setValue(s);})().catch(e=>{if(active)setError(e instanceof ApiError?e.code:'NETWORK');});return()=>{active=false;};},[manager,owner,attempt]));
   const save=async()=>{if(!value)return;setSaved(false);const result=await mutation.run(k=>manager.saveNotificationSettings(owner,value,k));if(result){setValue(result);setSaved(true);}};
-  return <Card><AppText>{t('notices.settingsHint')}</AppText><JobFeedback error={error??m.error} pending={m.pending} busy={state.busy} retry={()=>void (m.error?save():setAttempt(n=>n+1))}/>
+  return <Card><AppText>{t('notices.settingsHint')}</AppText><PushControl owner={owner}/><JobFeedback error={error??m.error} pending={m.pending} busy={state.busy} retry={()=>void (m.error?save():setAttempt(n=>n+1))}/>
     {value?(['message_push','call_push','service_push','reminder_push'] as const).map(k=><View key={k} style={styles.setting}><AppText style={{flex:1}}>{t(`notices.${k}`)}</AppText><Switch testID={`setting-${k}`} accessibilityLabel={t(`notices.${k}`)} value={value[k]} accessibilityState={{disabled:state.busy||m.pending}} disabled={state.busy||m.pending} onValueChange={v=>{setValue({...value,[k]:v});setSaved(false);}}/></View>):!error&&<AppText>{t('accountTools.loading')}</AppText>}
     <Button testID="notices-save" label={t('notices.save')} disabled={!value||state.busy||m.busy} onPress={()=>void save()}/>{saved&&<AppText testID="notices-saved" accessibilityLiveRegion="polite">{t('notices.saved')}</AppText>}
   </Card>;

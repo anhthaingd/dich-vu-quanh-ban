@@ -7,6 +7,8 @@ export class ReviewsController {
  constructor(@Inject(ReviewsService) private readonly service: ReviewsService) {}
  @Get('partners/:id/reviews') @Header('Cache-Control','no-store')
  publicList(@Param('id') id:string,@Query() q:Record<string,unknown>) { return this.service.list(undefined,identifier(id),true,pageInput(q)); }
+ @Get('jobs/:id/customer-reviews') @Header('Cache-Control','no-store')
+ customerHistory(@Headers('authorization') auth:string|undefined,@Param('id') id:string,@Query() q:Record<string,unknown>){return this.service.customerHistory(auth,identifier(id),pageInput(q));}
  @Get('jobs/:id/reviews') @Header('Cache-Control','no-store')
  list(@Headers('authorization') auth:string|undefined,@Param('id') id:string,@Query() q:Record<string,unknown>) { return this.service.list(auth,identifier(id),false,pageInput(q)); }
  @Post('jobs/:id/reviews') @Header('Cache-Control','no-store')

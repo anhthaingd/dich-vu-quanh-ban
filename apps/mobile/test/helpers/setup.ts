@@ -4,3 +4,16 @@ jest.mock('react-native-safe-area-context', () => jest.requireActual('react-nati
 // Map rendering is exercised in browser/native runs; unit tests control map events.
 jest.mock('../../src/features/location/components/LocationMap', () => ({ LocationMap: () => null }));
 jest.mock('../../src/features/search/components/ResultsMap', () => ({ ResultsMap: () => null }));
+// Unit tests have no OS push service. Keep the native event subscription contract;
+// dedicated PushControl/PushListener tests override this boundary and exercise delivery callbacks.
+jest.mock('expo-notifications', () => ({
+  getPermissionsAsync: jest.fn(async () => ({ granted: false })),
+  requestPermissionsAsync: jest.fn(async () => ({ granted: false })),
+  getExpoPushTokenAsync: jest.fn(),
+  setNotificationChannelAsync: jest.fn(),
+  AndroidImportance: { DEFAULT: 3 },
+  addPushTokenListener: jest.fn(() => ({ remove: jest.fn() })),
+  addNotificationResponseReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
+  getLastNotificationResponseAsync: jest.fn(async () => null),
+  clearLastNotificationResponseAsync: jest.fn(async () => undefined),
+}));

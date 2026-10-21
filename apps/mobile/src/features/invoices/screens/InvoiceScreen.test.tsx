@@ -101,3 +101,9 @@ test('leaving the invoice screen cancels a queued write before it reaches the AP
 test('admin-settled invoice shows settlement separately without inventing a worker receipt or review eligibility',async()=>{
  const f=invoiceFixture(true);f.setInvoice({...invoice,state:'settled',settled:true,customer_payment_reported_at:'2026-10-20T00:00:00Z',worker_receipt_confirmed_at:null,review_eligible:false});mount(f);await ready();expect(screen.getByTestId('invoice-settled-separate')).toBeTruthy();expect(screen.queryByTestId('invoice-receive')).toBeNull();expect(screen.queryByTestId('invoice-done')).toBeNull();
 });
+test('assigned worker confirms receipt after admin settlement using the separate action and an explicit checkbox',async()=>{
+ const f=invoiceFixture(true),current={...invoice,state:'settled' as const,settled:true,review_eligible:false,worker_receipt_confirmed_at:null};f.setInvoice(current);
+ const job=await f.jobs.get('token','job');f.jobs.get.mockResolvedValue({...job,state:'completed',allowed_actions:['confirm_receipt']});
+ f.invoices.change.mockResolvedValue({...current,version:current.version+1,worker_receipt_confirmed_at:'2026-10-20T00:00:00Z'});mount(f);await ready();expect(screen.getByTestId('invoice-receive')).toBeDisabled();press('invoice-receive-check');press('invoice-receive');await ready();
+ expect(f.invoices.change.mock.calls[0][2]).toBe('receipt-confirmed');expect(f.invoices.change.mock.calls[0][3]).toEqual({expected_version:invoice.version,version_id:invoice.version_id,received_in_full:true});
+});

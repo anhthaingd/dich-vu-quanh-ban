@@ -34,6 +34,7 @@ export class AdminApi {
   }
   item(domain:Domain,id:string){return this.call('/admin/'+domain+'/'+encodeURIComponent(id),isItem);}
   decision(domain:Domain,id:string,input:unknown,key:string):Promise<Item>{return this.call('/admin/'+domain+'/'+encodeURIComponent(id)+'/decision',isItem,input,key);}
+  note(id:string,input:unknown,key:string){return this.call('/admin/reports/'+encodeURIComponent(id)+'/notes',isItem,input,key);}
   saveCatalog(domain:Domain,id:string|null,input:unknown,key:string){return this.call('/admin/'+domain+(id?'/'+encodeURIComponent(id):''),isItem,input,key,id?'PUT':'POST');}
   completionPreview(id:string){return this.call('/admin/reports/'+encodeURIComponent(id)+'/completion-preview',isCompletionPreview);}
   complete(id:string,input:unknown,key:string){return this.call('/admin/reports/'+encodeURIComponent(id)+'/complete-on-behalf',isCompletionResult,input,key);}

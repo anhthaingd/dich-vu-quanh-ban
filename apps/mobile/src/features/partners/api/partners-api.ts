@@ -70,9 +70,8 @@ export const isPartner = (x: unknown): x is Partner =>
       record(a) &&
       text(a.label) &&
       point(a.center) &&
-      Number.isSafeInteger(a.radius_m) &&
-      Number(a.radius_m) > 0 &&
-      a.boundary_geojson === null
+      ((a.radius_m===null&&a.boundary_geojson!==null)||Number.isSafeInteger(a.radius_m)&&Number(a.radius_m)>0) &&
+      (a.boundary_geojson === null||record(a.boundary_geojson)&&a.boundary_geojson.type==='MultiPolygon'&&Array.isArray(a.boundary_geojson.coordinates))
   ) &&
   Array.isArray(x.locations) &&
   x.locations.every(

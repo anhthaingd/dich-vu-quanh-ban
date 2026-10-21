@@ -36,7 +36,7 @@ export class RealtimeGateway implements OnModuleDestroy {
       for(const action of ['subscribe','unsubscribe'])socket.on(action,(input:unknown,ack:unknown)=>{
         if(typeof ack!=='function')return;
         const p=input as {type?:string;id?:string;request_id?:string};
-        if(!p||!['conversation','job','invoice'].includes(p.type??'')||typeof p.id!=='string'||!uuid.test(p.id)||typeof p.request_id!=='string'||!uuid.test(p.request_id)||Object.keys(p).some(k=>!['type','id','request_id'].includes(k))){ack({ok:false,code:'VALIDATION'});return;}
+        if(!p||!['conversation','job','invoice','report','verification','review'].includes(p.type??'')||typeof p.id!=='string'||!uuid.test(p.id)||typeof p.request_id!=='string'||!uuid.test(p.request_id)||Object.keys(p).some(k=>!['type','id','request_id'].includes(k))){ack({ok:false,code:'VALIDATION'});return;}
         const resource={type:p.type,id:p.id} as Resource,key=resource.type+':'+resource.id;
         if(action==='unsubscribe'){c.resources.delete(key);ack({ok:true,request_id:p.request_id});return;}
         if(c.busy||c.resources.size>=32){ack({ok:false,code:'RATE_LIMITED',request_id:p.request_id});return;}

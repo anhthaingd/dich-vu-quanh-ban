@@ -1,10 +1,11 @@
+import {event} from '../../common/events/event.store.js';
 import {decisionHistory} from '../moderation/history.js';
 import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import type { Pool, PoolClient } from 'pg';
 import type { AuthService } from '../auth/auth.service.js';
 import { AccountTransaction } from '../accounts/account-transaction.js';
 import type { PageInput } from '../accounts/accounts.input.js';
-import { hasPermission, memberAccess } from '../jobs/jobs.access.js';
+import { hasPermission, memberAccess, jobAccess } from '../jobs/jobs.access.js';
 import type { Cursor } from '../../common/http/cursor.js';
 import type { ReviewInput, visibilityInput, replyInput } from './reviews.input.js';
 
@@ -47,6 +48,7 @@ export class ReviewsService {
   if (id && !(await db.query("SELECT 1 FROM assets WHERE id=$1 AND uploader_id=$2 AND purpose='review' AND status='ready' FOR SHARE",[id,user])).rowCount) throw new BadRequestException();
  }
  private async audit(db: PoolClient, user: string, partner: string, action: string, id: string, before: unknown, after: unknown, reason = '') {
+  const version=Number((after as {version:number}).version);await event(db,`review:${id}:${version}`,id,version,'review.updated.v1',{review_id:id,resource_version:version});
   await db.query('INSERT INTO audit_events(actor_id,partner_id,action,resource_id,reason,details) VALUES($1,$2,$3,$4,$5,$6)',[user,partner,action,id,reason,JSON.stringify({before,after})]);
  }
  create(header: string | undefined, jobId: string, input: ReviewInput, key: string) {
@@ -104,6 +106,21 @@ export class ReviewsService {
    await this.audit(db,a.user.id,job.partner_id,'review.reply',id,r,next);
    return reviewDto(next,this.actions(next,access,a.user.id));
   },async(db,a)=>{await this.recipient(db,id,a.user.id);}).then(r=>this.currentResult(header,r));
+ }
+ async customerHistory(header:string|undefined,jobId:string,q:PageInput){
+  const db=await this.pool.connect();try{
+   await db.query('BEGIN');const actor=await this.auth.authenticate(header,db),access=await jobAccess(db,jobId,actor.user.id);
+   if(access.customer)throw new ForbiddenException();
+   const scope=`customerReviews:${jobId}:${actor.user.id}`,after=this.cursor.decode(q.cursor,scope);
+   const {rows}=await db.query(`SELECT r.id,r.stars,r.body,r.reply_body,date_trunc('milliseconds',r.created_at) AS created_at
+    FROM reviews r JOIN jobs j ON j.id=r.job_id WHERE j.customer_id=$1 AND r.direction='partner_to_customer'
+    AND r.hidden_at IS NULL AND r.removed_at IS NULL
+    AND ($2::timestamptz IS NULL OR (date_trunc('milliseconds',r.created_at),r.id)<($2::timestamptz,$3::uuid))
+    ORDER BY date_trunc('milliseconds',r.created_at) DESC,r.id DESC LIMIT $4`,[access.job.customer_id,after?.created_at??null,after?.id??null,q.limit+1]);
+   const page=rows.slice(0,q.limit),last=page.at(-1);
+   const result={items:page.map(r=>({id:r.id,stars:r.stars,body:r.body,reply:r.reply_body,created_at:r.created_at.toISOString()})),next_cursor:rows.length>q.limit?this.cursor.encode({id:last.id,created_at:last.created_at.toISOString()},scope):null};
+   await db.query('COMMIT');return result;
+  }catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
  }
  async list(header: string | undefined, id: string, publicPartner: boolean, q: PageInput) {
   const db = await this.pool.connect();

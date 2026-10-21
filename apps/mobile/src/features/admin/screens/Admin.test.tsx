@@ -104,3 +104,9 @@ test('restricted support disables notification chat polling and realtime without
  await screen.findByTestId('support-create');await act(async()=>{await jest.advanceTimersByTimeAsync(1000);});expect(notices).not.toHaveBeenCalled();expect(messages).not.toHaveBeenCalled();expect(setSession).toHaveBeenLastCalledWith(null);expect(f.manager.getSnapshot().user?.status).toBe('suspended');expect(screen.queryByTestId('nav-jobs')).toBeNull();
  }finally{unbind();client.dispose();jest.useRealTimers();}
 });
+test('mobile internal note is a separate private action and retries the captured body without changing report state',async()=>{
+ const f=fixture(),note=jest.spyOn(AdminApi.prototype,'note').mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValue({...report,version:2,internal_notes:[{id:'note',actor_id:'admin',body:'DEMO internal only',created_at:'2026-10-20T00:00:00Z'}]});
+ mount(f);await enter();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-reason');fireEvent.press(screen.getByTestId('admin-action'));fireEvent.press(screen.getByTestId('admin-action-internal_note'));
+ fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO internal only');fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Chưa xác nhận được kết quả. Giữ nguyên nội dung để thử lại.');fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Ghi chú riêng của admin hỗ trợ');
+ expect(note.mock.calls[0]).toEqual(note.mock.calls[1]);expect(note.mock.calls[0]).toEqual(['report',{expected_version:1,body:'DEMO internal only'},expect.any(String)]);expect(f.decision).not.toHaveBeenCalled();
+});

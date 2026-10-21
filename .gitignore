@@ -9,6 +9,7 @@ test-results/
 playwright-report/
 .DS_Store
 .local/
+*firebase-adminsdk*.json
 
 # Generated previews and local working material
 storybook-static/

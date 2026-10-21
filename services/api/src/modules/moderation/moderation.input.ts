@@ -10,3 +10,5 @@ export function decisionInput(value:unknown,d:Domain){const v=object(value,d==='
  if(!Number.isSafeInteger(v.expected_version)||Number(v.expected_version)<1||!allowed.includes(String(action))||(v.checked!==undefined&&typeof v.checked!=='boolean')||(d==='verifications'&&action==='approve'&&v.checked!==true))throw new BadRequestException();
  return {expected_version:Number(v.expected_version),action:String(action),reason:text(v.reason),checked:v.checked===true};
 }
+
+export function noteInput(value:unknown){const v=object(value,['expected_version','body']);if(!Number.isSafeInteger(v.expected_version)||Number(v.expected_version)<1)throw new BadRequestException();return {expected_version:Number(v.expected_version),body:text(v.body)};}

@@ -1,5 +1,12 @@
 # Kế hoạch triển khai và học code
 
+**20/10/2026 — P1-06, hoàn thiện cùng đợt P1-2:** ghi chú hỗ trợ nội bộ; lịch sử đánh giá khách theo quyền việc; người thực hiện bổ sung dấu nhận tiền sau admin; vùng đa giác/điểm đại diện, gom cụm theo zoom và xếp hạng ổn định; sự kiện hỗ trợ/xác minh/đánh giá; tích hợp Expo Push Service. [Quyết định đã chốt](de-xuat/P1-06-hoan-thien-cung-dot.md). Code và kiểm local được ghi theo từng báo cáo bên dưới. **Cập nhật 21/10: đã cấu hình FCM, build Android và nhận thông báo thật qua Expo/FCM trên Emulator, mở đúng báo cáo ở nền. Cold-start kiểm lại đạt nhưng giữ một lần chỉ mở trang chủ cần theo dõi. iOS còn thiếu APNs; chưa thiết bị vật lý/UAT, chưa đóng toàn P1-2.** Chọn tin nhắn chứng cứ tiếp tục hoãn; chưa chuyển P2. Chưa commit/push, CI mới hoặc UAT.
+
+- [B09-06 — Ghi chú nội bộ hỗ trợ](bao-cao/B09-06-ghi-chu-noi-bo.md).
+- [B10-04 — Lịch sử đánh giá khách và dấu nhận tiền](bao-cao/B10-04-lich-su-khach-va-dau-nhan-tien.md).
+- [B03-06 — Đa giác, gom cụm và xếp hạng](bao-cao/B03-06-da-giac-gom-cum-va-xep-hang.md).
+- [B05-06 — Sự kiện và push Expo](bao-cao/B05-06-su-kien-va-expo-push.md).
+
 **20/10/2026 — P1-05 / B09-05:** triển khai các chức năng admin P1-2 còn lại đã duyệt: tài khoản/người cung cấp, ngành–nhóm–kỹ năng và khu hỗ trợ hạn chế khi bị khóa. [Báo cáo, ảnh và giới hạn](bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md) · [Ba contract đã chốt](de-xuat/P1-05-admin-tai-khoan-partner-danh-muc.md). Chọn tin nhắn chứng cứ để sau; khôi phục/xóa tài khoản, cấp quyền admin và tài chính P2 ngoài đợt. Bằng chứng SDD local không thay CI/UAT/production.
 
 **20/10/2026 — P1-04 / B09-04:** admin hoàn tất thay bằng tiền test theo contract bổ sung đã duyệt. [Báo cáo luồng và bằng chứng](bao-cao/B09-04-admin-hoan-tat-thay.md) · [Thiết kế đã chốt](de-xuat/P1-04-admin-hoan-tat-thay.md). Giữ hai dấu thanh toán và trạng thái báo cáo; chưa CI/UAT/production.

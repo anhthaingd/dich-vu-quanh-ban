@@ -12,8 +12,8 @@ export type PartnerSkill = {
 export type Area = {
   label: string;
   center: Point;
-  radius_m: number;
-  boundary_geojson: null;
+  radius_m: number|null;
+  boundary_geojson:{type:'MultiPolygon';coordinates:number[][][][]}|null;
 };
 export type Location = {
   address: { text: string; point: Point };
@@ -75,6 +75,7 @@ export type PartnerProfile = Pick<
   can_message: boolean;
 };
 export type SearchInput = Point & {
+  sort?:'distance'|'rating'|'recommended';
   radius_m: number;
   skill_id?: string;
   category_id?: string;

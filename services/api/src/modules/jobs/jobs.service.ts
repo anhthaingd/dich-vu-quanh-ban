@@ -51,7 +51,7 @@ export class JobsService {
                 throw new ConflictException({ code: 'STATE_CONFLICT' });
             return l as JobCreate['address'];
         }
-        const { rows: [area] } = await db.query(`SELECT 1 FROM service_areas WHERE partner_id=$1 AND active AND ((center IS NOT NULL AND ST_DWithin(center,ST_SetSRID(ST_MakePoint($2,$3),4326)::geography,radius_m)) OR (boundary IS NOT NULL AND ST_Covers(boundary::geometry,ST_SetSRID(ST_MakePoint($2,$3),4326)))) LIMIT 1`, [input.partner_id, input.address.point.longitude, input.address.point.latitude]);
+        const { rows: [area] } = await db.query(`SELECT 1 FROM service_areas WHERE partner_id=$1 AND active AND ((boundary IS NULL AND center IS NOT NULL AND ST_DWithin(center,ST_SetSRID(ST_MakePoint($2,$3),4326)::geography,radius_m)) OR (boundary IS NOT NULL AND ST_Covers(boundary::geometry,ST_SetSRID(ST_MakePoint($2,$3),4326)))) LIMIT 1`, [input.partner_id, input.address.point.longitude, input.address.point.latitude]);
         if (!area)
             throw new ConflictException({ code: 'STATE_CONFLICT' });
         return input.address;

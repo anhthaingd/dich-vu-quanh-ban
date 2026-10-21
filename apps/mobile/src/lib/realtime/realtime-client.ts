@@ -1,7 +1,7 @@
 import {Platform} from 'react-native';
 import {io,type Socket} from 'socket.io-client';
 import {randomUUID} from 'expo-crypto';
-export type Resource={type:'conversation'|'job'|'invoice';id:string};
+export type Resource={type:'conversation'|'job'|'invoice'|'report'|'verification'|'review';id:string};
 export type DomainEvent={event_id:string;type:string;aggregate_version:number;data:Record<string,unknown>};
 export type Signal={kind:'event';event:DomainEvent}|{kind:'sync'}|{kind:'revoked';resource:Resource};
 type Credentials={token:string;owner:string;expiresAt:number};

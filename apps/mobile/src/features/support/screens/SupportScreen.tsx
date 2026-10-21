@@ -1,3 +1,4 @@
+import {useRealtimeRefresh} from '../../../app/providers/RealtimeProvider';
 import {ScrollView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {LanguageSettings} from '../../accounts/components/LanguageSettings';
@@ -27,21 +28,23 @@ import {reportStates,type Report,type ReportContext,type ReportState} from '../m
 type Props=NativeStackScreenProps<RootStackParamList,'Support'>;
 export function SupportScreen({navigation,route}:Props){
  const context=route.params?.context;
- return <AccountPage title="support.title" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account',{returnTo:'Support'})}>{owner=><Desk key={`${owner}:${JSON.stringify(context)}`} owner={owner} context={context}/>}</AccountPage>;
+ return <AccountPage title="support.title" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account',{returnTo:'Support'})}>{owner=><Desk key={`${owner}:${JSON.stringify(context)}:${route.params?.id??''}`} owner={owner} context={context} initialId={route.params?.id}/>}</AccountPage>;
 }
-function Desk({owner,context}:{owner:string;context?:ReportContext}){
+function Desk({owner,context,initialId}:{owner:string;context?:ReportContext;initialId?:string}){
  const {manager,state:auth}=useAuth(),{t,locale}=useLocale();
  const [items,setItems]=useState<Report[]>([]),[selected,setSelected]=useState<Report|null>(null),[creating,setCreating]=useState(!!context),[body,setBody]=useState(''),[subject,setSubject]=useState('');
  const [photos,setPhotos]=useState<string[]>([]),[picking,setPicking]=useState(false);
  const [upload]=useState(()=>new Mutation<EvidenceAsset>()),up=useSyncExternalStore(upload.subscribe,upload.getSnapshot,upload.getSnapshot);
  const [filter,setFilter]=useState<ReportState|'all'>('all'),[busy,setBusy]=useState(false),[loaded,setLoaded]=useState(false),[error,setError]=useState<ApiErrorCode|null>(null),[attempt,setAttempt]=useState(0);
  const [mutation,setMutation]=useState(()=>new Mutation<Report>()),state=useSyncExternalStore(mutation.subscribe,mutation.getSnapshot,mutation.getSnapshot);
- const active=useRef(false),generation=useRef(0),selectedId=selected?.id;
+ const [linkedId,setLinkedId]=useState(initialId);
+ const active=useRef(false),generation=useRef(0),selectedId=selected?.id??linkedId;
  const blocked=busy||auth.busy||state.busy||state.pending||up.busy||up.pending||picking;
  const clearPrivate=useCallback(()=>{setItems([]);setSelected(null);setBody('');setSubject('');setPhotos([]);setCreating(false);setLoaded(false);},[]);
  useEffect(()=>{if(state.error&&['NOT_FOUND','FORBIDDEN','UNAUTHENTICATED'].includes(state.error))clearPrivate();},[state.error,clearPrivate]);
  const reload=useCallback(()=>{setAttempt(n=>n+1);return true;},[]);
  useAccountRefresh(busy,reload,!blocked);
+ useRealtimeRefresh({busy:blocked||!!body||photos.length>0,error,matches:s=>s.kind==='event'&&s.event.type==='report.updated.v1',refresh:()=>{reload();},revoke:()=>{clearPrivate();}});
  useFocusEffect(useCallback(()=>{
   active.current=true;const request=++generation.current;setBusy(true);setError(null);
   const valid=()=>active.current&&request===generation.current;
@@ -59,7 +62,7 @@ function Desk({owner,context}:{owner:string;context?:ReportContext}){
  },[manager,owner,selectedId,attempt,clearPrivate]));
  const finish=(r:Report|null)=>{if(r&&active.current){setSelected(r);setItems(all=>[r,...all.filter(x=>x.id!==r.id)]);setCreating(false);setBody('');setSubject('');setPhotos([]);reload();}};
  const send=()=>{const text=body.trim();if(!text)return;const id=selected?.id,ids=[...photos],input={...(context??{kind:'account' as const}),subject:subject.trim(),body:text,evidence_ids:ids};void mutation.run(k=>id?manager.replyReport(owner,id,text,ids,k):manager.createReport(owner,input,k)).then(finish);};
- const back=()=>{setSelected(null);setCreating(false);setBody('');setSubject('');setPhotos([]);setMutation(new Mutation<Report>());reload();};
+ const back=()=>{setLinkedId(undefined);setSelected(null);setCreating(false);setBody('');setSubject('');setPhotos([]);setMutation(new Mutation<Report>());reload();};
  const loadPhoto=useCallback(async(id:string)=>{for(let i=0;;i++){await sessionReady(manager,owner);if(!active.current)throw new ApiError('CANCELLED');try{return await manager.evidenceAsset(owner,id);}catch(e){if(!(e instanceof ApiError)||e.code!=='BUSY'||i>=2)throw e;}}},[manager,owner]);
  const uploaded=(a:EvidenceAsset|null)=>{if(a&&active.current)setPhotos(ids=>ids.includes(a.id)?ids:[...ids,a.id]);};
  const pick=async()=>{setPicking(true);setError(null);try{

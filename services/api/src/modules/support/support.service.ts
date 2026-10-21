@@ -1,3 +1,4 @@
+import {event} from '../../common/events/event.store.js';
 import {BadRequestException,ConflictException,NotFoundException} from '@nestjs/common';
 import type {Pool,PoolClient} from 'pg';
 import type {AuthService} from '../auth/auth.service.js';
@@ -51,6 +52,7 @@ export class SupportService {
    const job=await this.resources(db,input,a.user.id);
    const r=(await db.query('INSERT INTO reports(reporter_id,job_id,invoice_id,invoice_version_id,review_id,kind,body,subject) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',[a.user.id,job,input.invoice_id,input.invoice_version_id,input.review_id,input.kind,input.body,input.subject])).rows[0];
    await this.evidence(db,r.id,input.evidence_ids,a.user.id);await this.audit(db,a.user.id,r.id,'report.create',r.version);
+   await event(db,`report:${r.id}:${r.version}`,r.id,r.version,'report.updated.v1',{report_id:r.id,resource_version:r.version});
    return this.dto(db,r);
   },async(_db,a)=>{
    if(a.user.status==='suspended'&&(input.job_id||input.invoice_id||input.review_id||input.kind!=='account'))throw new BadRequestException();
@@ -62,7 +64,7 @@ export class SupportService {
    const update=(await db.query("INSERT INTO report_updates(report_id,actor_id,body,visibility) VALUES($1,$2,$3,'participants') RETURNING id",[id,a.user.id,input.body])).rows[0];
    await this.evidence(db,id,input.evidence_ids,a.user.id,update.id);
    const next=(await db.query("UPDATE reports SET state=CASE WHEN state='awaiting_evidence' THEN 'reviewing' ELSE state END,version=version+1 WHERE id=$1 RETURNING *",[id])).rows[0];
-   await this.audit(db,a.user.id,id,'report.update',next.version);return this.dto(db,next);
+   await this.audit(db,a.user.id,id,'report.update',next.version);await event(db,`report:${id}:${next.version}`,id,next.version,'report.updated.v1',{report_id:id,resource_version:next.version});return this.dto(db,next);
   },async(db,a)=>{await this.own(db,id,a.user.id);});
  }
  private async read<T>(header:string|undefined,work:(db:PoolClient,user:string)=>Promise<T>){

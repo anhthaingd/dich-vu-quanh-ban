@@ -1,5 +1,12 @@
 # Thứ tự triển khai từng chức năng
 
+**20/10/2026 — P1-06, hoàn thiện cùng đợt P1-2:** ghi chú hỗ trợ nội bộ; lịch sử đánh giá khách theo quyền việc; người thực hiện bổ sung dấu nhận tiền sau admin; vùng đa giác/điểm đại diện, gom cụm theo zoom và xếp hạng ổn định; sự kiện hỗ trợ/xác minh/đánh giá; tích hợp Expo Push Service. [Quyết định đã chốt](de-xuat/P1-06-hoan-thien-cung-dot.md). Code và kiểm local được ghi theo từng báo cáo bên dưới. **Đã liên kết Expo, build và thử thông báo mô phỏng trên Android/iOS; iOS đã đăng ký token, gửi thật bị Expo từ chối InvalidCredentials. Còn cấu hình FCM/APNs và nghiệm thu chuyển phát thật; chưa đóng toàn P1-2.** Chọn tin nhắn chứng cứ tiếp tục hoãn; chưa chuyển P2. Chưa commit/push, CI mới hoặc UAT.
+
+- [B09-06 — Ghi chú nội bộ hỗ trợ](bao-cao/B09-06-ghi-chu-noi-bo.md).
+- [B10-04 — Lịch sử đánh giá khách và dấu nhận tiền](bao-cao/B10-04-lich-su-khach-va-dau-nhan-tien.md).
+- [B03-06 — Đa giác, gom cụm và xếp hạng](bao-cao/B03-06-da-giac-gom-cum-va-xep-hang.md).
+- [B05-06 — Sự kiện và push Expo](bao-cao/B05-06-su-kien-va-expo-push.md).
+
 **20/10/2026 — P1-05 / B09-05:** triển khai các chức năng admin P1-2 còn lại đã duyệt: tài khoản/người cung cấp, ngành–nhóm–kỹ năng và khu hỗ trợ hạn chế khi bị khóa. [Báo cáo, ảnh và giới hạn](bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md) · [Ba contract đã chốt](de-xuat/P1-05-admin-tai-khoan-partner-danh-muc.md). Chọn tin nhắn chứng cứ để sau; khôi phục/xóa tài khoản, cấp quyền admin và tài chính P2 ngoài đợt. Bằng chứng SDD local không thay CI/UAT/production.
 
 **20/10/2026 — P1-04:** tiếp tục P1-2 với admin hoàn tất thay thợ bằng tiền test. Chủ dự án duyệt bổ sung contract xem trước/đối chiếu và triển khai web/mobile. [Thiết kế](de-xuat/P1-04-admin-hoan-tat-thay.md) · [Báo cáo B09-04](bao-cao/B09-04-admin-hoan-tat-thay.md). Giữ Q01, không tự đóng báo cáo, không mở Q02/tiền thật.

@@ -98,6 +98,7 @@ export class AuthService {
     const { sessionId, user } = await this.authenticate(header,this.pool,true);
     await this.transaction(async db => {
       await db.query('SELECT id FROM users WHERE id=$1 FOR UPDATE', [user.id]);
+      await db.query('UPDATE push_devices SET revoked_at=COALESCE(revoked_at,now()) WHERE family_id=(SELECT family_id FROM sessions WHERE id=$1)',[sessionId]);
       await db.query('UPDATE sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE family_id=(SELECT family_id FROM sessions WHERE id=$1)', [sessionId]);
     });
     await this.accessChanged();

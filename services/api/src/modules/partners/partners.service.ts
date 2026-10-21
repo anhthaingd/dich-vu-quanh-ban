@@ -172,11 +172,13 @@ export class PartnersService {
               'UPDATE service_areas SET active=false WHERE partner_id=$1',
               [id]
             );
-            for (const a of input.areas)
+            for (const a of input.areas){
+              if(a.boundary_geojson){const valid=(await db.query("SELECT ST_IsValid(g) AND NOT ST_IsEmpty(g) AND ST_Area(g)>0 AS valid FROM (SELECT ST_SetSRID(ST_GeomFromGeoJSON($1),4326) g) x",[JSON.stringify(a.boundary_geojson)])).rows[0];if(!valid.valid)throw new BadRequestException();}
               await db.query(
-                'INSERT INTO service_areas(partner_id,label,center,radius_m) VALUES($1,$2,ST_SetSRID(ST_MakePoint($3,$4),4326)::geography,$5)',
-                [id, a.label, a.center.longitude, a.center.latitude, a.radius_m]
+                'INSERT INTO service_areas(partner_id,label,center,radius_m,boundary) VALUES($1,$2,ST_SetSRID(ST_MakePoint($3,$4),4326)::geography,$5,CASE WHEN $6::text IS NULL THEN NULL ELSE ST_SetSRID(ST_GeomFromGeoJSON($6),4326)::geography END)',
+                [id, a.label, a.center.longitude, a.center.latitude, a.boundary_geojson?null:a.radius_m,a.boundary_geojson?JSON.stringify(a.boundary_geojson):null]
               );
+            }
             break;
           case 'locations':
             await db.query(

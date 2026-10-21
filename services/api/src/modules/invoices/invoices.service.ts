@@ -59,16 +59,20 @@ export class InvoicesService {
    } else if(action==='payment-reported'){
     this.state(i.state,['locked','settled']);if(i.customer_payment_reported_at)throw new ConflictException({code:'STATE_CONFLICT'});
     await db.query('UPDATE invoices SET customer_payment_reported_at=now() WHERE id=$1',[id]);
+   } else if(action==='receipt-confirmed'){
+    this.state(i.state,['settled']);if(i.settled_by_kind!=='admin'||i.worker_receipt_confirmed_at||a.job.state!=='completed')throw new ConflictException({code:'STATE_CONFLICT'});
+    await db.query('UPDATE invoices SET worker_receipt_confirmed_at=now(),worker_receipt_by=$2 WHERE id=$1',[id,actor.user.id]);
+    await db.query("INSERT INTO audit_events(actor_id,partner_id,action,resource_id,reason,details) VALUES($1,$2,'invoice.receipt_confirmed',$3,'Worker confirmed receipt after admin completion','{}')",[actor.user.id,a.job.partner_id,id]);
    } else {
     const settlement=await settleLockedInvoice(db,a.job,i,{id:actor.user.id,kind:'worker'});
     return {invoice:await this.read(db,job),settlement_id:settlement,actor_kind:'worker' as const};
    }
    await db.query('UPDATE invoices SET version=version+1 WHERE id=$1',[id]);
    const result=await this.read(db,job);
-   const type={send:'sent','revision-requests':'revision_requested',confirm:'locked','payment-reported':'payment_reported',settle:'settled'}[action];
+   const type={send:'sent','revision-requests':'revision_requested',confirm:'locked','payment-reported':'payment_reported',settle:'settled','receipt-confirmed':'receipt_confirmed'}[action];
    await event(db,`invoice:${id}:${result.version}`,id,result.version,`invoice.${type}.v1`,{invoice_id:id,version_id:result.version_id,resource_version:result.version});
    return result;
-  },async(db,actor)=>{const a=await this.access(db,id,actor.user.id,true);if(['send','settle'].includes(action)?!a.assigned:!a.customer)throw new ForbiddenException();});
+  },async(db,actor)=>{const a=await this.access(db,id,actor.user.id,true);if(['send','settle','receipt-confirmed'].includes(action)?!a.assigned:!a.customer)throw new ForbiddenException();});
  }
  private state(current:string,allowed:string[]){if(!allowed.includes(current))throw new ConflictException({code:'STATE_CONFLICT'});}
  points(header:string|undefined){return this.readTx(header,async(db,user)=>{

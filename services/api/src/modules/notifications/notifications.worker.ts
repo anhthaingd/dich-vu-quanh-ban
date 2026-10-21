@@ -1,3 +1,4 @@
+import {resourceAccess} from '../realtime/realtime.access.js';
 import {event} from '../../common/events/event.store.js';
 import { NotFoundException, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
 import type { Pool, PoolClient } from 'pg';
@@ -32,7 +33,9 @@ export class NotificationsWorker implements OnModuleInit, OnModuleDestroy {
         if(ref.job_id){
           const a=await jobAccess(db,ref.job_id,d.user_id);
           if(ref.schedule_version!==undefined)allowed=a.job.state==='accepted' && a.job.stop_has_agreed_charges===null && a.job.schedule_version===ref.schedule_version && a.job.scheduled_at>new Date();
-        } else allowed=false;
+        } else if(ref.report_id)await resourceAccess(db,d.user_id,{type:'report',id:ref.report_id});
+        else if(ref.verification_id)await resourceAccess(db,d.user_id,{type:'verification',id:ref.verification_id});
+        else allowed=false;
       } catch(error){if(error instanceof NotFoundException)allowed=false;else throw error;}
       if(allowed){const {rows:[n]}=await db.query(`INSERT INTO notifications(user_id,event_key,kind,resource_ref) VALUES($1,$2,$3,$4) ON CONFLICT(user_id,event_key) DO NOTHING RETURNING id`,[d.user_id,d.event_key,d.kind,d.resource_ref]);
         if(n)await event(db,`notice:${n.id}`,n.id,1,'notification.created.v1',{notification_id:n.id});}

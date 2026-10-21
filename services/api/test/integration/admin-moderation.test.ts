@@ -68,6 +68,10 @@ test('verification encrypts declarations and files, requires ownership and revie
  const approved=await call(a,`/admin/verifications/${again.id}/decision`,'POST',{expected_version:1,action:'approve',reason:'DEMO checked',checked:true});assert.equal(approved.body.state,'approved',JSON.stringify(approved));contract('AdminVerification',approved.body);
  assert.equal((await f.pool.query('SELECT verification_status FROM partners WHERE id=$1',[p])).rows[0].verification_status,'verified');
  assert.equal((await call(u,`/partners/${p}/verification`)).body.items.length,2);
+ const events=(await f.pool.query("SELECT id,payload FROM outbox_events WHERE event_type='verification.updated.v1' ORDER BY created_at")).rows;assert.equal(events.length,4);
+ for(const e of events){assert.deepEqual(Object.keys(e.payload).sort(),['resource_version','verification_id']);assert.deepEqual((await f.pool.query('SELECT user_id FROM realtime_deliveries WHERE event_id=$1',[e.id])).rows,[{user_id:u.id}]);}
+ const {resourceAccess}=await import('../../src/modules/realtime/realtime.access.js');const db=await f.pool.connect();try{await resourceAccess(db,u.id,{type:'verification',id:r.id});await assert.rejects(resourceAccess(db,other.id,{type:'verification',id:r.id}));}finally{db.release();}
+
  const snapshots=JSON.stringify((await f.pool.query('SELECT response_snapshot FROM idempotency_keys')).rows);assert.ok(!snapshots.includes(input.details.statement));
  const stored=(await f.pool.query('SELECT private_cipher FROM verification_requests')).rows;assert.ok(!JSON.stringify(stored).includes(input.details.statement));
  const url=(await call(u,`/assets/${asset}`)).body.download_url;assert.equal((await fetch(url)).status,200);assert.equal((await call(other,`/assets/${asset}`)).status,404);
@@ -87,4 +91,25 @@ test('review moderation keeps author removal, original stars and replies, serial
  assert.equal((await call(a,'/admin/reviews?state=removed')).body.items.length,1);assert.equal((await call(a,`/admin/reviews/${randomUUID()}`)).status,404);
  const out=await call(a,'/admin/moderation-audit?limit=1');assert.ok(out.body.next_cursor);assert.equal((await call(b,'/admin/moderation-audit?cursor='+encodeURIComponent(out.body.next_cursor))).status,403);
  assert.equal((await f.pool.query('SELECT count(*) FROM settlements')).rows[0].count,'0');
+ const events=(await f.pool.query("SELECT id,payload FROM outbox_events WHERE event_type='review.updated.v1'")).rows;assert.equal(events.length,3);
+ for(const e of events){assert.deepEqual(Object.keys(e.payload).sort(),['resource_version','review_id']);assert.deepEqual((await f.pool.query('SELECT user_id FROM realtime_deliveries WHERE event_id=$1 ORDER BY user_id',[e.id])).rows.map(x=>x.user_id),[u.id,customer.id].sort());}
+
+});
+test('internal support notes require fresh grants and CAS, retry once, and never reach reporter or audit-only readers',async()=>{
+ const sender=await user(),other=await user(),a=await enroll(await user(['support.read','support.manage'])),reader=await enroll(await user(['support.read'])),auditor=await enroll(await user(['audit.read']));
+ const report=(await call(sender,'/reports','POST',{kind:'account',subject:'DEMO note',body:'DEMO public'})).body;
+ const path=`/admin/reports/${report.id}/notes`,input={expected_version:1,body:'PRIVATE_NOTE_CANARY_061'},key=randomUUID();
+ assert.equal((await call(reader,path,'POST',input)).status,403);assert.equal((await call({...a,mfa:undefined},path,'POST',input)).status,403);
+ const results=await Promise.all([call(a,path,'POST',input,key),call(a,path,'POST',input,key)]);assert.equal(results[0].status,201,JSON.stringify(results));assert.deepEqual(results[0],results[1]);contract('AdminReport',results[0].body);
+ assert.equal(results[0].body.state,'open');assert.equal(results[0].body.version,2);assert.equal(results[0].body.internal_notes[0].body,input.body);assert.equal(results[0].body.updates.length,0);
+ assert.equal((await call(reader,`/admin/reports/${report.id}`)).body.internal_notes.length,1);
+ assert.equal((await call(a,path,'POST',{...input,body:'changed'},key)).status,409);assert.equal((await call(a,path,'POST',input)).status,409);
+ for(const response of [await call(sender,`/reports/${report.id}`),await call(sender,'/reports'),await call(auditor,'/admin/moderation-audit')])assert.ok(!JSON.stringify(response.body).includes(input.body));
+ assert.equal((await call(other,`/reports/${report.id}`)).status,404);
+ assert.equal((await f.pool.query("SELECT count(*) FROM report_updates WHERE visibility='admin_only'")).rows[0].count,'1');
+ assert.ok(!JSON.stringify((await f.pool.query('SELECT * FROM audit_events')).rows).includes(input.body));assert.ok(!f.logs.text().includes(input.body));
+ await call(a,`/admin/reports/${report.id}/decision`,'POST',{expected_version:2,state:'closed',reason:'DEMO done'});
+ assert.equal((await call(a,path,'POST',{...input,expected_version:3})).status,409);
+ await f.pool.query("UPDATE admin_grants SET revoked_at=now() WHERE user_id=$1 AND permission='support.read'",[a.id]);assert.equal((await call(a,path,'POST',input,key)).status,403);
+ assert.equal((await f.pool.query('SELECT count(*) FROM ledger_transactions')).rows[0].count,'0');
 });

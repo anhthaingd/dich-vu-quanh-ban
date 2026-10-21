@@ -1,5 +1,5 @@
 import type {LocalMessagesConfig} from '../integrations/local-messages.js';
-export interface Config { admin?:{secret:string}; realtimeEnabled?:boolean; localMessages?:LocalMessagesConfig; databaseUrl: string; cursorSecret: string; authSecret?: string; port: number; host: string; corsOrigin?: string; geoapifyKey?: string; localAssets?: { directory:string; origin:string } }
+export interface Config { push?:{accessToken?:string}; admin?:{secret:string}; realtimeEnabled?:boolean; localMessages?:LocalMessagesConfig; databaseUrl: string; cursorSecret: string; authSecret?: string; port: number; host: string; corsOrigin?: string; geoapifyKey?: string; localAssets?: { directory:string; origin:string } }
 export function config(env = process.env): Config {
   if (!env.DATABASE_URL || !env.CURSOR_SECRET || env.CURSOR_SECRET.length < 32) {
     throw new Error('DATABASE_URL and CURSOR_SECRET (at least 32 characters) are required');
@@ -28,5 +28,6 @@ export function config(env = process.env): Config {
     if(!['development','test'].includes(env.NODE_ENV??'')||!['localhost','127.0.0.1','[::1]'].includes(url.hostname)||!['/dvqb_p1_demo','/dvqb_test'].includes(url.pathname)||env.ADMIN_LOCAL_SECRET.length<32)throw new Error('Admin pilot requires isolated local/test database and a separate secret');
     admin={secret:env.ADMIN_LOCAL_SECRET};
   }
-  return { admin, realtimeEnabled:env.REALTIME_ENABLED==='1', localMessages, localAssets, databaseUrl: env.DATABASE_URL, cursorSecret: env.CURSOR_SECRET, authSecret: env.AUTH_SECRET || undefined, port, host: env.HOST ?? '127.0.0.1', geoapifyKey: env.GEOAPIFY_API_KEY?.trim() || undefined, corsOrigin: env.CORS_ORIGIN };
+  if(env.EXPO_PUSH_ENABLED==='1'&&!['test','development'].includes(env.NODE_ENV??''))throw new Error('Expo push pilot requires local/test mode');
+  return { push:env.EXPO_PUSH_ENABLED==='1'?{accessToken:env.EXPO_ACCESS_TOKEN}:undefined,admin, realtimeEnabled:env.REALTIME_ENABLED==='1', localMessages, localAssets, databaseUrl: env.DATABASE_URL, cursorSecret: env.CURSOR_SECRET, authSecret: env.AUTH_SECRET || undefined, port, host: env.HOST ?? '127.0.0.1', geoapifyKey: env.GEOAPIFY_API_KEY?.trim() || undefined, corsOrigin: env.CORS_ORIGIN };
 }

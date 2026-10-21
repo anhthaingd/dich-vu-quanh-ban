@@ -1,3 +1,4 @@
+import {useRealtimeRefresh} from '../../../app/providers/RealtimeProvider';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import {ReviewPhoto} from './ReviewPhoto';
@@ -30,6 +31,7 @@ function Content({owner,id,report}:{owner:string;id:string;report:(id:string)=>v
  const blocked=busy||auth.busy||state.pending||up.pending||picking;
  const refresh=useCallback(()=>{setAttempt(v=>v+1);return true;},[]);
  useAccountRefresh(busy,refresh,!blocked);
+ useRealtimeRefresh({busy:blocked||editing||!!replyDraft,error,matches:s=>s.kind==='event'&&s.event.type==='review.updated.v1',refresh:()=>{refresh();},revoke:()=>{setItems([]);}});
  useFocusEffect(useCallback(()=>{
   let active=true;mounted.current=true;setBusy(true);setError(null);
   void (async()=>{

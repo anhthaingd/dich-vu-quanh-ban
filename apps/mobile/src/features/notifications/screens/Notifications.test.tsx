@@ -14,7 +14,7 @@ import {ApiError} from '../../../lib/http/api-error';
 const Stack=createNativeStackNavigator<RootStackParamList>();
 const settings={message_push:true,call_push:true,service_push:true,reminder_push:true};
 const notice={id:'notice',kind:'job.accepted.v1',resource_ref:{job_id:'job'},read_at:null,created_at:'2026-10-14T00:00:00Z'};
-function fixture(){const f=workFixture();const api:jest.Mocked<NotificationsApi>={list:jest.fn().mockResolvedValue({items:[notice],next_cursor:null}),read:jest.fn().mockResolvedValue({id:'notice',state:'read'}),settings:jest.fn().mockResolvedValue(settings),save:jest.fn().mockImplementation(async(_,b)=>b)};
+function fixture(){const f=workFixture();const api:jest.Mocked<NotificationsApi>={registerDevice:jest.fn(),list:jest.fn().mockResolvedValue({items:[notice],next_cursor:null}),read:jest.fn().mockResolvedValue({id:'notice',state:'read'}),settings:jest.fn().mockResolvedValue(settings),save:jest.fn().mockImplementation(async(_,b)=>b)};
  return {...f,notices:api,manager:new AuthSession(f.api,f.storage,f.accounts,f.partners,f.jobs,f.chat,undefined,undefined,api)};}
 function mount(f:ReturnType<typeof fixture>,initial:'Notifications'|'NotificationSettings'='Notifications'){
  return render(<AppProviders api={{categories:jest.fn().mockResolvedValue([]),skills:jest.fn().mockResolvedValue([])}}><AuthProvider manager={f.manager}><NotificationsProvider><NavigationContainer><Stack.Navigator initialRouteName={initial} screenOptions={{headerShown:false,animation:'none'}}><Stack.Screen name="Notifications" component={NotificationsScreen}/><Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen}/></Stack.Navigator></NavigationContainer></NotificationsProvider></AuthProvider></AppProviders>);

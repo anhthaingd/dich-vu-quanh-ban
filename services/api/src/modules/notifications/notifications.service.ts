@@ -21,6 +21,11 @@ export class NotificationsService {
   setSettings(header:string|undefined,input:ReturnType<typeof settingsInput>,key:string){return this.tx.run(header,'setSettings',key,input,async(db,a)=>{
     await db.query(`INSERT INTO notification_settings(user_id,message_push,call_push,service_push,reminder_push) VALUES($1,$2,$3,$4,$5) ON CONFLICT(user_id) DO UPDATE SET message_push=$2,call_push=$3,service_push=$4,reminder_push=$5`,[a.user.id,input.message_push,input.call_push,input.service_push,input.reminder_push]);return input;
   });}
+  registerDevice(header:string|undefined,input:{token:string;platform:string},key:string){return this.tx.run(header,'registerDevice',key,input,async(db,a)=>{
+    const family=(await db.query('SELECT family_id FROM sessions WHERE id=$1',[a.sessionId])).rows[0].family_id;
+    const r=(await db.query(`INSERT INTO push_devices(user_id,family_id,token,platform) VALUES($1,$2,$3,$4)
+      ON CONFLICT(token) DO UPDATE SET user_id=$1,family_id=$2,platform=$4,revoked_at=NULL,updated_at=now() RETURNING id`,[a.user.id,family,input.token,input.platform])).rows[0];return {id:r.id,version:1,state:'registered'};
+  });}
   list(header:string|undefined,q:PageInput){return this.readTx(header,async(db,user)=>{
     const scope=`notifications:${user}`,start=this.cursor.decode(q.cursor,scope);
     const {rows}=await db.query(`SELECT id,kind,resource_ref,read_at,date_trunc('milliseconds',created_at) AS created_at FROM notifications WHERE user_id=$1 AND kind NOT LIKE 'conversation.%'
@@ -33,3 +38,5 @@ export class NotificationsService {
     if(rowCount)await event(db,`notice-read:${id}`,id,2,'notification.read.v1',{notification_id:id});return {id,version:1,state:'read'};
   },async(db,a)=>{if(!(await db.query("SELECT 1 FROM notifications WHERE id=$1 AND user_id=$2 AND kind NOT LIKE 'conversation.%'",[id,a.user.id])).rowCount)throw new NotFoundException();});}
 }
+
+export function deviceInput(value:unknown){const v=object(value,['token','platform']);if(typeof v.token!=='string'||! /^(ExponentPushToken|ExpoPushToken)\[[a-zA-Z0-9_-]{10,200}\]$/.test(v.token)||!['ios','android'].includes(String(v.platform)))throw new BadRequestException();return {token:v.token,platform:String(v.platform)};}

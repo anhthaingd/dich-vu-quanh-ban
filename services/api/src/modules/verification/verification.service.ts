@@ -1,3 +1,4 @@
+import {event} from '../../common/events/event.store.js';
 import {BadRequestException,ConflictException,NotFoundException,ForbiddenException} from '@nestjs/common';
 import type {Pool,PoolClient} from 'pg';
 import {AuthService} from '../auth/auth.service.js';
@@ -29,6 +30,7 @@ export class VerificationService {
   if(input.details.kind==='identity')await db.query("UPDATE partners SET verification_status='pending',version=version+1 WHERE id=$1",[id]);
   await db.query("INSERT INTO audit_events(actor_id,partner_id,action,resource_id,reason,details) VALUES($1,$2,'verification.submit',$3,'', '{}')",[a.user.id,id,r.id]);
   // Snapshot only the request ID: private declaration is encrypted at rest, not duplicated into idempotency JSON.
+  await event(db,`verification:${r.id}:1`,r.id,1,'verification.updated.v1',{verification_id:r.id,resource_version:1});
   return {id:r.id};
  },async(db,a)=>{await this.access(db,id,a.user.id);}).then(r=>this.readOne(header,id,r.id));}
  private async readOne(header:string|undefined,partner:string,id:string){return this.admin.transaction(header,async(db,a)=>{await this.access(db,partner,a.user.id);return this.dto(db,id);});}

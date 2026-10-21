@@ -1,3 +1,4 @@
+import {useRealtimeRefresh} from '../../../app/providers/RealtimeProvider';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {View} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
@@ -27,6 +28,7 @@ export function VerificationDesk({owner,id}:{owner:string;id:string}){
  const clear=useCallback(()=>{setItems([]);setPhotos([]);setStatement('');setLoaded(false);},[]);
  const reload=useCallback(()=>{setAttempt(n=>n+1);return true;},[]);useAccountRefresh(busy,reload,!blocked);
  useEffect(()=>{if(m.error&&['FORBIDDEN','UNAUTHENTICATED','NOT_FOUND'].includes(m.error))clear();},[m.error,clear]);
+ useRealtimeRefresh({busy:blocked||!!statement||photos.length>0,error,matches:s=>s.kind==='event'&&s.event.type==='verification.updated.v1',refresh:()=>{reload();},revoke:()=>{clear();}});
  useFocusEffect(useCallback(()=>{live.current=true;const gen=++generation.current;setBusy(true);setError(null);const valid=()=>live.current&&gen===generation.current;
   void (async()=>{await sessionReady(manager,owner);const p=await manager.loadPartner(owner,id);if(valid())setPartnerKind(p.kind);
    const all:Verification[]=[],seen=new Set<string>();let cursor:string|undefined;do{await sessionReady(manager,owner);if(!valid())return;const page=await manager.listVerifications(owner,id,cursor);all.push(...page.items);cursor=page.next_cursor??undefined;if(cursor&&seen.has(cursor))throw new ApiError('INVALID_RESPONSE');if(cursor)seen.add(cursor);}while(cursor&&valid());if(valid()){setItems(all);setLoaded(true);}

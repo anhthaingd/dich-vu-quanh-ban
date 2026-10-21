@@ -1,3 +1,4 @@
+import {PolygonEditor} from '../components/PolygonEditor';
 import { LocationField } from '../../location/components/LocationField';
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { Switch, View } from 'react-native';
@@ -41,7 +42,7 @@ export function PartnerEditorScreen({
     </AccountPage>
   );
 }
-type AreaDraft = { label: string; lat: string; lng: string; radius: string };
+type AreaDraft = { polygon:number[][]|null; label: string; lat: string; lng: string; radius: string };
 type LocationDraft = {
   text: string;
   lat: string;
@@ -100,7 +101,8 @@ function Editor({
         label: a.label,
         lat: String(a.center.latitude),
         lng: String(a.center.longitude),
-        radius: String(a.radius_m)
+        polygon:a.boundary_geojson?.coordinates[0][0].slice(0,-1)??null,
+        radius: String(a.radius_m??10000)
       }))
     );
     setLocations(
@@ -498,13 +500,14 @@ function Editor({
                   <LocationField
                     prefix={`area-${i}`}
                     text={a.label}
-                    radius={Number(a.radius)}
+                    radius={a.polygon?undefined:Number(a.radius)}
                     onChange={value => setAreas(v => v.map((x,j) => j === i ? {...x, lat: String(value.point.latitude), lng: String(value.point.longitude)} : x))}
                     lat={a.lat}
                     lng={a.lng}
                     disabled={blocked}
                   />
-                  <Input
+                  <PolygonEditor center={a.lat&&a.lng?{latitude:Number(a.lat),longitude:Number(a.lng)}:null} points={a.polygon} disabled={blocked} onChange={polygon=>setAreas(v=>v.map((x,j)=>j===i?{...x,polygon}:x))}/>
+                  {!a.polygon&&<Input
                     testID={`area-${i}-radius`}
                     label={t('partners.radius')}
                     value={a.radius}
@@ -515,7 +518,7 @@ function Editor({
                         v.map((x, j) => (j === i ? { ...x, radius } : x))
                       )
                     }
-                  />
+                  />}
                   <Button
                     label={t('partners.remove')}
                     variant="link"
@@ -532,14 +535,14 @@ function Editor({
                 onPress={() =>
                   setAreas((v) => [
                     ...v,
-                    { label: '', lat: '', lng: '', radius: '10000' }
+                    { polygon:null,label: '', lat: '', lng: '', radius: '10000' }
                   ])
                 }
               />
               <Button
                 testID="partner-save-areas"
                 label={t('partners.save')}
-                disabled={blocked}
+                disabled={blocked||areas.some(a=>a.polygon!==null&&a.polygon.length<3)}
                 onPress={() =>
                   save({
                     action: 'service-areas',
@@ -550,7 +553,7 @@ function Editor({
                         longitude: coordinateNumber(a.lng)
                       },
                       radius_m: coordinateNumber(a.radius),
-                      boundary_geojson: null
+                      boundary_geojson: a.polygon?{type:'MultiPolygon',coordinates:[[[...a.polygon,a.polygon[0]]]]}:null
                     }))
                   })
                 }

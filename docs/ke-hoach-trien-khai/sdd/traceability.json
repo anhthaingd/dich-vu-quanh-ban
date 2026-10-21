@@ -3939,6 +3939,264 @@
         "QA-048",
         "QA-049"
       ]
+    },
+    {
+      "id": "P1-06-AC-01",
+      "requirement": "FR-SUP-001; FR-ADM-012",
+      "description": "Internal notes require current support grants/MFA and CAS, retain exact retry and never reach reporter or audit-only readers.",
+      "sources": [
+        "p1-06-approved",
+        "QA-047"
+      ],
+      "code": [
+        "services/api/src/modules/moderation/moderation.service.ts",
+        "services/api/src/modules/moderation/moderation.input.ts",
+        "apps/admin/src/App.tsx",
+        "apps/mobile/src/features/admin/screens/AdminDecision.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-moderation.test.ts",
+          "name": "internal support notes require fresh grants and CAS, retry once, and never reach reporter or audit-only readers"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "mobile internal note is a separate private action and retries the captured body without changing report state"
+        }
+      ],
+      "qa": [
+        "QA-047"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Automated checks use local/test APIs, Expo web and simulated push transport. Separate native/provider evidence is recorded in B05-06; Android Expo/FCM delivery reached an Emulator on 2026-10-21. APNs, physical devices and UAT remain unverified. Chat evidence deferred; P2, production and real money excluded."
+    },
+    {
+      "id": "P1-06-AC-02",
+      "requirement": "FR-REV-007",
+      "description": "Customer review history requires current job rights and returns only visible minimal reviews without other job/provider identifiers.",
+      "sources": [
+        "p1-06-approved",
+        "QA-046"
+      ],
+      "code": [
+        "services/api/src/modules/reviews/reviews.service.ts",
+        "apps/mobile/src/features/reviews/screens/CustomerReviews.tsx",
+        "apps/mobile/src/features/jobs/screens/JobDetailScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/reviews.test.ts",
+          "name": "customer history is contextual, paginated, visibility filtered and omits unrelated job and provider identifiers"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "customer history loads only on demand, paginates minimal reviews and clears them after permission loss"
+        }
+      ],
+      "qa": [
+        "QA-046"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Automated checks use local/test APIs, Expo web and simulated push transport. Separate native/provider evidence is recorded in B05-06; Android Expo/FCM delivery reached an Emulator on 2026-10-21. APNs, physical devices and UAT remain unverified. Chat evidence deferred; P2, production and real money excluded."
+    },
+    {
+      "id": "P1-06-AC-03",
+      "requirement": "FR-INV-008; Q01",
+      "description": "Assigned worker adds one receipt after admin settlement without extra settlement or ledger, and reviews still require both marks.",
+      "sources": [
+        "p1-06-approved",
+        "QA-037"
+      ],
+      "code": [
+        "services/api/src/modules/invoices/invoices.service.ts",
+        "services/api/src/modules/jobs/jobs.service.ts",
+        "apps/mobile/src/features/invoices/screens/InvoiceScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-completion.test.ts",
+          "name": "assigned worker adds receipt after admin completion once without ledger changes and opens reviews only after both marks"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/invoices/screens/InvoiceScreen.test.tsx",
+          "name": "assigned worker confirms receipt after admin settlement using the separate action and an explicit checkbox"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/admin-completion.spec.mjs",
+          "name": "admin completion on desktop and mobile previews money, retries once and preserves payment marks and report state"
+        }
+      ],
+      "qa": [
+        "QA-037"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Automated checks use local/test APIs, Expo web and simulated push transport. Separate native/provider evidence is recorded in B05-06; Android Expo/FCM delivery reached an Emulator on 2026-10-21. APNs, physical devices and UAT remain unverified. Chat evidence deferred; P2, production and real money excluded."
+    },
+    {
+      "id": "P1-06-AC-04",
+      "requirement": "FR-PAR-005; FR-SEARCH-002",
+      "description": "Owners draw valid polygons and independently select a disclosed representative; eligibility uses real geometry and current profile rights.",
+      "sources": [
+        "p1-06-approved",
+        "QA-010"
+      ],
+      "code": [
+        "services/api/src/modules/partners/partners.input.ts",
+        "services/api/src/modules/partners/partners.service.ts",
+        "services/api/src/modules/jobs/jobs.service.ts",
+        "services/api/migrations/018_p1_completion.sql",
+        "apps/mobile/src/features/partners/components/PolygonEditor.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "polygon areas validate geometry, preserve the chosen representative and filter by boundary before ranking"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/partners.spec.mjs",
+          "name": "provider publishes real profile, customer finds it, private fields stay hidden, lost save response retries safely"
+        }
+      ],
+      "qa": [
+        "QA-010"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Automated checks use local/test APIs, Expo web and simulated push transport. Separate native/provider evidence is recorded in B05-06; Android Expo/FCM delivery reached an Emulator on 2026-10-21. APNs, physical devices and UAT remain unverified. Chat evidence deferred; P2, production and real money excluded."
+    },
+    {
+      "id": "P1-06-AC-05",
+      "requirement": "FR-SEARCH-003; FR-SEARCH-005",
+      "description": "Zoom clusters loaded results without dropping providers; rating/recommended ranking keeps snapshot pagination order while rechecking visibility.",
+      "sources": [
+        "p1-06-approved",
+        "QA-011"
+      ],
+      "code": [
+        "services/api/src/modules/search/search.service.ts",
+        "services/api/src/modules/search/search.query.ts",
+        "apps/mobile/src/features/search/components/results-map-model.ts",
+        "apps/mobile/src/features/search/screens/SearchScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/partners.test.ts",
+          "name": "recommended and rating search preserve snapshot order across verification changes and recheck current visibility"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/search/components/results-map-model.test.ts",
+          "name": "zoom clusters nearby results and splits them while preserving every provider"
+        }
+      ],
+      "qa": [
+        "QA-011"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Automated checks use local/test APIs, Expo web and simulated push transport. Separate native/provider evidence is recorded in B05-06; Android Expo/FCM delivery reached an Emulator on 2026-10-21. APNs, physical devices and UAT remain unverified. Chat evidence deferred; P2, production and real money excluded."
+    },
+    {
+      "id": "P1-06-AC-06",
+      "requirement": "FR-NOT-001",
+      "description": "Support, verification and review events/inbox use minimum identifiers and entitled recipients; current rights are rechecked before delivery.",
+      "sources": [
+        "p1-06-approved",
+        "QA-050"
+      ],
+      "code": [
+        "services/api/src/common/events/event.store.ts",
+        "services/api/src/modules/notifications/notifications.store.ts",
+        "services/api/src/modules/notifications/notifications.worker.ts",
+        "services/api/src/modules/realtime/realtime.access.ts",
+        "apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/push.test.ts",
+          "name": "Expo pilot persists registration, minimal report push and receipts; events and inbox remain private and settings are rechecked"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-moderation.test.ts",
+          "name": "verification encrypts declarations and files, requires ownership and reviewed evidence, preserves resubmission history and public badge"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-moderation.test.ts",
+          "name": "review moderation keeps author removal, original stars and replies, serializes reviewers and records keep/hide/unhide"
+        }
+      ],
+      "qa": [
+        "QA-050"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Automated checks use local/test APIs, Expo web and simulated push transport. Separate native/provider evidence is recorded in B05-06; Android Expo/FCM delivery reached an Emulator on 2026-10-21. APNs, physical devices and UAT remain unverified. Chat evidence deferred; P2, production and real money excluded."
+    },
+    {
+      "id": "P1-06-AC-07",
+      "requirement": "FR-NOT-002; FR-NOT-003",
+      "description": "Expo pilot binds tokens to active session families, revokes invalid/logout devices, handles send/receipt retries and opens only the current account after API authorization.",
+      "sources": [
+        "p1-06-approved",
+        "QA-025",
+        "QA-050"
+      ],
+      "code": [
+        "services/api/src/modules/notifications/push.worker.ts",
+        "services/api/src/modules/notifications/notifications.service.ts",
+        "services/api/src/modules/auth/auth.service.ts",
+        "apps/mobile/src/features/notifications/PushControl.native.tsx",
+        "apps/mobile/src/features/notifications/PushListener.native.tsx",
+        "apps/mobile/src/app/navigation/AppNavigator.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/push.test.ts",
+          "name": "push retries transport failures, revokes unregistered devices, and suppresses logged-out or reassigned tokens"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/PushControl.native.test.tsx",
+          "name": "native push requests explicit permission and registers the Expo token only after permission is granted"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/PushControl.native.test.tsx",
+          "name": "denied push permission and provider failure show a retryable status without registering a token"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/PushListener.native.test.tsx",
+          "name": "native push listener registers permitted devices, ignores another account and deduplicates authorized opens"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/PushListener.native.test.tsx",
+          "name": "native token callbacks reuse the supplied token and do not create a registration loop"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/notifications/PushListener.native.test.tsx",
+          "name": "cold-start notification waits until navigation and the restored session are ready"
+        }
+      ],
+      "qa": [
+        "QA-025",
+        "QA-050"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Native/provider evidence is in B05-06: Android Emulator received real Expo/FCM pushes on 2026-10-21 with four successful receipts and authorized report opening. One initial cold-start opened home; diagnostic and clean reruns opened the report, so stability across the full matrix is unverified. iOS injected notifications opened reports, but live APNs remains blocked by InvalidCredentials. Physical devices, Doze/offline, full provider authorization matrix and UAT remain unverified. Chat evidence deferred; P2, production and real money excluded."
     }
   ]
 }

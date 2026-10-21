@@ -49,6 +49,7 @@ export function SearchScreen({
     search.getSnapshot
   );
   const [placeText, setPlaceText] = useState('');
+  const [sort,setSort]=useState<'distance'|'rating'|'recommended'>('distance');
   const [mapView,setMapView]=useState(false);
   const [lat, setLat] = useState(''),
     [lng, setLng] = useState(''),
@@ -63,7 +64,7 @@ export function SearchScreen({
   useEffect(() => {
     setService({categoryId:route.params?.categoryId,skillId:route.params?.skillId});
   }, [route.params?.categoryId, route.params?.skillId]);
-  useEffect(() => { search.reset(); }, [search, lat, lng, service.categoryId, service.skillId, radius, mode, anyMode, verified]);
+  useEffect(() => { search.reset(); }, [search, lat, lng, service.categoryId, service.skillId, radius, mode, anyMode, verified,sort]);
   useEffect(() => { setLat(''); setLng(''); setPlaceText(''); }, [auth.user?.id]);
   const choose = (p: Point, text = '') => {
     setPlaceText(text);
@@ -90,7 +91,7 @@ export function SearchScreen({
     void search.search({
       latitude,
       longitude,
-      radius_m,
+      radius_m,sort,
       skill_id: service.skillId,
       category_id: service.categoryId,
       service_mode: anyMode ? undefined : mode,
@@ -181,7 +182,7 @@ export function SearchScreen({
       {state.searched && <>
         <View style={styles.resultHeader}><View style={{flex:1,gap:4}}><AppText accessibilityRole="header" style={styles.resultTitle}>{t(state.next ? 'home.resultsMore' : 'home.results',{count:state.items.length})}</AppText><AppText style={styles.small} tone="muted">{t('home.radius',{km:Number(radius)/1000})} · {placeText}</AppText></View>
           <Pressable testID={mapView?'search-view-list':'search-view-map'} accessibilityRole="button" accessibilityLabel={t(mapView?'searchMap.list':'searchMap.map')} onPress={()=>setMapView(v=>!v)} style={styles.mapButton}><Icon name="map" size={17}/><AppText style={styles.small}>{t(mapView?'searchMap.list':'searchMap.map')}</AppText></Pressable>
-        </View><AppText style={styles.sort} tone="muted">{t('home.nearest')}</AppText>
+        </View><View style={{flexDirection:'row',gap:8,flexWrap:'wrap'}}>{(['distance','rating','recommended'] as const).map(v=><Button key={v} testID={`search-sort-${v}`} variant={sort===v?'primary':'secondary'} label={t(`search.${v}`)} onPress={()=>setSort(v)}/>)}</View>
       </>}
       {mapView && state.searched && state.criteria && <SearchResultsMap
         key={`${state.criteria.latitude},${state.criteria.longitude},${state.criteria.radius_m},${state.criteria.service_mode},${state.criteria.verified},${state.criteria.skill_id},${state.criteria.category_id}`}
