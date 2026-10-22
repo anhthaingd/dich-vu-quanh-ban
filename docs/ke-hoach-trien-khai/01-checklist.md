@@ -1,5 +1,7 @@
 # Checklist chức năng và bằng chứng
 
+**22/10/2026 — Push P2 và ngân sách CI:** `a2a6a50` đã lên nhánh public `feat/p2-local-workflows`; chưa vào `main` vì CI chưa đạt. Lượt hai của run `39706934174` đạt 25 bài web liên tiếp rồi hết giới hạn tổng 15 phút trước khi đủ 28 bài. Tăng giới hạn cả bộ web lên 20 phút và job lên 40 phút; giữ nguyên từng bài, retries=0, coverage và 144 tiêu chí. Chi tiết lỗi lượt đầu và kiểm lại nằm trong [báo cáo P2](bao-cao/B11-03-tong-ket-p2.md#kiểm-ci-khi-push--22102026). Kết quả bàn giao phải kiểm trên commit mới.
+
 **21/10/2026 — P2 đang được triển khai theo yêu cầu mới nhất:** chủ dự án đã chốt OTP/khôi phục/xóa và locale tài khoản, quyền admin, LiveKit local để thử âm thanh thật, ngân hàng mô phỏng local chỉ tiền test. [Kế hoạch đã duyệt](de-xuat/P2-01-trien-khai-tron-dot.md). Các ghi chú “chưa chuyển P2” bên dưới là lịch sử; giới hạn APNs/thiết bị thật/UAT của P1-2 vẫn giữ. Kết quả cuối và phạm vi từng lượt kiểm nằm trong [báo cáo tổng P2](bao-cao/B11-03-tong-ket-p2.md). Chủ dự án đã yêu cầu push ngày 21/10; CI phải kiểm trên đúng commit. Chưa phát hành. Phần còn thiếu đã đối chiếu code được gom tại mục “Rà soát phần còn thiếu trước push” trong báo cáo tổng P2.
 
 

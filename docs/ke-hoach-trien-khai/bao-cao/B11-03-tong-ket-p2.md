@@ -98,3 +98,11 @@ Các mục dưới đây được đối chiếu lại với code, không lấy 
 Phần đang hoãn hoặc cần quyết định riêng: chọn đoạn chat làm chứng cứ; Q02/khoản giữ treo/đảo tiền và cổng tiền thật; chuyển chủ/đóng doanh nghiệp; đăng nhập Google/Facebook; chặn liên lạc/tranh chấp nâng cao; PROMO-02 (banner/quảng cáo/voucher); website khách theo kế hoạch riêng. Không biến danh sách này thành phê duyệt mở triển khai.
 
 Kiểm trước push: giữ nguyên 129 tiêu chí cũ, thêm 15 tiêu chí P2; giữ nguyên 103 QA cũ, thêm QA-104–108. Inventory có 181 operation triển khai và 2 operation chưa triển khai nêu trên; số endpoint không phải tỷ lệ hoàn thành sản phẩm. SDD giữ 95 QA partial và 13 unmapped. Lượt chạy sandbox đạt 329 mobile, 173 API và 53 tooling; Chromium bị macOS từ chối khởi động (`MachPortRendezvous`, permission denied), nên lượt đó không đạt toàn gói. Kết quả chạy lại và CI phải kiểm đúng dấu băm/commit; không giảm tiêu chí hoặc lấy số kiểm riêng thay bằng chứng tổng.
+
+## Kiểm CI khi push — 22/10/2026
+
+Chủ dự án đã đồng ý công khai `a2a6a50`; commit được push lên `feat/p2-local-workflows`. Bộ SDD local trên commit đó đạt đủ 12 bước, gồm 329 mobile, 173 API, 53 tooling và 28 web. Đây chưa phải kết quả CI hoặc UAT.
+
+[CI run 39706934174](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/39706934174) thất bại hai lượt. Lượt đầu có luồng đánh giá timeout: trace ghi nhận bấm gỡ trùng tải lại realtime nhưng không có request gỡ gửi tới API; chưa coi nguyên nhân lỗi thời điểm này đã được sửa. Kiểm riêng luồng đánh giá local sau đó đạt 3/3 lần. Lượt CI thứ hai đạt luồng đánh giá và toàn bộ 25 bài đã chạy, rồi runner dừng ở đúng 900 giây trước khi hoàn tất 28 bài. Log/artifact của hai lượt được giữ; không lấy lần chạy lại đạt riêng để xóa bằng chứng lỗi đầu.
+
+Giới hạn tổng 15 phút được đặt khi bộ web có 20 hành trình. Sau khi đọc log lượt hai, tăng ngân sách cả bộ lên 20 phút (`scripts/sdd/run.mjs`) và job lên 40 phút (`.github/workflows/quality.yml`) để còn thời gian kiểm API, build và lưu bằng chứng. Không đổi timeout từng bài, retries=0, assertion, coverage, inventory hoặc 144 tiêu chí. Không đổi hành vi sản phẩm hay spec. Cần `sdd:run`/`verify` và CI mới trên commit chứa điều chỉnh này trước khi fast-forward `main`.
