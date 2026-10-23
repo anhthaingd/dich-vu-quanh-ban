@@ -48,6 +48,7 @@ export type PartnerEdit = { expected_version: number } & (
   | { action: 'service-areas'; areas: Area[] }
   | { action: 'locations'; locations: Location[] }
   | { action: 'publication'; publication_status: 'draft' | 'published' }
+  | { action: 'deactivation'; reason: string }
   | { action: 'availability'; accepting_jobs: boolean }
 );
 export type PartnerCard = {

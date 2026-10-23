@@ -35,6 +35,7 @@ export type Edit = { expected_version: number } & (
   | { action: "skills"; skills: PartnerSkill[] }
   | { action: "service-areas"; areas: Area[] }
   | { action: "locations"; locations: Location[] }
+  | { action: "gallery"; asset_ids: string[] }
   | { action: "availability"; accepting_jobs: boolean }
   | { action: "publication"; publication_status: "draft" | "published" }
 );
@@ -98,6 +99,7 @@ export function editInput(action: Edit["action"], value: unknown): Edit {
     skills: ["skills"],
     "service-areas": ["areas"],
     locations: ["locations"],
+    gallery: ["asset_ids"],
     availability: ["accepting_jobs"],
     publication: ["publication_status"],
   };
@@ -119,6 +121,11 @@ export function editInput(action: Edit["action"], value: unknown): Edit {
             .map((k) => [k, textInput(v[k], k !== "name", k === "bio")]),
         ),
       };
+    case "gallery": {
+      const ids = array(v.asset_ids, identifier);
+      if (ids.length > 12 || new Set(ids).size !== ids.length) throw new BadRequestException();
+      return {...base, action, asset_ids: ids};
+    }
     case "availability":
       return { ...base, action, accepting_jobs: bool(v.accepting_jobs) };
     case "publication": {
@@ -206,4 +213,11 @@ export function polygonInput(value:unknown):Area['boundary_geojson']{
  for(const p of ring){if(!Array.isArray(p)||p.length!==2)throw new BadRequestException();pointInput({longitude:p[0],latitude:p[1]});}
  if(ring[0][0]!==ring.at(-1)[0]||ring[0][1]!==ring.at(-1)[1]||new Set(ring.slice(0,-1).map(p=>JSON.stringify(p))).size!==ring.length-1||ring.some((p,i)=>i>0&&Math.abs(p[0]-ring[i-1][0])>180))throw new BadRequestException();
  return {type:'MultiPolygon',coordinates:v.coordinates as number[][][][]};
+}
+
+export function deactivationInput(value:unknown){
+ const v=object(value,['expected_version','reason']);
+ if(!Number.isSafeInteger(v.expected_version)||Number(v.expected_version)<1)throw new BadRequestException();
+ const reason=textInput(v.reason);if(reason.length>1000)throw new BadRequestException();
+ return {expected_version:Number(v.expected_version),reason};
 }

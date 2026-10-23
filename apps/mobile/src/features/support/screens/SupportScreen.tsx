@@ -28,7 +28,7 @@ import {reportStates,type Report,type ReportContext,type ReportState} from '../m
 type Props=NativeStackScreenProps<RootStackParamList,'Support'>;
 export function SupportScreen({navigation,route}:Props){
  const context=route.params?.context;
- return <AccountPage title="support.title" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account',{returnTo:'Support'})}>{owner=><Desk key={`${owner}:${JSON.stringify(context)}:${route.params?.id??''}`} owner={owner} context={context} initialId={route.params?.id}/>}</AccountPage>;
+ return <AccountPage title="support.title" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account',{returnTo:route.params?.id?{screen:'Support',params:{id:route.params.id}}:'Support'})}>{owner=><Desk key={`${owner}:${JSON.stringify(context)}:${route.params?.id??''}`} owner={owner} context={context} initialId={route.params?.id}/>}</AccountPage>;
 }
 function Desk({owner,context,initialId}:{owner:string;context?:ReportContext;initialId?:string}){
  const {manager,state:auth}=useAuth(),{t,locale}=useLocale();

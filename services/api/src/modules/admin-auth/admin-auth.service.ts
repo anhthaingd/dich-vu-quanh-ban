@@ -1,4 +1,4 @@
-import {ForbiddenException,HttpException,ServiceUnavailableException,ConflictException} from '@nestjs/common';
+import {ForbiddenException,NotFoundException,HttpException,ServiceUnavailableException,ConflictException} from '@nestjs/common';
 import {randomBytes,createHash} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
 import {AuthService} from '../auth/auth.service.js';
@@ -41,14 +41,15 @@ export class AdminAuthService {
    SELECT $1,family_id,$2,clock_timestamp()+interval '15 minutes' FROM sessions WHERE id=$3 RETURNING expires_at,verified_at`,[a.user.id,tokenHash(token),a.sessionId])).rows[0];
   return {token,expires_at:r.expires_at.toISOString(),fresh_until:new Date(r.verified_at.getTime()+300000).toISOString()};
  }
- async enroll(header:string|undefined,password:string){
+ async enroll(header:string|undefined,password:string,replace=false,token?:string){
   const result=await this.transaction(header,async(db,a)=>{
-   await this.grants(db,a);if(!await this.password(db,a,password))return null;
-   const f=(await db.query('SELECT enabled_at FROM admin_factors WHERE user_id=$1',[a.user.id])).rows[0];if(f?.enabled_at)throw new ConflictException({code:'STATE_CONFLICT'});
+   await this.grants(db,a);if(replace)await this.check(db,a,token,undefined,true);if(!await this.password(db,a,password))return null;
+   const f=(await db.query('SELECT enabled_at FROM admin_factors WHERE user_id=$1',[a.user.id])).rows[0];if(f?.enabled_at&&!replace)throw new ConflictException({code:'STATE_CONFLICT'});
+   if(replace){await db.query('DELETE FROM admin_backup_codes WHERE user_id=$1',[a.user.id]);await db.query('UPDATE admin_sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1',[a.user.id]);await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.mfa.replace',$1,'Fresh MFA and password verified','{}')",[a.user.id]);}
    const secret=base32(randomBytes(20));
    await db.query(`INSERT INTO admin_factors(user_id,secret_cipher,enrollment_family,pending_until)
     SELECT $1,$2,family_id,clock_timestamp()+interval '5 minutes' FROM sessions WHERE id=$3
-    ON CONFLICT(user_id) DO UPDATE SET secret_cipher=EXCLUDED.secret_cipher,enrollment_family=EXCLUDED.enrollment_family,pending_until=EXCLUDED.pending_until,last_counter=-1`,[a.user.id,this.secrets.encrypt(secret),a.sessionId]);
+    ON CONFLICT(user_id) DO UPDATE SET secret_cipher=EXCLUDED.secret_cipher,enrollment_family=EXCLUDED.enrollment_family,pending_until=EXCLUDED.pending_until,last_counter=-1,enabled_at=NULL`,[a.user.id,this.secrets.encrypt(secret),a.sessionId]);
    return {secret,uri:`otpauth://totp/DVQB:${a.user.id}?secret=${secret}&issuer=DVQB&algorithm=SHA1&digits=6&period=30`};
   });if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return result;
  }
@@ -62,6 +63,53 @@ export class AdminAuthService {
    await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,$2,$1,'MFA', '{}')",[a.user.id,enrollment?'admin.mfa.enroll':'admin.mfa.verify']);
    return this.issue(db,a);
   });if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return result;
+ }
+ async backupCodes(header:string|undefined,token:string|undefined){
+  return this.transaction(header,async(db,a)=>{
+   await this.check(db,a,token,undefined,true);
+   const codes=Array.from({length:10},()=>randomBytes(16).toString('hex'));
+   await db.query('DELETE FROM admin_backup_codes WHERE user_id=$1',[a.user.id]);
+   for(const code of codes)await db.query('INSERT INTO admin_backup_codes(user_id,code_hash) VALUES($1,$2)',[a.user.id,tokenHash(code)]);
+   await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.mfa.backup_codes',$1,'Backup codes replaced','{}')",[a.user.id]);
+   // Plain codes appear only in this response, never in idempotency snapshots or logs.
+   return {codes};
+  });
+ }
+ async recover(header:string|undefined,password:string,code:string){
+  const result=await this.transaction(header,async(db,a)=>{
+   await this.grants(db,a);if(!await this.password(db,a,password))return null;
+   const factor=(await db.query('SELECT 1 FROM admin_factors WHERE user_id=$1 AND enabled_at IS NOT NULL',[a.user.id])).rowCount;
+   if(!factor)return null;
+   const used=await db.query('UPDATE admin_backup_codes SET consumed_at=clock_timestamp() WHERE user_id=$1 AND code_hash=$2 AND consumed_at IS NULL RETURNING user_id',[a.user.id,tokenHash(code)]);
+   if(!used.rowCount)return null;
+   await db.query('UPDATE admin_sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1',[a.user.id]);
+   await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.mfa.recover',$1,'Single-use backup code','{}')",[a.user.id]);
+   return this.issue(db,a);
+  });if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return result;
+ }
+ async reset(header:string|undefined,token:string|undefined,id:string,input:{expected_version:number;reason:string},key:string){
+  const initial=await this.auth.authenticate(header);if(initial.user.id===id)throw new ForbiddenException();
+  const db=await this.pool.connect(),operation='admin.mfa.reset:'+id,hash=tokenHash(JSON.stringify(input));
+  try{
+   await db.query('BEGIN');
+   await db.query('SELECT pg_advisory_xact_lock(2110202602)');
+   await db.query('SELECT id FROM users WHERE id=ANY($1::uuid[]) ORDER BY id FOR NO KEY UPDATE',[[initial.user.id,id]]);
+   const a=await this.auth.authenticate(header,db);await this.check(db,a,token,'grant.manage',true);
+   const target=(await db.query("SELECT u.version FROM users u WHERE u.id=$1 AND u.status='active' AND EXISTS(SELECT 1 FROM admin_grants g WHERE g.user_id=u.id AND g.revoked_at IS NULL)",[id])).rows[0];
+   if(!target)throw new NotFoundException();
+   const previous=(await db.query('SELECT request_hash,response_snapshot FROM idempotency_keys WHERE actor_id=$1 AND operation=$2 AND request_key=$3',[a.user.id,operation,key])).rows[0];
+   if(previous&&previous.request_hash!==hash)throw new ConflictException({code:'IDEMPOTENCY_MISMATCH'});
+   if(previous){await db.query('COMMIT');return previous.response_snapshot;}
+   if(target.version!==input.expected_version)throw new ConflictException({code:'VERSION_CONFLICT'});
+   await db.query('DELETE FROM admin_backup_codes WHERE user_id=$1',[id]);
+   await db.query('DELETE FROM admin_factors WHERE user_id=$1',[id]);
+   await db.query('UPDATE admin_sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1',[id]);
+   await db.query('UPDATE users SET version=version+1 WHERE id=$1',[id]);
+   await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.mfa.reset',$2,$3,'{}')",[a.user.id,id,input.reason]);
+   const result={id,version:target.version+1,state:'mfa_reset'};
+   await db.query("INSERT INTO idempotency_keys(actor_id,operation,request_key,request_hash,state,response_snapshot) VALUES($1,$2,$3,$4,'completed',$5)",[a.user.id,operation,key,hash,JSON.stringify(result)]);
+   await db.query('COMMIT');return result;
+  }catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
  }
  lock(header:string|undefined){return this.transaction(header,async(db,a)=>{await db.query('UPDATE admin_sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1 AND family_id=(SELECT family_id FROM sessions WHERE id=$2)',[a.user.id,a.sessionId]);return {id:a.user.id,version:1,state:'locked'};});}
 }

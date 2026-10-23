@@ -4690,6 +4690,281 @@
       ],
       "evidenceStatus": "mapping-reviewed-not-executed",
       "gaps": "Local DEMO/test only. Actual LiveKit generated-signal media and disposable restore evidence are separate manual reports; required suite does not prove physical microphone, background/closed/APNs, external bank, production, full retention or UAT."
+    },
+    {
+      "id": "LOCAL-01-INTENT",
+      "requirement": "FR-CHAT-005; FR-REV-005; FR-REV-006",
+      "description": "Nhận lần bấm khi đọc nền, giữ phiên bản và hủy ý định chưa gửi khi rời màn hoặc đổi người.",
+      "sources": [
+        "QA-023",
+        "QA-045"
+      ],
+      "qa": [
+        "QA-023",
+        "QA-045"
+      ],
+      "code": [
+        "apps/mobile/src/features/jobs/state/session-ready.ts",
+        "apps/mobile/src/features/jobs/state/mutation.ts",
+        "apps/mobile/src/features/chat/screens/ConversationScreen.tsx",
+        "apps/mobile/src/features/reviews/screens/ReviewsScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "chat draft remains editable while the read watermark holds the account lock"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/reviews/screens/Reviews.test.tsx",
+          "name": "review removal waits for a background snapshot without dropping the click or changing its version"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/state/session-ready.test.ts",
+          "name": "queued work cancels on blur and rechecks account identity before reaching the API"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/state/mutation.test.ts",
+          "name": "a cancelled queued intent cannot be replayed after returning to the screen"
+        }
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local/test only. Native font and OS-link evidence is recorded separately in B00-09. Physical devices, APNs/FCM, Universal Links, UAT, production and pending contracts are not certified."
+    },
+    {
+      "id": "LOCAL-01-LINKS",
+      "requirement": "FR-UX-001",
+      "description": "Đích sau login và dvqb links giữ ID hợp lệ, chờ lượt đọc nền để kiểm quyền, không tự phát sinh mutation.",
+      "sources": [
+        "QA-054"
+      ],
+      "qa": [
+        "QA-054"
+      ],
+      "code": [
+        "apps/mobile/src/app/navigation/routes.ts",
+        "apps/mobile/src/app/navigation/AppNavigator.tsx",
+        "apps/mobile/src/features/auth/screens/AccountScreen.tsx",
+        "apps/mobile/src/features/jobs/screens/JobCreateScreen.tsx",
+        "apps/mobile/src/features/jobs/screens/JobDetailScreen.tsx",
+        "apps/mobile/src/features/invoices/screens/InvoiceScreen.tsx",
+        "apps/mobile/src/features/chat/screens/ConversationsScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/app/navigation/account-return.test.tsx",
+          "name": "resource destinations retain only a validated identity and never a mutation or draft"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/app/navigation/account-return.test.tsx",
+          "name": "local app links accept read destinations and reject foreign hosts, secrets, nested paths and actions"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/app/navigation/account-return.test.tsx",
+          "name": "cold hire link survives sign-in and reloads the exact partner without submitting a request"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/app/navigation/account-return.test.tsx",
+          "name": "warm job link checks current permissions and never displays an inaccessible job or runs an action"
+        }
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local/test only. Native font and OS-link evidence is recorded separately in B00-09. Physical devices, APNs/FCM, Universal Links, UAT, production and pending contracts are not certified."
+    },
+    {
+      "id": "LOCAL-01-ROLE",
+      "requirement": "FR-UX-001",
+      "description": "UI-16 theo lựa chọn membership có kiểm server; tab ví chủ, nhân viên không có tab ví; đổi locale/offline/logout.",
+      "sources": [
+        "QA-054"
+      ],
+      "qa": [
+        "QA-054"
+      ],
+      "code": [
+        "apps/mobile/src/app/providers/ProductRoleProvider.tsx",
+        "apps/mobile/src/app/layout/ProductShell.tsx",
+        "apps/mobile/src/features/organizations/screens/OrganizationsScreen.tsx",
+        "apps/mobile/src/features/jobs/screens/JobsScreen.tsx",
+        "apps/mobile/src/features/auth/state/auth-session.ts"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/app/layout/ProductRole.test.tsx",
+          "name": "explicit owner and employee contexts change tabs and logout removes the selected partner"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/local-completion.spec.mjs",
+          "name": "local role selection keeps partner scope across tabs, excludes employee wallet and clears on logout"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
+          "name": "role membership refresh does not take the form lock and rejects its late result after logout"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
+          "name": "membership cards contain no raw text children that crash native views"
+        }
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local/test only. Native font and OS-link evidence is recorded separately in B00-09. Physical devices, APNs/FCM, Universal Links, UAT, production and pending contracts are not certified."
+    },
+    {
+      "id": "LOCAL-01-AUDIT",
+      "requirement": "P1-03",
+      "description": "GET /admin/audit hiện hành, quyền và MFA sống, cursor gắn actor/bộ lọc, projection không trả details; UI desktop/mobile lọc thật.",
+      "sources": [
+        "QA-098",
+        "QA-102"
+      ],
+      "qa": [
+        "QA-098",
+        "QA-102"
+      ],
+      "code": [
+        "services/api/src/modules/backoffice/backoffice.controller.ts",
+        "services/api/src/modules/backoffice/backoffice.input.ts",
+        "services/api/src/modules/backoffice/backoffice.service.ts",
+        "apps/admin/src/App.tsx",
+        "apps/mobile/src/features/admin/screens/AdminDesk.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/backoffice.test.ts",
+          "name": "global audit requires live MFA grant and binds pagination to actor and resource without exposing details"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/admin-moderation.spec.mjs",
+          "name": "admin MFA and decisions connect support, private verification resubmission and review visibility"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/admin-moderation.spec.mjs",
+          "name": "mobile admin uses a dedicated console with MFA, decisions and locking without customer tabs"
+        }
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Local/test only. Native font and OS-link evidence is recorded separately in B00-09. Physical devices, APNs/FCM, Universal Links, UAT, production and pending contracts are not certified."
+    },
+    {
+      "id": "LOCAL-01-GALLERY",
+      "requirement": "FR-PAR-003; FR-SEARCH-004",
+      "qa": [
+        "QA-009",
+        "QA-012"
+      ],
+      "description": "Gallery approved 23/10: 12 images, current profile permissions, ordered CAS writes and revoked public URLs; audited pause preserves wallet/history.",
+      "code": [
+        "services/api/src/modules/partners/partners.service.ts",
+        "services/api/src/modules/assets/assets.service.ts",
+        "apps/mobile/src/features/partners/components/GalleryEditor.tsx",
+        "apps/mobile/src/features/partners/components/PublicGallery.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/local-gallery.test.ts",
+          "name": "gallery is ordered, limited, owner/delegate managed, CAS protected and public URLs lose access after removal or unpublish; deactivation preserves history"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/partners/components/GalleryEditor.test.tsx",
+          "name": "gallery keeps ordered IDs and retries the same upload before save without duplicate photos"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/local-gallery-mfa.spec.mjs",
+          "name": "gallery upload reorder removal and pause connect UI to DB with safe lost-response retry"
+        }
+      ],
+      "sources": [
+        "local-01-approved",
+        "QA-009",
+        "QA-012"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Approved local/test implementation. Native and actual DB restore evidence reported separately. Existing QA remains partial; OpenAPI sync not requested, new routes tracked as reviewed contract gaps. No real device, UAT, provider or production certification."
+    },
+    {
+      "id": "LOCAL-01-MFA",
+      "requirement": "P1-03",
+      "qa": [
+        "QA-098"
+      ],
+      "description": "Approved one-use backup codes, password and fresh MFA replacement, independent admin reset, DEMO-only last-admin rescue.",
+      "code": [
+        "services/api/src/modules/admin-auth/admin-auth.service.ts",
+        "apps/mobile/src/features/admin/screens/MfaSecurity.tsx",
+        "apps/admin/src/MfaSecurity.tsx",
+        "scripts/ops/demo-mfa-rescue.mjs"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/mfa-recovery.test.ts",
+          "name": "backup codes are one use, hashed, password protected and reset requires another fresh grant manager"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/Admin.test.tsx",
+          "name": "admin backup recovery uses the one-use-code path and hides generated codes when locked"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/local-gallery-mfa.spec.mjs",
+          "name": "desktop admin creates one-use codes recovers MFA and resets another admin with fresh approval"
+        }
+      ],
+      "sources": [
+        "local-01-approved",
+        "QA-098"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Approved local/test implementation. Native and actual DB restore evidence reported separately. Existing QA remains partial; OpenAPI sync not requested, new routes tracked as reviewed contract gaps. No real device, UAT, provider or production certification."
+    },
+    {
+      "id": "LOCAL-01-BACKUP",
+      "requirement": "Q03",
+      "qa": [
+        "QA-055"
+      ],
+      "description": "Approved isolated full restore exercise with private asset/key integrity and fail-closed file guards.",
+      "code": [
+        "scripts/ops/backup-files.mjs",
+        "scripts/ops/restore-drill.mjs",
+        "scripts/ops/local-safety.mjs"
+      ],
+      "tests": [
+        {
+          "suite": "tooling",
+          "file": "scripts/test/backup-files.test.mjs",
+          "name": "private bundle preserves assets and keys and rejects tampering, symlinks and loose modes"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/restore-safety.test.mjs",
+          "name": "DEMO MFA rescue refuses normal schemas, remote hosts and malformed identity"
+        }
+      ],
+      "sources": [
+        "local-01-approved",
+        "QA-055"
+      ],
+      "evidenceStatus": "mapping-reviewed-not-executed",
+      "gaps": "Approved local/test implementation. Native and actual DB restore evidence reported separately. Existing QA remains partial; OpenAPI sync not requested, new routes tracked as reviewed contract gaps. No real device, UAT, provider or production certification."
     }
   ]
 }

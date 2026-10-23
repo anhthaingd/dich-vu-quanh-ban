@@ -17,7 +17,7 @@ import type {Member} from '../../jobs/models';
 import {permissionKeys,teamPermissions,type MyMembership,type Invitation,type Departure} from '../models';
 import {TeamFeedback} from './TeamFeedback';
 import {theme} from '../../../theme/tokens';
-export function TeamScreen({navigation,route}:NativeStackScreenProps<RootStackParamList,'Team'>){return <AccountPage title="team.title" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account',{returnTo:'Organizations'})}>{owner=><Team key={owner+route.params.id} owner={owner} partner={route.params.id}/>}</AccountPage>;}
+export function TeamScreen({navigation,route}:NativeStackScreenProps<RootStackParamList,'Team'>){return <AccountPage title="team.title" back={()=>navigation.goBack()} login={() => navigation.navigate('Account',{returnTo:{screen:'Team',params:{id:route.params.id}}})}>{owner=><Team key={owner+route.params.id} owner={owner} partner={route.params.id}/>}</AccountPage>;}
 function Team({owner,partner}:{owner:string;partner:string}){
  const {manager,state:auth}=useAuth(),{t}=useLocale();
  const [members,setMembers]=useState<Member[]>([]),[invitations,setInvitations]=useState<Invitation[]>([]),[me,setMe]=useState<MyMembership|null>(null),[contact,setContact]=useState<{membership_id:string|null;version:number}|null>(null),[tab,setTab]=useState<'members'|'invites'|'left'|'permissions'>('members'),[query,setQuery]=useState('');

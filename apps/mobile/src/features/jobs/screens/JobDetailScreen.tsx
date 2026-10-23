@@ -16,11 +16,11 @@ import { Input } from '../../../components/ui/Input';
 import { AppText } from '../../../components/ui/AppText';
 import { Mutation } from '../state/mutation';
 import { appointment } from '../state/appointment';
-import { sessionReady } from '../state/session-ready';
+import { sessionOperation } from '../state/session-ready';
 import { JobFeedback } from '../components/JobFeedback';
 import type { Job, JobAction, JobChange, Member } from '../models';
 import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
-export function JobDetailScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'JobDetail'>) { return <AccountPage title="jobs.detail" back={() => navigation.goBack()} login={() => navigation.navigate('Account')}>{owner => <Detail key={`${owner}:${route.params.id}`} id={route.params.id} owner={owner} support={() => navigation.navigate('Support', {context:{kind:'service',job_id:route.params.id}})} reviews={() => navigation.navigate('Reviews', { id:route.params.id })} invoice={() => navigation.navigate('Invoice', { id:route.params.id })} chat={() => navigation.navigate('Conversations', { jobId: route.params.id })}/>}</AccountPage>; }
+export function JobDetailScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'JobDetail'>) { return <AccountPage title="jobs.detail" back={() => navigation.goBack()} login={() => navigation.navigate('Account',{returnTo:{screen:'JobDetail',params:{id:route.params.id}}})}>{owner => <Detail key={`${owner}:${route.params.id}`} id={route.params.id} owner={owner} support={() => navigation.navigate('Support', {context:{kind:'service',job_id:route.params.id}})} reviews={() => navigation.navigate('Reviews', { id:route.params.id })} invoice={() => navigation.navigate('Invoice', { id:route.params.id })} chat={() => navigation.navigate('Conversations', { jobId: route.params.id })}/>}</AccountPage>; }
 function Detail({ id, owner, chat, invoice, reviews, support }: {
     id: string;
     owner: string;
@@ -40,20 +40,19 @@ function Detail({ id, owner, chat, invoice, reviews, support }: {
         setBusy(true);
         setError(null);
         void (async () => {
-            await sessionReady(manager, owner);
-            const value = await manager.getJob(owner, id);
+            const value = await sessionOperation(manager,owner,()=>manager.getJob(owner, id),()=>active);
             const people: Member[] = [];
             if (value.allowed_actions.includes('assignments')) {
                 let cursor: string | undefined;
                 do {
-                    const p = await manager.jobMembers(owner, value.partner_id, cursor);
+                    const p = await sessionOperation(manager,owner,()=>manager.jobMembers(owner, value.partner_id, cursor),()=>active);
                     people.push(...p.items);
                     cursor = p.next_cursor ?? undefined;
                 } while (cursor && active);
             }
             let labels: Record<string, string> = {};
             try {
-                const p = await manager.partnerProfile(owner, value.partner_id, locale);
+                const p = await sessionOperation(manager,owner,()=>manager.partnerProfile(owner, value.partner_id, locale),()=>active);
                 labels = Object.fromEntries(p.skills.map(s => [s.id, s.name]));
             }
             catch { /* Historical jobs remain readable when the public profile is unavailable. */ }

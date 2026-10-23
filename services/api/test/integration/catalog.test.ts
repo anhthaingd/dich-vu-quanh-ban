@@ -63,7 +63,8 @@ test('replacement rolls back deletes and restores exact previous catalog if inse
 
 test('empty-schema migration, PostGIS, rerun migration/seed and preserve edited data', async () => {
   assert.match((await pool.query('SELECT postgis_version() AS version')).rows[0].version, /^3\./);
-  assert.equal((await pool.query('SELECT count(*) FROM schema_migrations')).rows[0].count, '23');
+  assert.equal((await pool.query('SELECT count(*) FROM schema_migrations')).rows[0].count, '24');
+  assert.deepEqual((await pool.query("SELECT to_regclass('partner_gallery') IS NOT NULL AS gallery, to_regclass('admin_backup_codes') IS NOT NULL AS recovery")).rows[0], {gallery:true,recovery:true});
   const count = async () => (await pool.query('SELECT (SELECT count(*) FROM categories) AS c,(SELECT count(*) FROM skills) AS s,(SELECT count(*) FROM skill_categories) AS sc')).rows[0];
   const original = await count();
   assert.deepEqual(original, { c: '49', s: '128', sc: '128' });

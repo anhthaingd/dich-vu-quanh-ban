@@ -117,7 +117,7 @@ export class PartnersService {
       `partner.${id}.${input.action}`,
       key,
       input,
-      async (db) => {
+      async (db, actor) => {
         const {
           rows: [current]
         } = await db.query(
@@ -127,6 +127,17 @@ export class PartnersService {
         if (current.version !== input.expected_version)
           throw new ConflictException({ code: 'VERSION_CONFLICT' });
         switch (input.action) {
+          case 'gallery': {
+            // Partner lock serializes all gallery edits; assets cannot be borrowed from another uploader/profile.
+            const assets=(await db.query(`SELECT a.id FROM assets a WHERE a.id=ANY($1::uuid[]) AND a.purpose='gallery' AND a.status='ready'
+              AND (a.uploader_id=$2 OR EXISTS(SELECT 1 FROM partner_gallery g WHERE g.partner_id=$3 AND g.asset_id=a.id))
+              AND NOT EXISTS(SELECT 1 FROM partner_gallery g WHERE g.asset_id=a.id AND g.partner_id<>$3) FOR UPDATE OF a`,[input.asset_ids,actor.user.id,id])).rows;
+            if(assets.length!==input.asset_ids.length)throw new BadRequestException();
+            await db.query('DELETE FROM partner_gallery WHERE partner_id=$1',[id]);
+            for(const [position,asset] of input.asset_ids.entries())await db.query('INSERT INTO partner_gallery(partner_id,asset_id,position) VALUES($1,$2,$3)',[id,asset,position]);
+            await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'partner.gallery',$2,'Gallery updated',$3)",[actor.user.id,id,JSON.stringify({asset_ids:input.asset_ids})]);
+            break;
+          }
           case 'profile':
             await db.query(
               `UPDATE partners SET name=COALESCE($2,name),bio=COALESCE($3,bio),profile=profile || $4::jsonb WHERE id=$1`,
@@ -239,6 +250,27 @@ export class PartnersService {
       },
       (db, actor) => this.permission(db, actor, id)
     );
+  }
+  async gallery(header:string|undefined,id:string){
+    const actor=header?await this.auth.authenticate(header):null;
+    const db=await this.pool.connect();try{
+      await db.query('BEGIN ISOLATION LEVEL REPEATABLE READ');
+      const p=(await db.query(`SELECT p.version FROM partners p WHERE p.id=$1 AND p.archived_at IS NULL AND (
+       (p.publication_status='published' AND p.moderation_status='active') OR EXISTS(
+        SELECT 1 FROM memberships m WHERE m.partner_id=p.id AND m.user_id=$2 AND m.active AND (m.is_owner OR EXISTS(
+         SELECT 1 FROM membership_grants g WHERE g.membership_id=m.id AND g.permission='profile.manage' AND g.revoked_at IS NULL))))`,[id,actor?.user.id??null])).rows[0];
+      if(!p)throw new NotFoundException();
+      const asset_ids=(await db.query('SELECT asset_id FROM partner_gallery WHERE partner_id=$1 ORDER BY position',[id])).rows.map(r=>r.asset_id as string);
+      await db.query('COMMIT');return {partner_id:id,version:p.version,asset_ids};
+    }catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
+  }
+  deactivate(header:string|undefined,id:string,input:{expected_version:number;reason:string},key:string){
+    return this.transaction.run(header,`partner.${id}.deactivation`,key,input,async(db,actor)=>{
+      const p=(await db.query('UPDATE partners SET accepting_jobs=false,version=version+1 WHERE id=$1 AND version=$2 RETURNING version',[id,input.expected_version])).rows[0];
+      if(!p)throw new ConflictException({code:'VERSION_CONFLICT'});
+      await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'partner.deactivation',$2,$3,'{}')",[actor.user.id,id,input.reason]);
+      return {id,version:p.version,state:'inactive'};
+    },(db,actor)=>this.permission(db,actor,id));
   }
   async publicProfile(
     header: string | undefined,

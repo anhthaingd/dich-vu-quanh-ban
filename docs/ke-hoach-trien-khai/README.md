@@ -1,5 +1,10 @@
 # Kế hoạch triển khai và học code
 
+**23/10/2026 — LOCAL-01 bổ sung đã duyệt:** [gallery và ngừng nhận việc](bao-cao/B02-05-gallery-va-ngung-nhan-viec.md), [khôi phục MFA](bao-cao/B11-05-khoi-phuc-mfa.md), [backup đầy đủ DEMO](bao-cao/B11-06-backup-day-du-demo.md). Cùng đợt với [sáu phần điều hướng/local](bao-cao/B00-09-luong-local-va-dieu-huong.md) và [nhật ký admin](bao-cao/B11-04-nhat-ky-admin-tong-hop.md). Không đồng bộ Drive/ui-ux, chưa commit/push mới hoặc production.
+
+
+**23/10/2026 — LOCAL-01:** hoàn thiện thao tác chat/đánh giá, đích sau đăng nhập, vai trò theo hồ sơ, liên kết app và nhật ký admin tổng hợp. [Kế hoạch](de-xuat/LOCAL-01-hoan-thien-luong-local.md) · [B00-09 — luồng local và điều hướng](bao-cao/B00-09-luong-local-va-dieu-huong.md) · [B11-04 — nhật ký tổng hợp](bao-cao/B11-04-nhat-ky-admin-tong-hop.md). Nền P2 `cd719cb` đã lên main và main CI `39717884524` thành công; LOCAL-01 là bộ sửa local mới, chưa commit/push/CI/UAT. Ghi chú chưa push P2 phía dưới là lịch sử.
+
 **21/10/2026 — P2 đang được triển khai theo yêu cầu mới nhất:** chủ dự án đã chốt OTP/khôi phục/xóa và locale tài khoản, quyền admin, LiveKit local để thử âm thanh thật, ngân hàng mô phỏng local chỉ tiền test. [Kế hoạch đã duyệt](de-xuat/P2-01-trien-khai-tron-dot.md). Các ghi chú “chưa chuyển P2” bên dưới là lịch sử; giới hạn APNs/thiết bị thật/UAT của P1-2 vẫn giữ. Kết quả cuối và phạm vi từng lượt kiểm nằm trong [báo cáo tổng P2](bao-cao/B11-03-tong-ket-p2.md). Chưa commit/push hoặc phát hành.
 
 

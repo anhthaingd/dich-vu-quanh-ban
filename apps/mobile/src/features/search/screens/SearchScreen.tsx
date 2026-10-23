@@ -99,7 +99,7 @@ export function SearchScreen({
     });
   };
   return (
-    <ProductShell
+    <ProductShell onWallet={id=>navigation.navigate('Finance',{id})}
       keyboardDismissMode="on-drag"
       discovery
       onBack={route.name === 'Search' ? () => navigation.goBack() : undefined}

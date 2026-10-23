@@ -124,8 +124,9 @@ test('chat draft remains editable while the read watermark holds the account loc
  const f=workFixture();let finish!:(value:{id:string;state:'read'})=>void;
  f.chat.read.mockImplementationOnce(()=>new Promise(resolve=>{finish=resolve;}));mount(f,'Conversation');await screen.findByTestId('message-msg1');
  await waitFor(()=>expect(f.chat.read).toHaveBeenCalled());expect(f.manager.getSnapshot().busy).toBe(true);
- expect(screen.getByTestId('chat-body').props.editable).toBe(true);fireEvent.changeText(screen.getByTestId('chat-body'),'DEMO draft during background read');expect(screen.getByTestId('chat-send')).toBeDisabled();
- await act(async()=>finish({id:'room',state:'read'}));await enabled('chat-send');expect(screen.getByTestId('chat-body').props.value).toBe('DEMO draft during background read');
+ expect(screen.getByTestId('chat-body').props.editable).toBe(true);fireEvent.changeText(screen.getByTestId('chat-body'),'DEMO draft during background read');expect(screen.getByTestId('chat-send')).not.toBeDisabled();
+ fireEvent.press(screen.getByTestId('chat-send'));expect(f.chat.send).not.toHaveBeenCalled();expect(screen.getByTestId('chat-send')).toBeDisabled();
+ await act(async()=>finish({id:'room',state:'read'}));await screen.findByTestId('message-sent');expect(f.chat.send).toHaveBeenCalledTimes(1);expect(f.chat.send.mock.calls[0][2].body).toBe('DEMO draft during background read');expect(screen.getByTestId('chat-body').props.value).toBe('');
 });
 
 test('job action draft stays editable during a background snapshot while confirmation waits',async()=>{

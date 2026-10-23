@@ -17,3 +17,7 @@ test('Vietnam appointment validates calendar instead of rolling dates', () => {
     expect(appointment('2030-02-30', '10:30')).toBeNull();
     expect(appointment('2030-12-10', '25:30')).toBeNull();
 });
+test('a cancelled queued intent cannot be replayed after returning to the screen',async()=>{
+ const mutation=new Mutation<number>(),work=jest.fn().mockRejectedValue(new ApiError('CANCELLED'));
+ await mutation.run(work);expect(mutation.getSnapshot().pending).toBe(false);await mutation.run();expect(work).toHaveBeenCalledTimes(1);
+});

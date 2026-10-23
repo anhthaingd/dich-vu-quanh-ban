@@ -8,7 +8,7 @@ import { ApiError } from '../../../lib/http/api-error';
 async function mount() {
   const f = authFixture('saved');
   render(<AppProviders api={{ categories: async () => [], skills: async () => [] }}><AuthProvider manager={f.manager}><AppNavigator /></AuthProvider></AppProviders>);
-  fireEvent.press(screen.getByRole('button', { name: 'Tài khoản' }));
+  fireEvent.press(await screen.findByRole('button', { name: 'Tài khoản' }));
   const open = await screen.findByTestId('profile-open');
   await waitFor(() => expect(open).not.toBeDisabled()); fireEvent.press(open);
   await screen.findByTestId('profile-name'); return f;

@@ -32,7 +32,7 @@ export class Mutation<T> {
         }
         catch (e) {
             const error = e instanceof ApiError ? e.code : 'NETWORK';
-            if (['CHALLENGE_INVALID', 'CHALLENGE_EXPIRED', 'REAUTH_REQUIRED', 'INSUFFICIENT_POINTS', 'PARTNER_FUNDING_REQUIRED', 'VALIDATION', 'FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED', 'VERSION_CONFLICT', 'STATE_CONFLICT', 'IDEMPOTENCY_MISMATCH', 'BUSY'].includes(error))
+            if (['CANCELLED', 'CHALLENGE_INVALID', 'CHALLENGE_EXPIRED', 'REAUTH_REQUIRED', 'INSUFFICIENT_POINTS', 'PARTNER_FUNDING_REQUIRED', 'VALIDATION', 'FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED', 'VERSION_CONFLICT', 'STATE_CONFLICT', 'IDEMPOTENCY_MISMATCH', 'BUSY'].includes(error))
                 this.attempt = null;
             this.update({ error, pending: !!this.attempt });
             return null;

@@ -65,8 +65,7 @@ function fixture(saved: string | null = 'saved', verified = true) {
       Parameters<PartnersApi['edit']>
     >(async (_t, _id, input) => {
       const { action, expected_version, ...fields } = input;
-      void action;
-      return (value = { ...value, ...fields, version: expected_version + 1 });
+      return (value = { ...value, ...fields, ...(action==='deactivation'?{accepting_jobs:false}:{}), version: expected_version + 1 });
     }),
     search: jest.fn().mockResolvedValue({
       items: [
@@ -131,7 +130,7 @@ function fixture(saved: string | null = 'saved', verified = true) {
   return { ...f, partners: api };
 }
 async function openEditor() {
-  fireEvent.press(screen.getByTestId('nav-account'));
+  fireEvent.press(await screen.findByTestId('nav-account'));
   fireEvent.press(await screen.findByTestId('partners-open'));
   fireEvent.press(await screen.findByText('Provider'));
   await screen.findByTestId('partner-name');
@@ -144,7 +143,7 @@ async function saved() {
 }
 test('owner creates a company; a lost save response freezes fields and retries exact request', async () => {
   const f = fixture();
-  fireEvent.press(screen.getByTestId('nav-account'));
+  fireEvent.press(await screen.findByTestId('nav-account'));
   fireEvent.press(await screen.findByTestId('partners-open'));
   const create = await screen.findByTestId('partner-create-open');
   await waitFor(() => expect(create).not.toBeDisabled());
@@ -254,7 +253,7 @@ test('conflict preserves draft until explicit reload, access loss removes privat
 });
 test('unverified account cannot create provider and anonymous search opens public profile', async () => {
   const f = fixture(null);
-  fireEvent.press(screen.getByTestId('search-submit'));
+  fireEvent.press(await screen.findByTestId('search-submit'));
   expect(f.partners.search).not.toHaveBeenCalled();
   await choosePlace('search');
   f.partners.search.mockRejectedValueOnce(new ApiError('NETWORK'));
@@ -268,7 +267,7 @@ test('unverified account cannot create provider and anonymous search opens publi
 test('unverified account sees creation gate, list retries and omits inaccessible membership', async () => {
   const f = fixture('saved', false);
   f.partners.management.mockRejectedValueOnce(new ApiError('NETWORK'));
-  fireEvent.press(screen.getByTestId('nav-account'));
+  fireEvent.press(await screen.findByTestId('nav-account'));
   fireEvent.press(await screen.findByTestId('partners-open'));
   fireEvent.press(await screen.findByText('Thử lại'));
   await screen.findByText('Provider');
@@ -301,6 +300,6 @@ test('availability is always visible; a draft explains why it is disabled and ca
   expect(f.partners.edit.mock.calls.map((call) => call[2].action)).toEqual([
     'publication',
     'availability',
-    'availability'
+    'deactivation'
   ]);
 });

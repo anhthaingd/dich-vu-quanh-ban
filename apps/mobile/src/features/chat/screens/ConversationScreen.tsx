@@ -18,10 +18,10 @@ import { Input } from '../../../components/ui/Input';
 import { AppText } from '../../../components/ui/AppText';
 import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
 import { JobFeedback } from '../../jobs/components/JobFeedback';
-import { sessionReady } from '../../jobs/state/session-ready';
+import { sessionReady, sessionOperation } from '../../jobs/state/session-ready';
 import { Mutation } from '../../jobs/state/mutation';
 import type { Message } from '../models';
-export function ConversationScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'Conversation'>) { return <AccountPage title="chat.title" back={() => navigation.goBack()} login={() => navigation.navigate('Account')}>{owner => <Room key={`${owner}:${route.params.id}`} owner={owner} id={route.params.id} jobId={route.params.jobId}/>}</AccountPage>; }
+export function ConversationScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'Conversation'>) { return <AccountPage title="chat.title" back={() => navigation.goBack()} login={() => navigation.navigate('Account',{returnTo:{screen:'Conversation',params:{id:route.params.id}}})}>{owner => <Room key={`${owner}:${route.params.id}`} owner={owner} id={route.params.id} jobId={route.params.jobId}/>}</AccountPage>; }
 function Room({ owner, id, jobId }: {
     owner: string;
     id: string;
@@ -29,7 +29,8 @@ function Room({ owner, id, jobId }: {
 }) {
     const { manager, state: auth } = useAuth(), { t, locale } = useLocale();
     const [items, setItems] = useState<Message[]>([]), [body, setBody] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState<ApiErrorCode | null>(null), [attempt, setAttempt] = useState(0);
-    const highest = useRef(0);
+    const highest = useRef(0), mounted = useRef(true), focusVersion=useRef(0);
+    useFocusEffect(useCallback(() => { mounted.current = true; focusVersion.current++; return () => { mounted.current = false; focusVersion.current++; }; }, []));
     const [pulling, setPulling] = useState(false), [loaded, setLoaded] = useState(false);
     const {invalidate}=useMessageUnread();
     const [mutation] = useState(() => new Mutation<Message>());
@@ -49,7 +50,7 @@ function Room({ owner, id, jobId }: {
                 let cursor: string | undefined;
                 const after = highest.current, arrived: Message[] = [], seen = new Set<string>();
                 do {
-                    const p = await manager.listMessages(owner, id, after, cursor);
+                    const p = await sessionOperation(manager, owner, () => manager.listMessages(owner, id, after, cursor), () => active);
                     arrived.push(...p.items);
                     cursor = p.next_cursor ?? undefined;
                     if (cursor && seen.has(cursor)) throw new ApiError('INVALID_RESPONSE');
@@ -61,7 +62,8 @@ function Room({ owner, id, jobId }: {
                 setLoaded(true);
                 highest.current = Math.max(highest.current, ...arrived.map(m => m.sequence));
                 if (highest.current) {
-                    await manager.readConversation(owner, id, highest.current, randomUUID());
+                    const watermark = highest.current, key = randomUUID();
+                    await sessionOperation(manager, owner, () => manager.readConversation(owner, id, watermark, key), () => active);
                     invalidate();
                 }
                 if (active) setError(null);
@@ -86,14 +88,14 @@ function Room({ owner, id, jobId }: {
             void refresh(); });
         return () => { active = false; subscription.remove(); };
     }, [manager, owner, id, attempt, invalidate]));
-    const sent = (m: Message | null) => { if (m) {
+    const sent = (m: Message | null) => { if (m && mounted.current) {
         setBody('');
         setItems(old => [...new Map([...old, m].map(x => [x.id, x])).values()].sort((a, b) => a.sequence - b.sequence));
         setAttempt(v => v + 1);
     } };
     const send = async () => { const text = body.trim(); if (!text)
-        return; const input = { client_message_id: randomUUID(), body: text, ...(jobId ? { job_id: jobId } : {}) }; sent(await mutation.run(key => manager.sendMessage(owner, id, input, key))); };
+        return; const intentFocus=focusVersion.current; const input = { client_message_id: randomUUID(), body: text, ...(jobId ? { job_id: jobId } : {}) }; sent(await mutation.run(key => sessionOperation(manager, owner, () => manager.sendMessage(owner, id, input, key), () => mounted.current&&focusVersion.current===intentFocus))); };
     const draftBlocked = (!loaded && busy) || state.busy || state.pending || error === 'NOT_FOUND' || error === 'FORBIDDEN';
-    const blocked = draftBlocked || auth.busy;
+    const blocked = draftBlocked;
     return <><CallHistory conversationId={id}/><RefreshError error={error} busy={busy || auth.busy || state.busy || state.pending} retry={reload}/>{!loaded && busy && !error && !pulling && <LoadingState message={t('accountTools.loading')}/> }{loaded && !items.length && !error && <AppText>{t('chat.noMessages')}</AppText>}{items.map(m => <Card key={m.id}><AppText variant="caption">{t(m.sender_id === null ? 'chat.system' : m.sender_id === owner ? 'chat.you' : 'chat.peer')}</AppText><AppText testID={`message-${m.id}`}>{m.body}</AppText><AppText variant="caption" tone="muted">{formatBusinessDate(new Date(m.created_at), locale)}</AppText></Card>)}<Card><Input testID="chat-body" label={t('chat.message')} value={body} multiline editable={!draftBlocked} onChangeText={setBody}/><Button testID="chat-send" label={t('chat.send')} disabled={blocked || !body.trim()} onPress={() => void send()}/><JobFeedback error={state.error} pending={state.pending} busy={state.busy || auth.busy} retry={state.pending ? () => void mutation.run().then(sent) : undefined}/></Card></>;
 }

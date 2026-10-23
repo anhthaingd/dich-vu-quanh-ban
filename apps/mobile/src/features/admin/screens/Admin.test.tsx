@@ -25,7 +25,7 @@ function fixture(permissions=grants){
  const page=jest.spyOn(AdminApi.prototype,'page').mockImplementation(async d=>({items:[d==='reports'?report:d==='verifications'?verification:review],next_cursor:null}));
  const item=jest.spyOn(AdminApi.prototype,'item').mockImplementation(async d=>d==='reports'?report:d==='verifications'?verification:review);
  const decision=jest.spyOn(AdminApi.prototype,'decision').mockResolvedValue({...report,version:2,state:'reviewing',history:[{action:'reviewing',reason:'DEMO reason',created_at:'2026-10-19T00:00:00Z',version:2,actor_id:'admin'}]});
- const audit=jest.spyOn(AdminApi.prototype,'audit').mockResolvedValue({items:[{id:'a',domain:'reports',resource_id:'report',actor_id:'admin',action:'reviewing',reason:'DEMO audit',version:2,created_at:'2026-10-19T00:00:00Z'}],next_cursor:null});
+ const audit=jest.spyOn(AdminApi.prototype,'audit').mockResolvedValue({items:[{id:'a',resource_type:'reports',resource_id:'report',actor_id:'admin',action:'reviewing',reason:'DEMO audit',created_at:'2026-10-19T00:00:00Z'}],next_cursor:null});
  const lock=jest.spyOn(AdminApi.prototype,'lock').mockResolvedValue(undefined);
  jest.spyOn(AdminApi.prototype,'photo').mockResolvedValue('data:image/png;base64,ZGVtbw==');
  return {...f,status,verify,enroll,page,item,decision,audit,lock};
@@ -55,10 +55,10 @@ test('mobile admin filters queues, reviews private verification evidence, modera
  fireEvent.press(screen.getByTestId('admin-tab-audit'));await screen.findByText('DEMO audit');
 });
 test('admin setup requires confirmation and backgrounding clears the MFA secret and console',async()=>{
- const f=fixture();f.status.mockResolvedValue(false);let onChange:((s:AppStateStatus)=>void)|undefined;jest.spyOn(AppState,'addEventListener').mockImplementation((type,listener)=>{if(type==='change')onChange=listener;return {remove:jest.fn()};});mount(f);await screen.findByTestId('admin-password');
+ const f=fixture();f.status.mockResolvedValue(false);const onChange=new Set<(s:AppStateStatus)=>void>();jest.spyOn(AppState,'addEventListener').mockImplementation((type,listener)=>{if(type==='change')onChange.add(listener);return {remove:()=>onChange.delete(listener)};});mount(f);await screen.findByTestId('admin-password');
  fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.press(screen.getByTestId('admin-verify'));await screen.findByText('DEMO-SECRET');
- act(()=>onChange?.('background'));await waitFor(()=>expect(screen.queryByText('DEMO-SECRET')).toBeNull());expect(screen.getByTestId('admin-password')).toHaveProp('value','');
- fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.changeText(screen.getByTestId('admin-code'),'123456');fireEvent.press(screen.getByTestId('admin-verify'));await screen.findByTestId('admin-queue');expect(f.enroll).toHaveBeenCalledTimes(1);expect(f.verify).toHaveBeenCalledWith('DEMO password','123456',true);
+ act(()=>onChange.forEach(f=>f('background')));await waitFor(()=>expect(screen.queryByText('DEMO-SECRET')).toBeNull());expect(screen.getByTestId('admin-password')).toHaveProp('value','');
+ fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.changeText(screen.getByTestId('admin-code'),'123456');fireEvent.press(screen.getByTestId('admin-verify'));await screen.findByTestId('admin-queue');expect(f.enroll).toHaveBeenCalledTimes(1);expect(f.verify).toHaveBeenCalledWith('DEMO password','123456',true,false);
 });
 test('support read-only grants cannot decide and revoked MFA clears the loaded record',async()=>{
  const f=fixture(['support.read']);mount(f);await enter();expect(screen.queryByTestId('admin-tab-reviews')).toBeNull();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByText('Không có quyền đổi trạng thái báo cáo.');expect(screen.queryByTestId('admin-save')).toBeNull();fireEvent.press(screen.getByTestId('admin-close-detail'));f.item.mockRejectedValueOnce(new ApiError('FORBIDDEN'));fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-password');expect(screen.queryByTestId('admin-detail')).toBeNull();
@@ -109,4 +109,21 @@ test('mobile internal note is a separate private action and retries the captured
  mount(f);await enter();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-reason');fireEvent.press(screen.getByTestId('admin-action'));fireEvent.press(screen.getByTestId('admin-action-internal_note'));
  fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO internal only');fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Chưa xác nhận được kết quả. Giữ nguyên nội dung để thử lại.');fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Ghi chú riêng của admin hỗ trợ');
  expect(note.mock.calls[0]).toEqual(note.mock.calls[1]);expect(note.mock.calls[0]).toEqual(['report',{expected_version:1,body:'DEMO internal only'},expect.any(String)]);expect(f.decision).not.toHaveBeenCalled();
+});
+
+test('admin backup recovery uses the one-use-code path and hides generated codes when locked',async()=>{
+ const f=fixture(),codes=Array.from({length:10},(_,i)=>String(i).padStart(32,'0'));
+ const generated=jest.spyOn(AdminApi.prototype,'backupCodes').mockResolvedValue(codes);mount(f);await screen.findByTestId('admin-password');
+ fireEvent.press(screen.getByTestId('admin-recovery-toggle'));fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.changeText(screen.getByTestId('admin-code'),codes[0]);fireEvent.press(screen.getByTestId('admin-verify'));
+ await screen.findByTestId('admin-queue');expect(f.verify).toHaveBeenCalledWith('DEMO password',codes[0],false,true);
+ fireEvent.press(screen.getByTestId('mfa-security-toggle'));fireEvent.press(screen.getByTestId('mfa-generate'));await screen.findByTestId('mfa-backup-codes');expect(generated).toHaveBeenCalledTimes(1);
+ fireEvent.press(screen.getByTestId('admin-lock'));await screen.findByTestId('admin-password');expect(screen.queryByTestId('mfa-backup-codes')).toBeNull();
+});
+test('admin reset keeps target version reason and retry key; TOTP replacement returns to confirmation',async()=>{
+ const f=fixture([...grants,'grant.manage']),target={id:'00000000-0000-4000-8000-000000000077',name:'DEMO target',version:3};
+ const request=jest.spyOn(AdminApi.prototype,'request').mockResolvedValueOnce(target).mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValueOnce({id:target.id,version:4,state:'mfa_reset'});
+ const replace=jest.spyOn(AdminApi.prototype,'replace').mockResolvedValue({secret:'DEMO-REPLACEMENT',uri:'demo'});
+ mount(f);await enter();fireEvent.press(screen.getByTestId('mfa-security-toggle'));fireEvent.changeText(screen.getByTestId('mfa-target'),target.id);fireEvent.press(screen.getByTestId('mfa-target-load'));await screen.findByText('DEMO target · '+target.id);
+ fireEvent.changeText(screen.getByTestId('mfa-reset-reason'),'DEMO identity checked');fireEvent(screen.getByTestId('mfa-reset-checked'),'valueChange',true);fireEvent.press(screen.getByTestId('mfa-reset'));await screen.findByText('Thử lại cùng yêu cầu');expect(screen.getByTestId('mfa-reset-reason')).toHaveProp('editable',false);fireEvent.press(screen.getByTestId('mfa-reset'));await screen.findByText('Đã reset. Admin cần thiết lập TOTP lại.');expect(request.mock.calls[1]).toEqual(request.mock.calls[2]);expect(request.mock.calls[1][2]).toEqual({expected_version:3,reason:'DEMO identity checked'});
+ fireEvent.changeText(screen.getByLabelText('Mật khẩu hiện tại để thay TOTP'),'DEMO password');f.status.mockResolvedValue(false);fireEvent.press(screen.getByText('Thiết lập TOTP mới'));await screen.findByText('DEMO-REPLACEMENT');expect(replace).toHaveBeenCalledWith('DEMO password');expect(screen.queryByTestId('admin-queue')).toBeNull();
 });

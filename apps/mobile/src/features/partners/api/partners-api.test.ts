@@ -121,3 +121,11 @@ test('search is public, profile locale explicit, malformed response is rejected'
     createPartnersApi(undefined, transport).management('secret', id)
   ).rejects.toBeInstanceOf(ApiError);
 });
+test('deactivation uses the audited POST contract then reloads the preserved profile',async()=>{
+ const transport=jest.fn().mockResolvedValueOnce(response({id,version:2,state:'inactive'})).mockResolvedValueOnce(response({...p,version:2}));
+ const api=createPartnersApi('http://localhost/v1',transport);
+ await api.edit('token',id,{action:'deactivation',expected_version:1,reason:'Pause'},'same-key');
+ expect(transport.mock.calls[0][0]).toBe(`http://localhost/v1/partners/${id}/deactivation`);
+ expect(transport.mock.calls[0][1]).toMatchObject({method:'POST',body:JSON.stringify({expected_version:1,reason:'Pause'})});
+ expect(transport.mock.calls[1][0]).toBe(`http://localhost/v1/partners/${id}/management`);
+});

@@ -1,3 +1,4 @@
+import {ProductRoleProvider,useProductRole} from '../providers/ProductRoleProvider';
 import {SecurityScreen} from '../../features/account-security/screens/SecurityScreen';
 import {RecoveryScreen} from '../../features/account-security/screens/RecoveryScreen';
 import {FinanceScreen} from '../../features/finance/screens/FinanceScreen';
@@ -32,13 +33,18 @@ import { ProfileScreen } from '../../features/accounts/screens/ProfileScreen';
 import { AccountScreen } from '../../features/auth/screens/AccountScreen';
 import { theme } from '../../theme/tokens';
 import type { RootStackParamList } from './routes';
+import {appLinkState} from './routes';
+import {Platform} from 'react-native';
+const linking={prefixes:['dvqb://'],getStateFromPath:appLinkState};
 // Routes keep identity only; names are loaded in the current locale.
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const navigationTheme = { ...DefaultTheme, colors: { ...DefaultTheme.colors,
   primary: theme.colors.primary, background: theme.colors.background,
   card: theme.colors.surface, text: theme.colors.text, border: theme.colors.border,
 } };
-export function AppNavigator() {
+export function AppNavigator(){return <ProductRoleProvider><Navigator/></ProductRoleProvider>;}
+function Navigator() {
+  const role=useProductRole();
   const {state,manager} = useAuth();
   const [navigationReady,setNavigationReady]=useState(false);
   const ref=useNavigationContainerRef<RootStackParamList>();
@@ -58,7 +64,7 @@ export function AppNavigator() {
   if (state.phase === 'authenticated' && state.user?.admin_permissions?.length) {
     return <AdminScreen key={state.user.id} />;
   }
-  return <NavigationContainer ref={ref} onReady={()=>setNavigationReady(true)} key="ordinary" theme={navigationTheme}>
+  return <NavigationContainer linking={Platform.OS==='web'?undefined:linking} ref={ref} onStateChange={()=>void role.refresh()} onReady={()=>setNavigationReady(true)} key="ordinary" theme={navigationTheme}>
     <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}>
       <Stack.Screen name="CatalogHome" component={SearchScreen} />
       <Stack.Screen name="CatalogCategory" component={CatalogScreen} getId={({ params }) => params.categoryId} />
@@ -83,7 +89,7 @@ export function AppNavigator() {
       <Stack.Screen name="Account" component={AccountScreen} />
       <Stack.Screen name="AccountSecurity">{({navigation})=><SecurityScreen back={()=>navigation.goBack()} recovery={()=>navigation.navigate('AccountRecovery')}/>}</Stack.Screen>
       <Stack.Screen name="AccountRecovery">{({navigation})=><RecoveryScreen back={()=>navigation.goBack()}/>}</Stack.Screen>
-      <Stack.Screen name="Finance">{({navigation,route})=><FinanceScreen partnerId={route.params.id} onBack={()=>navigation.goBack()}/>}</Stack.Screen>
+      <Stack.Screen name="Finance">{({navigation,route})=><FinanceScreen partnerId={route.params.id} onBack={()=>navigation.goBack()} onLogin={()=>navigation.navigate('Account',{returnTo:{screen:'Finance',params:{id:route.params.id}}})} shell={{activeTab:'wallet',onAccount:()=>navigation.navigate('Account'),onCatalog:()=>navigation.popTo('CatalogHome'),onJobs:()=>navigation.navigate('Jobs'),onMessages:()=>navigation.navigate('Conversations'),onNotifications:()=>navigation.navigate('Notifications'),onWallet:id=>navigation.navigate('Finance',{id})}}/>}</Stack.Screen>
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Sessions" component={SessionsScreen} />
       <Stack.Screen name="Addresses" component={AddressesScreen} />

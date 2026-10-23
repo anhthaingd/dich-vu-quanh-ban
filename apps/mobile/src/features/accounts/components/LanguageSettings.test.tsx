@@ -14,7 +14,7 @@ function mount(f = authFixture(), store = { read: jest.fn().mockResolvedValue(nu
 }
 test('VI → JA → EN retains form, translates a visible error without another request, and retains session', async () => {
   const { f } = mount();
-  fireEvent.press(screen.getByTestId('nav-account'));
+  fireEvent.press(await screen.findByTestId('nav-account'));
   await screen.findByTestId('auth-email');
   fireEvent.press(screen.getByTestId('auth-toggle'));
   fireEvent.changeText(screen.getByTestId('auth-name'), 'Tên người dùng');
@@ -57,7 +57,7 @@ test('locale changes preserve the selected category and translate a catalog fail
 });
 test('language write failure is visible, preserves selection and can be retried', async () => {
   const { store } = mount();
-  fireEvent.press(screen.getByTestId('nav-account'));
+  fireEvent.press(await screen.findByTestId('nav-account'));
   await waitFor(() => expect(screen.getByTestId('locale-en')).toBeEnabled());
   store.write.mockRejectedValueOnce(Error('private'));
   fireEvent.press(screen.getByTestId('locale-en'));

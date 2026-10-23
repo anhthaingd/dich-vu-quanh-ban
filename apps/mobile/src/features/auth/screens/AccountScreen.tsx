@@ -1,3 +1,4 @@
+import {useProductRole} from '../../../app/providers/ProductRoleProvider';
 import {securityMessages} from '../../account-security/messages';
 import { useLocale } from '../../../app/providers/LocaleProvider';
 import { LanguageSettings } from '../../accounts/components/LanguageSettings';
@@ -22,13 +23,19 @@ const errorMessages: Record<AuthErrorCode, MessageKey & `errors.${string}`> = {
   UNAUTHENTICATED: 'errors.authentication', RATE_LIMITED: 'errors.rateLimited', VALIDATION: 'errors.validation', SESSION_UNAVAILABLE: 'errors.session',
 };
 export function AccountScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'Account'>) {
+  const role=useProductRole();
   const { t,locale } = useLocale();
   const security=securityMessages(locale);
   const { manager, state } = useAuth();
   const focused = useIsFocused();
   const destination = accountDestination(route.params?.returnTo);
   useEffect(() => {
-    if (focused && destination && state.phase === 'authenticated' && !state.busy && !state.user?.admin_permissions?.length) navigation.replace(destination);
+    if (focused && destination && state.phase === 'authenticated' && !state.busy && !state.user?.admin_permissions?.length) {
+      if(typeof destination==='string')navigation.replace(destination);
+      else if(destination.screen==='Conversations')navigation.replace('Conversations',destination.params);
+      else if(destination.screen==='JobCreate')navigation.replace('JobCreate',destination.params);
+      else navigation.replace(destination.screen,destination.params);
+    }
   }, [focused, destination, state.phase, state.busy, navigation]);
   const [register, setRegister] = useState(false);
   const [email, setEmail] = useState(''), [password, setPassword] = useState(''), [name, setName] = useState('');
@@ -55,6 +62,9 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
     {state.phase === 'authenticated' && <Card>
       <AppText variant="section">{state.user!.display_name}</AppText>
       <AppText>{t(state.user!.email_verified ? 'auth.verified' : 'auth.unverified')}</AppText>
+      <AppText>{t('shell.currentRole')}: {role.membership?role.membership.partner_name:t('shell.customerRole')}</AppText>
+      <Button testID="role-customer" label={t('shell.customerRole')} onPress={()=>{void role.choose(null);navigation.popTo('CatalogHome');}}/>
+      <Button testID="role-profiles" label={t('shell.chooseProfile')} disabled={state.busy} onPress={()=>navigation.navigate('Organizations')}/>
       <Button testID="security-open" label={security.title} disabled={state.busy} onPress={()=>navigation.navigate('AccountSecurity')} />
       <Button testID="support-open" label={t('support.title')} disabled={state.busy} onPress={() => navigation.navigate('Support')} />
       <Button testID="notification-settings-open" label={t('notices.settings')} disabled={state.busy} onPress={() => navigation.navigate('NotificationSettings')} />

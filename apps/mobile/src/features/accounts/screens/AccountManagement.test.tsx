@@ -11,7 +11,7 @@ async function mount(kind:'addresses'|'sessions') {
   const f=authFixture('saved');
   f.accounts.saveAddress.mockImplementation(async(_token,_id,input)=>({...address,...input,version:2}));
   render(<AppProviders api={{categories:async()=>[],skills:async()=>[]}}><AuthProvider manager={f.manager}><AppNavigator /></AuthProvider></AppProviders>);
-  fireEvent.press(screen.getByRole('button',{name:'Tài khoản'}));const open=await screen.findByTestId(kind+'-open');await waitFor(()=>expect(open).not.toBeDisabled());fireEvent.press(open);
+  fireEvent.press(await screen.findByRole('button',{name:'Tài khoản'}));const open=await screen.findByTestId(kind+'-open');await waitFor(()=>expect(open).not.toBeDisabled());fireEvent.press(open);
   await waitFor(()=>expect(screen.getByTestId('account-reload')).not.toBeDisabled());return f;
 }
 test('address form validates, preserves draft across locale, retries lost response, supports edit and confirmed archive',async()=>{

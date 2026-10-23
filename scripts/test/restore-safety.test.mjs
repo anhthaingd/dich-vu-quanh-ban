@@ -9,3 +9,10 @@ test('restore drill rejects production remote database and non-disposable schema
  assert.equal(remapDump(`CREATE SCHEMA ${source};\nCREATE TABLE ${source}.users ();`,source,target),`CREATE SCHEMA ${target};\nCREATE TABLE ${target}.users ();`);
  assert.throws(()=>remapDump('CREATE SCHEMA public;',source,target));assert.throws(()=>remapDump(`CREATE SCHEMA ${source};`,source,source));
 });
+
+test('DEMO MFA rescue refuses normal schemas, remote hosts and malformed identity',async()=>{
+ const {rescueTarget}=await import('../ops/demo-mfa-rescue.mjs'),url='postgresql://test@127.0.0.1/dvqb_test',schema='test_'+'a'.repeat(32),id='00000000-0000-4000-8000-000000000001';
+ assert.equal(rescueTarget(url,schema,id).schema,schema);
+ for(const s of ['public','demo','test_bad'])assert.throws(()=>rescueTarget(url,s,id));
+ assert.throws(()=>rescueTarget('postgresql://test@remote/dvqb_test',schema,id));assert.throws(()=>rescueTarget(url,schema,'not-id'));
+});

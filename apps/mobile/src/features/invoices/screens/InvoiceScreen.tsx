@@ -14,13 +14,13 @@ import {Card} from '../../../components/ui/Card';
 import {Input} from '../../../components/ui/Input';
 import {theme} from '../../../theme/tokens';
 import {ApiError,type ApiErrorCode} from '../../../lib/http/api-error';
-import {sessionReady} from '../../jobs/state/session-ready';
+import {sessionReady,sessionOperation} from '../../jobs/state/session-ready';
 import {Mutation} from '../../jobs/state/mutation';
 import {JobFeedback} from '../../jobs/components/JobFeedback';
 import type {Job} from '../../jobs/models';
 import {formatInteger} from '../format-amount';
 import type {Asset,LedgerPage,Invoice,InvoiceAction,InvoiceChange,Wallet} from '../models';
-export function InvoiceScreen({navigation,route}:NativeStackScreenProps<RootStackParamList,'Invoice'>){return <AccountPage title="invoice.title" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account')}>{owner=><InvoiceContent key={owner+route.params.id} owner={owner} id={route.params.id} report={invoice=>navigation.navigate('Support',{context:{kind:'invoice',job_id:route.params.id,invoice_id:invoice.id,invoice_version_id:invoice.version_id}})}/>}</AccountPage>;}
+export function InvoiceScreen({navigation,route}:NativeStackScreenProps<RootStackParamList,'Invoice'>){return <AccountPage title="invoice.title" back={()=>navigation.goBack()} login={() => navigation.navigate('Account',{returnTo:{screen:'Invoice',params:{id:route.params.id}}})}>{owner=><InvoiceContent key={owner+route.params.id} owner={owner} id={route.params.id} report={invoice=>navigation.navigate('Support',{context:{kind:'invoice',job_id:route.params.id,invoice_id:invoice.id,invoice_version_id:invoice.version_id}})}/>}</AccountPage>;}
 const validAmount=(v:string)=>/^(0|[1-9][0-9]*)$/.test(v);
 function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoice:Invoice)=>void}){
  const {manager,state:auth}=useAuth(),{t,locale}=useLocale();
@@ -38,13 +38,14 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
  useFocusEffect(useCallback(()=>{
   let active=true;mounted.current=true;setBusy(true);setError(null);
   readTask.current=(async()=>{
-   await sessionReady(manager,owner);const j=await manager.getJob(owner,id);let i:Invoice|null=null;
-   try{i=await manager.getInvoice(owner,id);}catch(e){if(!(e instanceof ApiError)||e.code!=='NOT_FOUND')throw e;}
-   const photos:Asset[]=[];if(i)for(const aid of i.result_asset_ids){if(!active)return;photos.push(await manager.getAsset(owner,aid));}
+   const read=<T,>(work:()=>Promise<T>)=>sessionOperation(manager,owner,work,()=>active);
+   const j=await read(()=>manager.getJob(owner,id));let i:Invoice|null=null;
+   try{i=await read(()=>manager.getInvoice(owner,id));}catch(e){if(!(e instanceof ApiError)||e.code!=='NOT_FOUND')throw e;}
+   const photos:Asset[]=[];if(i)for(const aid of i.result_asset_ids){if(!active)return;photos.push(await read(()=>manager.getAsset(owner,aid)));}
    let pointsAvailable='0',w:Wallet|null=null;
-   if(j.customer_id===owner)pointsAvailable=(await manager.getPoints(owner)).available;
-   else try{w=await manager.getWallet(owner,j.partner_id);}catch(e){if(!(e instanceof ApiError)||!['NOT_FOUND','FORBIDDEN'].includes(e.code))throw e;}
-   const entries=j.customer_id===owner||w?await manager.getLedger(owner,j.customer_id===owner?undefined:j.partner_id):null;
+   if(j.customer_id===owner)pointsAvailable=(await read(()=>manager.getPoints(owner))).available;
+   else try{w=await read(()=>manager.getWallet(owner,j.partner_id));}catch(e){if(!(e instanceof ApiError)||!['NOT_FOUND','FORBIDDEN'].includes(e.code))throw e;}
+   const entries=j.customer_id===owner||w?await read(()=>manager.getLedger(owner,j.customer_id===owner?undefined:j.partner_id)):null;
    if(!active)return;
    // Realtime is only an invalidation. A delayed/duplicate event must not lock
    // an edited form when HTTP still returns the version already displayed.

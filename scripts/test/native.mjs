@@ -1,3 +1,5 @@
+import {AdminAuthService,tokenHash} from '../../services/api/dist/src/modules/admin-auth/admin-auth.service.js';
+import {base32} from '../../services/api/dist/src/modules/admin-auth/totp.js';
 import sharp from 'sharp';
 import {AssetsService} from '../../services/api/dist/src/modules/assets/assets.service.js';
 import {InvoicesService} from '../../services/api/dist/src/modules/invoices/invoices.service.js';
@@ -8,7 +10,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import { createWriteStream, existsSync } from 'node:fs';
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { randomUUID } from 'node:crypto';
+import { randomUUID,randomBytes } from 'node:crypto';
 import { homedir } from 'node:os';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -30,7 +32,7 @@ import { requireTestDatabase } from './native-options.mjs';
 const platform = process.argv[2];
 if (!['android', 'ios'].includes(platform)) throw Error('Use android or ios');
 const flow = process.argv[3] ?? 'catalog';
-if (!['p2-screens', 'catalog', 'auth', 'i18n', 'i18n-layout', 'shell', 'profile', 'accounts', 'partners', 'jobs', 'invoices', 'search-service'].includes(flow)) throw Error('Use catalog, auth, i18n, i18n-layout shell, profile, accounts, partners, jobs or search-service flow');
+if (!['local-approved','local-completion','p2-screens', 'catalog', 'auth', 'i18n', 'i18n-layout', 'shell', 'profile', 'accounts', 'partners', 'jobs', 'invoices', 'search-service'].includes(flow)) throw Error('Use catalog, auth, i18n, i18n-layout shell, profile, accounts, partners, jobs or search-service flow');
 const directory = resolve('test-results/native', platform, flow === 'catalog' ? '.' : flow);
 await mkdir(directory, { recursive: true });
 const run = (cmd, args) => spawnSync(cmd, args, { encoding: 'utf8', timeout: 30000, env: { ...process.env, MAESTRO_CLI_NO_ANALYTICS: '1' } });
@@ -98,12 +100,12 @@ const listen = (server, port = 0, host = '127.0.0.1') => new Promise((done, reje
 const close = server => new Promise((done, reject) => server.close(error => error ? reject(error) : done()));
 const devLink = port => `exp+dich-vu-quanh-ban://expo-development-client/?url=${encodeURIComponent(`http://${platform === 'ios' ? 'localhost' : host}:${port}`)}`;
 try {
-  if (platform === 'android' && ['p2-screens','profile','accounts','partners','jobs','invoices'].includes(flow)) {
+  if (platform === 'android' && ['local-approved','local-completion','p2-screens','profile','accounts','partners','jobs','invoices'].includes(flow)) {
     // Gboard's stylus tutorial can intercept Maestro typing in name fields.
     originalHandwriting = check('adb', ['-s', device, 'shell', 'settings', 'get', 'secure', 'stylus_handwriting_enabled']).trim();
     check('adb', ['-s', device, 'shell', 'settings', 'put', 'secure', 'stylus_handwriting_enabled', '0']);
   }
-  if (flow === 'i18n-layout') {
+  if (['i18n-layout','local-completion'].includes(flow)) {
     originalTextSize = platform === 'android'
       ? check('adb', ['-s', device, 'shell', 'settings', 'get', 'system', 'font_scale']).trim()
       : check('xcrun', ['simctl', 'ui', device, 'content_size']).trim();
@@ -115,7 +117,7 @@ try {
   await migrate(pool); await seed(pool);
   const active = (await pool.query('SELECT id FROM categories WHERE active=true')).rows.map(row => row.id);
   const localAssets={directory:resolve('.local',schema+'-assets'),origin:'http://127.0.0.1'};
-  app = await createApp({ ...(flow==='p2-screens'?{finance:{secret:randomUUID().repeat(2)}}:{}), localAssets, databaseUrl: url, cursorSecret: randomUUID().repeat(2), authSecret: randomUUID().repeat(2), port: 0, host: '127.0.0.1' }, pool, new AppLog(apiLog, 'info', 'test'));
+  app = await createApp({ ...(flow==='local-approved'?{admin:{secret:randomUUID().repeat(2)}}:{}), ...(['local-approved','local-completion','p2-screens'].includes(flow)?{finance:{secret:randomUUID().repeat(2)}}:{}), localAssets, databaseUrl: url, cursorSecret: randomUUID().repeat(2), authSecret: randomUUID().repeat(2), port: 0, host: '127.0.0.1' }, pool, new AppLog(apiLog, 'info', 'test'));
   if (['accounts', 'partners', 'jobs'].includes(flow)) {
     app.get(GeoapifyProvider).lookup = async (action, input) => {
       const point = action === 'reverse' ? input.point : flow === 'partners' ? {latitude:21.0285,longitude:105.8542} : {latitude:10.77,longitude:106.7};
@@ -136,11 +138,26 @@ try {
   const original = service.list.bind(service);
   const key = randomUUID();
   const testEmail = `native-${randomUUID()}@example.test`;
-  if (['p2-screens','profile','accounts','partners','jobs','invoices'].includes(flow)) await app.get(AuthService).register(testEmail, 'native-test-only-password', 'Native profile');
-  if (flow === 'p2-screens') {
+  if (['local-approved','local-completion','p2-screens','profile','accounts','partners','jobs','invoices'].includes(flow)) await app.get(AuthService).register(testEmail, 'native-test-only-password', 'Native profile');
+  if (['local-approved','local-completion','p2-screens'].includes(flow)) {
     const session=await app.get(AuthService).login(testEmail,'native-test-only-password');
     await pool.query("INSERT INTO identities(user_id,provider,subject,verified_at) VALUES($1,'phone',$2,now())",[session.user.id,`native:${session.user.id}`]);
     await app.get(PartnersService).create('Bearer '+session.access_token,{kind:'solo',name:'DEMO P2 Wallet',bio:''},randomUUID());
+  }
+  let testAdminEmail='',backupCode='';
+  if (flow === 'local-approved'){
+    const auth=app.get(AuthService),session=await auth.login(testEmail,'native-test-only-password'),header='Bearer '+session.access_token,partners=app.get(PartnersService);
+    let p=await partners.create(header,{kind:'solo',name:'DEMO local gallery',bio:'DEMO images only'},randomUUID());
+    p=await partners.edit(header,p.id,{action:'skills',expected_version:p.version,skills:[{skill_id:stableId('socket_replacement'),modes:['at_shop'],reference_labor:null,inspection_fee:null,travel_fee:null}]},randomUUID());
+    p=await partners.edit(header,p.id,{action:'locations',expected_version:p.version,locations:[{address:{text:'DEMO shop',point:{latitude:21,longitude:105}},public:true}]},randomUUID());
+    p=await partners.edit(header,p.id,{action:'publication',expected_version:p.version,publication_status:'published'},randomUUID());
+    p=await partners.edit(header,p.id,{action:'availability',expected_version:p.version,accepting_jobs:true},randomUUID());
+    const ids=[];for(const color of ['#2457d6','#22a66b']){const bytes=await sharp({create:{width:320,height:180,channels:3,background:color}}).composite([{input:Buffer.from('<svg width="320" height="180"><text x="25" y="95" font-size="25" fill="white">DEMO GALLERY</text></svg>')}]).png().toBuffer();const assets=app.get(AssetsService),grant=await assets.grant(header,{purpose:'gallery',mime:'image/png',bytes:bytes.length},randomUUID());await fetch(grant.upload_url,{method:'PUT',headers:grant.required_headers,body:bytes});ids.push((await assets.complete(header,grant.asset_id,randomUUID(),{expected_version:1})).id);}
+    await partners.edit(header,p.id,{action:'gallery',expected_version:p.version,asset_ids:ids},randomUUID());
+    testAdminEmail='native-admin-'+randomUUID()+'@example.test';const adminUser=await auth.register(testAdminEmail,'native-test-only-password','DEMO Native Admin');
+    for(const permission of ['audit.read','grant.manage'])await pool.query('INSERT INTO admin_grants(user_id,permission) VALUES($1,$2)',[adminUser.user.id,permission]);
+    const secret=base32(randomBytes(20));await pool.query('INSERT INTO admin_factors(user_id,secret_cipher,enrollment_family,pending_until,enabled_at) VALUES($1,$2,$3,now(),now())',[adminUser.user.id,app.get(AdminAuthService).secrets.encrypt(secret),randomUUID()]);
+    backupCode=randomBytes(16).toString('hex');await pool.query('INSERT INTO admin_backup_codes(user_id,code_hash) VALUES($1,$2)',[adminUser.user.id,tokenHash(backupCode)]);
   }
   if (flow === 'partners') {
     const auth = app.get(AuthService);
@@ -207,6 +224,7 @@ try {
   const result = await new Promise((done, reject) => {
     maestroProcess = spawn(maestro, ['--device', device, 'test', '-e', `APP_ID=${appId}`, '-e', `DEV_URL=${devLink(metroPort)}`,
       '-e', `TEST_CONTROL_URL=http://127.0.0.1:${control.address().port}/${key}`,
+      '-e', `ADMIN_EMAIL=${testAdminEmail}`, '-e', `BACKUP_CODE=${backupCode}`,
       '-e', `TEST_EMAIL=${testEmail}`, '-e', 'TEST_PASSWORD=native-test-only-password',
       '--format', 'junit', '--output', `${directory}/junit.xml`,
       '--test-output-dir', directory, `tests/e2e/native/${flow}.yaml`], {
@@ -217,7 +235,7 @@ try {
     maestroProcess.once('close', code => { clearTimeout(timeout); done(code ?? 1); });
   });
   if (aborted || result !== 0) throw Error(`Maestro failed (${result}); inspect ${directory}`);
-  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'p2-screens' ? ['native-account-security','native-wallet-overview','native-bank-form','livekit-native-module-load'] : flow === 'invoices' ? ['result-image-from-local-api','edit-and-send-invoice','customer-confirm-via-test-control','worker-confirm-receipt'] : flow === 'search-service' ? ['storybook-home','protected-jobs-messages-tabs','guest-industry-group-skill-selection','cancel-preserves-service','clear-service-filter','search-filters','location-picker'] : flow === 'jobs' ? ['provider-job-list','accept-with-eta','private-chat-send-read',...(platform==='android'?['locale-switch']:[])] : flow === 'partners' ? ['manage-draft-profile', 'publish-and-enable', 'address-picker-distance-search', 'public-profile', 'locale-switch'] : flow === 'accounts' ? ['address-create-edit-default-archive', 'locale-draft-retention', 'address-cold-start', 'revoke-all-other-and-current-sessions', 'return-after-login'] : flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['storybook-home', 'protected-jobs-messages-tabs', 'service-selection', 'search-filters', 'location-picker', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
+  outcome = { status: 'PASS', platform, device, schema, scenarios: flow === 'local-approved' ? ['native-gallery-view-order-remove','native-deactivation','native-backup-code-MFA','native-MFA-security'] : flow === 'local-completion' ? ['owner-role-tabs','wallet-scope','vi-en-ja','warm-deep-link-denied','cold-deep-link-denied'] : flow === 'p2-screens' ? ['native-account-security','native-wallet-overview','native-bank-form','livekit-native-module-load'] : flow === 'invoices' ? ['result-image-from-local-api','edit-and-send-invoice','customer-confirm-via-test-control','worker-confirm-receipt'] : flow === 'search-service' ? ['storybook-home','protected-jobs-messages-tabs','guest-industry-group-skill-selection','cancel-preserves-service','clear-service-filter','search-filters','location-picker'] : flow === 'jobs' ? ['provider-job-list','accept-with-eta','private-chat-send-read',...(platform==='android'?['locale-switch']:[])] : flow === 'partners' ? ['manage-draft-profile', 'publish-and-enable', 'address-picker-distance-search', 'public-profile', 'locale-switch'] : flow === 'accounts' ? ['address-create-edit-default-archive', 'locale-draft-retention', 'address-cold-start', 'revoke-all-other-and-current-sessions', 'return-after-login'] : flow === 'profile' ? ['edit-name', 'locale-draft-retention', 'saved-header', 'cold-start-persistence'] : flow === 'shell' ? ['storybook-home', 'protected-jobs-messages-tabs', 'service-selection', 'search-filters', 'location-picker', 'shell-vi-en-ja'] : flow === 'i18n-layout' ? ['large-text-english', 'large-text-japanese', 'scrollable-form'] : flow === 'i18n' ? ['locale-switch', 'form-retention', 'localized-auth-error', 'locale-cold-start', 'catalog-localized', 'translated-error-retry'] : flow === 'auth' ? ['register', 'secure-restore', 'login-error-retry', 'logout'] : ['catalog', 'back', 'resume', 'error-retry', 'empty-recovery'] };
 } catch (error) {
   outcome = { status: 'FAIL', platform, device, reason: error.message };
   console.error(error.message); process.exitCode = 1;
@@ -238,6 +256,10 @@ try {
       outcome = { ...outcome, status: 'FAIL', fontRestoreError: error.message };
       process.exitCode = 1;
     }
+    // Release the test client's long-lived connections before closing its API.
+    // The previous development server is restored below when still available.
+    if (platform === 'android') run('adb', ['-s', device, 'shell', 'am', 'force-stop', appId]);
+    else run('xcrun', ['simctl', 'terminate', device, appId]);
     // Restore the user's development server only if it is still available.
     const originalPort = platform === 'android' ? 8081 : 8082;
     try {

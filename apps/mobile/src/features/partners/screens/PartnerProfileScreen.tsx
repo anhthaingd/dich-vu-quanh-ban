@@ -1,3 +1,4 @@
+import {PublicGallery} from '../components/PublicGallery';
 import {PartnerReviews} from '../../reviews/screens/PartnerReviews';
 import {sessionReady} from '../../jobs/state/session-ready';
 import {Mutation} from '../../jobs/state/mutation';
@@ -33,7 +34,7 @@ export function PartnerProfileScreen({
       <Profile
         key={state.user?.id ?? state.phase}
         id={route.params.id}
-        login={() => navigation.navigate('Account')}
+        login={() => navigation.navigate('Account',{returnTo:{screen:'PartnerProfile',params:{id:route.params.id}}})}
         hire={()=>navigation.navigate('JobCreate',{partnerId:route.params.id})}
         chat={id=>navigation.navigate('Conversation',{id})}
       />
@@ -116,6 +117,7 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
           ))}
         </Card>
       )}
+      <PublicGallery id={id}/>
       <PartnerReviews key={id} id={id}/>
       <Card>
         {profile.contact === null ? (

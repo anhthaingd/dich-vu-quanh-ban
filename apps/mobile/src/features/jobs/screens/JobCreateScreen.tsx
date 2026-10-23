@@ -13,11 +13,11 @@ import type { LocationValue } from '../../location/models';
 import type { PartnerProfile, Mode } from '../../partners/models';
 import { Mutation } from '../state/mutation';
 import { appointment } from '../state/appointment';
-import { sessionReady } from '../state/session-ready';
+import { sessionOperation } from '../state/session-ready';
 import { JobFeedback } from '../components/JobFeedback';
 import type { Job, JobCreate } from '../models';
 import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
-export function JobCreateScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'JobCreate'>) { return <AccountPage title="jobs.create" back={() => navigation.goBack()} login={() => navigation.navigate('Account')}>{owner => <Form key={`${owner}:${route.params.partnerId}`} owner={owner} partnerId={route.params.partnerId} done={id => navigation.replace('JobDetail', { id })}/>}</AccountPage>; }
+export function JobCreateScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'JobCreate'>) { return <AccountPage title="jobs.create" back={() => navigation.goBack()} login={() => navigation.navigate('Account',{returnTo:{screen:'JobCreate',params:{partnerId:route.params.partnerId}}})}>{owner => <Form key={`${owner}:${route.params.partnerId}`} owner={owner} partnerId={route.params.partnerId} done={id => navigation.replace('JobDetail', { id })}/>}</AccountPage>; }
 function Form({ owner, partnerId, done }: {
     owner: string;
     partnerId: string;
@@ -30,7 +30,7 @@ function Form({ owner, partnerId, done }: {
     const [mutation] = useState(() => new Mutation<Job>());
     const state = useSyncExternalStore(mutation.subscribe, mutation.getSnapshot, mutation.getSnapshot);
     const blocked = state.busy || state.pending || auth.busy;
-    useEffect(() => { let active = true; setLoadError(null); void sessionReady(manager, owner).then(() => manager.partnerProfile(owner, partnerId, locale)).then(p => { if (active)
+    useEffect(() => { let active = true; setLoadError(null); void sessionOperation(manager,owner,()=>manager.partnerProfile(owner,partnerId,locale),()=>active).then(p => { if (active)
         setProfile(p); }).catch(e => { if (active)
         setLoadError(e instanceof ApiError ? e.code : 'NETWORK'); }); return () => { active = false; }; }, [manager, owner, partnerId, locale, attempt]);
     const send = async () => {

@@ -12,6 +12,7 @@ type Option =
   | 'profile'
   | 'skills'
   | 'areas'
+  | 'gallery'
   | 'locations';
 export function Options<T extends Option>({
   values,

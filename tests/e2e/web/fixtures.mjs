@@ -15,7 +15,7 @@ export const test = base.extend({
   teamLocal: [false, {option:true}],
   adminLocal: [false, {option:true}],
   financeLocal: [false, {option:true}],
-  environment: async ({teamLocal,realtime,adminLocal,financeLocal}, use, testInfo) => {
+  environment: async ({teamLocal,realtime,adminLocal,financeLocal,context}, use, testInfo) => {
     const url = process.env.TEST_DATABASE_URL ?? 'postgresql://dvqb_test:test-only-password@127.0.0.1:55433/dvqb_test';
     if (new URL(url).pathname !== '/dvqb_test') throw Error('E2E requires dvqb_test');
     const schema = `web_${randomUUID().replaceAll('-', '')}`;
@@ -53,8 +53,11 @@ export const test = base.extend({
       try { await testInfo.attach('api-log.jsonl', { body: logs.join(''), contentType: 'application/x-ndjson' }); }
       finally {
         try { await base.step('Close test API', async () => {
-          // Tests are finished. Offline/reload scenarios can leave browser sockets
-          // half open; close only this fixture's connections before Nest teardown.
+          // Tests are finished. Stop new polling/reconnects before closing sockets:
+          // otherwise the still-open page can create another connection during shutdown.
+          // Keep the page for Playwright's failure screenshots and trace snapshots.
+          await context.route('**/*', route => route.abort());
+          await context.routeWebSocket('**/*', socket => socket.close());
           app?.getHttpServer().closeAllConnections();
           await app?.close();
         }); } finally {

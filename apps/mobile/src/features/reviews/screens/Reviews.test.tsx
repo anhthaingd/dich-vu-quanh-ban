@@ -81,3 +81,14 @@ test('customer history loads only on demand, paginates minimal reviews and clear
  await waitFor(()=>expect(f.manager.getSnapshot().phase).toBe('authenticated'));expect(f.reviews.customerHistory).not.toHaveBeenCalled();fireEvent.press(screen.getByTestId('customer-reviews-open'));await screen.findByText('DEMO history');fireEvent.press(screen.getByText('Xem thêm'));await screen.findByText('DEMO next');expect(f.reviews.customerHistory.mock.calls[1][2]).toBe('next');
  fireEvent.press(screen.getByTestId('customer-reviews-open'));f.reviews.customerHistory.mockRejectedValueOnce(new ApiError('NOT_FOUND'));fireEvent.press(screen.getByTestId('customer-reviews-open'));await screen.findByRole('alert');expect(screen.queryByText('DEMO history')).toBeNull();expect(screen.queryByText('DEMO next')).toBeNull();
 });
+
+
+test('review removal waits for a background snapshot without dropping the click or changing its version',async()=>{
+ const f=fixture();f.setReviews([review]);mount(f);await screen.findByTestId('review-visibility');await ready();
+ let finish!:(v:{items:Review[];next_cursor:null})=>void;
+ f.reviews.list.mockImplementationOnce(()=>new Promise(resolve=>{finish=resolve;}));
+ press('reviews-reload');await waitFor(()=>expect(f.manager.getSnapshot().busy).toBe(true));
+ expect(screen.getByTestId('review-visibility')).not.toBeDisabled();press('review-visibility');expect(f.reviews.visibility).not.toHaveBeenCalled();
+ await act(async()=>finish({items:[{...review,version:2}],next_cursor:null}));
+ await screen.findByText('Tác giả đã gỡ đánh giá này');expect(f.reviews.visibility).toHaveBeenCalledTimes(1);expect(f.reviews.visibility.mock.calls[0].slice(2,4)).toEqual([1,true]);
+});

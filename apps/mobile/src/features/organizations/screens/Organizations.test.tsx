@@ -41,3 +41,15 @@ test('wallet-only staff has a wallet entry without profile or membership adminis
  f.team.memberships.mockResolvedValue({items:[{...mine,is_owner:false,permissions:[],active:false}],next_cursor:null});fireEvent.press(screen.getByTestId('memberships-reload'));
  await waitFor(()=>expect(f.team.memberships).toHaveBeenCalledTimes(reads+1));await waitFor(()=>expect(screen.queryByTestId('membership-wallet-partner')).toBeNull());
 });
+test('role membership refresh does not take the form lock and rejects its late result after logout',async()=>{
+ const f=fixture();await f.manager.restore();const owner=f.manager.getSnapshot().user!.id;
+ let resolve!:(page:{items:typeof mine[];next_cursor:null})=>void;f.team.memberships.mockImplementationOnce(()=>new Promise(r=>{resolve=r;}));
+ const pending=f.manager.myMemberships(owner);expect(f.manager.getSnapshot().busy).toBe(false);
+ const denied=expect(pending).rejects.toMatchObject({code:'UNAUTHENTICATED'});await f.manager.logout();resolve({items:[mine],next_cursor:null});await denied;expect(f.manager.getSnapshot().phase).toBe('anonymous');
+});
+test('membership cards contain no raw text children that crash native views',async()=>{
+ const f=fixture(),view=mount(f,'Organizations');await screen.findByTestId('membership-wallet-partner');
+ const invalid:string[]=[];
+ const inspect=(node:unknown)=>{if(Array.isArray(node)){node.forEach(inspect);return;}if(!node||typeof node!=='object')return;const n=node as {type?:string;children?:unknown[]};if(n.type==='View')for(const child of n.children??[])if(typeof child==='string')invalid.push(child);n.children?.forEach(inspect);};
+ inspect(view.toJSON());expect(invalid).toEqual([]);
+});

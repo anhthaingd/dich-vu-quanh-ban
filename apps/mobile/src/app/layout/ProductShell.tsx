@@ -1,3 +1,5 @@
+import {useProductRole} from '../providers/ProductRoleProvider';
+import {financeText} from '../../features/finance/messages';
 import {useNotifications} from '../../features/notifications/NotificationsProvider';
 import {useMessageUnread} from '../../features/chat/MessageUnreadProvider';
 import type { PropsWithChildren } from 'react';
@@ -16,14 +18,16 @@ export type ShellProps = PropsWithChildren<{
   onJobs?: () => void;
   onMessages?: () => void;
   onNotifications?: () => void;
-  activeTab?: 'catalog' | 'jobs' | 'messages' | 'notifications';
+  onWallet?: (id:string) => void;
+  activeTab?: 'catalog' | 'jobs' | 'wallet' | 'messages' | 'notifications';
   discovery?: boolean;
   keyboardDismissMode?: ScrollViewProps['keyboardDismissMode'];
   refreshControl?: ScrollViewProps['refreshControl'];
 }>;
 // UI-16: avatar opens account; notifications have their own tab.
-export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, onMessages, onNotifications, activeTab = 'catalog', discovery, keyboardDismissMode, refreshControl }: ShellProps) {
-  const { t } = useLocale();
+export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, onMessages, onNotifications, onWallet, activeTab = 'catalog', discovery, keyboardDismissMode, refreshControl }: ShellProps) {
+  const { t,locale } = useLocale();
+  const {membership}=useProductRole();
   const unread=useNotifications().items.filter(n=>!n.read_at).length;
   const messages=useMessageUnread().unread;
   const { state } = useAuth();
@@ -44,8 +48,9 @@ export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, o
     </View>
   </View>;
   const tabs = [
-    { id: 'catalog', icon: 'search', label: t('shell.findServices'), onPress: onCatalog },
+    ...(!membership?[{ id: 'catalog' as const, icon: 'search' as const, label: t('shell.findServices'), onPress: onCatalog }]:[]),
     { id: 'jobs', icon: 'jobs', label: t('jobs.title'), onPress: onJobs },
+    ...(membership?.is_owner?[{id:'wallet' as const,icon:'wallet' as const,label:financeText(locale,'wallet'),onPress:onWallet?()=>onWallet(membership.partner_id):undefined}]:[]),
     { id: 'messages', icon: 'messages', label: t('chat.title'), onPress: onMessages },
     { id: 'notifications', icon: 'bell', label: t('home.notifications'), onPress: onNotifications },
   ] as const;

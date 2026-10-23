@@ -1,3 +1,4 @@
+import {createGalleryApi} from '../../partners/api/gallery-api';
 import type {VerificationApi,VerificationInput} from '../../verification/api/verification-api';
 import type {SupportApi} from '../../support/api/support-api';
 import type {ReportInput} from '../../support/models';
@@ -154,7 +155,7 @@ export class AuthSession {
   notificationSettings=(o:string)=>this.accountOperation(o,t=>this.notificationApi().settings(t));
   saveNotificationSettings=(o:string,b:NotificationSettings,k:string)=>this.accountOperation(o,t=>this.notificationApi().save(t,b,k));
   private teamApi(){if(!this.organizations)throw new ApiError('CONFIG');return this.organizations;}
-  myMemberships=(o:string,c?:string)=>this.accountOperation(o,t=>this.teamApi().memberships(t,c));
+  myMemberships=(o:string,c?:string)=>this.passiveRead(o,t=>this.teamApi().memberships(t,c));
   teamInvitations=(o:string,p:string,c?:string)=>this.accountOperation(o,t=>this.teamApi().invitations(t,p,c));
   inviteMember=(o:string,p:string,contact:string,k:string)=>this.accountOperation(o,t=>this.teamApi().invite(t,p,contact,k));
   acceptInvitation=(o:string,token:string,k:string)=>this.accountOperation(o,t=>this.teamApi().accept(t,token,k));
@@ -171,6 +172,10 @@ export class AuthSession {
   private verificationApi(){if(!this.verification)throw new ApiError('CONFIG');return this.verification;}
   listVerifications=(o:string,id:string,c?:string)=>this.accountOperation(o,t=>this.verificationApi().list(t,id,c));
   submitVerification=(o:string,id:string,b:VerificationInput,k:string)=>this.accountOperation(o,t=>this.verificationApi().submit(t,id,b,k));
+  gallery=(o:string,id:string)=>this.passiveRead(o,t=>createGalleryApi(process.env.EXPO_PUBLIC_API_URL).list(id,t));
+  saveGallery=(o:string,id:string,v:number,ids:string[],k:string)=>this.accountOperation(o,t=>createGalleryApi(process.env.EXPO_PUBLIC_API_URL).save(t,id,v,ids,k));
+  uploadGallery=(o:string,b:Blob,k:string)=>this.accountOperation(o,t=>createGalleryApi(process.env.EXPO_PUBLIC_API_URL).upload(t,b,k));
+  galleryAsset=(o:string,id:string)=>this.passiveRead(o,t=>createGalleryApi(process.env.EXPO_PUBLIC_API_URL).asset(id,t));
   uploadVerification=(o:string,b:Blob,k:string)=>this.accountOperation(o,t=>this.verificationApi().upload(t,b,k));
   verificationAsset=(o:string,id:string)=>this.passiveRead(o,t=>this.verificationApi().asset(t,id));
   private supportApi(){if(!this.support)throw new ApiError('CONFIG');return this.support;}

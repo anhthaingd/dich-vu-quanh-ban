@@ -58,3 +58,16 @@ test('metrics use a half-open period and admin invoice lookups preserve versions
  const details=await call(a,'/admin/invoices/'+invoice);assert.equal(details.status,200);assert.equal(details.body.labor,'9007199254740991');assert.equal(details.body.version,1);assert.equal((await call(a,'/admin/jobs/'+job)).body.customer_id,customer.id);
  assert.equal((await call(a,'/admin/invoices?state=unknown')).status,400);const p=await call(a,'/admin/grant-users?limit=1');assert.ok(p.body.next_cursor);assert.equal((await call(a,'/admin/jobs?cursor='+encodeURIComponent(p.body.next_cursor))).status,400); // signed cursor remains scoped to directory
 });
+
+test('global audit requires live MFA grant and binds pagination to actor and resource without exposing details',async()=>{
+ const a=await enroll(await user(['audit.read'])),b=await enroll(await user(['audit.read'])),ordinary=await user(),resource=randomUUID();
+ for(let n=0;n<3;n++)await f.pool.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details,created_at) VALUES($1,'partner.availability',$2,'DEMO audit',$3,'2026-01-01T00:00:00Z')",[ordinary.id,resource,JSON.stringify({token:'PRIVATE',evidence:'PRIVATE'})]);
+ const url='/admin/audit?resource_id='+resource+'&limit=1';
+ assert.equal((await call(ordinary,url)).status,403);assert.equal((await call({...a,mfa:undefined},url)).status,403);
+ const first=await call(a,url);assert.equal(first.status,200);assert.equal(first.body.items.length,1);assert.ok(first.body.next_cursor);
+ const row=first.body.items[0];assert.deepEqual(Object.keys(row).sort(),['action','actor_id','created_at','id','reason','resource_id','resource_type']);assert.equal(row.resource_type,'partner');assert.ok(!JSON.stringify(first.body).includes('PRIVATE'));
+ const cursor=encodeURIComponent(first.body.next_cursor),second=await call(a,url+'&cursor='+cursor);assert.equal(second.status,200);assert.notEqual(second.body.items[0].id,row.id);
+ assert.equal((await call(b,url+'&cursor='+cursor)).status,400);assert.equal((await call(a,'/admin/audit?cursor='+cursor)).status,400);
+ assert.equal((await call(a,'/admin/audit?resource_id=bad')).status,400);assert.equal((await call(a,'/admin/audit?limit=101')).status,400);
+ await f.pool.query("UPDATE admin_grants SET revoked_at=now() WHERE user_id=$1",[a.id]);assert.equal((await call(a,url+'&cursor='+cursor)).status,403);
+});

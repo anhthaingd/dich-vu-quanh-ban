@@ -1,0 +1,52 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import sharp from 'sharp';
+import {databaseFixture} from '../helpers/database.js';
+import {stableId} from '../../src/database/seed.js';
+test('gallery is ordered, limited, owner/delegate managed, CAS protected and public URLs lose access after removal or unpublish; deactivation preserves history',async()=>{
+ const f=await databaseFixture('gallery-test-secret-'.repeat(3),true);
+ try{
+ const call=async(token:string|null,path:string,method='GET',body?:unknown,key=randomUUID())=>{const r=await fetch(f.base+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),'Content-Type':'application/json','Idempotency-Key':key},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};};
+ const user=async(name:string)=>(await call(null,'/auth/register','POST',{email:name+'@example.test',password:'DEMO gallery password 2026',display_name:name})).body;
+ const a=await user('owner'),b=await user('delegate');const t=a.access_token;
+ await f.pool.query("INSERT INTO identities(user_id,provider,subject,verified_at) VALUES($1,'phone','+84900000001',now())",[a.user.id]);
+ let p=(await call(t,'/partners','POST',{kind:'solo',name:'DEMO gallery'})).body;
+ const edit=async(action:string,body:unknown,token=t,key=randomUUID(),version=p.version)=>call(token,`/partners/${p.id}/${action}`,'PUT',{expected_version:version,...body as object},key);
+ const bytes=await sharp({create:{width:8,height:8,channels:3,background:'#2457D6'}}).png().toBuffer();
+ const upload=async(token=t,purpose='gallery')=>{const g=await call(token,'/assets/upload-grants','POST',{purpose,mime:'image/png',bytes:bytes.length});assert.equal(g.status,201,JSON.stringify(g));await fetch(g.body.upload_url,{method:'PUT',headers:g.body.required_headers,body:bytes});const r=await call(token,`/assets/${g.body.asset_id}/complete`,'POST',{expected_version:1});assert.equal(r.status,201);return r.body.id as string;};
+ const first=await upload(),second=await upload(),foreign=await upload(b.access_token),wrong=await upload(t,'evidence');
+ for(const ids of [[foreign],[wrong],[first,first],Array.from({length:13},()=>randomUUID())])assert.equal((await edit('gallery',{asset_ids:ids})).status,400);
+ assert.equal((await call(t,'/assets/upload-grants','POST',{purpose:'gallery',mime:'image/png',bytes:10*1024*1024+1})).status,400);
+ const input={asset_ids:[first,second]},key=randomUUID();const saved=await edit('gallery',input,t,key);assert.equal(saved.status,200,JSON.stringify(saved));assert.deepEqual((await call(t,`/partners/${p.id}/gallery`)).body.asset_ids,[first,second]);assert.deepEqual(await edit('gallery',input,t,key),saved);p=saved.body;
+ assert.equal((await call(null,'/assets/'+first)).status,404);
+ p=(await edit('skills',{skills:[{skill_id:stableId('socket_replacement'),modes:['at_shop']}]})).body;
+ p=(await edit('locations',{locations:[{address:{text:'DEMO shop',point:{latitude:21,longitude:105}},public:true}]})).body;
+ p=(await edit('publication',{publication_status:'published'})).body;
+ const publicPhoto=await call(null,'/assets/'+first);assert.equal(publicPhoto.status,200);assert.equal((await fetch(publicPhoto.body.download_url)).status,200);
+ assert.deepEqual((await call(null,'/partners/'+p.id+'/gallery')).body.asset_ids,[first,second]);
+ const member=(await f.pool.query('INSERT INTO memberships(user_id,partner_id) VALUES($1,$2) RETURNING id',[b.user.id,p.id])).rows[0];
+ assert.equal((await edit('gallery',{asset_ids:[second,first]},b.access_token)).status,403);
+ await f.pool.query("INSERT INTO membership_grants(membership_id,permission,granted_by) VALUES($1,'profile.manage',$2)",[member.id,a.user.id]);
+ const results=await Promise.all([edit('gallery',{asset_ids:[second,first]},b.access_token),edit('gallery',{asset_ids:[second,first]})]);assert.deepEqual(results.map(x=>x.status).sort(),[200,409]);
+ p=(await call(t,`/partners/${p.id}/management`)).body;p=(await edit('gallery',{asset_ids:[second]})).body;
+ assert.equal((await fetch(publicPhoto.body.download_url)).status,404);
+ const secondUrl=(await call(null,'/assets/'+second)).body.download_url;p=(await edit('publication',{publication_status:'draft'})).body;assert.equal((await fetch(secondUrl)).status,404);
+ p=(await edit('publication',{publication_status:'published'})).body;p=(await edit('availability',{accepting_jobs:true})).body;
+ const wallet=JSON.stringify((await f.pool.query('SELECT * FROM ledger_accounts WHERE owner_partner_id=$1',[p.id])).rows);
+ const stopKey=randomUUID(),stopInput={expected_version:p.version,reason:'DEMO taking a break'},path=`/partners/${p.id}/deactivation`;
+ const stopped=await call(t,path,'POST',stopInput,stopKey);assert.equal(stopped.status,201,JSON.stringify(stopped));assert.deepEqual(await call(t,path,'POST',stopInput,stopKey),stopped);
+ p=(await call(t,`/partners/${p.id}/management`)).body;assert.equal(p.accepting_jobs,false);assert.equal(p.publication_status,'published');assert.deepEqual((await call(t,`/partners/${p.id}/gallery`)).body.asset_ids,[second]);assert.equal(JSON.stringify((await f.pool.query('SELECT * FROM ledger_accounts WHERE owner_partner_id=$1',[p.id])).rows),wallet);
+ assert.equal((await f.pool.query("SELECT count(*) FROM audit_events WHERE resource_id=$1 AND action='partner.deactivation'",[p.id])).rows[0].count,'1');
+ p=(await edit('availability',{accepting_jobs:true})).body;assert.equal(p.accepting_jobs,true);
+ const twelve=[first,second];for(let n=0;n<10;n++)twelve.push(await upload());
+ p=(await edit('gallery',{asset_ids:twelve})).body;assert.equal((await call(t,`/partners/${p.id}/gallery`)).body.asset_ids.length,12);
+ const delegatedKey=randomUUID(),delegatedVersion=p.version,delegatedInput={asset_ids:[...twelve].reverse()};
+ const delegated=await edit('gallery',delegatedInput,b.access_token,delegatedKey,delegatedVersion);assert.equal(delegated.status,200);p=delegated.body;
+ await f.pool.query('UPDATE membership_grants SET revoked_at=now() WHERE membership_id=$1',[member.id]);
+ assert.equal((await edit('gallery',delegatedInput,b.access_token,delegatedKey,delegatedVersion)).status,403);
+ const visibleUrl=(await call(null,'/assets/'+second)).body.download_url;
+ await f.pool.query("UPDATE partners SET moderation_status='suspended' WHERE id=$1",[p.id]);assert.equal((await fetch(visibleUrl)).status,404);assert.equal((await call(null,`/partners/${p.id}/gallery`)).status,404);
+
+ }finally{await f.close();}
+});

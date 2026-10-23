@@ -1,3 +1,5 @@
+import {MfaSecurity} from './MfaSecurity';
+import {mfaText} from '../mfa-messages';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {AppState,Keyboard,KeyboardAvoidingView,Platform,ScrollView,StyleSheet,View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -18,8 +20,9 @@ export function AdminScreen(){
  const client=useMemo(()=>new AdminApi(manager,state.user!.id,process.env.EXPO_PUBLIC_API_URL),[manager,state.user?.id]);
  const t=useMemo(()=>translator(locale),[locale]);
  const [ready,setReady]=useState(false),[enrolled,setEnrolled]=useState<boolean|null>(null),[setup,setSetup]=useState(''),[enrollmentPending,setEnrollmentPending]=useState(false),[password,setPassword]=useState(''),[code,setCode]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[epoch,setEpoch]=useState(0);
+ const [recovery,setRecovery]=useState(false),mt=mfaText(locale);
  const generation=useRef(0);
- const clear=()=>{generation.current++;client.clear();setReady(false);setSetup('');setPassword('');setCode('');setBusy(false);setEpoch(n=>n+1);};
+ const clear=()=>{generation.current++;client.clear();setReady(false);setSetup('');setPassword('');setCode('');setRecovery(false);setBusy(false);setEpoch(n=>n+1);};
  useEffect(()=>{
   const sub=AppState.addEventListener('change',s=>{if(s==='background')clear();});
   return()=>{generation.current++;client.clear();sub.remove();};
@@ -31,7 +34,7 @@ export function AdminScreen(){
   if(busy||!password||enrolled===null)return;
   Keyboard.dismiss();const gen=generation.current;setBusy(true);setError('');
   try{if(!enrolled&&!enrollmentPending){const value=await client.enroll(password);if(gen===generation.current){setSetup(value.secret);setEnrollmentPending(true);}}
-   else{await client.verify(password,code,!enrolled);if(gen===generation.current){setReady(true);setEnrolled(true);setEnrollmentPending(false);setSetup('');setPassword('');setCode('');}}}
+   else{await client.verify(password,code,!enrolled,recovery);if(gen===generation.current){setReady(true);setEnrolled(true);setEnrollmentPending(false);setSetup('');setPassword('');setCode('');}}}
   catch(e){if(gen===generation.current){fail(e);try{const enabled=await client.status();if(gen===generation.current){setEnrolled(enabled);if(enabled)setSetup('');}}catch{/* Keep the original error. */}}}
   finally{if(gen===generation.current)setBusy(false);}
  };
@@ -39,13 +42,14 @@ export function AdminScreen(){
  return <SafeAreaView style={styles.root} testID="admin-root"><KeyboardAvoidingView style={styles.root} behavior={Platform.OS==='ios'?'padding':undefined}>
   <View style={styles.top}><AppText tone="surface" variant="card">Dịch vụ quanh bạn</AppText><AppText tone="surface" variant="caption">{t('eyebrow')}</AppText></View>
   <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={styles.content}>
-   {ready?<P2Desk key={epoch} owner={state.user!.id} client={client} grants={state.user!.admin_permissions} t={t} locale={locale} fail={fail} lock={()=>void lock()}/>:<Card>
+   {ready?<><MfaSecurity client={client} owner={state.user!.id} canReset={state.user!.admin_permissions.includes('grant.manage')} fail={fail} replaced={secret=>{clear();setEnrolled(false);setSetup(secret);setEnrollmentPending(true);}}/><P2Desk key={epoch} owner={state.user!.id} client={client} grants={state.user!.admin_permissions} t={t} locale={locale} fail={fail} lock={()=>void lock()}/></>:<Card>
     <AppText variant="title" accessibilityRole="header">{t(enrolled?'reauth':'setup')}</AppText>
     {enrolled===null?<Button label={t('retry')} onPress={()=>{setError('');setEpoch(n=>n+1);}}/>:<>
     {setup&&<><AppText>{t('setupHint')}</AppText><AppText>{t('secret')}</AppText><AppText selectable testID="admin-setup-secret">{setup}</AppText></>}
     <Input testID="admin-password" label={t('password')} value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoCorrect={false} autoComplete="current-password" editable={!busy} maxLength={128}/>
-    {(enrolled||enrollmentPending)&&<Input testID="admin-code" label={t('code')} value={code} onChangeText={setCode} keyboardType="number-pad" autoComplete="one-time-code" maxLength={6} editable={!busy}/>}
-    <Button testID="admin-verify" label={t(!enrolled&&!enrollmentPending?'enroll':'verify')} loading={busy} disabled={!password||!!(enrolled||enrollmentPending)&&!/^\d{6}$/.test(code)} onPress={()=>void submit()}/>
+    {(enrolled||enrollmentPending)&&<Input testID="admin-code" label={recovery?mt.code:t('code')} value={code} onChangeText={setCode} keyboardType={recovery?'default':'number-pad'} autoCapitalize="none" autoComplete="one-time-code" maxLength={recovery?32:6} editable={!busy}/>}
+    {enrolled&&<Button testID="admin-recovery-toggle" label={recovery?mt.totp:mt.use} disabled={busy} variant="link" onPress={()=>{setRecovery(!recovery);setCode('');}}/>}
+    <Button testID="admin-verify" label={t(!enrolled&&!enrollmentPending?'enroll':'verify')} loading={busy} disabled={!password||!!(enrolled||enrollmentPending)&&!(recovery?/^[a-f0-9]{32}$/:/^\d{6}$/).test(code)} onPress={()=>void submit()}/>
     {!enrolled&&enrollmentPending&&<Button label={t('enroll')} variant="link" disabled={busy} onPress={()=>{setSetup('');setCode('');setEnrollmentPending(false);}}/>}</>}
     {error&&<AppText accessibilityRole="alert" tone="error">{errorText(error,t)}</AppText>}
    </Card>}

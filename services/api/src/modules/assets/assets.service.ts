@@ -27,7 +27,7 @@ export class AssetsService {
  }
  private url(id:string,user:string,session:string,kind:string){return this.configured().origin+'/v1/assets/'+id+'/'+(kind==='public-content'?'content':kind)+'?grant='+this.sign(id,user,session,kind);}
  grant(header:string|undefined,body:unknown,key:string){
-  this.configured();const v=object(body,['purpose','mime','bytes','checksum']);if(!['result','review','evidence','verification'].includes(String(v.purpose))||!['image/jpeg','image/png','image/webp'].includes(String(v.mime))||!Number.isSafeInteger(v.bytes)||Number(v.bytes)<1||Number(v.bytes)>MAX_BYTES||(v.checksum!==undefined&&(typeof v.checksum!=='string'||!/^[a-f0-9]{64}$/.test(v.checksum))))throw new BadRequestException();
+  this.configured();const v=object(body,['purpose','mime','bytes','checksum']);if(!['result','review','evidence','verification','gallery'].includes(String(v.purpose))||!['image/jpeg','image/png','image/webp'].includes(String(v.mime))||!Number.isSafeInteger(v.bytes)||Number(v.bytes)<1||Number(v.bytes)>MAX_BYTES||(v.checksum!==undefined&&(typeof v.checksum!=='string'||!/^[a-f0-9]{64}$/.test(v.checksum))))throw new BadRequestException();
   if(v.purpose==='verification'){if(!this.admin)throw new ServiceUnavailableException();this.admin.requireConfigured();}
   return this.tx.run(header,'assets.grant',key,v,async(db,actor)=>{
    if(actor.user.status==='suspended'&&v.purpose!=='evidence')throw new NotFoundException();
@@ -63,6 +63,12 @@ export class AssetsService {
  private dto(a:{id:string;status:string},user:string,session:string){return {id:a.id,status:a.status,download_url:a.status==='ready'?this.url(a.id,user,session,'content'):null,expires_at:a.status==='ready'?new Date(Date.now()+TTL).toISOString():null};}
  private async authorized(db:PoolClient,id:string,user:string){
   const a=(await db.query('SELECT * FROM assets WHERE id=$1',[id])).rows[0];if(!a)throw new NotFoundException();
+  if(a.purpose==='gallery'){
+   const refs=(await db.query('SELECT partner_id FROM partner_gallery WHERE asset_id=$1',[id])).rows;
+   if(!refs.length&&a.uploader_id===user)return a;
+   for(const r of refs)if(hasPermission(await memberAccess(db,r.partner_id,user),'profile.manage'))return a;
+   return this.publicAsset(db,id);
+  }
   if(a.purpose==='verification'){
    this.admin?.requireConfigured();const refs=(await db.query('SELECT v.partner_id FROM verification_assets x JOIN verification_requests v ON v.id=x.request_id WHERE x.asset_id=$1',[id])).rows;
    if(!refs.length&&a.uploader_id===user)return a;
@@ -85,10 +91,10 @@ export class AssetsService {
   throw new NotFoundException();
  }
  private async publicAsset(db:PoolClient,id:string) {
-  const a=(await db.query(`SELECT a.* FROM assets a WHERE a.id=$1 AND a.purpose='review' AND a.status='ready' AND EXISTS (
+  const a=(await db.query(`SELECT a.* FROM assets a WHERE a.id=$1 AND a.status='ready' AND ((a.purpose='gallery' AND EXISTS(SELECT 1 FROM partner_gallery g JOIN partners p ON p.id=g.partner_id WHERE g.asset_id=a.id AND p.publication_status='published' AND p.moderation_status='active' AND p.archived_at IS NULL)) OR (a.purpose='review' AND EXISTS (
    SELECT 1 FROM reviews r JOIN jobs j ON j.id=r.job_id JOIN partners p ON p.id=j.partner_id
    WHERE r.asset_id=a.id AND r.direction='customer_to_partner' AND r.hidden_at IS NULL AND r.removed_at IS NULL
-   AND p.publication_status='published' AND p.moderation_status='active' AND p.archived_at IS NULL)`,[id])).rows[0];
+   AND p.publication_status='published' AND p.moderation_status='active' AND p.archived_at IS NULL)))`,[id])).rows[0];
   if(!a)throw new NotFoundException();return a;
  }
  async get(header:string|undefined,id:string){

@@ -1,11 +1,12 @@
 import {BadRequestException,Body,Controller,Get,Header,Headers,Inject,Param,Post,Query} from '@nestjs/common';
 import {identifier,object} from '../accounts/accounts.input.js';
 import {queueInput} from '../moderation/moderation.input.js';
-import {grantsInput,metricsInput} from './backoffice.input.js';
+import {auditInput,grantsInput,metricsInput} from './backoffice.input.js';
 import {BackofficeService} from './backoffice.service.js';
 @Controller()
 export class BackofficeController {
  constructor(@Inject(BackofficeService)private service:BackofficeService){}
+ @Get('admin/audit') @Header('Cache-Control','no-store') audit(@Headers('authorization')a:string|undefined,@Headers('x-admin-session')t:string|undefined,@Query()q:Record<string,unknown>){return this.service.auditLog(a,t,auditInput(q));}
  @Get('admin/metrics') @Header('Cache-Control','no-store') metrics(@Headers('authorization')a:string|undefined,@Headers('x-admin-session')t:string|undefined,@Query()q:Record<string,unknown>){return this.service.metrics(a,t,metricsInput(q));}
  @Get('admin/grant-users') @Header('Cache-Control','no-store') users(@Headers('authorization')a:string|undefined,@Headers('x-admin-session')t:string|undefined,@Query()q:Record<string,unknown>){return this.service.list(a,t,'grant-users',queueInput(q));}
  @Get('admin/users/:id/grants') @Header('Cache-Control','no-store') grants(@Headers('authorization')a:string|undefined,@Headers('x-admin-session')t:string|undefined,@Param('id')id:string){return this.service.grants(a,t,identifier(id));}

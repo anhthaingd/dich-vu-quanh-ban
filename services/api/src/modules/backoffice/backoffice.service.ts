@@ -6,10 +6,21 @@ import {AdminAuthService} from '../admin-auth/admin-auth.service.js';
 import {Cursor} from '../../common/http/cursor.js';
 import {queueInput} from '../moderation/moderation.input.js';
 import {readInvoice} from '../invoices/invoice-view.js';
-import {grantsInput,type ReadDomain} from './backoffice.input.js';
+import {auditInput,grantsInput,type ReadDomain} from './backoffice.input.js';
 export class BackofficeService {
  constructor(private pool:Pool,private auth:AuthService,private admin:AdminAuthService,private cursor:Cursor){}
  private async audit(db:PoolClient,actor:string,action:string,id:string,details:unknown,reason='Administration read'){await db.query('INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,$2,$3,$4,$5)',[actor,action,id,reason,JSON.stringify(details)]);}
+ auditLog(header:string|undefined,token:string|undefined,q:ReturnType<typeof auditInput>){return this.admin.read(header,token,'audit.read',async(db,a)=>{
+  const scope=`global-audit:${a.user.id}:${q.resource_id??'*'}`,after=this.cursor.decode(q.cursor,scope);
+  // Project only the public audit contract; details contain private payloads and never leave this query.
+  // Existing events encode their domain in the action namespace.
+  const rows=(await db.query(`SELECT id,actor_id,action,resource_id,reason,date_trunc('milliseconds',created_at) AS created_at,
+   CASE WHEN split_part(action,'.',1) IN ('admin','finance') THEN split_part(action,'.',2) ELSE split_part(action,'.',1) END AS resource_type
+   FROM audit_events WHERE ($1::uuid IS NULL OR resource_id=$1) AND ($2::timestamptz IS NULL OR (date_trunc('milliseconds',created_at),id)<($2::timestamptz,$3::uuid))
+   ORDER BY date_trunc('milliseconds',created_at) DESC,id DESC LIMIT $4`,[q.resource_id??null,after?.created_at??null,after?.id??null,q.limit+1])).rows;
+  const items=rows.slice(0,q.limit),last=items.at(-1);
+  return {items,next_cursor:rows.length>q.limit?this.cursor.encode({id:last.id,created_at:last.created_at.toISOString()},scope):null};
+ });}
  private async grantDetail(db:PoolClient,id:string){const r=(await db.query('SELECT id,display_name AS name,status,version FROM users WHERE id=$1',[id])).rows[0];if(!r)throw new NotFoundException();return {...r,permissions:(await db.query('SELECT permission FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL ORDER BY permission',[id])).rows.map(r=>r.permission)};}
  grants(header:string|undefined,token:string|undefined,id:string){return this.admin.read(header,token,'grant.manage',async(db,a)=>{const r=await this.grantDetail(db,id);await this.audit(db,a.user.id,'admin.grants.read',id,{});return r;});}
  async saveGrants(header:string|undefined,token:string|undefined,id:string,input:ReturnType<typeof grantsInput>,key:string){

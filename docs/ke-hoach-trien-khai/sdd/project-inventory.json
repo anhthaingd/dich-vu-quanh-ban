@@ -109,6 +109,14 @@
       "kind": "product"
     },
     {
+      "path": "apps/admin/src/mfa-messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/MfaSecurity.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/admin/src/operations-messages.ts",
       "kind": "product"
     },
@@ -285,6 +293,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/app/layout/ProductRole.test.tsx",
+      "kind": "test"
+    },
+    {
       "path": "apps/mobile/src/app/layout/ProductShell.test.tsx",
       "kind": "test"
     },
@@ -318,6 +330,10 @@
     },
     {
       "path": "apps/mobile/src/app/providers/LocaleProvider.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/app/providers/ProductRoleProvider.tsx",
       "kind": "product"
     },
     {
@@ -473,6 +489,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/admin/mfa-messages.ts",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/admin/models.ts",
       "kind": "product"
     },
@@ -510,6 +530,10 @@
     },
     {
       "path": "apps/mobile/src/features/admin/screens/CatalogEditor.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/MfaSecurity.tsx",
       "kind": "product"
     },
     {
@@ -797,6 +821,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/jobs/state/session-ready.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "apps/mobile/src/features/jobs/state/session-ready.ts",
       "kind": "product"
     },
@@ -957,6 +985,10 @@
       "kind": "placeholder"
     },
     {
+      "path": "apps/mobile/src/features/partners/api/gallery-api.ts",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/partners/api/partners-api.test.ts",
       "kind": "test"
     },
@@ -965,11 +997,23 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/partners/components/GalleryEditor.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/components/GalleryEditor.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/partners/components/PartnerFields.tsx",
       "kind": "product"
     },
     {
       "path": "apps/mobile/src/features/partners/components/PolygonEditor.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/components/PublicGallery.tsx",
       "kind": "product"
     },
     {
@@ -1397,6 +1441,30 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-09/android-cold-link.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-09/android-wallet-ja.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-09/ios-cold-link.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-09/ios-owner-jobs.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-09/ios-wallet-ja.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-09/web-employee-tabs.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B01-08/01-security-web.png",
       "kind": "documentation"
     },
@@ -1530,6 +1598,26 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-04/web-verification-pending.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-05/android-gallery-order.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-05/android-paused.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-05/ios-gallery-order.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-05/ios-paused.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B02-05/web-gallery.png",
       "kind": "documentation"
     },
     {
@@ -2057,6 +2145,22 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B11-04/web-admin-audit.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B11-05/android-mfa-security.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B11-05/ios-mfa-security.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B11-05/web-mfa-reset.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/I18N-05/01-account-en-web.png",
       "kind": "documentation"
     },
@@ -2145,6 +2249,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-09-luong-local-va-dieu-huong.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
       "kind": "documentation"
     },
@@ -2178,6 +2286,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B02-04-nop-va-xet-xac-minh.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-05-gallery-va-ngung-nhan-viec.md",
       "kind": "documentation"
     },
     {
@@ -2297,6 +2409,18 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-04-nhat-ky-admin-tong-hop.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-05-khoi-phuc-mfa.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-06-backup-day-du-demo.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B03-01-geoapify-30-dia-chi.json",
       "kind": "documentation"
     },
@@ -2322,6 +2446,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/de-xuat/I18N-04-dich-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/LOCAL-01-hoan-thien-luong-local.md",
       "kind": "documentation"
     },
     {
@@ -2653,6 +2781,14 @@
       "kind": "test"
     },
     {
+      "path": "scripts/ops/backup-files.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/ops/demo-mfa-rescue.mjs",
+      "kind": "tooling"
+    },
+    {
       "path": "scripts/ops/local-safety.mjs",
       "kind": "tooling"
     },
@@ -2682,6 +2818,10 @@
     },
     {
       "path": "scripts/test/admin-client.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/backup-files.test.mjs",
       "kind": "test"
     },
     {
@@ -2818,6 +2958,10 @@
     },
     {
       "path": "services/api/migrations/023_p2_finance_reference_repair.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/024_local_gallery_mfa.sql",
       "kind": "product"
     },
     {
@@ -3497,11 +3641,19 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/integration/local-gallery.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/integration/locations.test.ts",
       "kind": "test"
     },
     {
       "path": "services/api/test/integration/logging.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/mfa-recovery.test.ts",
       "kind": "test"
     },
     {
@@ -3621,6 +3773,14 @@
       "kind": "test"
     },
     {
+      "path": "tests/e2e/native/local-approved.yaml",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/native/local-completion.yaml",
+      "kind": "test"
+    },
+    {
       "path": "tests/e2e/native/p2-screens.yaml",
       "kind": "test"
     },
@@ -3702,6 +3862,14 @@
     },
     {
       "path": "tests/e2e/web/jobs-chat.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/local-completion.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/local-gallery-mfa.spec.mjs",
       "kind": "test"
     },
     {
@@ -4396,7 +4564,10 @@
       "apps/mobile/src/lib/i18n/locale-state.test.ts",
       "apps/mobile/src/lib/i18n/locale-storage.test.ts",
       "apps/mobile/src/lib/logging/logger.test.ts",
-      "apps/mobile/src/lib/realtime/realtime-client.test.ts"
+      "apps/mobile/src/lib/realtime/realtime-client.test.ts",
+      "apps/mobile/src/app/layout/ProductRole.test.tsx",
+      "apps/mobile/src/features/jobs/state/session-ready.test.ts",
+      "apps/mobile/src/features/partners/components/GalleryEditor.test.tsx"
     ],
     "api": [
       "services/api/test/integration/account-management.test.ts",
@@ -4432,7 +4603,9 @@
       "services/api/test/unit/logging.test.ts",
       "services/api/test/unit/organizations.test.ts",
       "services/api/test/unit/output.test.ts",
-      "services/api/test/unit/totp.test.ts"
+      "services/api/test/unit/totp.test.ts",
+      "services/api/test/integration/local-gallery.test.ts",
+      "services/api/test/integration/mfa-recovery.test.ts"
     ],
     "web": [
       "tests/e2e/web/account-management.spec.mjs",
@@ -4459,7 +4632,9 @@
       "tests/e2e/web/search-map.spec.mjs",
       "tests/e2e/web/search-service.spec.mjs",
       "tests/e2e/web/shell.spec.mjs",
-      "tests/e2e/web/support.spec.mjs"
+      "tests/e2e/web/support.spec.mjs",
+      "tests/e2e/web/local-completion.spec.mjs",
+      "tests/e2e/web/local-gallery-mfa.spec.mjs"
     ],
     "tooling": [
       "scripts/diagnostics/export.test.mjs",
@@ -4468,7 +4643,8 @@
       "scripts/test/native-options.test.mjs",
       "scripts/test/restore-safety.test.mjs",
       "scripts/test/sdd-check.test.mjs",
-      "scripts/test/sdd-project.test.mjs"
+      "scripts/test/sdd-project.test.mjs",
+      "scripts/test/backup-files.test.mjs"
     ]
   },
   "criteria": [
@@ -4615,7 +4791,14 @@
     "P2-CALL-03",
     "P2-ADMIN-01",
     "P2-ADMIN-02",
-    "P2-OPS-01"
+    "P2-OPS-01",
+    "LOCAL-01-INTENT",
+    "LOCAL-01-LINKS",
+    "LOCAL-01-ROLE",
+    "LOCAL-01-AUDIT",
+    "LOCAL-01-GALLERY",
+    "LOCAL-01-MFA",
+    "LOCAL-01-BACKUP"
   ],
   "qa": [
     {
@@ -4686,7 +4869,9 @@
     {
       "id": "QA-009",
       "status": "unmapped",
-      "criteria": [],
+      "criteria": [
+        "LOCAL-01-GALLERY"
+      ],
       "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
     },
     {
@@ -4711,7 +4896,8 @@
       "id": "QA-012",
       "status": "partial",
       "criteria": [
-        "SEARCH-AC-03"
+        "SEARCH-AC-03",
+        "LOCAL-01-GALLERY"
       ],
       "reason": "Chỉ chứng minh assertions của tiêu chí liên kết; chưa đánh giá toàn bộ tổ hợp QA, native và UAT."
     },
@@ -4808,7 +4994,8 @@
         "CHAT-AC-02",
         "CHAT-AC-03",
         "CHAT-AC-04",
-        "JOB-AC-09"
+        "JOB-AC-09",
+        "LOCAL-01-INTENT"
       ],
       "reason": "Chỉ assertions của các test đã liệt kê; không phải chứng nhận toàn bộ QA hay native/UAT. | Không phải crash process/worker hoặc WebSocket delivery. | Không chứng minh mở room đồng thời, reuse sau hoàn tất; không native, phone OTP thật hoặc WebSocket."
     },
@@ -5016,7 +5203,8 @@
         "REV-01-AC-03",
         "REV-03-AC-01",
         "REV-03-AC-02",
-        "REV-03-AC-03"
+        "REV-03-AC-03",
+        "LOCAL-01-INTENT"
       ],
       "reason": "B10-01 core and B10-03 local photos/replies mapped. Admin/support and cross-job history remain open; QA partial."
     },
@@ -5097,15 +5285,19 @@
     },
     {
       "id": "QA-054",
-      "status": "unmapped",
-      "criteria": [],
-      "reason": "Chưa có tiêu chí tự động được review cho toàn ca này; giữ nguyên Pending/chưa triển khai hoặc bằng chứng thủ công cũ. Cần rà soát trước khi mở chức năng."
+      "status": "partial",
+      "criteria": [
+        "LOCAL-01-LINKS",
+        "LOCAL-01-ROLE"
+      ],
+      "reason": "LOCAL-01 maps validated app links, login return and explicit customer/owner/employee roles with local tests. Physical devices, Universal Links, real push, all roles/resources and UAT remain unproven."
     },
     {
       "id": "QA-055",
       "status": "partial",
       "criteria": [
-        "P2-OPS-01"
+        "P2-OPS-01",
+        "LOCAL-01-BACKUP"
       ],
       "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
@@ -5503,7 +5695,9 @@
       "id": "QA-098",
       "status": "partial",
       "criteria": [
-        "P1-03-AC-01"
+        "P1-03-AC-01",
+        "LOCAL-01-AUDIT",
+        "LOCAL-01-MFA"
       ],
       "reason": "P1-03 local/test criteria only; physical devices, UAT, production and full operational edge matrix not certified."
     },
@@ -5536,7 +5730,8 @@
       "status": "partial",
       "criteria": [
         "P1-03-AC-05",
-        "P1-03-MOBILE-01"
+        "P1-03-MOBILE-01",
+        "LOCAL-01-AUDIT"
       ],
       "reason": "P1-03 local/test criteria only; physical devices, UAT, production and full operational edge matrix not certified."
     },
@@ -6811,9 +7006,11 @@
       "id": "getAudit",
       "method": "GET",
       "path": "/admin/audit",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "LOCAL-01-AUDIT"
+      ],
+      "reason": "LOCAL-01 approved local batch implements the existing getAudit contract. Projection of current audit_events only, no guarantee of complete event coverage or production retention."
     },
     {
       "id": "getMetrics",
@@ -6999,9 +7196,11 @@
       "id": "deactivatePartner",
       "method": "POST",
       "path": "/partners/{id}/deactivation",
-      "status": "specified-not-implemented",
-      "criteria": [],
-      "reason": "Chưa có controller sản phẩm tương ứng; không được tự triển khai từ việc đăng ký SDD."
+      "status": "implemented",
+      "criteria": [
+        "LOCAL-01-GALLERY"
+      ],
+      "reason": "Approved 23/10/2026: existing ReasonInput/Ack, profile.manage, CAS/idempotency/audit; accepting_jobs=false preserves history."
     },
     {
       "id": "leavePartner",
@@ -8717,6 +8916,46 @@
       "method": "POST",
       "path": "/partners/{id}/verification",
       "file": "services/api/src/modules/verification/verification.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/audit",
+      "file": "services/api/src/modules/backoffice/backoffice.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/replacement",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/backup-codes",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/recover",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/users/{id}/reset",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/gallery",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/partners/{id}/deactivation",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/partners/{id}/gallery",
+      "file": "services/api/src/modules/partners/partners.controller.ts"
     }
   ],
   "contractGaps": [
@@ -8731,6 +8970,42 @@
       "path": "/assets/{id}/content",
       "file": "services/api/src/modules/assets/assets.controller.ts",
       "reason": "Adapter ảnh local/test chưa có operation OpenAPI; không nâng thành contract production."
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/replacement",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts",
+      "reason": "LOCAL-01: owner explicitly approved grouped gallery/MFA rules 23/10/2026. Implementation contract documented in B02-05/B11-05; OpenAPI/Drive/ui-ux synchronization was not requested. Reviewed local/test route, not production contract certification."
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/backup-codes",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts",
+      "reason": "LOCAL-01: owner explicitly approved grouped gallery/MFA rules 23/10/2026. Implementation contract documented in B02-05/B11-05; OpenAPI/Drive/ui-ux synchronization was not requested. Reviewed local/test route, not production contract certification."
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/recover",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts",
+      "reason": "LOCAL-01: owner explicitly approved grouped gallery/MFA rules 23/10/2026. Implementation contract documented in B02-05/B11-05; OpenAPI/Drive/ui-ux synchronization was not requested. Reviewed local/test route, not production contract certification."
+    },
+    {
+      "method": "POST",
+      "path": "/admin/auth/users/{id}/reset",
+      "file": "services/api/src/modules/admin-auth/admin-auth.controller.ts",
+      "reason": "LOCAL-01: owner explicitly approved grouped gallery/MFA rules 23/10/2026. Implementation contract documented in B02-05/B11-05; OpenAPI/Drive/ui-ux synchronization was not requested. Reviewed local/test route, not production contract certification."
+    },
+    {
+      "method": "GET",
+      "path": "/partners/{id}/gallery",
+      "file": "services/api/src/modules/partners/partners.controller.ts",
+      "reason": "LOCAL-01: owner explicitly approved grouped gallery/MFA rules 23/10/2026. Implementation contract documented in B02-05/B11-05; OpenAPI/Drive/ui-ux synchronization was not requested. Reviewed local/test route, not production contract certification."
+    },
+    {
+      "method": "PUT",
+      "path": "/partners/{id}/gallery",
+      "file": "services/api/src/modules/partners/partners.controller.ts",
+      "reason": "LOCAL-01: owner explicitly approved grouped gallery/MFA rules 23/10/2026. Implementation contract documented in B02-05/B11-05; OpenAPI/Drive/ui-ux synchronization was not requested. Reviewed local/test route, not production contract certification."
     }
   ],
   "knownGaps": [

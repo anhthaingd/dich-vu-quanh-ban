@@ -1336,6 +1336,12 @@
         "id": "QA-108",
         "requirement": "P2-METRICS"
       }
+    },
+    {
+      "id": "local-01-approved",
+      "path": "docs/ke-hoach-trien-khai/de-xuat/LOCAL-01-hoan-thien-luong-local.md",
+      "heading": "## Quyết định bổ sung đã duyệt ngày 23/10/2026",
+      "sha256": "6e845f80b6e04b6a0e912ac36649bd9cd3f4d55159a95ceedeb8931b57fb0530"
     }
   ],
   "domains": [

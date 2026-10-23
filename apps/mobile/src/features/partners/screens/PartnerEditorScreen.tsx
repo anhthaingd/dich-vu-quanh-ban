@@ -1,3 +1,4 @@
+import {GalleryEditor} from '../components/GalleryEditor';
 import {PolygonEditor} from '../components/PolygonEditor';
 import { LocationField } from '../../location/components/LocationField';
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
@@ -81,7 +82,7 @@ function Editor({
     [areas, setAreas] = useState<AreaDraft[]>([]),
     [locations, setLocations] = useState<LocationDraft[]>([]);
   const [section, setSection] = useState<
-    'profile' | 'skills' | 'areas' | 'locations'
+    'profile' | 'skills' | 'areas' | 'locations' | 'gallery'
   >('profile');
   const [categories, setCategories] = useState<Category[]>([]),
     [choices, setChoices] = useState<Skill[]>([]),
@@ -279,10 +280,7 @@ function Editor({
                 (p.moderation_status !== 'active' && !p.accepting_jobs)
               }
               onPress={() =>
-                save({
-                  action: 'availability',
-                  accepting_jobs: !p.accepting_jobs
-                })
+                save(p.accepting_jobs?{action:'deactivation',reason:t('partners.disable')}:{action:'availability',accepting_jobs:true})
               }
             />
             {p.publication_status === 'draft' && (
@@ -302,13 +300,14 @@ function Editor({
           </Card>
           <AppText variant="section">{t('partners.editDetails')}</AppText>
           <Options
-            values={['profile', 'skills', 'areas', 'locations']}
+            values={['profile', 'skills', 'areas', 'locations', 'gallery']}
             value={section}
             onChange={setSection}
             disabled={blocked}
             testID="partner-section"
             layout="sections"
           />
+          {section === 'gallery' && <GalleryEditor key={p.id} owner={owner} partner={p} blocked={blocked} saved={()=>void editor.load()}/>}
           {section === 'profile' && (
             <Card>
               <Input

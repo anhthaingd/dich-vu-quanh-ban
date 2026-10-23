@@ -1,0 +1,199 @@
+appId: vn.dichvuquanhban.app
+---
+- stopApp
+- openLink: ${DEV_URL}
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "Close"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: nav-account
+    timeout: 60000
+- tapOn:
+    id: nav-account
+- tapOn:
+    id: locale-vi
+- scrollUntilVisible:
+    element:
+      id: auth-email
+    direction: DOWN
+- tapOn:
+    id: auth-email
+- inputText: ${TEST_EMAIL}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: auth-password
+    direction: DOWN
+- tapOn:
+    id: auth-password
+- inputText: ${TEST_PASSWORD}
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Enter
+- runFlow: dismiss-password-prompt.yaml
+- extendedWaitUntil:
+    visible: "Email chưa xác minh"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: security-open
+    direction: DOWN
+- tapOn:
+    id: security-open
+- assertVisible: "Bảo mật tài khoản"
+- takeScreenshot: p2-security
+- tapOn: "Quay lại"
+- scrollUntilVisible:
+    element:
+      id: partners-open
+    direction: DOWN
+- tapOn:
+    id: partners-open
+- extendedWaitUntil:
+    visible: "DEMO P2 Wallet"
+    timeout: 15000
+- tapOn:
+    id: "wallet-open-.*"
+- extendedWaitUntil:
+    visible:
+      id: finance-home
+    timeout: 20000
+- takeScreenshot: p2-wallet
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: finance-bank
+          direction: DOWN
+          centerElement: true
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: finance-bank
+          direction: DOWN
+          visibilityPercentage: 100
+- tapOn:
+    id: finance-bank
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: finance-bank-code
+          direction: DOWN
+          centerElement: true
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: finance-bank-code
+          direction: DOWN
+          visibilityPercentage: 100
+- takeScreenshot: p2-bank
+
+- tapOn:
+    id: nav-account
+- scrollUntilVisible:
+    element:
+      id: role-profiles
+    direction: DOWN
+- tapOn:
+    id: role-profiles
+- scrollUntilVisible:
+    element:
+      id: "role-select-.*"
+    direction: DOWN
+- tapOn:
+    id: "role-select-.*"
+- extendedWaitUntil:
+    visible:
+      id: nav-wallet
+    timeout: 15000
+- assertNotVisible:
+    id: nav-catalog
+- takeScreenshot: local-role-jobs
+- tapOn:
+    id: nav-wallet
+- extendedWaitUntil:
+    visible:
+      id: finance-home
+    timeout: 20000
+- takeScreenshot: local-role-wallet
+- tapOn:
+    id: nav-account
+- tapOn:
+    id: locale-en
+- tapOn:
+    id: nav-back
+- assertVisible: "Your wallet"
+- takeScreenshot: local-wallet-en
+- tapOn:
+    id: nav-account
+- tapOn:
+    id: locale-ja
+- tapOn:
+    id: nav-back
+- assertVisible: "ウォレット"
+- takeScreenshot: local-wallet-ja
+- tapOn:
+    id: nav-account
+- tapOn:
+    id: locale-vi
+- tapOn:
+    id: nav-back
+- openLink: "dvqb://jobs/00000000-0000-4000-8000-000000000099"
+- extendedWaitUntil:
+    visible: "Bạn không có quyền hoặc dữ liệu này không còn khả dụng."
+    timeout: 15000
+- takeScreenshot: local-link-denied
+- stopApp
+- openLink: "dvqb://jobs/00000000-0000-4000-8000-000000000099"
+# A cold custom URL opens Expo's development launcher. Selecting the
+# existing bundle consumes the pending URL; do not send the product URL again.
+- extendedWaitUntil:
+    visible: "Development Build"
+    timeout: 15000
+- runFlow:
+    when:
+      visible: "Development Build"
+    commands:
+      - scrollUntilVisible:
+          element:
+            text: '.*(localhost|127\.0\.0\.1):808[34].*'
+          direction: DOWN
+          visibilityPercentage: 100
+      - tapOn:
+          text: '.*(localhost|127\.0\.0\.1):808[34].*'
+          index: 0
+- extendedWaitUntil:
+    visible: "Bạn không có quyền hoặc dữ liệu này không còn khả dụng."
+    timeout: 60000
+- takeScreenshot: local-cold-link-denied

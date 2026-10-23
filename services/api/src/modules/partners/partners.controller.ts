@@ -12,7 +12,7 @@ import {
   BadRequestException
 } from '@nestjs/common';
 import { PartnersService } from './partners.service.js';
-import { createInput, editInput, type Edit } from './partners.input.js';
+import { createInput, deactivationInput, editInput, type Edit } from './partners.input.js';
 import { parseQuery } from '../catalog/catalog.query.js';
 import { identifier, object } from '../accounts/accounts.input.js';
 import { SearchService } from '../search/search.service.js';
@@ -28,6 +28,9 @@ export class PartnersController {
   list(@Query() query: Record<string, unknown>) {
     return this.search.list(searchInput(query));
   }
+  @Get(':id/gallery')
+  @Header('Cache-Control','no-store')
+  gallery(@Headers('authorization')auth:string|undefined,@Param('id')id:string){return this.service.gallery(auth,identifier(id));}
   @Get(':id/management')
   @Header('Cache-Control', 'no-store')
   management(
@@ -59,6 +62,11 @@ export class PartnersController {
   ) {
     return this.service.create(auth, createInput(body), identifier(key));
   }
+  @Post(':id/deactivation')
+  @Header('Cache-Control', 'no-store')
+  deactivate(@Headers('authorization') auth:string|undefined,@Headers('idempotency-key') key:string|undefined,@Param('id') id:string,@Body() body:unknown){
+    return this.service.deactivate(auth,identifier(id),deactivationInput(body),identifier(key));
+  }
   @Put(':id/:action')
   @Header('Cache-Control', 'no-store')
   edit(
@@ -70,6 +78,7 @@ export class PartnersController {
   ) {
     if (
       ![
+        'gallery',
         'profile',
         'skills',
         'service-areas',

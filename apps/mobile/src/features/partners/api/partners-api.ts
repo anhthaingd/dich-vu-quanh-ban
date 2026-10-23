@@ -170,8 +170,12 @@ export function createPartnersApi(
       call('', isPartner, { method: 'POST', body: input }, token, key),
     management: (token, id) =>
       call(`/${encodeURIComponent(id)}/management`, isPartner, {}, token),
-    edit: (token, id, input, key) => {
+    edit: async (token, id, input, key) => {
       const { action, ...body } = input;
+      if(action==='deactivation'){
+        await call(`/${encodeURIComponent(id)}/deactivation`,(v):v is {id:string;version:number;state:string}=>record(v)&&v.id===id&&Number.isSafeInteger(v.version)&&v.state==='inactive',{method:'POST',body},token,key);
+        return call(`/${encodeURIComponent(id)}/management`,isPartner,{},token);
+      }
       return call(
         `/${encodeURIComponent(id)}/${action}`,
         isPartner,
