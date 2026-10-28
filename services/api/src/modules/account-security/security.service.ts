@@ -64,7 +64,6 @@ export class SecurityService {
   await db.query('UPDATE reauth_grants SET consumed_at=COALESCE(consumed_at,clock_timestamp()) WHERE user_id=$1',[user]);
  }
  async confirm(header:string|undefined,b:Confirm,receipt?:string,key?:string){
-  const hash=b.new_password?await hashPassword(b.new_password):null;
   const result=await this.tx(async db=>{
    let a:Actor|undefined;
    if(b.purpose==='identity'){a=await this.actor(db,header);
@@ -84,6 +83,9 @@ export class SecurityService {
     if(!r||r.state!=='approved'||!receipt||r.receipt_hash!==this.messages.secrets.hash(receipt))return null;
 
    }
+   // Expensive password work starts only after the challenge and recovery proof
+   // are valid. Otherwise anonymous requests can monopolize both scrypt slots.
+   const hash=b.new_password?await hashPassword(b.new_password):null;
    if(['identity','recovery'].includes(b.purpose)){
     await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[c.contact_hash]);
     const existing=(await db.query('SELECT user_id FROM identities WHERE provider=$1 AND subject=$2',[c.provider,contact])).rows[0];
@@ -105,8 +107,7 @@ export class SecurityService {
   if(!result)throw new BadRequestException({code:'CHALLENGE_INVALID'});if(typeof result==='string')throw new ConflictException({code:result});return result;
  }
  async changePassword(header:string|undefined,b:ReturnType<typeof Input.changePassword>,ip:string){
-  const hash=await hashPassword(b.new_password);
-  const result=await this.tx(async db=>{const a=await this.actor(db,header);if(!await this.proof(db,a,b.password,ip))return null;await db.query("UPDATE identities SET password_hash=$2 WHERE user_id=$1 AND provider='email'",[a.user.id,hash]);await this.revoke(db,a.user.id);await this.audit(db,a.user.id,'account.password.changed',a.user.id,'Fresh current-password proof');return {id:a.user.id,version:1,state:'completed'};});
+  const result=await this.tx(async db=>{const a=await this.actor(db,header);if(!await this.proof(db,a,b.password,ip))return null;const hash=await hashPassword(b.new_password);await db.query("UPDATE identities SET password_hash=$2 WHERE user_id=$1 AND provider='email'",[a.user.id,hash]);await this.revoke(db,a.user.id);await this.audit(db,a.user.id,'account.password.changed',a.user.id,'Fresh current-password proof');return {id:a.user.id,version:1,state:'completed'};});
   await this.auth.accessChanged();if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return result;
  }
  async recover(b:ReturnType<typeof Input.recovery>,ip:string,suppliedReceipt?:string){

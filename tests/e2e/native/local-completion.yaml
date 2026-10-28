@@ -76,7 +76,7 @@ appId: vn.dichvuquanhban.app
     id: "wallet-open-.*"
 - extendedWaitUntil:
     visible:
-      id: finance-home
+      id: finance-bank
     timeout: 20000
 - takeScreenshot: p2-wallet
 - runFlow:
@@ -144,7 +144,7 @@ appId: vn.dichvuquanhban.app
     id: nav-wallet
 - extendedWaitUntil:
     visible:
-      id: finance-home
+      id: finance-bank
     timeout: 20000
 - takeScreenshot: local-role-wallet
 - tapOn:

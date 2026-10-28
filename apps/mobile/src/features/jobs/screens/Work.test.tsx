@@ -1,3 +1,5 @@
+import {Fragment} from 'react';
+import {RealtimeProvider} from '../../../app/providers/RealtimeProvider';
 import {ScrollView} from 'react-native';
 import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
 import {NavigationContainer} from '@react-navigation/native';
@@ -16,8 +18,9 @@ import {workFixture,job,message,room} from '../../../../test/helpers/work';
 import {ApiError} from '../../../lib/http/api-error';
 jest.mock('../../location/components/LocationField',()=>({LocationField:({onChange}:{onChange:(v:unknown)=>void})=>{const {Button}=jest.requireActual('../../../components/ui/Button');return <Button testID="test-place" label="DEMO place" onPress={()=>onChange({text:'DEMO place',point:{latitude:21,longitude:105},source:'saved'})}/>;}}));
 const Stack=createNativeStackNavigator<RootStackParamList>();
-function mount(f:ReturnType<typeof workFixture>,initial: 'Jobs'|'JobDetail'|'JobCreate'|'Conversations'|'Conversation'|'PartnerProfile'='Jobs'){
- return render(<AppProviders api={{categories:jest.fn().mockResolvedValue([]),skills:jest.fn().mockResolvedValue([])}}><AuthProvider manager={f.manager}><NavigationContainer><Stack.Navigator initialRouteName={initial} screenOptions={{headerShown:false,animation:'none'}}><Stack.Screen name="PartnerProfile" component={PartnerProfileScreen} initialParams={{id:'partner'}}/><Stack.Screen name="Jobs" component={JobsScreen}/><Stack.Screen name="JobDetail" component={JobDetailScreen} initialParams={{id:'job'}}/><Stack.Screen name="JobCreate" component={JobCreateScreen} initialParams={{partnerId:'partner'}}/><Stack.Screen name="Conversations" component={ConversationsScreen} initialParams={{jobId:'job'}}/><Stack.Screen name="Conversation" component={ConversationScreen} initialParams={{id:'room',jobId:'job'}}/></Stack.Navigator></NavigationContainer></AuthProvider></AppProviders>);
+function mount(f:ReturnType<typeof workFixture>,initial: 'Jobs'|'JobDetail'|'JobCreate'|'Conversations'|'Conversation'|'PartnerProfile'='Jobs',realtime=false){
+ const RefreshProvider=realtime?RealtimeProvider:Fragment;
+ return render(<AppProviders api={{categories:jest.fn().mockResolvedValue([]),skills:jest.fn().mockResolvedValue([])}}><AuthProvider manager={f.manager}><RefreshProvider><NavigationContainer><Stack.Navigator initialRouteName={initial} screenOptions={{headerShown:false,animation:'none'}}><Stack.Screen name="PartnerProfile" component={PartnerProfileScreen} initialParams={{id:'partner'}}/><Stack.Screen name="Jobs" component={JobsScreen}/><Stack.Screen name="JobDetail" component={JobDetailScreen} initialParams={{id:'job'}}/><Stack.Screen name="JobCreate" component={JobCreateScreen} initialParams={{partnerId:'partner'}}/><Stack.Screen name="Conversations" component={ConversationsScreen} initialParams={{jobId:'job'}}/><Stack.Screen name="Conversation" component={ConversationScreen} initialParams={{id:'room',jobId:'job'}}/></Stack.Navigator></NavigationContainer></RefreshProvider></AuthProvider></AppProviders>);
 }
 async function refreshDone(){await waitFor(()=>expect(screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.accessibilityState.busy).toBe(false));}
 function pull(){act(()=>screen.UNSAFE_getByType(ScrollView).props.refreshControl.props.onRefresh());}
@@ -133,8 +136,26 @@ test('job action draft stays editable during a background snapshot while confirm
  const f=workFixture();mount(f,'JobDetail');await enabled('job-reload');
  let finish!:(value:typeof job)=>void;f.jobs.get.mockReturnValueOnce(new Promise(resolve=>{finish=resolve;}));
  fireEvent.press(screen.getByTestId('job-reload'));await waitFor(()=>expect(f.manager.getSnapshot().busy).toBe(true));
+ // A background refresh must not insert a row above the action buttons:
+ // it moves the touch target between pointer down and pointer up.
+ expect(screen.queryByText('Đang tải…')).toBeNull();
  expect(screen.getByTestId('job-action-reschedule')).not.toBeDisabled();fireEvent.press(screen.getByTestId('job-action-reschedule'));
  expect(screen.getByTestId('job-date').props.editable).toBe(true);fireEvent.changeText(screen.getByTestId('job-date'),'2099-12-11');
  expect(screen.getByTestId('job-action-confirm')).toBeDisabled();expect(f.jobs.change).not.toHaveBeenCalled();
  await act(async()=>finish(job));await enabled('job-action-confirm');expect(screen.getByTestId('job-date').props.value).toBe('2099-12-11');
+});
+
+test('fallback polling defers while drafting instead of announcing an unobserved job conflict',async()=>{
+ jest.useFakeTimers();
+ try {
+  const f=workFixture();const view=mount(f,'JobDetail',true);await enabled('job-reload');
+  fireEvent.press(screen.getByTestId('job-action-accept'));
+  fireEvent.changeText(screen.getByTestId('job-eta'),'45');
+  await act(async()=>jest.advanceTimersByTime(16000));
+  expect(screen.queryByText('Dữ liệu hoặc điều kiện đã đổi. Tải lại và kiểm tra trước khi thao tác tiếp.')).toBeNull();
+  expect(screen.getByTestId('job-eta').props.value).toBe('45');
+  fireEvent.press(screen.getByTestId('job-action-confirm'));await enabled('job-reload');
+  expect(f.jobs.change).toHaveBeenCalledWith(expect.any(String),'job','accept',expect.objectContaining({expected_version:1}),expect.any(String));
+  view.unmount();
+ } finally {jest.useRealTimers();}
 });

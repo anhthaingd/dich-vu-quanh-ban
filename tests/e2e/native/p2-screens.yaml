@@ -58,11 +58,22 @@ appId: vn.dichvuquanhban.app
     element:
       id: security-open
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
+- extendedWaitUntil:
+    visible:
+      id: security-open
+      enabled: true
+    timeout: 15000
 - tapOn:
     id: security-open
+- extendedWaitUntil:
+    visible: "Mật khẩu hiện tại"
+    timeout: 15000
 - assertVisible: "Bảo mật tài khoản"
 - takeScreenshot: p2-security
-- tapOn: "Quay lại"
+- tapOn:
+    id: nav-back
 - scrollUntilVisible:
     element:
       id: partners-open
@@ -79,6 +90,12 @@ appId: vn.dichvuquanhban.app
       id: finance-bank
     timeout: 20000
 - takeScreenshot: p2-wallet
+- scrollUntilVisible:
+    element:
+      id: finance-bank
+    direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: finance-bank
 - extendedWaitUntil:

@@ -22,7 +22,7 @@ const labels={'job.requested':'requested','job.decline':'declined','job.withdraw
 type Navigation=NativeStackScreenProps<RootStackParamList,'Notifications'>['navigation'];
 export function NotificationsScreen({navigation}:NativeStackScreenProps<RootStackParamList,'Notifications'>){
   return <AccountPage title="notices.title" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account',{returnTo:'Notifications'})}
-    shell={{onWallet:id=>navigation.navigate('Finance',{id}),activeTab:'notifications',onAccount:()=>navigation.navigate('Account'),onCatalog:()=>navigation.popTo('CatalogHome'),onJobs:()=>navigation.navigate('Jobs'),onMessages:()=>navigation.navigate('Conversations'),onNotifications:()=>navigation.navigate('Notifications')}}>
+    shell={{root:true,onWallet:id=>navigation.navigate('Finance',{id}),activeTab:'notifications',onAccount:()=>navigation.navigate('Account'),onCatalog:()=>navigation.popTo('CatalogHome'),onJobs:()=>navigation.navigate('Jobs'),onMessages:()=>navigation.navigate('Conversations'),onNotifications:()=>navigation.navigate('Notifications')}}>
     {owner=><Inbox key={owner} owner={owner} navigation={navigation}/>}</AccountPage>;
 }
 function Inbox({owner,navigation}:{owner:string;navigation:Navigation}){

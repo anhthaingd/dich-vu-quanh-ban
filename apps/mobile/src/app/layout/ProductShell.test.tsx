@@ -27,6 +27,7 @@ test('avatar follows the current session and resets after logout without adding 
   await screen.findByText('Email chưa xác minh');
   fireEvent.press(screen.getByTestId('auth-logout'));
   await screen.findByTestId('auth-email');
+  expect(screen.queryByText('← Quay lại')).toBeNull();
   fireEvent.press(screen.getByTestId('nav-back'));
   await screen.findByRole('button', { name: 'Điện nước' });
   expect(screen.getByTestId('account-initial')).toHaveTextContent('?');
@@ -36,6 +37,7 @@ test('home keeps service selection after account, and protected tabs have real d
   fireEvent.press(await screen.findByRole('button', { name: 'Điện nước' }));
   fireEvent.press(screen.getByTestId('nav-account'));
   await screen.findByTestId('auth-email');
+  expect(screen.queryByText('← Quay lại')).toBeNull();
   fireEvent.press(screen.getByTestId('nav-back'));
   expect(await screen.findByTestId('search-service-selected')).toHaveTextContent('Điện nước');
   expect(screen.getByTestId('nav-notifications')).not.toBeDisabled();
@@ -44,6 +46,7 @@ test('home keeps service selection after account, and protected tabs have real d
   fireEvent.press(screen.getByTestId('nav-jobs'));
   expect(await screen.findByTestId('account-continue-login')).toBeVisible();
   expect(screen.getByRole('tab', {name:'Công việc',selected:true})).toBeVisible();
+  expect(screen.queryByTestId('nav-back')).toBeNull();
   fireEvent.press(screen.getByTestId('nav-messages'));
   expect(await screen.findByRole('tab', {name:'Tin nhắn',selected:true})).toBeVisible();
   fireEvent.press(screen.getByTestId('nav-catalog'));

@@ -25,7 +25,13 @@ export class ProfileEditor {
     if (!this.state.loaded || this.state.saving || this.state.loading || this.state.conflict) return;
     const name = this.state.name.trim();
     if (!name || name.length > 100 || Array.from(name).some(c => c.charCodeAt(0) < 32)) { this.update({ error: 'VALIDATION' }); return; }
-    this.attempt ??= { input: { expected_version: this.state.version, display_name: name }, key: randomUUID() };
+    // Locale changes share the account version. Rebase only when the observed
+    // server name still matches our baseline; another name must remain a conflict.
+    // An uncertain retry keeps its original payload and key in this.attempt.
+    const current = this.auth.getSnapshot().user;
+    const version = current?.id === this.owner && current.display_name === this.state.currentName
+      ? Math.max(current.version, this.state.version) : this.state.version;
+    this.attempt ??= { input: { expected_version: version, display_name: name }, key: randomUUID() };
     this.update({ saving: true, saved: false, error: null, pending: true });
     try {
       const me = await this.auth.editProfile(this.owner, this.attempt.input, this.attempt.key);

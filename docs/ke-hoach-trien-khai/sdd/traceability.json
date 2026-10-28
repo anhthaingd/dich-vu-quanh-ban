@@ -26,7 +26,7 @@
     {
       "id": "MAP-02-AC-02",
       "requirement": "MAP-02",
-      "description": "Người không có ghim vẫn còn trong danh sách; ghim trùng mở được từng hồ sơ",
+      "description": "Người không có ghim vẫn còn trong danh sách; ghim trùng mở được từng hồ sơ. Audit 23/10: real MapLibre attribution strips adjacent event-handler attributes; malicious third-party style attribution does not execute.",
       "sources": [
         "map02",
         "ux-map02",
@@ -338,7 +338,7 @@
       "qa": [
         "QA-071"
       ],
-      "description": "Mất response giữ nguyên key/payload; conflict giữ draft chờ reload rõ ràng",
+      "description": "Mất response giữ nguyên key/payload; conflict giữ draft chờ reload rõ ràng. Audit 23/10: locale-only account updates advance the name draft baseline version only when the observed server name is unchanged; another name remains a conflict.",
       "code": [
         "apps/mobile/src/features/accounts/state/profile-editor.ts"
       ],
@@ -352,6 +352,16 @@
           "suite": "mobile",
           "file": "apps/mobile/src/features/accounts/state/profile-editor.test.ts",
           "name": "version conflict preserves draft, requires explicit reload and a new key before resaving"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/accounts/state/profile-editor.test.ts",
+          "name": "locale-only account updates advance the profile version without losing the name draft"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/accounts/state/profile-editor.test.ts",
+          "name": "a newer account snapshot with another name does not silently overwrite that name"
         }
       ],
       "gaps": "Không thay native persistence/UAT",
@@ -3066,7 +3076,7 @@
         "QA-025",
         "rt01-contract"
       ],
-      "description": "Theo yêu cầu 15/10: kéo làm mới thay nút thường trực, giữ nội dung/bản nháp khi lỗi mạng, dừng vòng xoay và retry, xóa khi mất quyền. Regression 16/10: profile waits/retries transient BUSY after chat; background read watermark does not lock draft input. Sending remains session-locked. Job draft actions/inputs remain editable during snapshot reads; confirmation stays locked.",
+      "description": "Theo yêu cầu 15/10: kéo làm mới thay nút thường trực, giữ nội dung/bản nháp khi lỗi mạng, dừng vòng xoay và retry, xóa khi mất quyền. Regression 16/10: profile waits/retries transient BUSY after chat; background read watermark does not lock draft input. Sending remains session-locked. Job draft actions/inputs remain editable during snapshot reads; confirmation stays locked. Audit 23/10: background snapshots do not insert a loading row above the active touch targets. Fallback polling is deferred during an action draft; it does not claim an unobserved version conflict. Server CAS and access revocation remain active.",
       "code": [
         "apps/mobile/src/features/accounts/components/AccountPage.tsx",
         "apps/mobile/src/features/chat/screens/ConversationsScreen.tsx",
@@ -3101,6 +3111,11 @@
           "suite": "mobile",
           "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
           "name": "job action draft stays editable during a background snapshot while confirmation waits"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/jobs/screens/Work.test.tsx",
+          "name": "fallback polling defers while drafting instead of announcing an unobserved job conflict"
         }
       ],
       "gaps": "Không chứng nhận offline storage, push ngoài app, thiết bị vật lý, UAT hoặc toàn bộ QA. Cử chỉ native cần bằng chứng riêng.",
@@ -4222,7 +4237,7 @@
     {
       "id": "P2-ACCOUNT-01",
       "requirement": "FR-AUTH-001",
-      "description": "OTP local gắn mục đích, hết hạn, giới hạn thử và thu hồi phiên khi reset.",
+      "description": "OTP local gắn mục đích, hết hạn, giới hạn thử và thu hồi phiên khi reset. Security audit 23/10: reject invalid reset challenges and unauthenticated password changes before expensive scrypt work.",
       "sources": [
         "p2-approved",
         "QA-001",
@@ -4236,6 +4251,11 @@
           "suite": "api",
           "file": "services/api/test/integration/account-security.test.ts",
           "name": "purpose-bound OTP login anti-enumeration, attempts, expiry, replay and reset revocation"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/account-security.test.ts",
+          "name": "invalid security proofs never allocate password hashing work"
         }
       ],
       "qa": [

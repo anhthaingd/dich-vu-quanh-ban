@@ -1,5 +1,11 @@
 # Kế hoạch triển khai và học code
 
+**28/10/2026 — B00-11:** chủ dự án đã duyệt áp dụng [thiết kế B00-10](bao-cao/B00-10-de-xuat-giao-dien.html) vào app. [Báo cáo triển khai và ảnh app](bao-cao/B00-11-trien-khai-giao-dien.md): 7 màn chính, khung điều hướng và bố cục quản trị web; kiểm local/native được ghi riêng. Không đồng bộ Drive/ui-ux, chưa commit/push/CI mới/UAT. Ghi chú “chưa áp dụng” tại mốc B00-10 bên dưới là lịch sử.
+
+**28/10/2026 — B00-10, chỉnh thiết kế đã duyệt:** [bản HTML](bao-cao/B00-10-de-xuat-giao-dien.html) dùng mũi tên không chữ ở màn chi tiết, bỏ ở màn gốc và quay về đúng màn vừa mở. [Ảnh và kiểm tương tác](bao-cao/B00-10-ra-soat-bao-mat-va-giao-dien.md); chưa áp dụng vào app.
+
+**23/10/2026 — B00-10:** [rà soát bảo mật, kiểm hệ thống và đề xuất giao diện](bao-cao/B00-10-ra-soat-bao-mat-va-giao-dien.md). CI main xanh nhưng nhánh `1d925ce` run `39910748394` còn đỏ; đã sửa local nguyên nhân tương tác, thứ tự kiểm chứng trước hash mật khẩu và dependency có bản vá. [Xem 7 màn đề xuất](bao-cao/B00-10-de-xuat-giao-dien.html): đã nối các liên kết trong điện thoại, hoạt động cả khi tắt JavaScript; chưa áp dụng thiết kế mới. Native đạt 14/14 flow mỗi nền tảng giả lập; kết quả và giới hạn kiểm nằm trong báo cáo. Các dòng LOCAL-01 chưa push bên dưới là lịch sử trước `1d925ce`.
+
 **23/10/2026 — LOCAL-01 bổ sung đã duyệt:** [gallery và ngừng nhận việc](bao-cao/B02-05-gallery-va-ngung-nhan-viec.md), [khôi phục MFA](bao-cao/B11-05-khoi-phuc-mfa.md), [backup đầy đủ DEMO](bao-cao/B11-06-backup-day-du-demo.md). Cùng đợt với [sáu phần điều hướng/local](bao-cao/B00-09-luong-local-va-dieu-huong.md) và [nhật ký admin](bao-cao/B11-04-nhat-ky-admin-tong-hop.md). Không đồng bộ Drive/ui-ux, chưa commit/push mới hoặc production.
 
 

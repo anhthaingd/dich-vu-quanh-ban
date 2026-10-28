@@ -15,3 +15,20 @@ test('lost locale write replay cannot display an older locale than the newer acc
 test('suspended account locale save retains the restricted session instead of refreshing or logging out',async()=>{
  const f=authFixture(),support={...session,user:{...session.user,status:'suspended'}},locale=new LocaleState({read:async()=>null,write:async()=>{}});f.api.login.mockResolvedValue(support);f.accounts.edit.mockResolvedValue({...support.user,locale:'ja',version:2});render(<LocaleProvider manager={locale}><AuthProvider manager={f.manager}><View/></AuthProvider></LocaleProvider>);await waitFor(()=>expect(f.manager.getSnapshot().phase).toBe('anonymous'));await act(async()=>{await f.manager.login(credentials);await locale.select('ja');});expect(f.manager.getSnapshot()).toMatchObject({phase:'authenticated',user:{status:'suspended',locale:'ja'}});expect(locale.getSnapshot().locale).toBe('ja');expect(f.api.refresh).not.toHaveBeenCalled();expect(f.api.logout).not.toHaveBeenCalled();
 });
+
+
+test('locale selection waits for account verification before saving the current profile version',async()=>{
+ const f=authFixture(),locale=new LocaleState({read:async()=>null,write:async()=>{}});
+ render(<LocaleProvider manager={locale}><AuthProvider manager={f.manager}><View/></AuthProvider></LocaleProvider>);
+ await waitFor(()=>expect(f.manager.getSnapshot().phase).toBe('anonymous'));
+ await act(async()=>{await f.manager.login(credentials);});
+ let finish!:(value:typeof session.user)=>void;
+ f.api.me.mockImplementationOnce(()=>new Promise(resolve=>{finish=resolve;}));
+ f.accounts.edit.mockResolvedValue({...session.user,version:3,locale:'en'});
+ let verifying!:Promise<void>,changing!:Promise<void>;
+ act(()=>{verifying=f.manager.verify();changing=locale.select('en');});
+ expect(f.accounts.edit).not.toHaveBeenCalled();expect(locale.getSnapshot().busy).toBe(true);
+ await act(async()=>{finish({...session.user,version:2});await verifying;await changing;});
+ expect(f.accounts.edit).toHaveBeenCalledWith(expect.any(String),{expected_version:2,locale:'en'},expect.any(String));
+ expect(locale.getSnapshot()).toMatchObject({locale:'en',busy:false,error:null});
+});

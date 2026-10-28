@@ -1,3 +1,5 @@
+import {useLocale} from '../../../app/providers/LocaleProvider';
+import type {Locale} from '../../../lib/i18n';
 import { locationsApi } from '../../location/api/locations-api';
 jest.mock('../../location/api/locations-api', () => ({ locationsApi: { search: jest.fn(), reverse: jest.fn() } }));
 import {
@@ -14,6 +16,8 @@ import { authFixture, session } from '../../../../test/helpers/auth';
 import { ApiError } from '../../../lib/http/api-error';
 import type { PartnersApi } from '../api/partners-api';
 import type { Partner } from '../models';
+let changeTestLocale:(locale:Locale)=>Promise<void>;
+function LocaleProbe(){changeTestLocale=useLocale().selectLocale;return null;}
 async function choosePlace(prefix: string) {
   jest.mocked(locationsApi.search).mockResolvedValue([{id:'demo',text:'DEMO address',point:{latitude:21,longitude:105},precision:'address'}]);
   fireEvent.press(screen.getByTestId(`${prefix}-pick-location`));
@@ -122,7 +126,7 @@ function fixture(saved: string | null = 'saved', verified = true) {
         skills: async () => [skill]
       }}
     >
-      <AuthProvider manager={f.manager}>
+      <AuthProvider manager={f.manager}><LocaleProbe/>
         <AppNavigator />
       </AuthProvider>
     </AppProviders>
@@ -198,15 +202,9 @@ test('owner edits skills, modes, prices, circles and public shops with a shared 
   fireEvent.press(screen.getByTestId('partner-add-area'));
   fireEvent.changeText(screen.getByLabelText('Tên khu vực'), 'Hanoi');
   await choosePlace('area-0');
-  fireEvent.press(screen.getByTestId('locale-en'));
-  await waitFor(() =>
-    expect(screen.getByTestId('locale-vi')).not.toBeDisabled()
-  );
+  await act(async()=>changeTestLocale('en'));
   expect(screen.getByTestId('area-0-pick-location')).toHaveTextContent('Change location');
-  fireEvent.press(screen.getByTestId('locale-vi'));
-  await waitFor(() =>
-    expect(screen.getByTestId('locale-en')).not.toBeDisabled()
-  );
+  await act(async()=>changeTestLocale('vi'));
   fireEvent.press(screen.getByTestId('partner-save-areas'));
   await waitFor(() =>
     expect(screen.getByTestId('partner-section-locations')).not.toBeDisabled()

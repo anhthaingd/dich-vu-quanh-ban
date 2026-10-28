@@ -65,3 +65,28 @@ test('profile lock rejects overlapping operations and logout waits for a later e
   done({ ...session.user, version: 2 }); await save;
   await f.manager.logout(); expect(f.manager.getSnapshot().user).toBeNull();
 });
+
+test('locale-only account updates advance the profile version without losing the name draft', async () => {
+  const f = await setup(); f.editor.setName('My draft');
+  await f.manager.editProfile(session.user.id, {expected_version: 1, locale: 'en'}, 'locale-key');
+  f.accounts.edit.mockImplementationOnce(async (_token, input) => {
+    if (input.expected_version !== 2) throw new ApiError('VERSION_CONFLICT');
+    return {...session.user, locale: 'en', display_name: input.display_name!, version: 3};
+  });
+  await f.editor.save();
+  expect(f.editor.getSnapshot()).toMatchObject({saved: true, name: 'My draft', version: 3, conflict: false});
+  expect(f.accounts.edit.mock.calls[1][1]).toEqual({expected_version: 2, display_name: 'My draft'});
+});
+
+test('a newer account snapshot with another name does not silently overwrite that name', async () => {
+  const f = await setup(); f.editor.setName('My draft');
+  f.api.me.mockResolvedValueOnce({...session.user, display_name: 'Other device', version: 2});
+  await f.manager.verify();
+  f.accounts.edit.mockImplementationOnce(async (_token, input) => {
+    if (input.expected_version !== 2) throw new ApiError('VERSION_CONFLICT');
+    return {...session.user, display_name: input.display_name!, version: 3};
+  });
+  await f.editor.save();
+  expect(f.editor.getSnapshot()).toMatchObject({saved: false, name: 'My draft', conflict: true});
+  expect(f.accounts.edit.mock.calls[0][1].expected_version).toBe(1);
+});

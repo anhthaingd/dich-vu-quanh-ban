@@ -7,11 +7,14 @@ test('discovery home follows Storybook layout and real tabs, preserves service s
   await page.getByRole('button',{name:'Điện nước',exact:true}).click();
   await page.getByTestId('nav-account').filter({visible:true}).click();
   await expect(page.getByTestId('auth-email')).toBeVisible();
+  await expect(page.getByTestId('nav-back').filter({visible:true})).toHaveText('');
+  await expect(page.getByTestId('nav-back').filter({visible:true})).toHaveAccessibleName('Quay lại');
   await page.getByTestId('nav-back').filter({visible:true}).click();
   await expect(page.getByTestId('search-service-selected')).toHaveText('Điện nước');
   await page.getByTestId('nav-jobs').filter({visible:true}).click();
   await expect(page.getByTestId('account-continue-login')).toBeVisible();
   await expect(page.getByTestId('nav-jobs').filter({visible:true})).toHaveAttribute('aria-selected','true');
+  await expect(page.getByTestId('nav-back').filter({visible:true})).toHaveCount(0);
   await page.getByTestId('nav-messages').filter({visible:true}).click();
   await expect(page.getByTestId('nav-messages').filter({visible:true})).toHaveAttribute('aria-selected','true');
   await page.getByTestId('nav-catalog').filter({visible:true}).click();
@@ -24,6 +27,6 @@ test('discovery home follows Storybook layout and real tabs, preserves service s
     expect(await page.evaluate(()=>document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({path:testInfo.outputPath(`shell-${width}.png`)});
     const box=await page.getByTestId('nav-account').filter({visible:true}).boundingBox();
-    expect(box.y).toBeGreaterThanOrEqual(0);expect(box.y+box.height).toBeLessThan(844);
+    expect(box.x).toBeGreaterThanOrEqual(0);expect(box.x+box.width).toBeLessThanOrEqual(width);expect(box.y).toBeGreaterThanOrEqual(0);expect(box.y+box.height).toBeLessThan(844);
   }
 });

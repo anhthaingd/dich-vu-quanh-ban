@@ -7,9 +7,9 @@ test('address book and session management work with real DB, lost response and r
   await page.getByTestId('addresses-open').click();await expect(page.getByTestId('addresses-empty')).toBeVisible();
   const fill=async(label,text)=>{await page.getByTestId('address-label').fill(label);await page.getByTestId('address-text').fill(text);await chooseLocation(page,'address',{latitude:10.77,longitude:106.7},text);};
   await page.getByTestId('address-add').click();await fill('Home','Street one');
-  await page.getByRole('button',{name:'English',exact:true}).click();await expect(page.getByTestId('address-text')).toHaveValue('Street one');
-  await page.getByRole('button',{name:'日本語',exact:true}).click();await expect(page.getByTestId('address-text')).toHaveValue('Street one');
-  await page.getByRole('button',{name:'Tiếng Việt',exact:true}).click();
+  await page.getByTestId('nav-account').filter({visible:true}).click();await page.getByRole('button',{name:'English',exact:true}).click();await page.getByTestId('nav-back').filter({visible:true}).click();await expect(page.getByTestId('address-text')).toHaveValue('Street one');
+  await page.getByTestId('nav-account').filter({visible:true}).click();await page.getByRole('button',{name:'日本語',exact:true}).click();await page.getByTestId('nav-back').filter({visible:true}).click();await expect(page.getByTestId('address-text')).toHaveValue('Street one');
+  await page.getByTestId('nav-account').filter({visible:true}).click();await page.getByRole('button',{name:'Tiếng Việt',exact:true}).click();await page.getByTestId('nav-back').filter({visible:true}).click();
   const attempts=[];await page.route('**/v1/me/addresses',async route=>{
     if(route.request().method()!=='POST'){await route.continue();return;}
     attempts.push({key:route.request().headers()['idempotency-key'],body:route.request().postDataJSON()});

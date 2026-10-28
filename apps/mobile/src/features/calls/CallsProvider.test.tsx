@@ -43,7 +43,7 @@ test('media disconnect marks failure and polling cannot keep a dead media call a
 });
 test('call button starts an outgoing call, while history retries an empty failed first page',async()=>{
  mockOwner='caller';api.list.mockResolvedValue({items:[],next_cursor:null});const view=render(<CallsProvider api={api}><CallButton jobId="job1"/></CallsProvider>);await flush();fireEvent.press(screen.getByTestId('call-target-assigned'));await flush();expect(api.create).toHaveBeenCalledWith('test-token','job1','recipient',expect.any(String));expect(screen.queryByTestId('call-accept')).toBeNull();view.unmount();
- let historyReads=0;api.list.mockImplementation(async(_t,q)=>{if(q?.conversation_id&&++historyReads===1)throw new ApiError('NETWORK');return {items:[],next_cursor:null};});render(<CallsProvider api={api}><CallHistory conversationId="room1"/></CallsProvider>);await flush();fireEvent.press(screen.getByText('Thử lại'));await flush();expect(historyReads).toBe(2);expect(screen.getByText('Chưa có cuộc gọi')).toBeTruthy();
+ let historyReads=0;api.list.mockImplementation(async(_t,q)=>{if(q?.conversation_id&&++historyReads===1)throw new ApiError('NETWORK');return {items:[],next_cursor:null};});render(<CallsProvider api={api}><CallHistory conversationId="room1"/></CallsProvider>);await flush();fireEvent.press(screen.getByText('Thử lại'));await flush();expect(historyReads).toBe(2);expect(screen.queryByText('Thử lại')).toBeNull();expect(screen.queryByText('Chưa có cuộc gọi')).toBeNull();
 });
 test('peer label uses current contact name and fences late names across account and call changes',async()=>{
  let finishOld!:(v:{items:{user_id:string;display_name:string;role:'customer'}[]})=>void;

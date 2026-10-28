@@ -15,10 +15,12 @@ test('two accounts request all service modes, accept ETA, retry safely, chat, re
  for(const [section,body] of Object.entries({skills:{skills:[{skill_id:skill,modes:['at_customer','at_shop','custom']}]},'service-areas':{areas:[{label:'DEMO Hà Nội',center:point,radius_m:5000}]},locations:{locations:[{address:{text:'DEMO cửa hàng Hà Nội',point},public:true}]},publication:{publication_status:'published'},availability:{accepting_jobs:true}}))p=await request(provider.access_token,`/partners/${p.id}/${section}`,'PUT',{expected_version:p.version,...body});
  const signIn=async(tab,email)=>{await tab.goto(environment.webUrl);await tab.getByTestId('nav-account').click();await tab.getByTestId('auth-email').fill(email);await tab.getByTestId('auth-password').fill(password);await tab.getByTestId('auth-submit').click();await expect(tab.getByTestId('jobs-open')).toBeVisible();};
  await signIn(page,'DEMO-customer@example.test');
+ await expect(page.getByTestId('account-points')).toHaveText('0 Point');
+ await page.screenshot({path:'test-results/web/report-screenshots/B03-04/web-account.png'});
  const context=await browser.newContext({viewport:{width:390,height:844}}),providerPage=await context.newPage();
  try{
  await signIn(providerPage,'DEMO-provider@example.test');
- await page.getByTestId('nav-back').click();await chooseLocation(page,'search',point);await page.getByTestId('search-submit').click();await page.getByRole('button',{name:'Xem hồ sơ',exact:true}).click();
+ await page.getByTestId('nav-back').click();await chooseLocation(page,'search',point);await page.getByTestId('search-submit').click();await expect(page.getByRole('button',{name:'Xem hồ sơ',exact:true})).toBeVisible();await page.screenshot({path:'test-results/web/report-screenshots/B03-04/web-search.png'});await page.getByRole('button',{name:'Xem hồ sơ',exact:true}).click();await expect(page.getByTestId('profile-hire')).toBeVisible();await page.screenshot({path:'test-results/web/report-screenshots/B03-04/web-profile.png'});
  await page.getByTestId('profile-chat').click();await page.getByTestId('chat-body').fill('DEMO hỏi trước khi thuê');await page.getByTestId('chat-send').click();await expect(page.getByText('DEMO hỏi trước khi thuê',{exact:true})).toBeVisible();await page.getByRole('button',{name:'Quay lại',exact:true}).click();
  for(const mode of ['at_customer','at_shop','custom']){
  await page.getByTestId('profile-hire').click();await page.getByTestId('job-skill-'+skill).click();await page.getByTestId('job-mode-'+mode).click();

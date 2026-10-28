@@ -60,6 +60,11 @@ appId: vn.dichvuquanhban.app
     direction: DOWN
 - tapOn:
     id: addresses-open
+- extendedWaitUntil:
+    visible:
+      id: address-add
+      enabled: true
+    timeout: 15000
 - tapOn:
     id: address-add
 - scrollUntilVisible:
@@ -100,11 +105,28 @@ appId: vn.dichvuquanhban.app
     direction: DOWN
 - tapOn:
     id: location-description
+    point: "95%,50%"
 - eraseText
-- inputText: "Native test street"
 - pressKey: Enter
+- takeScreenshot: address-description-cleared
+- tapOn:
+    id: location-description
+    point: "95%,50%"
+- inputText: "Native test street"
+- scrollUntilVisible:
+    element:
+      id: location-description
+    direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
+- assertVisible: "Native test street"
+- takeScreenshot: address-description-typed
+- pressKey: Enter
+- takeScreenshot: address-description-ready
 - tapOn:
     id: location-confirm
+- tapOn:
+    id: nav-account
 - scrollUntilVisible:
     element:
       id: locale-en
@@ -115,6 +137,8 @@ appId: vn.dichvuquanhban.app
     id: locale-ja
 - tapOn:
     id: locale-vi
+- tapOn:
+    id: nav-back
 - scrollUntilVisible:
     element:
       id: address-text

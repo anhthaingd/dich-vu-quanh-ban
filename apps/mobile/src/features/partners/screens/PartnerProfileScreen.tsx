@@ -26,11 +26,10 @@ export function PartnerProfileScreen({
   const { state } = useAuth(),
     { t } = useLocale();
   return (
-    <ProductShell
+    <ProductShell title={t('search.profile')}
       onBack={() => navigation.goBack()}
       onAccount={() => navigation.navigate('Account')}
     >
-      <AppText variant="title">{t('search.profile')}</AppText>
       <Profile
         key={state.user?.id ?? state.phase}
         id={route.params.id}
@@ -89,10 +88,11 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
   if (!profile) return <LoadingState message={t('accountTools.loading')} />;
   return (
     <>
-      <Card>
+      <PublicGallery id={id} featured/>
+      <Card style={{padding:0,borderWidth:0,gap:10}}>
         <AppText variant="title">{profile.name}</AppText>
         <AppText>{t(`partners.${profile.kind}`)}</AppText>
-        <AppText>
+        <AppText style={{alignSelf:'flex-start',borderRadius:20,paddingHorizontal:12,paddingVertical:6,backgroundColor:'#eff3fb'}} variant="caption" tone="primary">
           {t(
             profile.verification_status === 'verified'
               ? 'partners.verified'
@@ -100,6 +100,25 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
           )}
         </AppText>
         <AppText>{profile.bio}</AppText>
+      </Card>
+      <Card>
+        {profile.contact === null ? (
+          <Button label={t('search.loginContact')} onPress={login} />
+        ) : (
+          <>
+            <AppText variant="caption" tone="muted">{t('partners.profile')}</AppText>
+            {profile.contact.phone && (
+              <AppText>{profile.contact.phone}</AppText>
+            )}
+            {profile.contact.zalo && <AppText>{profile.contact.zalo}</AppText>}
+            {!profile.contact.phone && !profile.contact.zalo && (
+              <AppText>{t('search.noContact')}</AppText>
+            )}
+          </>
+        )}
+        {profile.can_hire&&<Button testID="profile-hire" label={t('jobs.create')} disabled={state.busy} onPress={hire}/>}
+        {profile.can_message&&<Button testID="profile-chat" variant="secondary" label={t('chat.open')} disabled={state.busy||openingState.pending} onPress={()=>void openChat()}/>}
+        <JobFeedback error={openingState.error} pending={openingState.pending} busy={openingState.busy||state.busy} retry={openingState.pending?()=>void opening.run().then(c=>{if(c)chat(c.id);}):undefined}/>
       </Card>
       <Card>
         <AppText variant="section">
@@ -117,27 +136,8 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
           ))}
         </Card>
       )}
-      <PublicGallery id={id}/>
+
       <PartnerReviews key={id} id={id}/>
-      <Card>
-        {profile.contact === null ? (
-          <Button label={t('search.loginContact')} onPress={login} />
-        ) : (
-          <>
-            <AppText variant="section">{t('partners.profile')}</AppText>
-            {profile.contact.phone && (
-              <AppText>{profile.contact.phone}</AppText>
-            )}
-            {profile.contact.zalo && <AppText>{profile.contact.zalo}</AppText>}
-            {!profile.contact.phone && !profile.contact.zalo && (
-              <AppText>{t('search.noContact')}</AppText>
-            )}
-          </>
-        )}
-        {profile.can_hire&&<Button testID="profile-hire" label={t('jobs.create')} disabled={state.busy} onPress={hire}/>}
-        {profile.can_message&&<Button testID="profile-chat" label={t('chat.open')} disabled={state.busy||openingState.pending} onPress={()=>void openChat()}/>}
-        <JobFeedback error={openingState.error} pending={openingState.pending} busy={openingState.busy||state.busy} retry={openingState.pending?()=>void opening.run().then(c=>{if(c)chat(c.id);}):undefined}/>
-      </Card>
     </>
   );
 }

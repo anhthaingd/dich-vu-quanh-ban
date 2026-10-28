@@ -8,10 +8,12 @@ import { useAuth } from '../providers/AuthProvider';
 import { useLocale } from '../providers/LocaleProvider';
 import { Screen } from '../../components/ui/Screen';
 import { AppText } from '../../components/ui/AppText';
-import { Button } from '../../components/ui/Button';
 import { Icon } from '../../components/ui/Icon';
 import { theme } from '../../theme/tokens';
 export type ShellProps = PropsWithChildren<{
+  title?: string;
+  root?: boolean;
+  scrollable?: boolean;
   onBack?: () => void;
   onAccount?: () => void;
   onCatalog?: () => void;
@@ -25,7 +27,7 @@ export type ShellProps = PropsWithChildren<{
   refreshControl?: ScrollViewProps['refreshControl'];
 }>;
 // UI-16: avatar opens account; notifications have their own tab.
-export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, onMessages, onNotifications, onWallet, activeTab = 'catalog', discovery, keyboardDismissMode, refreshControl }: ShellProps) {
+export function ProductShell({ children, title, root = false, scrollable = true, onBack, onAccount, onCatalog, onJobs, onMessages, onNotifications, onWallet, activeTab = 'catalog', discovery, keyboardDismissMode, refreshControl }: ShellProps) {
   const { t,locale } = useLocale();
   const {membership}=useProductRole();
   const unread=useNotifications().items.filter(n=>!n.read_at).length;
@@ -35,11 +37,11 @@ export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, o
   const initial = Array.from(displayName)[0]?.toLocaleUpperCase() || '?';
   const header = <View style={styles.header}>
     <View style={styles.headerContent}>
-      {onBack ? <Button testID="nav-back" label={t('common.backButton')} accessibilityLabel={t('common.back')} variant="link" onPress={onBack} />
-        : <View style={styles.brand}>
+      <View style={styles.heading}>{onBack && !root && <Pressable testID="nav-back" accessibilityRole="button" accessibilityLabel={t('common.back')} onPress={onBack} style={({pressed})=>[styles.back,pressed&&{backgroundColor:theme.colors.primarySoft}]}><Icon name="back" size={24} color={theme.colors.text}/></Pressable>}
+      {title ? <AppText accessibilityRole="header" style={styles.title}>{title}</AppText> : <View style={styles.brand}>
           <View style={styles.mark}><Icon name="navigation" color="#fff" /></View>
           <AppText style={styles.brandText}>Dịch vụ quanh bạn</AppText>
-        </View>}
+        </View>}</View>
       {onAccount && <Pressable testID="nav-account" accessibilityRole="button" accessibilityLabel={t('common.account')}
         accessibilityHint={t('shell.openAccount')} onPress={onAccount} hitSlop={6}
         style={({ pressed }) => [styles.avatar, { opacity: pressed ? 0.65 : 1 }]}>
@@ -65,22 +67,25 @@ export function ProductShell({ children, onBack, onAccount, onCatalog, onJobs, o
       <AppText style={[styles.destinationText, {color: activeTab === tab.id ? theme.colors.primary : '#78869E', fontWeight: activeTab === tab.id ? '700' : '400'}]}>{tab.label}</AppText>
     </Pressable>)}
   </View> : undefined;
-  return <Screen refreshControl={refreshControl} alwaysBounceVertical={refreshControl ? true : undefined} header={header} footer={footer} keyboardDismissMode={keyboardDismissMode}
+  return <Screen scrollable={scrollable} refreshControl={refreshControl} alwaysBounceVertical={refreshControl ? true : undefined} header={header} footer={footer} keyboardDismissMode={keyboardDismissMode}
     style={discovery ? styles.white : undefined} contentContainerStyle={discovery ? styles.discovery : undefined}>{children}</Screen>;
 }
 const styles = StyleSheet.create({
+  heading: {flex:1,flexDirection:'row',alignItems:'center',gap:8},
+  back: {width:44,height:44,borderRadius:22,alignItems:'center',justifyContent:'center'},
+  title: {flex:1,fontSize:18,lineHeight:26,fontWeight:'700'},
   badge: {position:'absolute',top:0,right:16,borderRadius:12,backgroundColor:'#B42318',paddingHorizontal:5},
   badgeText: {color:'#fff',fontSize:11,lineHeight:18},
   white: {backgroundColor: '#fff'},
-  discovery: {paddingHorizontal:16, paddingTop:24, gap:0, backgroundColor:'#fff'},
-  header: { backgroundColor: '#fff', borderBottomWidth: 1, borderColor: theme.colors.border },
-  headerContent: { minHeight: 72, paddingVertical: 12, paddingHorizontal: 16, width: '100%', maxWidth: 640, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
+  discovery: {paddingHorizontal:16, paddingTop:8, gap:0, backgroundColor:'#fff'},
+  header: { backgroundColor: '#fff' },
+  headerContent: { minHeight: 68, paddingVertical: 12, paddingHorizontal: 16, width: '100%', maxWidth: 640, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
   brand: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
   brandText: { flexShrink: 1, fontSize:15, lineHeight:22, fontWeight:'700' },
   mark: { width: 32, height: 32, borderRadius: 12, borderBottomLeftRadius: 3, transform:[{rotate:'-5deg'}], alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.primary },
-  avatar: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: '#E9EEF8' },
+  avatar: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: '#E9EEF8' },
   initial: { fontSize: 14, lineHeight:20, fontWeight: '700' },
   footer: { backgroundColor: '#fff', borderTopWidth: 1, borderColor: theme.colors.border, flexDirection:'row', justifyContent:'space-around', paddingVertical:9, paddingHorizontal:8 },
   destination: { minHeight: 46, flex:1, gap:4, alignItems: 'center', justifyContent:'center' },
-  destinationText: { fontSize:10, lineHeight:16, textAlign:'center' },
+  destinationText: { fontSize:11, lineHeight:16, textAlign:'center' },
 });

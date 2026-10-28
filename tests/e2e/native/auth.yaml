@@ -18,12 +18,16 @@ appId: vn.dichvuquanhban.app
     element:
       id: auth-toggle
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: auth-toggle
 - scrollUntilVisible:
     element:
       id: auth-name
     direction: UP
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: auth-name
 - inputText: "Nguoi thu native"
@@ -41,6 +45,8 @@ appId: vn.dichvuquanhban.app
     element:
       id: auth-email
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: auth-email
 - inputText: ${TEST_EMAIL}
@@ -58,6 +64,8 @@ appId: vn.dichvuquanhban.app
     element:
       id: auth-password
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: auth-password
 - inputText: ${TEST_PASSWORD}
@@ -75,6 +83,8 @@ appId: vn.dichvuquanhban.app
           element:
             id: auth-submit
           direction: DOWN
+          centerElement: true
+          visibilityPercentage: 100
       - tapOn:
           id: auth-submit
 - runFlow: dismiss-password-prompt.yaml
@@ -97,12 +107,21 @@ appId: vn.dichvuquanhban.app
     element:
       id: auth-logout
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
+- extendedWaitUntil:
+    visible:
+      id: auth-logout
+      enabled: true
+    timeout: 15000
 - tapOn:
     id: auth-logout
 - scrollUntilVisible:
     element:
       id: auth-email
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: auth-email
 - inputText: ${TEST_EMAIL}
@@ -120,6 +139,8 @@ appId: vn.dichvuquanhban.app
     element:
       id: auth-password
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: auth-password
 - inputText: "an incorrect password"
@@ -137,16 +158,22 @@ appId: vn.dichvuquanhban.app
           element:
             id: auth-submit
           direction: DOWN
+          centerElement: true
+          visibilityPercentage: 100
       - tapOn:
           id: auth-submit
 - scrollUntilVisible:
     element: "Không thể xác thực.*"
     direction: UP
+    centerElement: true
+    visibilityPercentage: 100
 - assertVisible: "Không thể xác thực.*"
 - scrollUntilVisible:
     element:
       id: auth-password
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: auth-password
 - inputText: ${TEST_PASSWORD}
@@ -164,6 +191,8 @@ appId: vn.dichvuquanhban.app
           element:
             id: auth-submit
           direction: DOWN
+          centerElement: true
+          visibilityPercentage: 100
       - tapOn:
           id: auth-submit
 - runFlow: dismiss-password-prompt.yaml
@@ -172,6 +201,13 @@ appId: vn.dichvuquanhban.app
     element:
       id: auth-logout
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
+- extendedWaitUntil:
+    visible:
+      id: auth-logout
+      enabled: true
+    timeout: 15000
 - tapOn:
     id: auth-logout
 - assertVisible:

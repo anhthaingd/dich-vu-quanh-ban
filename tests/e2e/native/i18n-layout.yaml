@@ -25,32 +25,44 @@ appId: vn.dichvuquanhban.app
     element:
       id: auth-toggle
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: auth-toggle
 - scrollUntilVisible:
     element: "Use 15–128 characters.*"
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - takeScreenshot: english-large-form
 - scrollUntilVisible:
     element:
       id: locale-ja
     direction: UP
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: locale-ja
 - takeScreenshot: japanese-large-heading
 - scrollUntilVisible:
     element: "15〜128文字.*"
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - takeScreenshot: japanese-large-form
 - scrollUntilVisible:
     element:
       id: auth-toggle
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - assertVisible: "アカウントをお持ちですか？ログイン"
 - scrollUntilVisible:
     element:
       id: locale-vi
     direction: UP
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn:
     id: locale-vi
 - tapOn:
@@ -63,10 +75,14 @@ appId: vn.dichvuquanhban.app
 - scrollUntilVisible:
     element: "Beauty \\(non-medical\\)"
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn: "Beauty \\(non-medical\\)"
 - scrollUntilVisible:
     element: "Hair treatments & colouring"
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - takeScreenshot: english-large-groups
 - tapOn:
     id: service-cancel
@@ -82,15 +98,21 @@ appId: vn.dichvuquanhban.app
 - scrollUntilVisible:
     element: "美容（医療行為を除く）"
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - tapOn: "美容（医療行為を除く）"
 - scrollUntilVisible:
     element: "パーマ・ストレート・カラー"
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - takeScreenshot: japanese-large-groups
 - tapOn: "パーマ・ストレート・カラー"
 - scrollUntilVisible:
     element: "ストレートパーマ"
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
 - assertVisible: "ストレートパーマ"
 - takeScreenshot: japanese-large-skills
 - tapOn:

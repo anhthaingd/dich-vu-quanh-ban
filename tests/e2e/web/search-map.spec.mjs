@@ -20,7 +20,12 @@ test('public result pins open profiles, coincident providers stay reachable, pri
  await page.route('**/v1/partners?**',r=>{const url=new URL(r.request().url());url.searchParams.set('limit','1');return r.continue({url:url.href});});
  await page.goto(environment.webUrl);await chooseLocation(page,'search',{latitude:21.0285,longitude:105.8542});await page.getByTestId('search-submit').click();
  await expect(page.getByTestId('search-result-'+a.id)).toBeVisible();await expect(page.getByTestId('search-result-'+b.id)).toHaveCount(0);
+ // Exercise the real attribution sanitizer, not a mock of MapLibre rendering.
+ await page.route('https://maps.geoapify.com/**',r=>r.fulfill({json:{version:8,sources:{audit:{type:'geojson',data:{type:'FeatureCollection',features:[]},attribution:'<details open onload="void 0" ontoggle="window.__dvqbXss=1">DEMO attribution</details>'}},layers:[{id:'bg',type:'background',paint:{'background-color':'#e8efe9'}},{id:'audit',type:'circle',source:'audit'}]}}));
  await page.getByTestId('search-view-map').click();
+ await expect(page.locator('.maplibregl-ctrl-attrib-inner')).toContainText('DEMO attribution');
+ expect(await page.locator('.maplibregl-ctrl-attrib-inner').evaluate(el=>[...el.querySelectorAll('*')].flatMap(node=>[...node.attributes]).filter(a=>/^on/i.test(a.name)).length)).toBe(0);
+ expect(await page.evaluate(()=>window.__dvqbXss)).toBeUndefined();
  await page.getByTestId('search-more').click();await expect(page.getByRole('button',{name:/DEMO Public A, DEMO Public B|DEMO Public B, DEMO Public A/})).toHaveText('2×');
  await page.getByTestId('search-more').click();await expect(page.getByTestId('search-result-'+privateOnly.id)).toBeVisible();await expect(page.getByTestId('search-more')).toHaveCount(0);
  const pin=page.getByRole('button',{name:/DEMO Public A, DEMO Public B|DEMO Public B, DEMO Public A/});await expect(pin).toHaveText('2×');await pin.click();

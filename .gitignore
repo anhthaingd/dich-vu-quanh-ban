@@ -9,6 +9,7 @@ test-results/
 playwright-report/
 .DS_Store
 .idea/
+.vscode/
 .local/
 *firebase-adminsdk*.json
 

@@ -1,3 +1,6 @@
+import {sessionOperation} from '../../jobs/state/session-ready';
+import {formatInteger} from '../../invoices/format-amount';
+import {type PointWallet} from '../../invoices/models';
 import {useProductRole} from '../../../app/providers/ProductRoleProvider';
 import {securityMessages} from '../../account-security/messages';
 import { useLocale } from '../../../app/providers/LocaleProvider';
@@ -5,7 +8,7 @@ import { LanguageSettings } from '../../accounts/components/LanguageSettings';
 import type { AuthErrorCode } from '../state/auth-session';
 import type { MessageKey } from '../../../lib/i18n';
 import { useCallback, useEffect, useState } from 'react';
-import { Keyboard, Platform, StyleSheet, View } from 'react-native';
+import { Keyboard, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAuth } from '../../../app/providers/AuthProvider';
@@ -51,33 +54,33 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
     else await manager.login({ email, password });
     setPassword('');
   };
-  return <ProductShell keyboardDismissMode="on-drag" onBack={() => navigation.goBack()}>
-    <AppText variant="title" accessibilityRole="header">{t('common.account')}</AppText>
-    <AppText tone="muted">{t('shell.accountIntro')}</AppText>
-    <Card><AppText variant="card">{t('shell.preferences')}</AppText><LanguageSettings /></Card>
+  return <ProductShell title={t('common.account')} keyboardDismissMode="on-drag" onBack={() => navigation.goBack()}>
+    {state.phase!=='authenticated'&&<Card><AppText variant="card">{t('shell.preferences')}</AppText><LanguageSettings /></Card>}
     <View style={styles.section}>
     {state.error && <AppText tone="error" accessibilityRole="alert">{t(errorMessages[state.error])}</AppText>}
     {state.phase === 'loading' && <LoadingState message={t('auth.restoring')} />}
     {state.phase === 'restore-error' && <Button label={t('common.retry')} loading={state.busy} onPress={() => void manager.restore()} />}
-    {state.phase === 'authenticated' && <Card>
+    {state.phase === 'authenticated' && <>
       <AppText variant="section">{state.user!.display_name}</AppText>
-      <AppText>{t(state.user!.email_verified ? 'auth.verified' : 'auth.unverified')}</AppText>
+      <AccountPoints key={state.user!.id} owner={state.user!.id}/>
+      <Card><AppText variant="card">{t('shell.preferences')}</AppText><LanguageSettings /></Card>
+      <AppText variant="caption" tone="muted">{t(state.user!.email_verified ? 'auth.verified' : 'auth.unverified')}</AppText>
       <AppText>{t('shell.currentRole')}: {role.membership?role.membership.partner_name:t('shell.customerRole')}</AppText>
-      <Button testID="role-customer" label={t('shell.customerRole')} onPress={()=>{void role.choose(null);navigation.popTo('CatalogHome');}}/>
-      <Button testID="role-profiles" label={t('shell.chooseProfile')} disabled={state.busy} onPress={()=>navigation.navigate('Organizations')}/>
-      <Button testID="security-open" label={security.title} disabled={state.busy} onPress={()=>navigation.navigate('AccountSecurity')} />
-      <Button testID="support-open" label={t('support.title')} disabled={state.busy} onPress={() => navigation.navigate('Support')} />
-      <Button testID="notification-settings-open" label={t('notices.settings')} disabled={state.busy} onPress={() => navigation.navigate('NotificationSettings')} />
-      <Button testID="team-open" label={t('team.title')} disabled={state.busy} onPress={() => navigation.navigate('Organizations')} />
-      <Button testID="verify-open" label={t('team.verifyTitle')} disabled={state.busy} onPress={() => navigation.navigate('VerifyContact')} />
-      <Button testID="jobs-open" label={t('jobs.title')} disabled={state.busy} onPress={() => navigation.navigate('Jobs')} />
-      <Button testID="conversations-open" label={t('chat.title')} disabled={state.busy} onPress={() => navigation.navigate('Conversations')} />
-      <Button testID="partners-open" label={t('partners.title')} disabled={state.busy} onPress={() => navigation.navigate('Partners')} />
-      <Button testID="profile-open" label={t('profile.title')} disabled={state.busy} onPress={() => navigation.navigate('Profile')} />
-      <Button testID="sessions-open" label={t('sessions.title')} disabled={state.busy} onPress={() => navigation.navigate('Sessions')} />
-      <Button testID="addresses-open" label={t('addresses.title')} disabled={state.busy} onPress={() => navigation.navigate('Addresses')} />
-      <Button testID="auth-logout" label={t('auth.logout')} loading={state.busy} onPress={() => void manager.logout()} />
-    </Card>}
+      <AccountLink testID="role-customer" label={t('shell.customerRole')} onPress={()=>{void role.choose(null);navigation.popTo('CatalogHome');}}/>
+      <AccountLink testID="role-profiles" label={t('shell.chooseProfile')} disabled={state.busy} onPress={()=>navigation.navigate('Organizations')}/>
+      <AccountLink testID="security-open" label={security.title} disabled={state.busy} onPress={()=>navigation.navigate('AccountSecurity')} />
+      <AccountLink testID="support-open" label={t('support.title')} disabled={state.busy} onPress={() => navigation.navigate('Support')} />
+      <AccountLink testID="notification-settings-open" label={t('notices.settings')} disabled={state.busy} onPress={() => navigation.navigate('NotificationSettings')} />
+      <AccountLink testID="team-open" label={t('team.title')} disabled={state.busy} onPress={() => navigation.navigate('Organizations')} />
+      <AccountLink testID="verify-open" label={t('team.verifyTitle')} disabled={state.busy} onPress={() => navigation.navigate('VerifyContact')} />
+      <AccountLink testID="jobs-open" label={t('jobs.title')} disabled={state.busy} onPress={() => navigation.navigate('Jobs')} />
+      <AccountLink testID="conversations-open" label={t('chat.title')} disabled={state.busy} onPress={() => navigation.navigate('Conversations')} />
+      <AccountLink testID="partners-open" label={t('partners.title')} disabled={state.busy} onPress={() => navigation.navigate('Partners')} />
+      <AccountLink testID="profile-open" label={t('profile.title')} disabled={state.busy} onPress={() => navigation.navigate('Profile')} />
+      <AccountLink testID="sessions-open" label={t('sessions.title')} disabled={state.busy} onPress={() => navigation.navigate('Sessions')} />
+      <AccountLink testID="addresses-open" label={t('addresses.title')} disabled={state.busy} onPress={() => navigation.navigate('Addresses')} />
+      <AccountLink testID="auth-logout" label={t('auth.logout')} loading={state.busy} onPress={() => void manager.logout()} />
+    </>}
     {state.phase === 'anonymous' && <Card>
       <AppText variant="section" accessibilityRole="header">{t(register ? 'auth.createAccount' : 'auth.login')}</AppText>
       {register && <Input testID="auth-name" label={t('auth.name')} value={name} onChangeText={setName} editable={!state.busy} autoComplete="name" maxLength={100} />}
@@ -99,4 +102,14 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
   </ProductShell>;
 }
 
-const styles = StyleSheet.create({ section: { gap: theme.spacing.lg, paddingTop: theme.spacing.sm } });
+const styles = StyleSheet.create({ link:{minHeight:56,paddingVertical:14,flexDirection:'row',alignItems:'center',gap:12,borderBottomWidth:1,borderColor:'#edf0f5'},points:{backgroundColor:theme.colors.primarySoft,borderWidth:0}, section: { gap: theme.spacing.lg, paddingTop: theme.spacing.sm } });
+
+function AccountLink({label,onPress,testID,disabled,loading}:{label:string;onPress:()=>void;testID:string;disabled?:boolean;loading?:boolean}){
+ return <Pressable testID={testID} accessibilityRole="button" accessibilityLabel={label} accessibilityState={{disabled:!!(disabled||loading),busy:!!loading}} disabled={disabled||loading} onPress={onPress} style={({pressed})=>[styles.link,{opacity:disabled||loading?0.5:pressed?0.65:1}]}><AppText style={{flex:1}}>{label}</AppText><AppText tone="muted" accessible={false}>›</AppText></Pressable>;
+}
+function AccountPoints({owner}:{owner:string}){
+ const {manager}=useAuth(),{t,locale}=useLocale();
+ const [value,setValue]=useState<PointWallet|null>(null),[failed,setFailed]=useState(false),[attempt,setAttempt]=useState(0);
+ useFocusEffect(useCallback(()=>{let active=true;setFailed(false);void sessionOperation(manager,owner,()=>manager.getPoints(owner),()=>active).then(v=>{if(active)setValue(v);}).catch(()=>{if(active){setValue(null);setFailed(true);}});return()=>{active=false;};},[manager,owner,attempt]));
+ return <Card style={styles.points}><AppText variant="brand" tone="primary">{t('invoice.pointWallet')}</AppText>{value?<><AppText testID="account-points" variant="title">{formatInteger(value.available,locale)} Point</AppText><AppText variant="caption" tone="muted">{t('invoice.availablePoints')}</AppText></>:failed?<><AppText tone="error">{t('accountTools.error')}</AppText><Button label={t('common.retry')} variant="link" onPress={()=>setAttempt(v=>v+1)}/></>:<AppText>{t('accountTools.loading')}</AppText>}</Card>;
+}

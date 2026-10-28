@@ -1,3 +1,5 @@
+import {useLocale} from '../../../app/providers/LocaleProvider';
+import type {Locale} from '../../../lib/i18n';
 import {ScrollView} from 'react-native';
 import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
 import {NavigationContainer} from '@react-navigation/native';
@@ -11,13 +13,15 @@ import type {NotificationsApi} from '../api/notifications-api';
 import {NotificationsProvider} from '../NotificationsProvider';
 import {NotificationsScreen,NotificationSettingsScreen} from './NotificationsScreen';
 import {ApiError} from '../../../lib/http/api-error';
+let changeTestLocale:(locale:Locale)=>Promise<void>;
+function LocaleProbe(){changeTestLocale=useLocale().selectLocale;return null;}
 const Stack=createNativeStackNavigator<RootStackParamList>();
 const settings={message_push:true,call_push:true,service_push:true,reminder_push:true};
 const notice={id:'notice',kind:'job.accepted.v1',resource_ref:{job_id:'job'},read_at:null,created_at:'2026-10-14T00:00:00Z'};
 function fixture(){const f=workFixture();const api:jest.Mocked<NotificationsApi>={registerDevice:jest.fn(),list:jest.fn().mockResolvedValue({items:[notice],next_cursor:null}),read:jest.fn().mockResolvedValue({id:'notice',state:'read'}),settings:jest.fn().mockResolvedValue(settings),save:jest.fn().mockImplementation(async(_,b)=>b)};
  return {...f,notices:api,manager:new AuthSession(f.api,f.storage,f.accounts,f.partners,f.jobs,f.chat,undefined,undefined,api)};}
 function mount(f:ReturnType<typeof fixture>,initial:'Notifications'|'NotificationSettings'='Notifications'){
- return render(<AppProviders api={{categories:jest.fn().mockResolvedValue([]),skills:jest.fn().mockResolvedValue([])}}><AuthProvider manager={f.manager}><NotificationsProvider><NavigationContainer><Stack.Navigator initialRouteName={initial} screenOptions={{headerShown:false,animation:'none'}}><Stack.Screen name="Notifications" component={NotificationsScreen}/><Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen}/></Stack.Navigator></NavigationContainer></NotificationsProvider></AuthProvider></AppProviders>);
+ return render(<AppProviders api={{categories:jest.fn().mockResolvedValue([]),skills:jest.fn().mockResolvedValue([])}}><AuthProvider manager={f.manager}><LocaleProbe/><NotificationsProvider><NavigationContainer><Stack.Navigator initialRouteName={initial} screenOptions={{headerShown:false,animation:'none'}}><Stack.Screen name="Notifications" component={NotificationsScreen}/><Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen}/></Stack.Navigator></NavigationContainer></NotificationsProvider></AuthProvider></AppProviders>);
 }
 test('inbox reads all pages, deduplicates IDs, marks across pages and clears private data on logout',async()=>{
  const f=fixture();f.notices.list.mockImplementation(async(_,cursor)=>cursor?{items:[notice,{...notice,id:'second'}],next_cursor:null}:{items:[notice],next_cursor:'page2'});mount(f);
@@ -34,7 +38,7 @@ test('notification retry retains read key and denied target never navigates usin
 });
 test('reminder settings retain form across locale changes and retry the same immutable payload',async()=>{
  const f=fixture();mount(f,'NotificationSettings');const toggle=await screen.findByTestId('setting-reminder_push');fireEvent(toggle,'valueChange',false);
- fireEvent.press(screen.getByRole('button',{name:'English'}));await waitFor(()=>expect(screen.getByTestId('notices-save')).not.toBeDisabled());expect(screen.getByTestId('setting-reminder_push').props.value).toBe(false);
+ await act(async()=>changeTestLocale('en'));await waitFor(()=>expect(screen.getByTestId('notices-save')).not.toBeDisabled());expect(screen.getByTestId('setting-reminder_push').props.value).toBe(false);
  f.notices.save.mockRejectedValueOnce(new ApiError('NETWORK'));fireEvent.press(screen.getByTestId('notices-save'));await screen.findByTestId('work-retry');expect(screen.getByTestId('setting-reminder_push')).toBeDisabled();
  fireEvent.press(screen.getByTestId('work-retry'));await screen.findByTestId('notices-saved');expect(f.notices.save.mock.calls[0]).toEqual(f.notices.save.mock.calls[1]);expect(f.notices.save.mock.calls[1][1]).toEqual({...settings,reminder_push:false});
 });

@@ -1,11 +1,32 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import test, {mock} from 'node:test';
+import crypto from 'node:crypto';
+import {syncBuiltinESMExports} from 'node:module';
 import {randomUUID} from 'node:crypto';
 import {databaseFixture} from '../helpers/database.js';
 import {AuthService} from '../../src/modules/auth/auth.service.js';
 import {LocalMessages} from '../../src/integrations/local-messages.js';
 const secret='p2-security-secret-'.repeat(3),password='test-password-long-enough',contacts=['a@example.test','b@example.test','new@example.test','unknown@example.test','+84900000001'];
 const config={secret,contacts,mailpit:'http://127.0.0.1:1',smsDirectory:'/tmp/dvqb-p2-sms'};
+test('invalid security proofs never allocate password hashing work',async()=>{
+ const f=await setup();
+ const derive=mock.method(crypto,'scrypt',()=>{throw new Error('Unexpected password hashing before proof');});
+ syncBuiltinESMExports();
+ try{
+  const reset=await f.call('/auth/password/reset',{challenge_id:randomUUID(),code:'000000',new_password:'new-password-long-enough'});
+  assert.equal(reset.status,400);
+  const challenge=await (await f.call('/auth/security/challenges',{purpose:'reset',contact:contacts[0]})).json();
+  const code=await f.code(challenge.id);
+  const wrong=await f.call('/auth/password/reset',{challenge_id:challenge.id,code:code==='000000'?'000001':'000000',new_password:'new-password-long-enough'});
+  assert.equal(wrong.status,400);
+  await f.pool.query("UPDATE auth_challenges SET expires_at=now()-interval '1 second' WHERE id=$1",[challenge.id]);
+  const expired=await f.call('/auth/password/reset',{challenge_id:challenge.id,code,new_password:'new-password-long-enough'});
+  assert.equal(expired.status,400);
+  const change=await f.call('/me/password',{password,new_password:'new-password-long-enough'});
+  assert.equal(change.status,401);
+  assert.equal(derive.mock.callCount(),0);
+ }finally{derive.mock.restore();syncBuiltinESMExports();await f.close();}
+});
 async function setup(){const f=await databaseFixture(secret,false,config,false,{secret});const auth=f.app.get(AuthService),a=await auth.register(contacts[0],password,'A');await f.pool.query('UPDATE identities SET verified_at=now() WHERE user_id=$1',[a.user.id]);const call=(path:string,body?:unknown,token?:string,extra:Record<string,string>={})=>fetch(f.base+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json','Idempotency-Key':randomUUID(),...(token?{Authorization:'Bearer '+token}:{}),...extra},...(body===undefined?{}:{body:JSON.stringify(body)})});async function code(id:string){const d=(await f.pool.query('SELECT payload_cipher FROM local_deliveries WHERE challenge_id=$1',[id])).rows[0];const payload=JSON.parse(f.app.get(LocalMessages).secrets.decrypt(d.payload_cipher));return String(payload.text).match(/\b\d{6}\b/)![0];}return {...f,auth,a,call,code};}
 test('purpose-bound OTP login anti-enumeration, attempts, expiry, replay and reset revocation',async()=>{
  const f=await setup();try{

@@ -16,7 +16,7 @@ export function Button({ label, loading = false, disabled = false, variant = 'pr
 const styles = StyleSheet.create({
   base: { minHeight: 48, padding: theme.spacing.md, borderRadius: theme.radius.control, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: theme.spacing.sm },
   primary: { backgroundColor: theme.colors.primary },
-  secondary: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.primary },
+  secondary: { backgroundColor: theme.colors.primarySoft, borderWidth: 1, borderColor: theme.colors.primarySoft },
   link: { alignSelf: 'flex-start', minHeight: 44, paddingHorizontal: 0 },
   label: { flexShrink: 1, fontWeight: '600', textAlign: 'center' },
 });

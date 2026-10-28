@@ -82,13 +82,30 @@ appId: vn.dichvuquanhban.app
     id: job-eta
 - eraseText
 - inputText: "45"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Enter
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
 
 - scrollUntilVisible:
     element:
       id: job-action-confirm
     direction: DOWN
+    centerElement: true
+    visibilityPercentage: 100
+- takeScreenshot: job-before-confirm
 - tapOn:
     id: job-action-confirm
+- scrollUntilVisible:
+    element:
+      id: job-state
+    direction: UP
 - extendedWaitUntil:
     visible: "Đã nhận · đang xử lý"
     timeout: 15000
@@ -97,24 +114,28 @@ appId: vn.dichvuquanhban.app
     when:
       platform: Android
     commands:
+      - tapOn:
+          id: nav-account
       - scrollUntilVisible:
           element:
             id: locale-en
-          direction: UP
+          direction: DOWN
       - tapOn:
           id: locale-en
-      - scrollUntilVisible:
-          element:
-            text: "Accepted · in progress"
-          direction: DOWN
-      - scrollUntilVisible:
-          element:
-            id: locale-ja
-          direction: UP
+      - tapOn:
+          id: nav-back
+      - extendedWaitUntil:
+          visible: "Accepted · in progress"
+          timeout: 15000
+      - takeScreenshot: job-accepted-en
+      - tapOn:
+          id: nav-account
       - tapOn:
           id: locale-ja
       - tapOn:
           id: locale-vi
+      - tapOn:
+          id: nav-back
 - scrollUntilVisible:
     element:
       id: job-chat

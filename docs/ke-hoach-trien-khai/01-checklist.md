@@ -1,5 +1,30 @@
 # Checklist chức năng và bằng chứng
 
+## B00-11 — Áp dụng giao diện, 28/10/2026
+
+- [x] Chủ dự án duyệt triển khai từ B00-10: mũi tên không chữ, ẩn trên màn gốc; giữ quyền và nghiệp vụ/API.
+- [x] Áp dụng khung chung, tìm dịch vụ, hồ sơ, công việc, chat, hóa đơn, Ví, Tài khoản và menu quản trị desktop. [Báo cáo/ảnh](bao-cao/B00-11-trien-khai-giao-dien.md).
+- [x] Bổ sung kiểm Point từ API và lỗi lưu ngôn ngữ trùng lúc xác thực phiên; giữ retry, bản nháp và hai dấu thanh toán.
+- [x] 349 test mobile và 10 hành trình web liên quan đạt; iOS Simulator đạt shell/jobs, Android Emulator đạt jobs; ảnh và giới hạn trong báo cáo.
+- [x] Inventory và SDD prepare đạt; báo cáo ghi cách chạy/đọc evidence SDD cuối đúng working tree, tách khỏi native/CI/UAT.
+- [ ] Thiết bị vật lý, UAT, commit/push và CI mới: chưa thực hiện.
+
+
+## B00-10 — Rà soát bảo mật và giao diện, 23/10/2026
+
+- [x] 28/10: sửa riêng bản thiết kế theo duyệt — mũi tên không chữ, ẩn ở màn gốc, cùng hàng tiêu đề; quay về đúng nguồn mở, kiểm desktop/mobile/file/Live Server và chụp ảnh HTML. Chưa áp dụng vào app.
+
+- [x] Đối chiếu CI đúng commit; tải trace của run `39910748394`, sửa lỗi nút dịch chuyển khi đọc nền.
+- [x] Sửa hash mật khẩu mới trước proof, có kiểm RED/GREEN; cập nhật dependency có bản vá và giữ cảnh báo tồn đọng.
+- [x] Chuẩn bị [báo cáo, ảnh DEMO và đề xuất tương tác](bao-cao/B00-10-ra-soat-bao-mat-va-giao-dien.md); chưa áp dụng thiết kế mới vào app.
+- [x] Sửa liên kết chuyển màn bên trong bản HTML: tab, hồ sơ, công việc/chat/hóa đơn, avatar và ví; kiểm 7 màn với JavaScript bật/tắt, bàn phím, Back/Forward và màn hẹp. Mục chưa mô phỏng được ghi rõ; admin vẫn là bố cục tĩnh.
+- [x] Web local độc lập 31/31; native 14/14 flow iOS simulator và 14/14 Android emulator. Sửa thêm lưu tên sau đổi locale và bàn phím địa điểm; không lấy web thay native/UAT.
+- [x] Cô lập worker thông báo khỏi hàng rào đếm đúng hai actor trong bài API đổi lịch đồng thời; giữ kiểm 200/409 và lịch sử ghi một lần.
+- SDD giữ 151 tiêu chí và QA 96 partial/12 unmapped; kết quả bộ file cuối đọc từ evidence và verify đúng fingerprint, không thay bằng số kiểm tập trung.
+- [ ] Chủ dự án chốt thiết kế; commit/push sửa đợt này và CI mới; thiết bị vật lý/UAT/production.
+
+LOCAL-01 đã có commit `1d925ce` trên nhánh remote, nhưng CI tương ứng thất bại. Dòng chưa push trong checklist cũ là trạng thái lịch sử.
+
 ## LOCAL-01 — Hoàn thiện local, 23/10/2026
 
 - [x] Chat/đánh giá nhận ý định lúc đọc nền, giữ nội dung/phiên bản/khóa; hủy khi rời màn hoặc đổi tài khoản.

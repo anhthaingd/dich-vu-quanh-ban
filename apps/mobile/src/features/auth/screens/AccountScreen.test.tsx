@@ -52,3 +52,11 @@ test('keyboard submit ignores incomplete input and submits completed registratio
   expect(await screen.findByText('Email chưa xác minh')).toBeVisible();
   expect(f.api.register).toHaveBeenCalledTimes(1);
 });
+
+test('account Point shows available API balance, retries read failure and clears on logout',async()=>{
+ const f=authFixture('saved');const points=jest.spyOn(f.manager,'getPoints').mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValue({balance:'12000',held:'2000',available:'10000'});
+ await mount(f);
+ fireEvent.press(await screen.findByRole('button',{name:'Thử lại'}));
+ expect(await screen.findByTestId('account-points')).toHaveTextContent('10.000 Point');expect(points).toHaveBeenCalledTimes(2);
+ fireEvent.press(screen.getByTestId('auth-logout'));await screen.findByTestId('auth-email');expect(screen.queryByTestId('account-points')).toBeNull();
+});

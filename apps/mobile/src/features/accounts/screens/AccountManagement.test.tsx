@@ -1,16 +1,20 @@
+import {useLocale} from '../../../app/providers/LocaleProvider';
+import type {Locale} from '../../../lib/i18n';
 import { locationsApi } from '../../location/api/locations-api';
 jest.mock('../../location/api/locations-api', () => ({ locationsApi: { search: jest.fn(), reverse: jest.fn() } }));
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { AppNavigator } from '../../../app/navigation/AppNavigator';
 import { AppProviders } from '../../../app/providers/AppProviders';
 import { AuthProvider } from '../../../app/providers/AuthProvider';
 import { authFixture } from '../../../../test/helpers/auth';
 import { ApiError } from '../../../lib/http/api-error';
 const address={id:'00000000-0000-4000-8000-000000000003',label:'Home',address:{text:'Street',point:{latitude:10,longitude:106}},is_default:true,version:1};
+let changeTestLocale:(locale:Locale)=>Promise<void>;
+function LocaleProbe(){changeTestLocale=useLocale().selectLocale;return null;}
 async function mount(kind:'addresses'|'sessions') {
   const f=authFixture('saved');
   f.accounts.saveAddress.mockImplementation(async(_token,_id,input)=>({...address,...input,version:2}));
-  render(<AppProviders api={{categories:async()=>[],skills:async()=>[]}}><AuthProvider manager={f.manager}><AppNavigator /></AuthProvider></AppProviders>);
+  render(<AppProviders api={{categories:async()=>[],skills:async()=>[]}}><AuthProvider manager={f.manager}><LocaleProbe/><AppNavigator /></AuthProvider></AppProviders>);
   fireEvent.press(await screen.findByRole('button',{name:'Tài khoản'}));const open=await screen.findByTestId(kind+'-open');await waitFor(()=>expect(open).not.toBeDisabled());fireEvent.press(open);
   await waitFor(()=>expect(screen.getByTestId('account-reload')).not.toBeDisabled());return f;
 }
@@ -23,7 +27,7 @@ test('address form validates, preserves draft across locale, retries lost respon
   fireEvent.press(await screen.findByTestId('location-result-0'));
   fireEvent.press(screen.getByTestId('location-confirm'));
   for(const [id,value] of [['label','Home'],['text','Street']]) fireEvent.changeText(screen.getByTestId('address-'+id),value);
-  fireEvent.press(screen.getByRole('button',{name:'English'}));await waitFor(()=>expect(screen.getByTestId('locale-ja')).not.toBeDisabled());expect(screen.getByTestId('address-text').props.value).toBe('Street');
+  await act(async()=>changeTestLocale('en'));expect(screen.getByTestId('address-text').props.value).toBe('Street');
   f.accounts.saveAddress.mockRejectedValueOnce(new ApiError('NETWORK'));fireEvent.press(screen.getByTestId('address-save'));await screen.findByTestId('account-retry');expect(screen.getByTestId('address-text').props.editable).toBe(false);
   f.accounts.addresses.mockResolvedValue({items:[address],next_cursor:null});fireEvent.press(screen.getByTestId('account-retry'));await screen.findByTestId('address-edit');expect(f.accounts.saveAddress.mock.calls[0]).toEqual(f.accounts.saveAddress.mock.calls[1]);
   fireEvent.press(screen.getByTestId('address-edit'));f.accounts.saveAddress.mockRejectedValueOnce(new ApiError('VERSION_CONFLICT'));fireEvent.changeText(screen.getByTestId('address-text'),'Draft');fireEvent.press(screen.getByTestId('address-save'));await screen.findByRole('alert');expect(screen.getByTestId('address-save')).toBeDisabled();

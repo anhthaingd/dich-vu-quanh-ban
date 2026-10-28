@@ -101,6 +101,7 @@ export function SearchScreen({
   return (
     <ProductShell onWallet={id=>navigation.navigate('Finance',{id})}
       keyboardDismissMode="on-drag"
+      title={t('shell.findServices')}
       discovery
       onBack={route.name === 'Search' ? () => navigation.goBack() : undefined}
       onJobs={() => navigation.navigate('Jobs')}
@@ -109,9 +110,7 @@ export function SearchScreen({
       onCatalog={() => navigation.popTo('CatalogHome')}
     >
       <View style={styles.intro}>
-        <AppText style={styles.eyebrow}>{t('home.eyebrow')}</AppText>
-        <AppText variant="title" accessibilityRole="header" style={styles.headline}>{t('home.headline')}{'\n'}<AppText style={styles.headline} tone="primary">{t('home.headlineAccent')}</AppText></AppText>
-        <AppText tone="muted" style={styles.introCopy}>{t('home.intro')}</AppText>
+        <AppText variant="title" accessibilityRole="header" style={styles.headline}>{t('home.headline')} <AppText style={styles.headline} tone="primary">{t('home.headlineAccent')}</AppText></AppText>
       </View>
       <ServiceFilter value={service} onChange={setService}
         submitControl={<Pressable testID="search-submit" accessibilityRole="button" accessibilityLabel={t('search.submit')} onPress={submit} style={styles.submit}><Icon name="search" color="#fff" size={21}/></Pressable>}
@@ -190,7 +189,7 @@ export function SearchScreen({
       {state.items.filter(p=>!mapView || !p.map_location).map((p) => (
         <View key={p.id} testID={`search-result-${p.id}`} style={styles.provider}>
           <Pressable accessibilityRole="button" accessibilityLabel={`${t('search.view')} · ${p.name}`} onPress={()=>navigation.navigate('PartnerProfile',{id:p.id})} style={styles.providerName}>
-            <AppText style={styles.providerTitle}>{p.name}</AppText><Icon name="arrow" size={16}/>
+            <View style={styles.providerAvatar}><AppText tone="success" style={{fontWeight:'700'}}>{p.name.trim().split(/\s+/).slice(0,2).map(w=>Array.from(w)[0]).join('')}</AppText></View><AppText style={styles.providerTitle}>{p.name}</AppText><Icon name="arrow" size={16}/>
           </Pressable>
           <AppText style={styles.small} tone="muted">{t(`partners.${p.kind}`)} · {t(p.distance_kind === 'shop' ? 'search.distanceShop' : 'search.distanceArea', {distance:(p.distance_m/1000).toFixed(1)})}</AppText>
           <View style={styles.reputation}><AppText style={styles.small} tone="muted">{p.stars===null ? t('home.noReviews') : t('home.reviews',{stars:p.stars,count:p.review_count})}</AppText><AppText style={styles.small} tone={p.verification_status==='verified'?'success':'muted'}>{t(p.verification_status==='verified'?'partners.verified':'partners.unverified')}</AppText></View>
@@ -271,13 +270,13 @@ function SavedPositions({
 }
 
 const styles=StyleSheet.create({
- intro:{marginBottom:24},eyebrow:{fontSize:8,lineHeight:14,fontWeight:'700',letterSpacing:1,color:'#58657A',marginBottom:14},
- headline:{fontSize:28,lineHeight:38,fontWeight:'700',letterSpacing:-1.1},introCopy:{fontSize:12,lineHeight:22,maxWidth:320,marginTop:14},
+ intro:{marginBottom:16},eyebrow:{fontSize:8,lineHeight:14,fontWeight:'700',letterSpacing:1,color:'#58657A',marginBottom:14},
+ headline:{fontSize:26,lineHeight:35,fontWeight:'700',letterSpacing:-0.5},introCopy:{fontSize:12,lineHeight:22,maxWidth:320,marginTop:14},
  submit:{width:46,height:46,borderRadius:11,backgroundColor:theme.colors.primary,alignItems:'center',justifyContent:'center'},
- location:{flexDirection:'row',alignItems:'center',gap:10,paddingHorizontal:10,minHeight:40,borderTopWidth:1,borderColor:'#E1E6EE'},locationLabel:{fontSize:10,lineHeight:16},locationValue:{fontSize:12,lineHeight:18,fontWeight:'600',flex:1},
- filters:{flexDirection:'row',alignItems:'center',flexWrap:'wrap',gap:12,paddingBottom:22},filterButton:{flexDirection:'row',alignItems:'center',gap:6,borderWidth:1,borderColor:'#DEE5F0',borderRadius:8,minHeight:40,paddingHorizontal:10},
- verified:{flexDirection:'row',alignItems:'center',gap:6,minHeight:40},checkbox:{width:16,height:16,borderWidth:1,borderColor:'#78869E',borderRadius:3},checked:{backgroundColor:theme.colors.primary,borderColor:theme.colors.primary},checkMark:{fontSize:12,lineHeight:14,textAlign:'center'},
- small:{fontSize:11,lineHeight:18},notice:{fontSize:11,lineHeight:20,marginVertical:12},filterModal:{flex:1,padding:20,paddingTop:48,paddingBottom:32,backgroundColor:'#fff'},filterContent:{gap:16,paddingBottom:24},
+ location:{flexDirection:'row',alignItems:'center',gap:10,paddingHorizontal:10,minHeight:44,borderTopWidth:1,borderColor:'#E1E6EE'},locationLabel:{fontSize:10,lineHeight:16},locationValue:{fontSize:12,lineHeight:18,fontWeight:'600',flex:1},
+ filters:{flexDirection:'row',alignItems:'center',flexWrap:'wrap',gap:12,paddingBottom:22},filterButton:{flexDirection:'row',alignItems:'center',gap:6,borderWidth:1,borderColor:'#DEE5F0',borderRadius:8,minHeight:44,paddingHorizontal:10},
+ verified:{flexDirection:'row',alignItems:'center',gap:6,minHeight:44},checkbox:{width:16,height:16,borderWidth:1,borderColor:'#78869E',borderRadius:3},checked:{backgroundColor:theme.colors.primary,borderColor:theme.colors.primary},checkMark:{fontSize:12,lineHeight:14,textAlign:'center'},
+ small:{fontSize:13,lineHeight:20},notice:{fontSize:11,lineHeight:20,marginVertical:12},filterModal:{flex:1,padding:20,paddingTop:48,paddingBottom:32,backgroundColor:'#fff'},filterContent:{gap:16,paddingBottom:24},
  empty:{gap:8,paddingVertical:24,borderTopWidth:1,borderColor:theme.colors.border},resultHeader:{flexDirection:'row',alignItems:'center',gap:12,marginBottom:20},resultTitle:{fontSize:20,lineHeight:28,fontWeight:'700'},mapButton:{flexDirection:'row',gap:8,alignItems:'center',padding:12,borderWidth:1,borderColor:theme.colors.border,borderRadius:8},sort:{fontSize:11,lineHeight:18,textAlign:'right',marginBottom:12},
- provider:{paddingVertical:20,borderBottomWidth:1,borderColor:theme.colors.border,gap:10},providerName:{flexDirection:'row',alignItems:'center',gap:8},providerTitle:{fontSize:18,lineHeight:26,fontWeight:'700',flex:1},reputation:{flexDirection:'row',flexWrap:'wrap',gap:12},providerBottom:{flexDirection:'row',alignItems:'center',gap:12,marginTop:8},price:{fontSize:18,lineHeight:26,fontWeight:'700'},
+ providerAvatar:{width:48,height:48,borderRadius:16,backgroundColor:'#edf5ef',alignItems:'center',justifyContent:'center'},provider:{padding:18,borderWidth:1,borderRadius:18,borderColor:theme.colors.border,gap:12,marginTop:14},providerName:{flexDirection:'row',alignItems:'center',gap:8},providerTitle:{fontSize:18,lineHeight:26,fontWeight:'700',flex:1},reputation:{flexDirection:'row',flexWrap:'wrap',gap:12},providerBottom:{flexDirection:'row',alignItems:'center',gap:12,marginTop:8},price:{fontSize:18,lineHeight:26,fontWeight:'700'},
 });

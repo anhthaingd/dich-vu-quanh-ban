@@ -157,6 +157,8 @@ appId: vn.dichvuquanhban.app
       id: partner-add-location
     direction: DOWN
 - takeScreenshot: partner-locations
+- tapOn:
+    id: nav-account
 - scrollUntilVisible:
     element:
       id: locale-en
@@ -194,6 +196,8 @@ appId: vn.dichvuquanhban.app
 - extendedWaitUntil:
     visible: "Ngôn ngữ"
     timeout: 15000
+- tapOn:
+    id: nav-back
 - scrollUntilVisible:
     element:
       id: nav-back
@@ -237,9 +241,9 @@ appId: vn.dichvuquanhban.app
     id: search-submit
 - scrollUntilVisible:
     element:
-      text: "Native company"
+      text: "Xem hồ sơ · Native company"
     direction: DOWN
-- assertVisible: "Native company"
+- assertVisible: "Xem hồ sơ · Native company"
 - scrollUntilVisible:
     element:
       text: "Xem hồ sơ"

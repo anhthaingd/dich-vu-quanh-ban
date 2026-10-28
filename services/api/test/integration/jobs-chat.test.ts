@@ -6,6 +6,7 @@ import { Ajv } from 'ajv';
 import addFormats from 'ajv-formats';
 import { databaseFixture } from '../helpers/database.js';
 import { stableId } from '../../src/database/seed.js';
+import { NotificationsWorker } from '../../src/modules/notifications/notifications.worker.js';
 let f:Awaited<ReturnType<typeof databaseFixture>>;
 type Actor={token:string;id:string};
 let owner:Actor,customer:Actor,worker:Actor,outsider:Actor;
@@ -106,6 +107,10 @@ test('outbox failure rolls back message and sequence; same request can recover',
 });
 
 test('two actors reschedule after acquiring their own locks without deadlocking the customer foreign key',async()=>{
+ // This barrier observes exactly two HTTP actors. The periodic notification worker
+ // also locks this partner and can otherwise be counted as a third waiter.
+ // Wait for any active drain to finish before constructing this concurrency scenario.
+ await f.app.get(NotificationsWorker).onModuleDestroy();
  const p=await ready();let j=await create(p);j=(await change(owner,j,'accept',{eta:future()})).body;
  const blocker=await f.pool.connect();let attempts:Promise<Awaited<ReturnType<typeof change>>[]>|undefined;
  try {
