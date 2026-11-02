@@ -1,5 +1,16 @@
 # Kế hoạch triển khai và học code
 
+**02/11/2026 — Hoàn tất chụp lại báo cáo tổng sau UX-01:** [B00-14](bao-cao/B00-14-bao-cao-man-hinh.html) có **268 ảnh chính, 134/135 mục trên cả Android và iOS**, cộng 2 ảnh lỗi xác minh. Mục CatalogCategory chưa có đường vào hiện hành. [Bảng 6 vấn đề](bao-cao/B00-14-bao-cao-man-hinh.md) tách lỗi/cấu hình/điểm vướng; có bộ lọc riêng trong HTML. Dùng `dvqb_local`, không reset dữ liệu; không coi chụp ảnh là đã kiểm mọi nút, thiết bị thật hoặc UAT. Ảnh cũ trước UX-01 đã dọn ở đợt trước; không đồng bộ Drive/`ui-ux`.
+
+**02/11/2026 — UX-01, áp dụng giao diện đã duyệt:** chủ dự án đã yêu cầu sửa app theo bản HTML. [B00-15 — thay đổi, cách học code và bằng chứng sau sửa](bao-cao/B00-15-toi-uu-trai-nghiem.md). Giữ API/quyền/công thức hiện hành; D01–D04 chưa mở. Nghiệm thu native dùng `dvqb_local`; kết quả trước ngày này không thay bằng chứng sau sửa.
+
+**Mốc trước triển khai, 02/11/2026 — UX-01, thiết kế để duyệt:** đã dựng [bản HTML tương tác](de-xuat/UX-01-thiet-ke-giao-dien.html) với 30 màn mẫu, 7 vai, khung iPhone/Android và phần giải thích nút/thay đổi. [Cách xem và phạm vi](de-xuat/UX-01-thiet-ke-giao-dien.md) · [B00-16 — báo cáo thiết kế](bao-cao/B00-16-ban-thiet-ke-ux01.md). Chỉ thiết kế HTML; chưa áp dụng app/API, chưa ghi DB, chưa hoàn tất audit native hoặc duyệt D01–D04.
+
+**31/10–01/11/2026 — UX-01, đang rà native trước khi chốt sửa:** theo phản hồi của chủ dự án, kiểm lại Android/iOS trên `dvqb_local`; [bảng lọc bằng chứng từng mô tả nút](bao-cao/UX-01-kiem-nut-native.html) và [kết quả audit/giới hạn](de-xuat/UX-01-ket-qua-ra-soat-native.md) phân biệt thao tác đã thử với đề xuất. [Kế hoạch](de-xuat/UX-01-toi-uu-luong-va-nut.md) và [danh mục 30 nhóm / 135 mục](de-xuat/UX-01-danh-muc-man-va-nut.md) đã hạ mức chắc chắn, giữ gói 0 chưa hoàn tất. Chưa duyệt sửa sản phẩm; dữ liệu mô phỏng phục vụ kiểm nút được bổ sung vào DB hiện tại, không reset.
+
+
+
+
 **28/10/2026 — B00-11:** chủ dự án đã duyệt áp dụng [thiết kế B00-10](bao-cao/B00-10-de-xuat-giao-dien.html) vào app. [Báo cáo triển khai và ảnh app](bao-cao/B00-11-trien-khai-giao-dien.md): 7 màn chính, khung điều hướng và bố cục quản trị web; kiểm local/native được ghi riêng. Không đồng bộ Drive/ui-ux, chưa commit/push/CI mới/UAT. Ghi chú “chưa áp dụng” tại mốc B00-10 bên dưới là lịch sử.
 
 **28/10/2026 — B00-10, chỉnh thiết kế đã duyệt:** [bản HTML](bao-cao/B00-10-de-xuat-giao-dien.html) dùng mũi tên không chữ ở màn chi tiết, bỏ ở màn gốc và quay về đúng màn vừa mở. [Ảnh và kiểm tương tác](bao-cao/B00-10-ra-soat-bao-mat-va-giao-dien.md); chưa áp dụng vào app.
@@ -82,6 +93,9 @@ Theo yêu cầu mới nhất ngày 07/10/2026, thứ tự là **nguồn cung và
 Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Markdown Preview có hỗ trợ Mermaid như các tài liệu khác của dự án; tab sửa văn bản hiển thị mã sơ đồ. Không cần các file nguồn/ảnh riêng. Nếu sơ đồ không hiện, kiểm lỗi cú pháp và trình xem hiện có trước khi cài thêm công cụ.
 
 ## Báo cáo đã có
+
+- [B00-14 — Báo cáo tương tác các màn Android/iPhone](bao-cao/B00-14-bao-cao-man-hinh.html): 135 mục theo 9 luồng, lọc vai trò/quyền/nền tảng, giải thích nút và ảnh native trên `dvqb_local`; [cách đọc và giới hạn](bao-cao/B00-14-bao-cao-man-hinh.md).
+- [B00-13 — Dữ liệu vận hành local](bao-cao/B00-13-du-lieu-van-hanh-local.md): seed bổ sung, giữ dữ liệu cũ, kiểm quan hệ và luồng API thật; tài khoản/backup lưu riêng trong `.local`.
 
 - [B01-08 — Bảo mật, khôi phục và xóa tài khoản](bao-cao/B01-08-bao-mat-khoi-phuc-va-xoa.md).
 - [I18N-05 — Ngôn ngữ tài khoản](bao-cao/I18N-05-ngon-ngu-tai-khoan.md).

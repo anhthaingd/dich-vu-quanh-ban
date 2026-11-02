@@ -79,3 +79,11 @@ test('retry create does not create twice; revoked authorization is terminal', as
   expect(auth.editPartner).toHaveBeenCalledTimes(1);
   expect(editor.getSnapshot().pending).toBe(false);
 });
+
+test.each(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'] as const)('access loss %s clears the private editor snapshot',async(code)=>{
+ const {auth,editor}=fixture();auth.loadPartner.mockResolvedValueOnce(profile).mockRejectedValueOnce(new ApiError(code));
+ await editor.load();await editor.load();expect(editor.getSnapshot().value).toBeNull();
+ auth.loadPartner.mockResolvedValueOnce(profile);await editor.load();auth.editPartner.mockRejectedValueOnce(new ApiError(code));
+ await editor.edit({action:'profile',expected_version:1,name:'Draft'});
+ expect(editor.getSnapshot()).toMatchObject({value:null,pending:false,error:code});
+});

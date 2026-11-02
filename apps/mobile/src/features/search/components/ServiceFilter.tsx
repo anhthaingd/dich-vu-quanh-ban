@@ -93,9 +93,9 @@ export function ServiceFilter({ value, onChange, locationControl, submitControl 
           <Pressable testID="search-service-open" accessibilityRole="button" accessibilityLabel={t('serviceFilter.choose')} onPress={open} style={styles.searchInput}>
             <Icon name="search" size={21} /><AppText testID="search-service-selected" numberOfLines={1} style={styles.searchText} tone={selectedName ? 'text' : 'muted'}>{selectedName ?? t('home.placeholder')}</AppText>
           </Pressable>
-          {submitControl}
         </View>
         {locationControl}
+        {submitControl}
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}><View style={styles.categories}>
         {[{id:'',code:'',name:t('home.all')},...industries].map(item => <Pressable key={item.id} testID={`home-category-${item.id || 'all'}`} accessibilityRole="button" accessibilityLabel={item.name} accessibilityState={{selected:(selectedRoot??'')===item.id}}
@@ -144,7 +144,7 @@ export function ServiceFilter({ value, onChange, locationControl, submitControl 
 }
 
 const styles = StyleSheet.create({
- searchBar:{borderWidth:1,borderColor:'#D5DEF2',borderRadius:13,padding:6,gap:4},
+ searchBar:{borderWidth:1,borderColor:'#D5DEF2',borderRadius:18,padding:12,gap:8,backgroundColor:theme.colors.surface},
  searchRow:{flexDirection:'row',alignItems:'center',gap:4},
  searchInput:{flex:1,flexDirection:'row',alignItems:'center',gap:12,paddingHorizontal:10,minHeight:46},
  searchText:{fontSize:14,lineHeight:22,flex:1},

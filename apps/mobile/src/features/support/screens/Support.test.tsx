@@ -45,3 +45,10 @@ test('support handles closed cases, pagination and private draft revocation',asy
  fireEvent.press(screen.getByTestId('support-list'));await screen.findByTestId('support-open-r');fireEvent.press(screen.getByTestId('support-open-r'));await screen.findByTestId('support-body');await ready(f);
  fireEvent.changeText(screen.getByTestId('support-body'),'Private draft');await waitFor(()=>expect(screen.getByTestId('support-send')).not.toBeDisabled());f.support.reply.mockRejectedValue(new ApiError('FORBIDDEN'));await act(async()=>{fireEvent.press(screen.getByTestId('support-send'));});expect(f.support.reply).toHaveBeenCalled();await waitFor(()=>expect(screen.queryByDisplayValue('Private draft')).toBeNull());
 });
+
+test('support status filter stays selected after opening and returning from a report',async()=>{
+ const f=fixture();f.setItems([report,{...report,id:'closed',state:'closed'}]);f.support.get.mockResolvedValue({...report,id:'closed',state:'closed'});mount(f);
+ await screen.findByTestId('support-open-closed');await ready(f);fireEvent.press(screen.getByTestId('support-filter-closed'));expect(screen.getByTestId('support-filter-closed').props.accessibilityState.selected).toBe(true);expect(screen.queryByTestId('support-open-r')).toBeNull();
+ fireEvent.press(screen.getByTestId('support-open-closed'));await screen.findByTestId('support-state');await ready(f);fireEvent.press(screen.getByTestId('support-list'));await screen.findByTestId('support-filter-closed');await ready(f);
+ expect(screen.getByTestId('support-filter-closed').props.accessibilityState.selected).toBe(true);expect(screen.queryByTestId('support-open-r')).toBeNull();expect(screen.getByTestId('support-open-closed')).toBeTruthy();
+});

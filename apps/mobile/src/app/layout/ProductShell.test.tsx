@@ -3,7 +3,10 @@ import { AppNavigator } from '../navigation/AppNavigator';
 import { AppProviders } from '../providers/AppProviders';
 import { AuthProvider } from '../providers/AuthProvider';
 import { authFixture, credentials } from '../../../test/helpers/auth';
-import {ProductShell} from './ProductShell';
+import {useState} from 'react';
+import {Button} from '../../components/ui/Button';
+import {Input} from '../../components/ui/Input';
+import {ProductShell,usePageActions} from './ProductShell';
 let mockMessageCount=0;
 let mockNotices:{read_at:string|null}[]=[];
 jest.mock('../../features/chat/MessageUnreadProvider',()=>({useMessageUnread:()=>({unread:mockMessageCount,invalidate:()=>{}})}));
@@ -50,7 +53,7 @@ test('home keeps service selection after account, and protected tabs have real d
   fireEvent.press(screen.getByTestId('nav-messages'));
   expect(await screen.findByRole('tab', {name:'Tin nhắn',selected:true})).toBeVisible();
   fireEvent.press(screen.getByTestId('nav-catalog'));
-  expect(await screen.findByRole('header', {name:/Việc nhà có người lo/})).toBeVisible();
+  expect(await screen.findByRole('header', {name:'Tìm dịch vụ'})).toBeVisible();
   expect(screen.queryByTestId('nav-back')).toBeNull();
 });
 test('message and notification badges are independent, hide zero and cap at 99+',async()=>{
@@ -62,4 +65,13 @@ test('message and notification badges are independent, hide zero and cap at 99+'
  mockMessageCount=0;view.rerender(tree());expect(screen.queryByTestId('message-badge')).toBeNull();expect(screen.getByTestId('notification-badge')).toHaveTextContent('1');
  mockMessageCount=125;mockNotices=[{read_at:'2026-10-15'}];view.rerender(tree());expect(screen.getByTestId('message-badge')).toHaveTextContent('99+');expect(screen.queryByTestId('notification-badge')).toBeNull();
  mockMessageCount=0;mockNotices=[];
+});
+
+test('page actions follow the current draft and disappear when their form unmounts',async()=>{
+ const auth=authFixture(),save=jest.fn();
+ function Form(){const [draft,setDraft]=useState('');usePageActions(<Button testID="footer-save" label="Lưu" onPress={()=>save(draft)}/>);return <Input testID="footer-draft" label="Nháp" value={draft} onChangeText={setDraft}/>;}
+ function Page(){const [show,setShow]=useState(true);return <ProductShell><Button testID="hide-form" label="Đóng" onPress={()=>setShow(false)}/>{show&&<Form/>}</ProductShell>;}
+ render(<AppProviders api={{categories:async()=>[],skills:async()=>[]}}><AuthProvider manager={auth.manager}><Page/></AuthProvider></AppProviders>);await act(async()=>{});
+ fireEvent.changeText(screen.getByTestId('footer-draft'),'Nội dung mới');fireEvent.press(screen.getByTestId('footer-save'));expect(save).toHaveBeenCalledWith('Nội dung mới');expect(screen.getByTestId('footer-draft').props.value).toBe('Nội dung mới');
+ fireEvent.press(screen.getByTestId('hide-form'));expect(screen.queryByTestId('footer-save')).toBeNull();expect(screen.queryByTestId('page-actions')).toBeNull();
 });

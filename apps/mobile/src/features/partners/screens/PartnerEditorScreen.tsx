@@ -1,3 +1,4 @@
+import {partnerMessages} from '../messages';
 import {GalleryEditor} from '../components/GalleryEditor';
 import {PolygonEditor} from '../components/PolygonEditor';
 import { LocationField } from '../../location/components/LocationField';
@@ -91,6 +92,7 @@ function Editor({
     [catalogBusy, setCatalogBusy] = useState(false),
     [catalogAttempt, setCatalogAttempt] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const [galleryOpened, setGalleryOpened] = useState(false);
   function fill(p: Partner) {
     setName(p.name);
     setBio(p.bio);
@@ -147,6 +149,15 @@ function Editor({
   }, [catalog, locale, catalogAttempt]);
   const blocked = state.busy || state.pending || auth.busy;
   const p = state.value;
+  const copy = partnerMessages[locale];
+  // Compare each independent draft with its server snapshot. Saving one section
+  // must not erase unsaved edits in another section.
+  const dirty = p ? {
+    profile: name !== p.name || bio !== p.bio || phone !== p.phone || zalo !== p.zalo,
+    skills: JSON.stringify(skills) !== JSON.stringify(p.skills),
+    areas: JSON.stringify(areas) !== JSON.stringify(p.areas.map(a=>({label:a.label,lat:String(a.center.latitude),lng:String(a.center.longitude),polygon:a.boundary_geojson?.coordinates[0][0].slice(0,-1)??null,radius:String(a.radius_m??10000)}))),
+    locations: JSON.stringify(locations) !== JSON.stringify(p.locations.map(l=>({text:l.address.text,lat:String(l.address.point.latitude),lng:String(l.address.point.longitude),public:l.public})))
+  } : {profile:false,skills:false,areas:false,locations:false};
   const save = (input: PartnerChange) => {
     if (p) void editor.edit({ ...input, expected_version: p.version });
   };
@@ -299,15 +310,17 @@ function Editor({
             )}
           </Card>
           <AppText variant="section">{t('partners.editDetails')}</AppText>
+          <AppText tone="muted">{copy.editorHint}</AppText>
           <Options
             values={['profile', 'skills', 'areas', 'locations', 'gallery']}
             value={section}
-            onChange={setSection}
+            onChange={next=>{setSection(next); if(next==='gallery')setGalleryOpened(true);}}
             disabled={blocked}
             testID="partner-section"
             layout="sections"
           />
-          {section === 'gallery' && <GalleryEditor key={p.id} owner={owner} partner={p} blocked={blocked} saved={()=>void editor.load()}/>}
+          {section !== 'gallery' && <AppText testID="partner-section-status" accessibilityLiveRegion="polite" tone={dirty[section]?'primary':'muted'}>{dirty[section]?copy.unsaved:copy.saved}</AppText>}
+          {galleryOpened && <View style={section==='gallery'?undefined:{display:'none'}} accessibilityElementsHidden={section!=='gallery'} importantForAccessibility={section==='gallery'?'auto':'no-hide-descendants'}><GalleryEditor key={p.id} owner={owner} partner={p} blocked={blocked} saved={()=>void editor.load()}/></View>}
           {section === 'profile' && (
             <Card>
               <Input
@@ -339,7 +352,7 @@ function Editor({
               />
               <Button
                 testID="partner-save-profile"
-                label={t('partners.save')}
+                label={copy.saveProfile}
                 disabled={blocked}
                 onPress={() =>
                   save({ action: 'profile', name, bio, phone, zalo })
@@ -476,7 +489,7 @@ function Editor({
               </Card>
               <Button
                 testID="partner-save-skills"
-                label={t('partners.save')}
+                label={copy.saveSkills}
                 disabled={blocked || catalogBusy || catalogError}
                 onPress={() => save({ action: 'skills', skills })}
               />
@@ -540,7 +553,7 @@ function Editor({
               />
               <Button
                 testID="partner-save-areas"
-                label={t('partners.save')}
+                label={copy.saveAreas}
                 disabled={blocked||areas.some(a=>a.polygon!==null&&a.polygon.length<3)}
                 onPress={() =>
                   save({
@@ -618,7 +631,7 @@ function Editor({
               />
               <Button
                 testID="partner-save-locations"
-                label={t('partners.save')}
+                label={copy.saveLocations}
                 disabled={blocked}
                 onPress={() =>
                   save({
@@ -639,7 +652,8 @@ function Editor({
             </>
           )}
           <Card>
-            <AppText variant="card">{t('partners.visibilityTitle')}</AppText>
+            <AppText variant="card">{copy.publicProfile}</AppText>
+            <AppText tone="muted">{copy.publicationHint}</AppText>
             <AppText tone="muted">
               {t(
                 p.verification_status === 'verified'

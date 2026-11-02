@@ -34,3 +34,8 @@ test('P2 finance and media require explicit local credentials and cannot target 
  assert.ok(config(pilot).finance);assert.equal(config(pilot).calls?.url,'ws://127.0.0.1:7880');
  for(const change of [{NODE_ENV:'production'},{DATABASE_URL:'postgresql://remote.example/dvqb_test'},{FINANCE_LOCAL_SECRET:'short'},{LIVEKIT_URL:'wss://cloud.example'},{LIVEKIT_URL:'ws://user:secret@localhost:7880'},{LIVEKIT_URL:'ws://localhost:7880/path'},{LIVEKIT_API_SECRET:''}])assert.throws(()=>config({...pilot,...change}));
 });
+test('operational dvqb_local opt-in allows local adapters without enabling remote or production targets',()=>{
+ const base={DATABASE_URL:'postgresql://localhost:55432/dvqb_local',CURSOR_SECRET:'c'.repeat(32),NODE_ENV:'development',HOST:'127.0.0.1',LOCAL_OPERATIONAL_DATA:'1',ADMIN_LOCAL_SECRET:'a'.repeat(32),FINANCE_LOCAL_SECRET:'f'.repeat(32),LOCAL_MESSAGES:'1',LOCAL_MESSAGES_SECRET:'m'.repeat(32),LOCAL_MESSAGE_CONTACTS:'seed@example.test',LOCAL_SMS_DIRECTORY:'/tmp/dvqb-operational'};
+ const result=config(base);assert.ok(result.admin);assert.ok(result.finance);assert.deepEqual(result.localMessages?.contacts,['seed@example.test']);
+ for(const extra of [{LOCAL_OPERATIONAL_DATA:''},{NODE_ENV:'production'},{NODE_ENV:'test'},{HOST:'0.0.0.0'},{DATABASE_URL:'postgresql://remote/dvqb_local'},{DATABASE_URL:'postgresql://localhost/other'},{DATABASE_URL:'postgresql://localhost/dvqb_local?host=remote'}])assert.throws(()=>config({...base,...extra}));
+});

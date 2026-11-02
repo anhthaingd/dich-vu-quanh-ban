@@ -54,6 +54,15 @@ test('mobile admin filters queues, reviews private verification evidence, modera
  fireEvent.press(screen.getByTestId('admin-close-detail'));await screen.findByTestId('admin-queue');fireEvent.press(screen.getByTestId('admin-tab-reviews'));fireEvent.press(await screen.findByTestId('admin-item-review'));await screen.findByText('DEMO review');fireEvent.press(screen.getByTestId('admin-action'));fireEvent.press(screen.getByTestId('admin-action-hide'));fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO hidden');f.decision.mockResolvedValueOnce({...review,hidden:true,version:2});fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Đang ẩn');
  fireEvent.press(screen.getByTestId('admin-tab-audit'));await screen.findByText('DEMO audit');
 });
+
+test('admin keeps the applied queue criteria when closing a record and clears them with one action',async()=>{
+ const f=fixture(['support.read']);mount(f);await enter();
+ fireEvent.changeText(screen.getByTestId('admin-search'),'DEMO');fireEvent.press(screen.getByTestId('admin-filter'));fireEvent.press(screen.getByTestId('admin-filter-open'));fireEvent.press(screen.getByTestId('admin-search-submit'));
+ await waitFor(()=>expect(f.page).toHaveBeenLastCalledWith('reports','DEMO','open',undefined));
+ fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-detail');fireEvent.press(screen.getByTestId('admin-close-detail'));
+ expect(screen.getByTestId('admin-search')).toHaveProp('value','DEMO');fireEvent.press(screen.getByTestId('admin-filter'));expect(screen.getByTestId('admin-filter-open')).toHaveProp('accessibilityState',expect.objectContaining({selected:true}));fireEvent.press(screen.getByTestId('admin-filter-open'));
+ fireEvent.press(screen.getByTestId('admin-filter-reset'));await waitFor(()=>expect(f.page).toHaveBeenLastCalledWith('reports','','all',undefined));expect(screen.getByTestId('admin-search')).toHaveProp('value','');
+});
 test('admin setup requires confirmation and backgrounding clears the MFA secret and console',async()=>{
  const f=fixture();f.status.mockResolvedValue(false);const onChange=new Set<(s:AppStateStatus)=>void>();jest.spyOn(AppState,'addEventListener').mockImplementation((type,listener)=>{if(type==='change')onChange.add(listener);return {remove:()=>onChange.delete(listener)};});mount(f);await screen.findByTestId('admin-password');
  fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.press(screen.getByTestId('admin-verify'));await screen.findByText('DEMO-SECRET');

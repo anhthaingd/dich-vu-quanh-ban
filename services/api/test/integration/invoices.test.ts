@@ -41,6 +41,7 @@ test('invoice version, worker ACL, immutable sent data, settlement first and two
  const [s1,s2]=await Promise.all([call(worker,`/invoices/${i.id}/settle`,'POST',body,key),call(worker,`/invoices/${i.id}/settle`,'POST',body,key)]);
  assert.equal(s1.status,201,JSON.stringify(s1.body));assert.deepEqual(s1,s2);i=s1.body.invoice;assert.equal(i.review_eligible,false);assert.equal((await call(customer,`/jobs/${job}`)).body.state,'completed');
  assert.deepEqual((await call(customer,'/me/points')).body,{balance:'2000',held:'0',available:'2000'});
+ const settledLedger=await call(customer,'/me/points/ledger');assert.equal(settledLedger.status,200);assert.ok(settledLedger.body.items.length>0);assert.ok(settledLedger.body.items.every((entry:{reference_id:string})=>entry.reference_id===i.id));
  const wallet=(await call(worker,`/partners/${partner}/wallet`)).body;assert.equal(wallet.balance,'-10000');assert.equal(wallet.withdrawable,'0');
  i=(await change(customer,i,'payment-reported',{confirmed:true})).body;assert.equal(i.review_eligible,true);
  assert.equal((await f.pool.query('SELECT count(*) FROM settlements')).rows[0].count,'1');
@@ -99,4 +100,17 @@ test('stop with agreed charges continues invoice; no-charge stopped job cannot c
  const closed=await call(customer,`/jobs/${job}/stop`,'POST',{expected_version:stopped.body.version,reason:'DEMO no charges',has_agreed_charges:false});assert.equal(closed.status,201);assert.equal(closed.body.state,'stopped');
  assert.equal((await change(customer,i,'confirm',{points_used:'0'})).status,409);assert.equal((await change(customer,i,'revision-requests',{reason:'Blocked after stop'})).status,409);
  assert.equal((await f.pool.query('SELECT count(*) FROM holds')).rows[0].count,'0');
+});
+
+test('opening Point ledger entries keep a valid transaction reference and private account scope',async()=>{
+ const credit=randomUUID(),debit=randomUUID(),transaction=randomUUID();
+ await f.pool.query("INSERT INTO ledger_accounts(id,owner_user_id,unit) VALUES($1,$2,'POINT')",[credit,customer.id]);
+ await f.pool.query("INSERT INTO ledger_accounts(id,system_code,unit) VALUES($1,'opening_test','POINT')",[debit]);
+ const db=await f.pool.connect();try{await db.query('BEGIN');
+ await db.query("INSERT INTO ledger_transactions(id,operation_key,kind,actor_id,correlation_id) VALUES($1,$2,'opening',$3,$4)",[transaction,randomUUID(),customer.id,randomUUID()]);
+ await db.query("INSERT INTO ledger_entries(transaction_id,account_id,unit,delta,posting_code) VALUES($1,$2,'POINT',50000,'opening'),($1,$3,'POINT',-50000,'opening')",[transaction,credit,debit]);await db.query('COMMIT');}catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
+ const response=await call(customer,'/me/points/ledger');assert.equal(response.status,200);
+ const valid=ajv.compile({$ref:'spec#/components/schemas/getPointLedgerPage'});assert.equal(valid(response.body),true,JSON.stringify(valid.errors));
+ assert.equal(response.body.items[0].reference_id,transaction);assert.equal(response.body.items[0].amount,'50000');
+ assert.equal((await call(other,'/me/points/ledger')).body.items.length,0);
 });

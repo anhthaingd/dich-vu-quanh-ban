@@ -6,6 +6,14 @@ export function config(env = process.env): Config {
   }
   const url = new URL(env.DATABASE_URL);
   if (!['postgres:', 'postgresql:'].includes(url.protocol)) throw new Error('Invalid database protocol');
+  // Explicit owner-approved operational seed on the existing development DB.
+  // Never enables a production/remote DB or connection-string host overrides.
+  const operationalLocal = env.LOCAL_OPERATIONAL_DATA === '1' && env.NODE_ENV === 'development'
+    && url.pathname === '/dvqb_local' && !url.search
+    && ['localhost','127.0.0.1','[::1]'].includes(url.hostname)
+    && ['localhost','127.0.0.1','::1'].includes(env.HOST ?? '127.0.0.1');
+  if(env.LOCAL_OPERATIONAL_DATA === '1' && !operationalLocal) throw new Error('Operational seed requires development dvqb_local and loopback API/database');
+  const localDatabase = operationalLocal || ['/dvqb_p1_demo','/dvqb_test'].includes(url.pathname);
   const port = Number(env.PORT ?? 3100);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid PORT');
   if (env.AUTH_SECRET && env.AUTH_SECRET.length < 32) throw new Error('AUTH_SECRET must have at least 32 characters');
@@ -18,17 +26,17 @@ export function config(env = process.env): Config {
   }
   let localMessages:Config['localMessages'];
   if(env.LOCAL_MESSAGES==='1'){
-    if(!['development','test'].includes(env.NODE_ENV??'') || !['localhost','127.0.0.1','[::1]'].includes(url.hostname) || !['/dvqb_p1_demo','/dvqb_test'].includes(url.pathname) || (env.LOCAL_MESSAGES_SECRET?.length??0)<32 || !env.LOCAL_SMS_DIRECTORY || !env.LOCAL_MESSAGE_CONTACTS) throw new Error('Local messages require isolated dvqb_p1_demo/dvqb_test, secret and explicit DEMO contacts');
+    if(!['development','test'].includes(env.NODE_ENV??'') || !['localhost','127.0.0.1','[::1]'].includes(url.hostname) || !localDatabase || (env.LOCAL_MESSAGES_SECRET?.length??0)<32 || !env.LOCAL_SMS_DIRECTORY || !env.LOCAL_MESSAGE_CONTACTS) throw new Error('Local messages require an explicitly enabled local database, secret and explicit DEMO contacts');
     const mailpit=new URL(env.LOCAL_MAILPIT_URL??'http://127.0.0.1:8025');
     if(mailpit.protocol!=='http:'||!['127.0.0.1','localhost','[::1]'].includes(mailpit.hostname)||mailpit.username||mailpit.password||mailpit.pathname!=='/'||mailpit.search||mailpit.hash)throw new Error('Mailpit must be loopback only');
     localMessages={secret:env.LOCAL_MESSAGES_SECRET!,mailpit:mailpit.origin,smsDirectory:env.LOCAL_SMS_DIRECTORY,contacts:env.LOCAL_MESSAGE_CONTACTS.split(',').map(x=>x.trim().toLowerCase())};
   }
   let admin:Config['admin'];
   if(env.ADMIN_LOCAL_SECRET){
-    if(!['development','test'].includes(env.NODE_ENV??'')||!['localhost','127.0.0.1','[::1]'].includes(url.hostname)||!['/dvqb_p1_demo','/dvqb_test'].includes(url.pathname)||env.ADMIN_LOCAL_SECRET.length<32)throw new Error('Admin pilot requires isolated local/test database and a separate secret');
+    if(!['development','test'].includes(env.NODE_ENV??'')||!['localhost','127.0.0.1','[::1]'].includes(url.hostname)||!localDatabase||env.ADMIN_LOCAL_SECRET.length<32)throw new Error('Admin pilot requires isolated local/test database and a separate secret');
     admin={secret:env.ADMIN_LOCAL_SECRET};
   }
-  const localP2=()=>{if(!['development','test'].includes(env.NODE_ENV??'')||!['localhost','127.0.0.1','[::1]'].includes(url.hostname)||!['/dvqb_p1_demo','/dvqb_test'].includes(url.pathname))throw new Error('P2 pilots require isolated local/test database');};
+  const localP2=()=>{if(!['development','test'].includes(env.NODE_ENV??'')||!['localhost','127.0.0.1','[::1]'].includes(url.hostname)||!localDatabase)throw new Error('P2 pilots require isolated local/test database');};
   let finance:Config['finance'],calls:Config['calls'];
   if(env.FINANCE_LOCAL_SECRET){localP2();if(env.FINANCE_LOCAL_SECRET.length<32)throw new Error('Finance local secret must have at least 32 characters');finance={secret:env.FINANCE_LOCAL_SECRET};}
   if(env.LIVEKIT_URL||env.LIVEKIT_API_KEY||env.LIVEKIT_API_SECRET){

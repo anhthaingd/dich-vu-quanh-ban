@@ -159,3 +159,17 @@ test('fallback polling defers while drafting instead of announcing an unobserved
   view.unmount();
  } finally {jest.useRealTimers();}
 });
+
+test('job list retains same-scope items during failed refresh, clears them on permission loss',async()=>{
+ const f=workFixture();mount(f);await enabled('jobs-reload');
+ let reject!:(reason:ApiError)=>void;f.jobs.list.mockReturnValueOnce(new Promise((_resolve,no)=>{reject=no;}));
+ fireEvent.press(screen.getByTestId('jobs-reload'));await waitFor(()=>expect(screen.getByTestId('jobs-reload')).toBeDisabled());expect(screen.getByTestId('job-open-job')).toBeTruthy();
+ await act(async()=>reject(new ApiError('NETWORK')));await enabled('jobs-reload');expect(screen.getByTestId('job-open-job')).toBeTruthy();
+ f.jobs.list.mockRejectedValueOnce(new ApiError('FORBIDDEN'));fireEvent.press(screen.getByTestId('jobs-reload'));await enabled('jobs-reload');expect(screen.queryByTestId('job-open-job')).toBeNull();
+});
+
+test('job detail renders status and action groups without raw text beneath native Views',async()=>{
+ const f=workFixture();const view=mount(f,'JobDetail');await enabled('job-reload');
+ function check(node:unknown):void{if(!node||typeof node!=='object')return;if(Array.isArray(node)){node.forEach(check);return;}const n=node as {type?:string;children?:unknown[]};if(n.type==='View')expect((n.children??[]).filter(c=>typeof c==='string')).toEqual([]);n.children?.forEach(check);}
+ check(view.toJSON());fireEvent.press(screen.getByTestId('job-action-withdraw'));check(view.toJSON());
+});

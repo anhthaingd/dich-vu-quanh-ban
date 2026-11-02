@@ -1,0 +1,86 @@
+[
+  {
+    "name": "android-owner-job-requested.png",
+    "source": ".local/ux-01-audit/screens/android-owner-job-requested.png",
+    "sha256": "b951812507854d586b4cc71b5ddcb25c306f869e0e85524e12058cb8c5d6ae19",
+    "review": "Viewed directly or checked scenario screenshot; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "android-owner-job-declined.png",
+    "source": ".local/ux-01-audit/screens/android-owner-job-declined.png",
+    "sha256": "d9f6601e6a512ca0b35d7c287d0bbfe165a76da61f8abb59f00fcc0c310d7bb5",
+    "review": "Viewed directly or checked scenario screenshot; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "android-owner-invoice-draft.png",
+    "source": ".local/ux-01-audit/screens/android-owner-invoice-draft.png",
+    "sha256": "5da810eca22f7ae5ec0e1f8ac5f378f8856e4625fec68b2626b8df060e8978d3",
+    "review": "Viewed directly or checked scenario screenshot; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "android-employee-basic-organizations.png",
+    "source": ".local/ux-01-audit/screens/android-employee-basic-organizations.png",
+    "sha256": "272eb2232638077a4e71f4cf6802d068a50fc0f59ada766bef9983ee02bffa26",
+    "review": "Viewed directly or checked scenario screenshot; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "android-employee-basic-jobs.png",
+    "source": ".local/ux-01-audit/screens/android-employee-basic-jobs.png",
+    "sha256": "c9b955ea0f307ef0db732a577b0c07cb80845581ace88bbfe6153caf8712f0ca",
+    "review": "Viewed directly or checked scenario screenshot; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "ios-sessions.png",
+    "source": ".local/ux-01-audit/screens/ios-sessions.png",
+    "sha256": "708bb4d982b56169ad220184b0997ec139bfe8aebfe3e59e4863edd8bcaa4bf7",
+    "review": "Viewed directly or checked scenario screenshot; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "android-sort-clears-results.png",
+    "source": ".local/ux-01-audit/runs/android/android-search-reproduction/2026-10-31_225817/flow/takeScreenshot/android-sort-clears-results.png",
+    "sha256": "5d97f97082571978fc66c6b67d149271f284768d1e93fe14eeed41e3e6171031",
+    "review": "Viewed directly or checked scenario screenshot; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "ios-sort-clears-results.png",
+    "source": ".local/ux-01-audit/runs/ios/ios-search-reproduction/2026-10-31_232159/flow/takeScreenshot/ios-sort-clears-results.png",
+    "sha256": "1a04181bdd592f0b10415bd91dcb2e67c7effa809943f6e297ec9c9311bae18f",
+    "review": "Viewed directly or checked scenario screenshot; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "android-sent-confirm-settled.png",
+    "source": ".local/ux-01-audit/runs/android/android-owner-writes/2026-10-31_230536/flow/takeScreenshot/android-sent-confirm-settled.png",
+    "sha256": "a74c39a5364548d830e83490f51fc7a8626d1351402a7e49aac0fb80c3b11729",
+    "review": "Viewed directly or checked scenario screenshot; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "android-revision-empty-disabled.png",
+    "source": ".local/ux-01-audit/runs/android/android-customer-writes/2026-10-31_225953/flow/takeScreenshot/android-revision-empty-disabled.png",
+    "sha256": "32199c33ee6eede224102c02a58028bfc436388c83dc6cc55a4e233af5825760",
+    "review": "Viewed directly or checked scenario screenshot; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "ios-owner-job-declined.png",
+    "source": ".local/ux-01-audit/screens/ios-owner-job-declined.png",
+    "sha256": "ec2b8fa4e5083137881227a34eb50b46ffc5afde06033a3030f95742a2d9423e",
+    "review": "Viewed directly; synthetic local data; no authentication fields"
+  },
+  {
+    "name": "android-review-restore-confirmed.png",
+    "source": ".local/ux-01-audit/runs/android/android-review-restore/2026-11-01_000700/flow/takeScreenshot/android-review-restore-confirmed.png",
+    "sha256": "1ed470b7b8492820a2f82e5068ec1d398cfa352cb6445969b83e14f2f63688fe",
+    "review": "Viewed directly; synthetic local data; no authentication fields. Review outcome also checked in DB."
+  },
+  {
+    "name": "ios-notification-settings-saved.png",
+    "source": ".local/ux-01-audit/runs/ios/ios-notification-controls/2026-11-01_000330/flow/takeScreenshot/ios-notification-settings-saved.png",
+    "sha256": "471459c03d8d80372e0232a5c61cd97c14a07fb5c0b4d7395fcba018648a0853",
+    "review": "Viewed directly; synthetic local data; no authentication fields. Review outcome also checked in DB."
+  },
+  {
+    "name": "ios-call-render-warning.png",
+    "source": ".local/ux-01-audit/ios-current.png",
+    "sha256": "f98fb61b42c37fe68a6704f72c27c0b3905eef39b5a8d8285281c7e83adee972",
+    "review": "Viewed directly: iOS outgoing call plus React Native Text warning. Synthetic participants, no authentication fields."
+  }
+]

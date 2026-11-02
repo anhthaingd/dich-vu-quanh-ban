@@ -1,3 +1,4 @@
+import {partnerMessages} from '../messages';
 import {PublicGallery} from '../components/PublicGallery';
 import {PartnerReviews} from '../../reviews/screens/PartnerReviews';
 import {sessionReady} from '../../jobs/state/session-ready';
@@ -9,7 +10,7 @@ import { useCallback, useState, useSyncExternalStore } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../app/navigation/routes';
-import { ProductShell } from '../../../app/layout/ProductShell';
+import { ProductShell, usePageActions } from '../../../app/layout/ProductShell';
 import { useAuth } from '../../../app/providers/AuthProvider';
 import { usePartnersApi } from '../../../app/providers/AppProviders';
 import { useLocale } from '../../../app/providers/LocaleProvider';
@@ -31,7 +32,7 @@ export function PartnerProfileScreen({
       onAccount={() => navigation.navigate('Account')}
     >
       <Profile
-        key={state.user?.id ?? state.phase}
+        key={`${state.user?.id ?? state.phase}:${route.params.id}`}
         id={route.params.id}
         login={() => navigation.navigate('Account',{returnTo:{screen:'PartnerProfile',params:{id:route.params.id}}})}
         hire={()=>navigation.navigate('JobCreate',{partnerId:route.params.id})}
@@ -77,6 +78,7 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
       return () => c.abort();
     }, [api, manager, owner, id, locale, attempt])
   );
+  usePageActions(!error && profile?.can_hire ? <Button testID="profile-hire" label={partnerMessages[locale].hire} disabled={state.busy} onPress={hire}/> : null);
   if (error)
     return (
       <ErrorState
@@ -88,7 +90,6 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
   if (!profile) return <LoadingState message={t('accountTools.loading')} />;
   return (
     <>
-      <PublicGallery id={id} featured/>
       <Card style={{padding:0,borderWidth:0,gap:10}}>
         <AppText variant="title">{profile.name}</AppText>
         <AppText>{t(`partners.${profile.kind}`)}</AppText>
@@ -102,11 +103,13 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
         <AppText>{profile.bio}</AppText>
       </Card>
       <Card>
+        {profile.can_message&&<Button testID="profile-chat" variant="secondary" label={t('chat.open')} disabled={state.busy||openingState.pending} onPress={()=>void openChat()}/>}
+        <JobFeedback error={openingState.error} pending={openingState.pending} busy={openingState.busy||state.busy} retry={openingState.pending?()=>void opening.run().then(c=>{if(c)chat(c.id);}):undefined}/>
         {profile.contact === null ? (
-          <Button label={t('search.loginContact')} onPress={login} />
+          <Button label={t('search.loginContact')} variant="secondary" onPress={login} />
         ) : (
           <>
-            <AppText variant="caption" tone="muted">{t('partners.profile')}</AppText>
+            <AppText variant="caption" tone="muted">{partnerMessages[locale].contact}</AppText>
             {profile.contact.phone && (
               <AppText>{profile.contact.phone}</AppText>
             )}
@@ -116,9 +119,6 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
             )}
           </>
         )}
-        {profile.can_hire&&<Button testID="profile-hire" label={t('jobs.create')} disabled={state.busy} onPress={hire}/>}
-        {profile.can_message&&<Button testID="profile-chat" variant="secondary" label={t('chat.open')} disabled={state.busy||openingState.pending} onPress={()=>void openChat()}/>}
-        <JobFeedback error={openingState.error} pending={openingState.pending} busy={openingState.busy||state.busy} retry={openingState.pending?()=>void opening.run().then(c=>{if(c)chat(c.id);}):undefined}/>
       </Card>
       <Card>
         <AppText variant="section">
@@ -137,6 +137,7 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
         </Card>
       )}
 
+      <PublicGallery id={id} featured/>
       <PartnerReviews key={id} id={id}/>
     </>
   );

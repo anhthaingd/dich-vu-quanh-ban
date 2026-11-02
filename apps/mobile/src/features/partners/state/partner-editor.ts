@@ -44,7 +44,8 @@ export class PartnerEditor {
     try {
       this.update({ value: await this.auth.loadPartner(this.owner, this.id) });
     } catch (e) {
-      this.update({ error: e instanceof ApiError ? e.code : 'NETWORK' });
+      const error = e instanceof ApiError ? e.code : 'NETWORK';
+      this.update({ error, ...(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(error) ? {value:null} : {}) });
     } finally {
       this.update({ busy: false });
     }
@@ -78,7 +79,7 @@ export class PartnerEditor {
         ].includes(error)
       )
         this.attempt = null;
-      this.update({ error, pending: !!this.attempt });
+      this.update({ error, pending: !!this.attempt, ...(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(error) ? {value:null} : {}) });
     } finally {
       this.update({ busy: false });
     }

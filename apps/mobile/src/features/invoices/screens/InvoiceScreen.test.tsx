@@ -42,7 +42,7 @@ test.each(['INSUFFICIENT_POINTS','PARTNER_FUNDING_REQUIRED'] as const)('known fi
 test('zero invoice and two marks show completion; history pagination deduplicates entries',async()=>{
  const f=invoiceFixture();f.setInvoice({...invoice,labor:'0',materials:'0',total:'0',cash_due:'0',reward:'0',state:'settled',settled:true,review_eligible:true,customer_payment_reported_at:'2026-10-08T00:00:00Z',worker_receipt_confirmed_at:'2026-10-08T00:00:00Z'});
  const entry={id:'entry',kind:'reward',amount:'3200',unit:'POINT' as const,created_at:'2026-10-08T00:00:00Z',reference_id:'invoice'};
- f.invoices.ledger.mockResolvedValueOnce({items:[entry],next_cursor:'next'}).mockResolvedValueOnce({items:[entry,{...entry,id:'entry2',kind:'points_spent',amount:'-50000'}],next_cursor:null});mount(f);await ready();await screen.findByTestId('invoice-done');press('invoice-history');fireEvent.press(screen.getByText('Xem thêm'));await ready();expect(screen.getAllByText('Point thưởng')).toHaveLength(1);expect(screen.getByText('Point đã dùng')).toBeTruthy();expect(f.invoices.ledger).toHaveBeenLastCalledWith(expect.any(String),undefined,'next');
+ f.invoices.ledger.mockResolvedValueOnce({items:[entry],next_cursor:'next'}).mockResolvedValueOnce({items:[entry,{...entry,id:'entry2',kind:'points_spent',amount:'-50000'}],next_cursor:null});mount(f);await ready();await screen.findByTestId('invoice-done');press('invoice-history');fireEvent.press(await screen.findByText('Xem thêm'));await screen.findByText('Point đã dùng');await ready();expect(screen.getAllByText('Point thưởng')).toHaveLength(1);expect(screen.getByText('Point đã dùng')).toBeTruthy();expect(f.invoices.ledger).toHaveBeenLastCalledWith(expect.any(String),undefined,'next');
 });
 test('missing invoice waits; permission loss removes private content; non-wallet worker can still draft',async()=>{
  const f=invoiceFixture();f.invoices.get.mockRejectedValueOnce(new ApiError('NOT_FOUND'));const v=mount(f);await ready();expect(screen.queryByTestId('invoice-review')).toBeNull();press('invoice-reload');await ready();expect(screen.getByText('DEMO work completed')).toBeTruthy();f.jobs.get.mockRejectedValueOnce(new ApiError('FORBIDDEN'));press('invoice-reload');await ready();expect(screen.queryByText('DEMO work completed')).toBeNull();v.unmount();
@@ -106,4 +106,37 @@ test('assigned worker confirms receipt after admin settlement using the separate
  const job=await f.jobs.get('token','job');f.jobs.get.mockResolvedValue({...job,state:'completed',allowed_actions:['confirm_receipt']});
  f.invoices.change.mockResolvedValue({...current,version:current.version+1,worker_receipt_confirmed_at:'2026-10-20T00:00:00Z'});mount(f);await ready();expect(screen.getByTestId('invoice-receive')).toBeDisabled();press('invoice-receive-check');press('invoice-receive');await ready();
  expect(f.invoices.change.mock.calls[0][2]).toBe('receipt-confirmed');expect(f.invoices.change.mock.calls[0][3]).toEqual({expected_version:invoice.version,version_id:invoice.version_id,received_in_full:true});
+});
+
+test('failed photos and lazy history keep invoice readable and confirmation available',async()=>{
+ const f=invoiceFixture();f.invoices.asset.mockRejectedValue(new ApiError('NETWORK'));f.invoices.ledger.mockRejectedValue(new ApiError('NETWORK'));
+ mount(f);await ready();await screen.findByTestId('invoice-photo-error');
+ expect(screen.getByTestId('invoice-review')).toBeTruthy();expect(screen.getByTestId('invoice-confirm')).not.toBeDisabled();expect(f.invoices.ledger).not.toHaveBeenCalled();
+ press('invoice-history');await screen.findByTestId('invoice-history-error');expect(screen.getByTestId('invoice-review')).toBeTruthy();expect(screen.getByTestId('invoice-confirm')).not.toBeDisabled();
+});
+test('unknown Point balance shows invoice but blocks confirmation until financial retry succeeds',async()=>{
+ const f=invoiceFixture();f.invoices.points.mockRejectedValueOnce(new ApiError('NETWORK'));mount(f);await ready();
+ expect(screen.getByTestId('invoice-review')).toBeTruthy();expect(screen.getByTestId('invoice-confirm')).toBeDisabled();expect(screen.getByTestId('invoice-max')).toBeDisabled();
+ fireEvent.changeText(screen.getByTestId('invoice-points'),'500');press('invoice-finance-retry');await ready();
+ expect(screen.getByTestId('invoice-points').props.value).toBe('500');expect(screen.getByTestId('invoice-confirm')).not.toBeDisabled();
+});
+test('a failed draft photo load never drops its saved asset IDs when saving',async()=>{
+ const f=invoiceFixture(true);f.setInvoice({...invoice,state:'draft'});f.invoices.asset.mockRejectedValue(new ApiError('NETWORK'));mount(f);await ready();await screen.findByTestId('invoice-photo-error');
+ fireEvent.changeText(screen.getByTestId('invoice-note'),'keep photo');press('invoice-save');await ready();expect(f.invoices.save.mock.calls[0][2].result_asset_ids).toEqual(['photo']);
+});
+
+test('queued confirmation cancels safely if background Point refresh fails and can recover',async()=>{
+ const f=invoiceFixture();mount(f);await ready();const job=await f.jobs.get.mock.results[0].value;
+ let finish!:(value:typeof job)=>void;f.jobs.get.mockReturnValueOnce(new Promise(resolve=>{finish=resolve;}));
+ act(()=>jest.mocked(useRealtimeRefresh).mock.calls.at(-1)![0].refresh());await waitFor(()=>expect(f.manager.getSnapshot().busy).toBe(true));
+ press('invoice-confirm');f.invoices.points.mockRejectedValueOnce(new ApiError('NETWORK'));await act(async()=>finish(job));await ready();
+ expect(f.invoices.change).not.toHaveBeenCalled();expect(screen.queryByTestId('work-retry')).toBeNull();expect(screen.getByTestId('invoice-confirm')).toBeDisabled();
+ press('invoice-finance-retry');await ready();expect(screen.getByTestId('invoice-confirm')).not.toBeDisabled();
+});
+test('primary invoice content appears while photos are still loading',async()=>{
+ const f=invoiceFixture();let finish!:(value:Awaited<ReturnType<typeof f.invoices.asset>>)=>void;
+ f.invoices.asset.mockReturnValueOnce(new Promise(resolve=>{finish=resolve;}));mount(f);
+ await screen.findByTestId('invoice-review');expect(screen.getByTestId('invoice-confirm')).toBeTruthy();expect(screen.getByText('DEMO work completed')).toBeTruthy();
+ expect(f.invoices.ledger).not.toHaveBeenCalled();await waitFor(()=>expect(f.invoices.asset).toHaveBeenCalled());
+ await act(async()=>finish({id:'photo',status:'ready',download_url:'http://local/photo',expires_at:null}));await ready();expect(screen.getByTestId('invoice-photo')).toBeTruthy();
 });

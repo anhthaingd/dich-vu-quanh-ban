@@ -7,7 +7,8 @@ import { AccountPage, useAccountRefresh } from '../../accounts/components/Accoun
 import { useAuth } from '../../../app/providers/AuthProvider';
 import { useLocale } from '../../../app/providers/LocaleProvider';
 import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { theme } from '../../../theme/tokens';
 import { AppText } from '../../../components/ui/AppText';
 import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
 import { LoadingState, RefreshError } from '../../../components/ui/Feedback';
@@ -64,5 +65,7 @@ function List({ owner, jobId, open }: {
         } finally { if (epoch === generation.current) setBusy(false); }
     };
     const shown = items.filter(c => !jobId || c.job_ids.includes(jobId));
-    return <><AppText tone="muted">{t('chat.intro')}</AppText><RefreshError error={error} busy={busy || auth.busy} retry={reload}/>{!loaded && busy && !error && !pulling && <LoadingState message={t('accountTools.loading')}/>}{loaded && !error && !shown.length && <AppText>{t('chat.empty')}</AppText>}{shown.map(c => <Card key={c.id}><AppText variant="section">{c.display_name}</AppText><AppText>{t(c.kind === 'direct' ? 'chat.private' : 'chat.partner')}</AppText><AppText>{t('chat.unread', { count: c.unread })}</AppText><Button testID={`conversation-open-${c.id}`} label={t('chat.open')} onPress={() => open(c.id)}/></Card>)}{next && <Button label={t('accountTools.more')} disabled={busy || auth.busy} onPress={() => void more()}/>}</>;
+    return <><AppText tone="muted">{t('chat.intro')}</AppText><RefreshError error={error} busy={busy || auth.busy} retry={reload}/>{!loaded && busy && !error && !pulling && <LoadingState message={t('accountTools.loading')}/>}{loaded && !error && !shown.length && <AppText>{t('chat.empty')}</AppText>}{shown.map(c => <Pressable key={c.id} testID={`conversation-open-${c.id}`} accessibilityRole="button" accessibilityLabel={`${c.display_name}. ${t('chat.unread',{count:c.unread})}`} onPress={()=>open(c.id)} style={({pressed})=>[styles.row,pressed&&styles.pressed]}><View style={styles.avatar}><AppText tone="primary" variant="section">{Array.from(c.display_name.trim())[0]||'?'}</AppText></View><View style={styles.summary}><AppText variant="section">{c.display_name}</AppText><AppText variant="caption" tone="muted">{t(c.kind==='direct'?'chat.private':'chat.partner')}</AppText></View>{c.unread>0&&<View style={styles.badge}><AppText style={styles.count}>{c.unread>99?'99+':c.unread}</AppText></View>}<AppText tone="muted">›</AppText></Pressable>)}{next && <Button label={t('accountTools.more')} disabled={busy || auth.busy} onPress={() => void more()}/>}</>;
 }
+
+const styles=StyleSheet.create({row:{flexDirection:'row',alignItems:'center',gap:12,minHeight:84,padding:16,backgroundColor:theme.colors.surface,borderRadius:theme.radius.panel,borderWidth:1,borderColor:theme.colors.border},pressed:{backgroundColor:theme.colors.primarySoft},avatar:{width:44,height:44,borderRadius:22,backgroundColor:theme.colors.primarySoft,alignItems:'center',justifyContent:'center'},summary:{flex:1,gap:4},badge:{minWidth:24,paddingHorizontal:7,borderRadius:14,backgroundColor:theme.colors.primary},count:{color:'#fff',fontSize:12,textAlign:'center'}});

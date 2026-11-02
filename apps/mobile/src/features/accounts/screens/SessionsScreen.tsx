@@ -31,11 +31,11 @@ function Sessions({ owner }: { owner: string }) {
   return <>
     <AppText tone="muted">{t('sessions.intro')}</AppText>
     <Card>
-      <Button testID="sessions-revoke-others" label={t('sessions.revokeOthers')} disabled={disabled || !!confirm || !state.loaded} onPress={() => void batch.prepare()} />
+      <Button testID="sessions-revoke-others" variant="secondary" label={t('sessions.revokeOthers')} disabled={disabled || !!confirm || !state.loaded} onPress={() => void batch.prepare()} />
       {bulk.phase === 'preparing' && <AppText>{t('sessions.preparing')}</AppText>}
       {bulk.phase === 'confirm' && <>
         <AppText>{t('sessions.confirmOthers', { count: bulk.total })}</AppText>
-        <Button testID="sessions-confirm-others" label={t('sessions.revokeOthers')} disabled={auth.busy} onPress={() => void runBatch()} />
+        <Button testID="sessions-confirm-others" variant="danger" label={t('sessions.revokeOthers')} disabled={auth.busy} onPress={() => void runBatch()} />
         <Button testID="sessions-cancel-others" label={t('accountTools.cancel')} variant="secondary" onPress={batch.cancel} />
       </>}
       {['running', 'failed'].includes(bulk.phase) && <AppText testID="sessions-batch-progress" accessibilityLiveRegion="polite">{t('sessions.progress', { completed: bulk.completed, total: bulk.total })}</AppText>}
@@ -45,8 +45,9 @@ function Sessions({ owner }: { owner: string }) {
     </Card>
     <CollectionStatus state={state} blocked={bulkLocked} retry={() => void collection.perform().then(ok => { if(ok) setConfirm(null); })} reload={() => void collection.load()} />
     {confirm && <Card>
+      <AppText variant="section">{t(confirm.is_current?'sessions.current':'sessions.other')}</AppText><AppText>{t('sessions.created',{date:date(confirm.created_at)})}</AppText><AppText>{t('sessions.seen',{date:date(confirm.last_seen_at)})}</AppText>
       <AppText>{t(confirm.is_current ? 'sessions.confirmCurrent' : 'sessions.confirm')}</AppText>
-      <Button testID="session-confirm" label={t('sessions.revoke')} disabled={disabled} onPress={() => void collection.perform(key => manager.revokeSession(owner,confirm.id,confirm.is_current,key)).then(ok => { if(ok) setConfirm(null); })} />
+      <Button testID="session-confirm" variant="danger" label={t('sessions.revoke')} disabled={disabled} onPress={() => void collection.perform(key => manager.revokeSession(owner,confirm.id,confirm.is_current,key)).then(ok => { if(ok) setConfirm(null); })} />
       <Button label={t('accountTools.cancel')} variant="secondary" disabled={disabled} onPress={() => setConfirm(null)} />
     </Card>}
     {state.loaded && !state.items.length && <AppText>{t('sessions.empty')}</AppText>}
@@ -55,7 +56,7 @@ function Sessions({ owner }: { owner: string }) {
       <AppText>{t('sessions.created', { date: date(item.created_at) })}</AppText>
       <AppText>{t('sessions.seen', { date: date(item.last_seen_at) })}</AppText>
       <AppText>{t(item.state === 'active' ? 'sessions.active' : item.state === 'revoked' ? 'sessions.revoked' : 'sessions.expired')}</AppText>
-      {item.state === 'active' && <Button testID={item.is_current ? 'session-revoke-current' : 'session-revoke-other'} label={t('sessions.revoke')} variant="secondary" disabled={disabled} onPress={() => setConfirm(item)} />}
+      {item.state === 'active' && <Button testID={item.is_current ? 'session-revoke-current' : 'session-revoke-other'} label={t('sessions.revoke')} variant="secondary" disabled={disabled||!!confirm} onPress={() => setConfirm(item)} />}
     </Card>)}
     {state.next && <Button label={t('accountTools.more')} disabled={disabled} onPress={() => void collection.load(true)} />}
   </>;

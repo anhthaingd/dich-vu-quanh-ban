@@ -18,9 +18,9 @@ import type { PartnersApi } from '../api/partners-api';
 import type { Partner } from '../models';
 let changeTestLocale:(locale:Locale)=>Promise<void>;
 function LocaleProbe(){changeTestLocale=useLocale().selectLocale;return null;}
-async function choosePlace(prefix: string) {
-  jest.mocked(locationsApi.search).mockResolvedValue([{id:'demo',text:'DEMO address',point:{latitude:21,longitude:105},precision:'address'}]);
-  fireEvent.press(screen.getByTestId(`${prefix}-pick-location`));
+async function choosePlace(prefix: string, point={latitude:21,longitude:105}) {
+  jest.mocked(locationsApi.search).mockResolvedValue([{id:'demo',text:'DEMO address',point,precision:'address'}]);
+  fireEvent.press(await screen.findByTestId(`${prefix}-pick-location`));
   fireEvent.changeText(screen.getByTestId('location-query'), 'DEMO address');
   fireEvent.press(screen.getByTestId('location-search'));
   fireEvent.press(await screen.findByTestId('location-result-0'));
@@ -300,4 +300,72 @@ test('availability is always visible; a draft explains why it is disabled and ca
     'availability',
     'deactivation'
   ]);
+});
+
+test('filter cancel discards drafts; apply and sort query immediately without clearing visible results', async()=>{
+ const f=fixture(null);await choosePlace('search');fireEvent.press(screen.getByTestId('search-submit'));
+ await screen.findByTestId(`search-result-${id}`);
+ fireEvent.press(screen.getByTestId('search-filters-open'));fireEvent.changeText(screen.getByTestId('search-radius'),'5000');fireEvent.press(screen.getByTestId('search-filters-cancel'));
+ expect(f.partners.search).toHaveBeenCalledTimes(1);
+ fireEvent.press(screen.getByTestId('search-filters-open'));expect(screen.getByTestId('search-radius').props.value).toBe('10000');
+ fireEvent.changeText(screen.getByTestId('search-radius'),'5000');fireEvent.press(screen.getByTestId('search-filters-apply'));
+ await waitFor(()=>expect(f.partners.search).toHaveBeenCalledTimes(2));expect(f.partners.search.mock.calls[1][0]).toMatchObject({radius_m:5000,latitude:21,longitude:105});
+ let resolve!: (value: Awaited<ReturnType<PartnersApi['search']>>)=>void;
+ f.partners.search.mockImplementationOnce(()=>new Promise(r=>{resolve=r;}));
+ fireEvent.press(screen.getByTestId('search-sort-rating'));
+ expect(screen.getByTestId(`search-result-${id}`)).toBeVisible();expect(f.partners.search.mock.calls[2][0]).toMatchObject({sort:'rating',radius_m:5000,latitude:21,longitude:105});
+ await act(async()=>resolve({items:[],next_cursor:null}));
+ expect(!!screen.queryByTestId(`search-result-${id}`)).toBe(false);
+ fireEvent.press(screen.getByTestId('search-filters-clear'));
+ await waitFor(()=>expect(f.partners.search.mock.calls[3][0]).toMatchObject({radius_m:10000,verified:false,latitude:21,longitude:105,sort:'rating'}));
+});
+
+test('editor section status tracks drafts without losing other section edits on save',async()=>{
+ const f=fixture();await openEditor();
+ expect(screen.getByTestId('partner-section-status')).toHaveTextContent('Đã lưu nội dung nhóm này');
+ fireEvent.changeText(screen.getByTestId('partner-name'),'Unsaved provider');
+ expect(screen.getByTestId('partner-section-status')).toHaveTextContent('Có thay đổi chưa lưu');
+ fireEvent.press(screen.getByTestId('partner-section-skills'));
+ fireEvent.press(screen.getByTestId('partner-save-skills'));
+ await waitFor(()=>expect(f.partners.edit).toHaveBeenCalledTimes(1));
+ await waitFor(()=>expect(screen.getByTestId('partner-section-profile')).not.toBeDisabled());
+ fireEvent.press(screen.getByTestId('partner-section-profile'));
+ expect(screen.getByTestId('partner-name').props.value).toBe('Unsaved provider');
+ expect(screen.getByTestId('partner-section-status')).toHaveTextContent('Có thay đổi chưa lưu');
+});
+
+test('switching editor sections keeps the unsaved gallery order',async()=>{
+ const f=fixture();jest.spyOn(f.manager,'gallery').mockResolvedValue({partner_id:id,version:1,asset_ids:['first','second']});
+ jest.spyOn(f.manager,'galleryAsset').mockImplementation(async asset=>({id:asset,status:'ready',download_url:'http://demo/'+asset,expires_at:'2099-01-01T00:00:00Z'}));
+ const save=jest.spyOn(f.manager,'saveGallery').mockResolvedValue({partner_id:id,version:2,asset_ids:['second','first']});
+ await openEditor();fireEvent.press(screen.getByTestId('partner-section-gallery'));
+ await waitFor(()=>expect(screen.getByTestId('gallery-down-0')).not.toBeDisabled());fireEvent.press(screen.getByTestId('gallery-down-0'));
+ fireEvent.press(screen.getByTestId('partner-section-profile'));fireEvent.press(screen.getByTestId('partner-section-gallery'));
+ fireEvent.press(screen.getByTestId('gallery-save'));
+ await waitFor(()=>expect(save).toHaveBeenCalledWith(session.user.id,id,1,['second','first'],expect.any(String)));
+});
+
+test('authorized profile action is available in the fixed action area and returning keeps search results',async()=>{
+ const f=fixture();f.partners.profile.mockResolvedValue({...initial,skills:[skill],public_addresses:[],public_locations:[],service_modes:[],contact:{},can_hire:true,can_message:false});
+ await choosePlace('search');fireEvent.press(screen.getByTestId('search-submit'));fireEvent.press(await screen.findByText('Xem hồ sơ'));
+ expect(await screen.findByTestId('profile-hire')).toBeEnabled();
+ fireEvent.press(screen.getByTestId('nav-back'));
+ expect(await screen.findByTestId(`search-result-${id}`)).toBeVisible();expect(f.partners.search).toHaveBeenCalledTimes(1);
+});
+
+
+test('changing the picked location clears previous results and ignores an in-flight response from the old area',async()=>{
+ const f=fixture(null);await choosePlace('search');fireEvent.press(screen.getByTestId('search-submit'));
+ await screen.findByTestId(`search-result-${id}`);
+ const page=await f.partners.search.mock.results[0].value;
+ let finish!:(value:Awaited<ReturnType<PartnersApi['search']>>)=>void;
+ f.partners.search.mockReturnValueOnce(new Promise(resolve=>{finish=resolve;}));
+ fireEvent.press(screen.getByTestId('search-sort-rating'));
+ await waitFor(()=>expect(f.partners.search).toHaveBeenCalledTimes(2));
+ await choosePlace('search',{latitude:10,longitude:105});
+ expect(!!screen.queryByTestId(`search-result-${id}`)).toBe(false);
+ await act(async()=>finish(page));
+ expect(!!screen.queryByTestId(`search-result-${id}`)).toBe(false);
+ fireEvent.press(screen.getByTestId('search-submit'));
+ await waitFor(()=>expect(f.partners.search).toHaveBeenLastCalledWith(expect.objectContaining({latitude:10,longitude:105,sort:'rating'}),undefined,expect.anything()));
 });

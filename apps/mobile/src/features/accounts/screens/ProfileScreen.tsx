@@ -16,8 +16,7 @@ import { ProfileEditor } from '../state/profile-editor';
 export function ProfileScreen({ navigation }: NativeStackScreenProps<RootStackParamList, 'Profile'>) {
   const { state } = useAuth();
   const { t } = useLocale();
-  return <ProductShell keyboardDismissMode="on-drag" onBack={() => navigation.goBack()}>
-    <AppText variant="title" accessibilityRole="header">{t('profile.title')}</AppText>
+  return <ProductShell title={t('profile.title')} keyboardDismissMode="on-drag" onBack={() => navigation.goBack()}>
     {state.phase === 'authenticated' && state.user ? <ProfileForm key={state.user.id} owner={state.user.id} />
       : <Card><AppText>{t('profile.signedOut')}</AppText><Button label={t('auth.login')} onPress={() => navigation.replace('Account', { returnTo: 'Profile' })} /></Card>}
   </ProductShell>;
@@ -30,7 +29,6 @@ function ProfileForm({ owner }: { owner: string }) {
   useEffect(() => { void editor.load(); }, [editor]);
   const busy = auth.busy || state.loading || state.saving;
   return <>
-    <Card><LanguageSettings /></Card>
     <Card>
       {state.loading && <LoadingState message={t('profile.loading')} />}
       {state.loaded && <>
@@ -43,8 +41,9 @@ function ProfileForm({ owner }: { owner: string }) {
       {state.pending && <AppText>{t('profile.pending')}</AppText>}
       {state.saved && <AppText testID="profile-saved" accessibilityLiveRegion="polite">{t('profile.saved')}</AppText>}
       {(!state.loaded || state.conflict) && <Button testID="profile-reload" label={t('profile.reload')} disabled={busy} onPress={() => void editor.load()} />}
-      {state.loaded && !state.conflict && <Button testID="profile-save" label={t(state.pending ? 'common.retry' : 'profile.save')}
+      {state.loaded && !state.conflict && <Button testID="profile-save" label={t(state.pending ? 'common.retry' : 'ux.profileSave')}
         disabled={busy || !state.name.trim()} loading={state.saving} onPress={() => { Keyboard.dismiss(); void editor.save(); }} />}
     </Card>
+    <Card><AppText variant="card">{t('shell.preferences')}</AppText><LanguageSettings /></Card>
   </>;
 }

@@ -3,7 +3,7 @@ import {useRealtimeRefresh} from '../../../app/providers/RealtimeProvider';
 import {useMessageUnread} from '../MessageUnreadProvider';
 import { formatBusinessDate } from '../../../lib/i18n/formatters';
 import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
-import { AppState, ScrollView, StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
+import { AppState, ScrollView, StyleSheet, View } from 'react-native';
 import { randomUUID } from 'expo-crypto';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -31,10 +31,28 @@ function Room({ owner, id, jobId, openJob }: {
     const [items, setItems] = useState<Message[]>([]), [body, setBody] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState<ApiErrorCode | null>(null), [attempt, setAttempt] = useState(0);
     const refreshControl=useAccountRefreshControl();
     const scroll=useRef<ScrollView>(null);
+    const following = useRef(true), readThrough = useRef(0), readInFlight = useRef(false);
+    const [unseen, setUnseen] = useState(false);
+    const [readError,setReadError]=useState<ApiErrorCode|null>(null);
     const highest = useRef(0), mounted = useRef(true), focusVersion=useRef(0);
     useFocusEffect(useCallback(() => { mounted.current = true; focusVersion.current++; return () => { mounted.current = false; focusVersion.current++; }; }, []));
     const [pulling, setPulling] = useState(false), [loaded, setLoaded] = useState(false);
     const {invalidate}=useMessageUnread();
+    const markVisibleRead = async () => {
+        if (!following.current || readInFlight.current || highest.current <= readThrough.current) return;
+        const watermark = highest.current, epoch = focusVersion.current;
+        readInFlight.current = true;
+        try {
+            await sessionOperation(manager, owner, () => manager.readConversation(owner, id, watermark, randomUUID()), () => mounted.current && focusVersion.current === epoch);
+            if (mounted.current && focusVersion.current === epoch) { readThrough.current = watermark; setReadError(null); invalidate(); }
+        } catch (e) {
+            if (mounted.current && focusVersion.current === epoch) {
+                const code = e instanceof ApiError ? e.code : 'NETWORK'; setReadError(code);
+                if (['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)) { setItems([]); highest.current=0; setUnseen(false); setError(code); }
+            }
+        } finally { readInFlight.current = false; }
+    };
+    const showLatest = () => { following.current = true; setUnseen(false); scroll.current?.scrollToEnd({animated:true}); void markVisibleRead(); };
     const [mutation] = useState(() => new Mutation<Message>());
     const state = useSyncExternalStore(mutation.subscribe, mutation.getSnapshot, mutation.getSnapshot);
     const reload = () => { if (!busy && !auth.busy && !state.busy && !state.pending) { setPulling(true); setAttempt(v => v + 1); return true; } return false; };
@@ -63,10 +81,11 @@ function Room({ owner, id, jobId, openJob }: {
                 setItems(old => [...new Map([...old, ...arrived].map(m => [m.id, m])).values()].sort((a, b) => a.sequence - b.sequence));
                 setLoaded(true);
                 highest.current = Math.max(highest.current, ...arrived.map(m => m.sequence));
-                if (highest.current) {
+                if (!following.current && arrived.some(m => m.sequence > after)) setUnseen(true);
+                if (following.current && highest.current > readThrough.current) {
                     const watermark = highest.current, key = randomUUID();
                     await sessionOperation(manager, owner, () => manager.readConversation(owner, id, watermark, key), () => active);
-                    invalidate();
+                    if (active) { readThrough.current = watermark; setReadError(null); invalidate(); }
                 }
                 if (active) setError(null);
             }
@@ -91,18 +110,22 @@ function Room({ owner, id, jobId, openJob }: {
         return () => { active = false; subscription.remove(); };
     }, [manager, owner, id, attempt, invalidate]));
     const sent = (m: Message | null) => { if (m && mounted.current) {
+        following.current = true; setUnseen(false);
         setBody('');
         setItems(old => [...new Map([...old, m].map(x => [x.id, x])).values()].sort((a, b) => a.sequence - b.sequence));
         setAttempt(v => v + 1);
     } };
     const send = async () => { const text = body.trim(); if (!text)
         return; const intentFocus=focusVersion.current; const input = { client_message_id: randomUUID(), body: text, ...(jobId ? { job_id: jobId } : {}) }; sent(await mutation.run(key => sessionOperation(manager, owner, () => manager.sendMessage(owner, id, input, key), () => mounted.current&&focusVersion.current===intentFocus))); };
-    const draftBlocked = (!loaded && busy) || state.busy || state.pending || error === 'NOT_FOUND' || error === 'FORBIDDEN';
+    const draftBlocked = (!loaded && busy) || state.busy || state.pending || error === 'NOT_FOUND' || error === 'FORBIDDEN' || error === 'UNAUTHENTICATED';
     const blocked = draftBlocked;
-    return <KeyboardAvoidingView style={styles.room} behavior={Platform.OS==='ios'?'padding':'height'}>
+    return <View style={styles.room}>
       {jobId&&<View style={styles.context}><Button variant="link" label={t('jobs.detail')} onPress={openJob}/></View>}
-      <ScrollView refreshControl={refreshControl} ref={scroll} style={styles.room} contentContainerStyle={styles.messages} keyboardShouldPersistTaps="handled" onContentSizeChange={()=>scroll.current?.scrollToEnd({animated:false})}>
-        <RefreshError error={error} busy={busy || auth.busy || state.busy || state.pending} retry={reload}/>
+      <ScrollView testID="chat-timeline" refreshControl={refreshControl} ref={scroll} style={styles.room} contentContainerStyle={styles.messages} keyboardShouldPersistTaps="handled" scrollEventThrottle={100} onScroll={({nativeEvent:e})=>{
+          following.current = e.contentSize.height - e.layoutMeasurement.height - e.contentOffset.y < 64;
+          if (following.current) { setUnseen(false); void markVisibleRead(); }
+        }} onContentSizeChange={()=>{if(following.current)scroll.current?.scrollToEnd({animated:false});}}>
+        <RefreshError error={error??readError} busy={busy || auth.busy || state.busy || state.pending} retry={reload}/>
         {!loaded && busy && !error && !pulling && <LoadingState message={t('accountTools.loading')}/>}
         {loaded && !items.length && !error && <AppText>{t('chat.noMessages')}</AppText>}
         <CallHistory conversationId={id}/>
@@ -112,7 +135,8 @@ function Room({ owner, id, jobId, openJob }: {
           <AppText style={styles.time} tone="muted">{formatBusinessDate(new Date(m.created_at),locale)}</AppText>
         </View>)}
       </ScrollView>
+      {unseen&&<Button testID="chat-new-messages" variant="secondary" label={t('ux.newMessages')} onPress={showLatest}/>}
       <View style={styles.composer}><Input testID="chat-body" style={{maxHeight:120}} label={t('chat.message')} value={body} multiline editable={!draftBlocked} onChangeText={setBody}/><Button testID="chat-send" label={t('chat.send')} disabled={blocked || !body.trim()} onPress={()=>void send()}/><JobFeedback error={state.error} pending={state.pending} busy={state.busy || auth.busy} retry={state.pending?()=>void mutation.run().then(sent):undefined}/></View>
-    </KeyboardAvoidingView>;
+    </View>;
 }
 const styles=StyleSheet.create({room:{flex:1},context:{backgroundColor:'#eff3fb',borderRadius:14,paddingHorizontal:14},messages:{gap:14,paddingVertical:16},bubble:{maxWidth:'88%',borderRadius:18,padding:14,gap:6},mine:{alignSelf:'flex-end',backgroundColor:'#eaf0fd',borderBottomRightRadius:4},peer:{alignSelf:'flex-start',backgroundColor:'#f0f3f8',borderBottomLeftRadius:4},system:{alignSelf:'center',backgroundColor:'#f4f7fc'},time:{fontSize:11,lineHeight:17},composer:{borderTopWidth:1,borderColor:'#dee5f0',paddingVertical:12,gap:8}});

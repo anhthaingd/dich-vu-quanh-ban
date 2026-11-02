@@ -55,3 +55,13 @@ test('bulk confirmation can cancel, retries partial failure and keeps current lo
   await screen.findByTestId('sessions-batch-done');expect(f.accounts.revokeSession.mock.calls.map(x=>x[1])).toEqual(['a','b','b']);
   expect(f.manager.getSnapshot().phase).toBe('authenticated');expect(f.storage.clear).not.toHaveBeenCalled();
 });
+
+test('canceling address editing or archive confirmation does not write changes',async()=>{
+ const f=await mount('addresses');f.accounts.addresses.mockResolvedValue({items:[address],next_cursor:null});
+ fireEvent.press(screen.getByTestId('account-reload'));fireEvent.press(await screen.findByTestId('address-edit'));
+ expect(screen.getByTestId('address-save')).toHaveTextContent('Lưu địa chỉ');
+ fireEvent.changeText(screen.getByTestId('address-text'),'Unsaved address');fireEvent.press(screen.getByTestId('address-cancel'));
+ expect(screen.getByText('Street')).toBeVisible();expect(f.accounts.saveAddress).not.toHaveBeenCalled();
+ fireEvent.press(screen.getByTestId('address-archive'));fireEvent.press(screen.getByTestId('address-cancel-archive'));
+ expect(f.accounts.archiveAddress).not.toHaveBeenCalled();expect(screen.getByTestId('address-add')).toBeVisible();
+});

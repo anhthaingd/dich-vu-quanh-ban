@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, within } from '@testing-library/react-native';
 import { AppNavigator } from '../../../app/navigation/AppNavigator';
 import { AppProviders } from '../../../app/providers/AppProviders';
 import { AuthProvider } from '../../../app/providers/AuthProvider';
@@ -21,7 +21,7 @@ test('register through real navigation, show unverified account and logout', asy
   fireEvent.press(screen.getByRole('button', { name: 'Đăng xuất' }));
   expect(await screen.findByRole('button', { name: 'Đăng ký' })).toBeVisible();
   fireEvent.press(screen.getByRole('button', { name: 'Quay lại' }));
-  expect(await screen.findByRole('header', { name: /Việc nhà có người lo/ })).toBeVisible();
+  expect(await screen.findByRole('header', { name: 'Tìm người phù hợp.' })).toBeVisible();
 });
 test('failed login retains email, clears password and lets user retry', async () => {
   const f = authFixture(); f.api.login.mockRejectedValueOnce(new ApiError('UNAUTHENTICATED')); await mount(f);
@@ -59,4 +59,14 @@ test('account Point shows available API balance, retries read failure and clears
  fireEvent.press(await screen.findByRole('button',{name:'Thử lại'}));
  expect(await screen.findByTestId('account-points')).toHaveTextContent('10.000 Point');expect(points).toHaveBeenCalledTimes(2);
  fireEvent.press(screen.getByTestId('auth-logout'));await screen.findByTestId('auth-email');expect(screen.queryByTestId('account-points')).toBeNull();
+});
+
+test('account groups preserve personal, work, membership selection and support destinations',async()=>{
+ await mount(authFixture('saved'));
+ const personal=await screen.findByTestId('account-personal'),work=screen.getByTestId('account-work'),security=screen.getByTestId('account-security');
+ for(const id of ['profile-open','addresses-open','notification-settings-open'])expect(within(personal).getByTestId(id)).toBeVisible();
+ for(const id of ['role-customer','role-profiles','jobs-open','conversations-open','partners-open','team-open'])expect(within(work).getByTestId(id)).toBeVisible();
+ for(const id of ['security-open','verify-open','sessions-open','support-open'])expect(within(security).getByTestId(id)).toBeVisible();
+ expect(within(security).queryByTestId('auth-logout')).toBeNull();expect(screen.getByTestId('auth-logout')).toBeVisible();
+ fireEvent.press(screen.getByTestId('team-open'));expect(await screen.findByTestId('memberships-reload')).toBeVisible();
 });

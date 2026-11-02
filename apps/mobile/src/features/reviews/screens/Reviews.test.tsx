@@ -28,7 +28,7 @@ async function ready(){await waitFor(()=>expect(screen.getByTestId('reviews-relo
 test('reviews keep the same payload after lost response, then edit and remove the existing review',async()=>{
  const f=fixture();mount(f);await screen.findByTestId('review-save');await ready();expect(screen.getByTestId('review-save')).toBeDisabled();
  press('review-star-5');fireEvent.changeText(screen.getByTestId('review-body'),'DEMO draft');f.reviews.create.mockRejectedValueOnce(new ApiError('NETWORK'));press('review-save');await screen.findByTestId('work-retry');expect(screen.getByTestId('review-body').props.value).toBe('DEMO draft');expect(screen.getByTestId('review-save')).toBeDisabled();press('work-retry');await screen.findByTestId('review-edit');await ready();expect(f.reviews.create.mock.calls[1]).toEqual(f.reviews.create.mock.calls[0]);
- press('review-edit');press('review-star-3');press('review-save');await ready();expect(f.reviews.edit.mock.calls[0][2]).toMatchObject({expected_version:1,stars:3});press('review-visibility');await screen.findByText('Tác giả đã gỡ đánh giá này');await ready();expect(f.reviews.visibility.mock.calls[0].slice(2,4)).toEqual([2,true]);
+ press('review-edit');press('review-star-3');press('review-save');await ready();expect(f.reviews.edit.mock.calls[0][2]).toMatchObject({expected_version:1,stars:3});press('review-visibility');press('review-remove-confirm');await screen.findByText('Tác giả đã gỡ đánh giá này');await ready();expect(f.reviews.visibility.mock.calls[0].slice(2,4)).toEqual([2,true]);
 });
 test('reviews stay locked without both marks, retain draft on reload error and clear private content when access is lost',async()=>{
  const f=fixture();f.setInvoice({...invoice,review_eligible:false});mount(f);await screen.findByTestId('reviews-locked');expect(screen.queryByTestId('review-save')).toBeNull();
@@ -88,7 +88,15 @@ test('review removal waits for a background snapshot without dropping the click 
  let finish!:(v:{items:Review[];next_cursor:null})=>void;
  f.reviews.list.mockImplementationOnce(()=>new Promise(resolve=>{finish=resolve;}));
  press('reviews-reload');await waitFor(()=>expect(f.manager.getSnapshot().busy).toBe(true));
- expect(screen.getByTestId('review-visibility')).not.toBeDisabled();press('review-visibility');expect(f.reviews.visibility).not.toHaveBeenCalled();
+ expect(screen.getByTestId('review-visibility')).not.toBeDisabled();press('review-visibility');press('review-remove-confirm');expect(f.reviews.visibility).not.toHaveBeenCalled();
  await act(async()=>finish({items:[{...review,version:2}],next_cursor:null}));
  await screen.findByText('Tác giả đã gỡ đánh giá này');expect(f.reviews.visibility).toHaveBeenCalledTimes(1);expect(f.reviews.visibility.mock.calls[0].slice(2,4)).toEqual([1,true]);
+});
+
+test('removing a review requires confirmation, cancel keeps it and uncertain retry retains captured version',async()=>{
+ const f=fixture();f.setReviews([review]);mount(f);await screen.findByTestId('review-visibility');await ready();
+ press('review-visibility');expect(f.reviews.visibility).not.toHaveBeenCalled();press('review-remove-cancel');expect(screen.queryByTestId('review-remove-confirm')).toBeNull();expect(f.reviews.visibility).not.toHaveBeenCalled();
+ press('review-visibility');f.reviews.visibility.mockRejectedValueOnce(new ApiError('NETWORK'));press('review-remove-confirm');await screen.findByTestId('work-retry');expect(screen.getByTestId('review-remove-confirm')).toBeDisabled();press('work-retry');await screen.findByText('Tác giả đã gỡ đánh giá này');await ready();
+ expect(f.reviews.visibility.mock.calls[1]).toEqual(f.reviews.visibility.mock.calls[0]);expect(f.reviews.visibility.mock.calls[0].slice(2,4)).toEqual([1,true]);
+ press('review-visibility');await ready();expect(f.reviews.visibility.mock.calls.at(-1)?.[3]).toBe(false);
 });

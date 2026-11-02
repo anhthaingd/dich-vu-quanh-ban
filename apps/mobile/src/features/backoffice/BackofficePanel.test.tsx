@@ -7,9 +7,9 @@ function client(){const request=jest.fn().mockResolvedValue({items:[target],next
 test('admin permission form preserves retry input and key after lost response and cannot edit beyond held grants',async()=>{
  const api=client(),request=jest.mocked(api.request),fail=jest.fn();render(<BackofficePanel client={api} mode="grants" locale="vi" grants={['grant.manage','reports.read']} owner="admin" fail={fail}/>);
  await screen.findByText('DEMO target');request.mockResolvedValueOnce(target);fireEvent.press(screen.getByText('DEMO target'));
- const checkbox=await screen.findByLabelText('☐ reports.read');expect(screen.getByLabelText('☐ finance.review')).toBeDisabled();fireEvent.press(checkbox);fireEvent.changeText(screen.getByTestId('office-reason'),'DEMO reason');
+ const checkbox=await screen.findByTestId('office-grant-reports.read');expect(screen.getByTestId('office-grant-finance.review')).toBeDisabled();fireEvent(checkbox,'valueChange',true);expect(screen.getByText('Cấp thêm: Xem báo cáo vận hành')).toBeTruthy();fireEvent.changeText(screen.getByTestId('office-reason'),'DEMO reason');
  request.mockRejectedValueOnce(new ApiError('NETWORK'));fireEvent.press(screen.getByTestId('office-save'));await screen.findByText('Thử lại cùng thao tác');expect(screen.getByTestId('office-reason')).toHaveProp('editable',false);
- const first=request.mock.calls.at(-1);request.mockResolvedValueOnce({...target,version:2,permissions:['reports.read']});fireEvent.press(screen.getByTestId('office-save'));await screen.findByText('Lưu quyền');expect(request.mock.calls.at(-1)).toEqual(first);expect(await screen.findByLabelText('☑ reports.read')).toBeTruthy();expect(screen.queryByText('Không hoàn tất. Kiểm tra quyền hoặc tải dữ liệu mới rồi thử lại.')).toBeNull();
+ const first=request.mock.calls.at(-1);request.mockResolvedValueOnce({...target,version:2,permissions:['reports.read']});fireEvent.press(screen.getByTestId('office-save'));await screen.findByText('Lưu quyền');expect(request.mock.calls.at(-1)).toEqual(first);expect(await screen.findByTestId('office-grant-reports.read')).toBeTruthy();expect(screen.queryByText('Không hoàn tất. Kiểm tra quyền hoặc tải dữ liệu mới rồi thử lại.')).toBeNull();
 
 });
 test('metrics keeps exact large money and ignores a response after unmount',async()=>{

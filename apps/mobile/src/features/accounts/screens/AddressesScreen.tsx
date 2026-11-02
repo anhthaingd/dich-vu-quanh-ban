@@ -10,6 +10,7 @@ import { AppText } from '../../../components/ui/AppText';
 import { Input } from '../../../components/ui/Input';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
+import { usePageActions } from '../../../app/layout/ProductShell';
 import { AccountPage } from '../components/AccountPage';
 import { CollectionStatus } from '../components/CollectionStatus';
 import { AccountCollection } from '../state/account-collection';
@@ -45,34 +46,32 @@ function Addresses({ owner }: { owner: string }) {
     if(!input.label || !input.address.text || !draft.lat.trim() || !draft.lng.trim() || !Number.isFinite(input.address.point.latitude) || Math.abs(input.address.point.latitude)>90 || !Number.isFinite(input.address.point.longitude) || Math.abs(input.address.point.longitude)>180) { setInvalid(true); return; }
     Keyboard.dismiss(); void collection.perform(key => manager.saveAddress(owner,draft.id,input,key)).then(finish);
   };
+  usePageActions(!draft && !archive ? <Button testID="address-add" label={t('addresses.add')} disabled={disabled || !state.loaded} onPress={() => { setInvalid(false);setDraft(draftOf()); }} /> : draft ? <Button testID="address-save" label={t('ux.addressSave')} loading={state.busy} disabled={disabled || changed} onPress={save} /> : null);
   return <>
     <AppText tone="muted">{t('addresses.intro')}</AppText>
     <CollectionStatus state={state} retry={() => void collection.perform().then(finish)} reload={() => void reload()} />
-    {!draft && !archive && <Button testID="address-add" label={t('addresses.add')} disabled={disabled || !state.loaded} onPress={() => { setInvalid(false);setDraft(draftOf()); }} />}
     {draft && <Card>
       <AppText variant="section">{t(draft.id ? 'addresses.edit' : 'addresses.add')}</AppText>
       <Input testID="address-label" label={t('addresses.label')} value={draft.label} editable={!disabled} onChangeText={label => update({label})} />
       <Input testID="address-text" label={t('addresses.text')} value={draft.text} editable={!disabled} onChangeText={text => update({text})} />
       <LocationField prefix="address" lat={draft.lat} lng={draft.lng} text={draft.text} disabled={disabled}
         onChange={value => update({text:value.text, lat:String(value.point.latitude), lng:String(value.point.longitude)})} />
-      <View><AppText>{t('addresses.default')}</AppText><Switch testID="address-default" accessibilityLabel={t('addresses.default')} value={draft.is_default} disabled={disabled} onValueChange={is_default => update({is_default})} /></View>
+      <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12}}><AppText style={{flex:1}}>{t('addresses.default')}</AppText><Switch testID="address-default" accessibilityLabel={t('addresses.default')} value={draft.is_default} disabled={disabled} onValueChange={is_default => update({is_default})} /></View>
       {invalid && <AppText accessibilityRole="alert" tone="error">{t('accountTools.invalid')}</AppText>}
-      <Button testID="address-save" label={t('addresses.save')} disabled={disabled || changed} onPress={save} />
-      <Button label={t('accountTools.cancel')} variant="secondary" disabled={disabled} onPress={() => setDraft(null)} />
+      <Button testID="address-cancel" label={t('accountTools.cancel')} variant="secondary" disabled={disabled} onPress={() => setDraft(null)} />
     </Card>}
     {archive && <Card>
       <AppText>{t('addresses.confirmArchive',{label:archive.label})}</AppText>
-      <Button testID="address-confirm-archive" label={t('addresses.archive')} disabled={disabled} onPress={() => void collection.perform(key => manager.archiveAddress(owner,archive.id,key)).then(finish)} />
-      <Button label={t('accountTools.cancel')} variant="secondary" disabled={disabled} onPress={() => setArchive(null)} />
+      <Button testID="address-confirm-archive" variant="danger" label={t('addresses.archive')} disabled={disabled} onPress={() => void collection.perform(key => manager.archiveAddress(owner,archive.id,key)).then(finish)} />
+      <Button testID="address-cancel-archive" label={t('accountTools.cancel')} variant="secondary" disabled={disabled} onPress={() => setArchive(null)} />
     </Card>}
     {!draft && !archive && <>
       {state.loaded && !state.items.length && <AppText testID="addresses-empty">{t('addresses.empty')}</AppText>}
       {state.items.map(item => <Card key={item.id} testID={`address-${item.id}`}>
-        <AppText variant="card">{item.label}</AppText><AppText>{item.address.text}</AppText><LocationAttribution />
-        {item.is_default && <AppText testID="address-default-badge">{t('addresses.default')}</AppText>}
+        <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8}}><AppText style={{flex:1}} variant="card">{item.label}</AppText>{item.is_default && <AppText testID="address-default-badge" variant="caption" tone="primary">{t('addresses.default')}</AppText>}</View><AppText>{item.address.text}</AppText><LocationAttribution />
         <Button testID="address-edit" label={t('addresses.edit')} variant="secondary" disabled={disabled} onPress={() => { setInvalid(false);setDraft(draftOf(item)); }} />
         {!item.is_default && <Button testID="address-make-default" label={t('addresses.makeDefault')} variant="secondary" disabled={disabled} onPress={() => void collection.perform(key => manager.saveAddress(owner,item.id,{...inputOf(draftOf(item)),is_default:true},key))} />}
-        <Button testID="address-archive" label={t('addresses.archive')} variant="link" disabled={disabled} onPress={() => setArchive(item)} />
+        <View style={{paddingTop:8,borderTopWidth:1,borderColor:'#E1E6EE'}}><Button testID="address-archive" label={t('addresses.archive')} variant="link" disabled={disabled} onPress={() => setArchive(item)} /></View>
       </Card>)}
       {state.next && <Button label={t('accountTools.more')} disabled={disabled} onPress={() => void collection.load(true)} />}
     </>}

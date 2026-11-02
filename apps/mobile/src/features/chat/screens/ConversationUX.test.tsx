@@ -1,0 +1,40 @@
+import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {AppProviders} from '../../../app/providers/AppProviders';
+import {AuthProvider} from '../../../app/providers/AuthProvider';
+import type {RootStackParamList} from '../../../app/navigation/routes';
+import {ConversationScreen} from './ConversationScreen';
+import {ApiError} from '../../../lib/http/api-error';
+import {workFixture,message} from '../../../../test/helpers/work';
+const Stack=createNativeStackNavigator<RootStackParamList>();
+function mount(f:ReturnType<typeof workFixture>){return render(<AppProviders api={{categories:jest.fn().mockResolvedValue([]),skills:jest.fn().mockResolvedValue([])}}><AuthProvider manager={f.manager}><NavigationContainer><Stack.Navigator><Stack.Screen name="Conversation" component={ConversationScreen} initialParams={{id:'room'}}/></Stack.Navigator></NavigationContainer></AuthProvider></AppProviders>);}
+test('reading older messages preserves the draft and does not read new arrivals until jumping to latest',async()=>{
+ const f=workFixture();mount(f);await waitFor(()=>expect(f.chat.read).toHaveBeenCalledTimes(1));
+ const timeline=screen.getByTestId('chat-timeline');
+ fireEvent.scroll(timeline,{nativeEvent:{contentSize:{height:2000},layoutMeasurement:{height:500},contentOffset:{y:200}}});
+ fireEvent.changeText(screen.getByTestId('chat-body'),'Nội dung đang viết');
+ f.chat.messages.mockResolvedValueOnce({items:[{...message,id:'new',sequence:2,body:'Tin mới'}],next_cursor:null});
+ act(()=>timeline.props.refreshControl.props.onRefresh());
+ await screen.findByTestId('chat-new-messages');
+ expect(f.chat.read).toHaveBeenCalledTimes(1);expect(screen.getByTestId('chat-body').props.value).toBe('Nội dung đang viết');
+ f.chat.read.mockRejectedValueOnce(new ApiError('NETWORK'));
+ fireEvent.press(screen.getByTestId('chat-new-messages'));
+ await screen.findByTestId('refresh-retry');
+ fireEvent.scroll(screen.getByTestId('chat-timeline'),{nativeEvent:{contentSize:{height:2000},layoutMeasurement:{height:500},contentOffset:{y:1500}}});
+ await waitFor(()=>expect(f.chat.read).toHaveBeenCalledTimes(3));await waitFor(()=>expect(screen.queryByTestId('refresh-retry')).toBeNull());expect(f.chat.read).toHaveBeenLastCalledWith(expect.any(String),'room',2,expect.any(String));
+ expect(screen.queryByTestId('chat-new-messages')).toBeNull();
+});
+test('losing permission while marking new messages read clears private messages and blocks sending',async()=>{
+ const f=workFixture();mount(f);await waitFor(()=>expect(f.chat.read).toHaveBeenCalledTimes(1));
+ const timeline=screen.getByTestId('chat-timeline');
+ fireEvent.scroll(timeline,{nativeEvent:{contentSize:{height:2000},layoutMeasurement:{height:500},contentOffset:{y:200}}});
+ fireEvent.changeText(screen.getByTestId('chat-body'),'Chưa gửi');
+ f.chat.messages.mockResolvedValueOnce({items:[{...message,id:'new',sequence:2,body:'Tin riêng'}],next_cursor:null});
+ act(()=>timeline.props.refreshControl.props.onRefresh());await screen.findByTestId('chat-new-messages');
+ f.chat.read.mockRejectedValueOnce(new ApiError('FORBIDDEN'));
+ fireEvent.press(screen.getByTestId('chat-new-messages'));
+ await waitFor(()=>expect(screen.getByTestId('chat-body').props.editable).toBe(false));
+ expect(screen.queryByText('Tin riêng')).toBeNull();expect(screen.getByTestId('chat-send')).toBeDisabled();
+ fireEvent.press(screen.getByTestId('chat-send'));expect(f.chat.send).not.toHaveBeenCalled();
+});

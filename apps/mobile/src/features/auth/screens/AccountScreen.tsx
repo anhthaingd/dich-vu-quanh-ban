@@ -55,31 +55,37 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
     setPassword('');
   };
   return <ProductShell title={t('common.account')} keyboardDismissMode="on-drag" onBack={() => navigation.goBack()}>
-    {state.phase!=='authenticated'&&<Card><AppText variant="card">{t('shell.preferences')}</AppText><LanguageSettings /></Card>}
     <View style={styles.section}>
     {state.error && <AppText tone="error" accessibilityRole="alert">{t(errorMessages[state.error])}</AppText>}
     {state.phase === 'loading' && <LoadingState message={t('auth.restoring')} />}
     {state.phase === 'restore-error' && <Button label={t('common.retry')} loading={state.busy} onPress={() => void manager.restore()} />}
     {state.phase === 'authenticated' && <>
-      <AppText variant="section">{state.user!.display_name}</AppText>
+      <Card>
+        <View style={styles.identity}><View style={styles.avatar}><AppText tone="primary" variant="section">{Array.from(state.user!.display_name.trim())[0]?.toLocaleUpperCase() || '?'}</AppText></View><View style={{flex:1,gap:4}}><AppText variant="section">{state.user!.display_name}</AppText><AppText variant="caption" tone="muted">{t(state.user!.email_verified ? 'auth.verified' : 'auth.unverified')}</AppText></View></View>
+        <AppText>{t('shell.currentRole')}: {role.membership?role.membership.partner_name:t('shell.customerRole')}</AppText>
+      </Card>
       <AccountPoints key={state.user!.id} owner={state.user!.id}/>
+      <Card testID="account-personal"><AppText variant="card" accessibilityRole="header">{t('ux.personal')}</AppText>
+        <AccountLink testID="profile-open" label={t('profile.title')} disabled={state.busy} onPress={() => navigation.navigate('Profile')} />
+        <AccountLink testID="addresses-open" label={t('addresses.title')} disabled={state.busy} onPress={() => navigation.navigate('Addresses')} />
+        <AccountLink testID="notification-settings-open" label={t('notices.settings')} disabled={state.busy} onPress={() => navigation.navigate('NotificationSettings')} />
+      </Card>
+      <Card testID="account-work"><AppText variant="card" accessibilityRole="header">{t('ux.work')}</AppText>
+        <AccountLink testID="role-customer" label={t('shell.customerRole')} disabled={state.busy} onPress={()=>{void role.choose(null);navigation.popTo('CatalogHome');}}/>
+        <AccountLink testID="role-profiles" label={t('shell.chooseProfile')} disabled={state.busy} onPress={()=>navigation.navigate('Organizations')}/>
+        <AccountLink testID="jobs-open" label={t('jobs.title')} disabled={state.busy} onPress={() => navigation.navigate('Jobs')} />
+        <AccountLink testID="conversations-open" label={t('chat.title')} disabled={state.busy} onPress={() => navigation.navigate('Conversations')} />
+        <AccountLink testID="partners-open" label={t('partners.title')} disabled={state.busy} onPress={() => navigation.navigate('Partners')} />
+        <AccountLink testID="team-open" label={t('team.title')} disabled={state.busy} onPress={() => navigation.navigate('Organizations')} />
+      </Card>
+      <Card testID="account-security"><AppText variant="card" accessibilityRole="header">{t('ux.security')}</AppText>
+        <AccountLink testID="security-open" label={security.title} disabled={state.busy} onPress={()=>navigation.navigate('AccountSecurity')} />
+        <AccountLink testID="verify-open" label={t('team.verifyTitle')} disabled={state.busy} onPress={() => navigation.navigate('VerifyContact')} />
+        <AccountLink testID="sessions-open" label={t('sessions.title')} disabled={state.busy} onPress={() => navigation.navigate('Sessions')} />
+        <AccountLink testID="support-open" label={t('support.title')} disabled={state.busy} onPress={() => navigation.navigate('Support')} />
+      </Card>
       <Card><AppText variant="card">{t('shell.preferences')}</AppText><LanguageSettings /></Card>
-      <AppText variant="caption" tone="muted">{t(state.user!.email_verified ? 'auth.verified' : 'auth.unverified')}</AppText>
-      <AppText>{t('shell.currentRole')}: {role.membership?role.membership.partner_name:t('shell.customerRole')}</AppText>
-      <AccountLink testID="role-customer" label={t('shell.customerRole')} onPress={()=>{void role.choose(null);navigation.popTo('CatalogHome');}}/>
-      <AccountLink testID="role-profiles" label={t('shell.chooseProfile')} disabled={state.busy} onPress={()=>navigation.navigate('Organizations')}/>
-      <AccountLink testID="security-open" label={security.title} disabled={state.busy} onPress={()=>navigation.navigate('AccountSecurity')} />
-      <AccountLink testID="support-open" label={t('support.title')} disabled={state.busy} onPress={() => navigation.navigate('Support')} />
-      <AccountLink testID="notification-settings-open" label={t('notices.settings')} disabled={state.busy} onPress={() => navigation.navigate('NotificationSettings')} />
-      <AccountLink testID="team-open" label={t('team.title')} disabled={state.busy} onPress={() => navigation.navigate('Organizations')} />
-      <AccountLink testID="verify-open" label={t('team.verifyTitle')} disabled={state.busy} onPress={() => navigation.navigate('VerifyContact')} />
-      <AccountLink testID="jobs-open" label={t('jobs.title')} disabled={state.busy} onPress={() => navigation.navigate('Jobs')} />
-      <AccountLink testID="conversations-open" label={t('chat.title')} disabled={state.busy} onPress={() => navigation.navigate('Conversations')} />
-      <AccountLink testID="partners-open" label={t('partners.title')} disabled={state.busy} onPress={() => navigation.navigate('Partners')} />
-      <AccountLink testID="profile-open" label={t('profile.title')} disabled={state.busy} onPress={() => navigation.navigate('Profile')} />
-      <AccountLink testID="sessions-open" label={t('sessions.title')} disabled={state.busy} onPress={() => navigation.navigate('Sessions')} />
-      <AccountLink testID="addresses-open" label={t('addresses.title')} disabled={state.busy} onPress={() => navigation.navigate('Addresses')} />
-      <AccountLink testID="auth-logout" label={t('auth.logout')} loading={state.busy} onPress={() => void manager.logout()} />
+      <View style={styles.logout}><Button testID="auth-logout" variant="danger" label={t('auth.logout')} loading={state.busy} onPress={() => void manager.logout()} /></View>
     </>}
     {state.phase === 'anonymous' && <Card>
       <AppText variant="section" accessibilityRole="header">{t(register ? 'auth.createAccount' : 'auth.login')}</AppText>
@@ -93,16 +99,17 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
         returnKeyType="done" onSubmitEditing={() => void submit()}
         hint={register ? t('auth.passwordHint', { min: 15, max: 128 }) : undefined} />
       <Button testID="auth-submit" label={t(register ? 'auth.register' : 'auth.login')} loading={state.busy} disabled={!canSubmit} onPress={() => void submit()} />
-      <Button testID="otp-open" label={security.login+' / '+security.reset} disabled={state.busy} onPress={()=>navigation.navigate('AccountSecurity')} />
-      <Button testID="recovery-open" label={security.recovery} disabled={state.busy} onPress={()=>navigation.navigate('AccountRecovery')} />
+      <Button testID="otp-open" variant="secondary" label={security.login+' / '+security.reset} disabled={state.busy} onPress={()=>navigation.navigate('AccountSecurity')} />
+      <Button testID="recovery-open" variant="link" label={security.recovery} disabled={state.busy} onPress={()=>navigation.navigate('AccountRecovery')} />
       <Button testID="auth-toggle" label={t(register ? 'auth.switchToLogin' : 'auth.switchToRegister')} variant="link" disabled={state.busy}
         onPress={() => { setRegister(!register); setPassword(''); }} />
     </Card>}
     </View>
+    {state.phase!=='authenticated'&&<Card><AppText variant="card">{t('shell.preferences')}</AppText><LanguageSettings /></Card>}
   </ProductShell>;
 }
 
-const styles = StyleSheet.create({ link:{minHeight:56,paddingVertical:14,flexDirection:'row',alignItems:'center',gap:12,borderBottomWidth:1,borderColor:'#edf0f5'},points:{backgroundColor:theme.colors.primarySoft,borderWidth:0}, section: { gap: theme.spacing.lg, paddingTop: theme.spacing.sm } });
+const styles = StyleSheet.create({ identity:{flexDirection:'row',alignItems:'center',gap:12},avatar:{width:48,height:48,borderRadius:16,backgroundColor:theme.colors.primarySoft,alignItems:'center',justifyContent:'center'},logout:{paddingTop:8,borderTopWidth:1,borderColor:theme.colors.border},link:{minHeight:56,paddingVertical:14,flexDirection:'row',alignItems:'center',gap:12,borderBottomWidth:1,borderColor:'#edf0f5'},points:{backgroundColor:theme.colors.primarySoft,borderWidth:0}, section: { gap: theme.spacing.lg, paddingTop: theme.spacing.sm } });
 
 function AccountLink({label,onPress,testID,disabled,loading}:{label:string;onPress:()=>void;testID:string;disabled?:boolean;loading?:boolean}){
  return <Pressable testID={testID} accessibilityRole="button" accessibilityLabel={label} accessibilityState={{disabled:!!(disabled||loading),busy:!!loading}} disabled={disabled||loading} onPress={onPress} style={({pressed})=>[styles.link,{opacity:disabled||loading?0.5:pressed?0.65:1}]}><AppText style={{flex:1}}>{label}</AppText><AppText tone="muted" accessible={false}>›</AppText></Pressable>;

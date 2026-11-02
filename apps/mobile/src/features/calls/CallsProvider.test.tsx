@@ -22,7 +22,7 @@ afterEach(()=>{jest.useRealTimers();});
 test('incoming recipient accepts, enables media and actual controls, then closes tracks when ending',async()=>{
  render(<CallsProvider api={api}/>);await flush();expect(screen.getByTestId('call-state')).toHaveTextContent('Đang chờ trả lời');
  fireEvent.press(screen.getByTestId('call-accept'));await flush();expect(mockPrepare).toHaveBeenCalledTimes(1);expect(api.action).toHaveBeenCalledWith('test-token',call,'accept',expect.any(String));expect(mockConnect).toHaveBeenCalledTimes(1);expect(screen.getByTestId('call-state')).toHaveTextContent('Đang trò chuyện');
- fireEvent.press(screen.getByTestId('call-mute'));await flush();expect(mockMute).toHaveBeenCalledWith(true);
+ fireEvent.press(screen.getByTestId('call-mute'));await flush();expect(mockMute).toHaveBeenCalledWith(true);expect(screen.getByTestId('call-mute').props.accessibilityState.selected).toBe(true);
  fireEvent.press(screen.getByTestId('call-speaker'));await flush();expect(mockSpeaker).toHaveBeenCalledWith(true);
  fireEvent.press(screen.getByTestId('call-end'));await flush();expect(api.action.mock.calls.at(-1)![2]).toBe('end');expect(mockClose).toHaveBeenCalled();expect(screen.getByTestId('call-state')).toHaveTextContent('Đã kết thúc');
 });
@@ -51,4 +51,10 @@ test('peer label uses current contact name and fences late names across account 
  const view=render(<CallsProvider api={api}/>);await flush();expect(screen.getByText('Người gọi: Người liên hệ')).toBeTruthy();expect(screen.queryByText('Người gọi: caller')).toBeNull();
  const next={...call,id:'call-next',caller_id:'caller',recipient_id:'new-peer'};mockOwner='caller';api.list.mockResolvedValue({items:[next],next_cursor:null});api.targets.mockResolvedValue({items:[{user_id:'new-peer',display_name:'DEMO Người mới',role:'contact'}]});view.rerender(<CallsProvider api={api}/>);await flush();expect(screen.getByText('Người nhận: DEMO Người mới')).toBeTruthy();
  await act(async()=>finishOld({items:[{user_id:'caller',display_name:'DEMO Người cũ',role:'customer'}]}));expect(screen.getByText('Người nhận: DEMO Người mới')).toBeTruthy();expect(screen.queryByText(/DEMO Người cũ/)).toBeNull();expect(screen.queryByText('Người nhận: new-peer')).toBeNull();
+});
+
+test('call modal never puts raw text inside a native View',async()=>{
+ const view=render(<CallsProvider api={api}/>);await flush();
+ function check(node:unknown):void{if(!node||typeof node!=='object')return;if(Array.isArray(node)){node.forEach(check);return;}const n=node as {type?:string;children?:unknown[]};if(n.type==='View')expect((n.children??[]).filter(c=>typeof c==='string')).toEqual([]);n.children?.forEach(check);}
+ check(view.toJSON());fireEvent.press(screen.getByTestId('call-accept'));await flush();check(view.toJSON());
 });

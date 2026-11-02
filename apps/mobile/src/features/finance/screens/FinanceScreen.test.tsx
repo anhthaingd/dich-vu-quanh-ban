@@ -1,4 +1,4 @@
-import {fireEvent,render,screen,waitFor} from '@testing-library/react-native';
+import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
 import {AppProviders} from '../../../app/providers/AppProviders';
 import {FinanceScreen} from './FinanceScreen';
 import type {Bank} from '../models';
@@ -32,4 +32,60 @@ test('wallet finds active permissions through membership cursors instead of disa
 test('Hermes-style Intl rejects BigInt but wallet preserves arbitrary precision and grouping',async()=>{
  const NativeNumberFormat=Intl.NumberFormat;const intl=jest.spyOn(Intl,'NumberFormat').mockImplementation((locale,options)=>{const real=new NativeNumberFormat(locale,options);return {format:(value:number|bigint)=>{if(typeof value==='bigint')throw new TypeError('Cannot convert BigInt to number');return real.format(value);}} as Intl.NumberFormat;});
  try{mockManager.getWallet.mockResolvedValue({...wallet,balance:'900719925474099312345',withdrawable:'900719925474099302345'});mount();await screen.findByText('900.719.925.474.099.312.345 ₫');expect(screen.getByText('900.719.925.474.099.302.345 ₫')).toBeTruthy();}finally{intl.mockRestore();}
+});
+
+test('withdrawal explains the missing bank and offers recovery only to a bank manager',async()=>{
+ const mounted=render(<AppProviders api={{categories:jest.fn(),skills:jest.fn()}}><FinanceScreen partnerId="partner" onBack={jest.fn()}/></AppProviders>);
+ await screen.findByTestId('finance-payout-reason');expect(screen.getByTestId('finance-payout')).toBeDisabled();
+ fireEvent.press(screen.getByTestId('finance-bank-recovery'));expect(screen.getByTestId('finance-bank-number')).toBeTruthy();mounted.unmount();
+ mockManager.myMemberships.mockResolvedValue({items:[{partner_id:'partner',is_owner:false,active:true,permissions:['wallet.read','wallet.withdraw']}]});mount();
+ await screen.findByTestId('finance-payout-reason');expect(screen.queryByTestId('finance-bank-recovery')).toBeNull();expect(screen.getByTestId('finance-payout')).toBeDisabled();
+});
+
+test('verified bank with insufficient funds shows the minimum rather than opening an unusable payout form',async()=>{
+ mockManager.getWallet.mockResolvedValue({...wallet,withdrawable:'49000'});
+ fetchMock.mockImplementation(async(url:string)=>response(url.endsWith('/bank')?{...initial,current:{id:'bank',bank_code:'DEMO',account_last4:'1234',holder_name:'DEMO',status:'approved',version:1}}:{items:[],next_cursor:null}));
+ mount();await screen.findByText('Số tiền có thể rút chưa đủ mức tối thiểu 50.000 ₫.');expect(screen.getByTestId('finance-payout')).toBeDisabled();expect(screen.queryByTestId('finance-bank-recovery')).toBeNull();
+});
+
+test('topup validates the amount, displays the recorded request and clears it before another request',async()=>{
+ const item={id:'topup-created',partner_id:'partner',version:1,state:'pending',amount:'50000',created_at:'2026-11-02T00:00:00Z',history:[]};
+ fetchMock.mockImplementation(async(url:string,init:{method:string})=>response(init.method==='POST'?item:url.endsWith('/bank')?initial:{items:[],next_cursor:null}));
+ mount();await screen.findByTestId('finance-topup');fireEvent.press(screen.getByTestId('finance-topup'));expect(screen.getByTestId('finance-send')).toBeDisabled();
+ fireEvent.changeText(screen.getByTestId('finance-amount'),'0');expect(screen.getByTestId('finance-send')).toBeDisabled();
+ fireEvent.changeText(screen.getByTestId('finance-amount'),'50000');fireEvent.press(screen.getByTestId('finance-send'));
+ await screen.findByText('topup-created');expect(screen.queryByTestId('finance-send')).toBeNull();expect(screen.getByText('Chờ duyệt')).toBeTruthy();
+ await waitFor(()=>expect(screen.getByText('Đã lưu. Trạng thái tiền được đọc từ máy chủ.')).toBeTruthy());
+ expect(fetchMock.mock.calls.filter(([,init])=>init.method==='POST')).toHaveLength(1);fireEvent.press(screen.getByTestId('nav-back'));fireEvent.press(screen.getByTestId('finance-topup'));expect(screen.getByTestId('finance-amount')).toHaveProp('value','');expect(screen.getByTestId('finance-send')).toBeDisabled();
+});
+
+
+test('back leaves the bank form during a read refresh without losing the loading guard on money actions',async()=>{
+ mount();await screen.findByTestId('finance-bank');fireEvent.press(screen.getByTestId('finance-bank'));
+ const reads=mockManager.getWallet.mock.calls.length;let finish!:(value:typeof wallet)=>void;
+ mockManager.getWallet.mockImplementationOnce(()=>new Promise(resolve=>{finish=resolve;}));
+ fireEvent.press(screen.getByRole('button',{name:'Tải lại'}));
+ await waitFor(()=>expect(mockManager.getWallet).toHaveBeenCalledTimes(reads+1));
+ fireEvent.press(screen.getByTestId('nav-back'));
+ expect(screen.getByTestId('finance-topup')).toBeDisabled();
+ expect(screen.queryByTestId('finance-bank-number')).toBeNull();
+ await act(async()=>finish(wallet));
+ await waitFor(()=>expect(screen.getByTestId('finance-topup')).not.toBeDisabled());
+ expect(fetchMock.mock.calls.some(([,init])=>['POST','PUT','DELETE'].includes(init.method))).toBe(false);
+});
+
+test('back ignores a late finance detail response and unlocks the overview when that read finishes',async()=>{
+ const item={id:'topup-existing',partner_id:'partner',version:1,state:'pending',amount:'50000',created_at:'2026-11-02T00:00:00Z',history:[]};
+ let finish!:(value:ReturnType<typeof response>)=>void;
+ fetchMock.mockImplementation(async(url:string)=>{
+  if(url.endsWith('/topups/topup-existing'))return new Promise(resolve=>{finish=resolve;});
+  return response(url.endsWith('/bank')?initial:url.includes('/topups')?{items:[item],next_cursor:null}:{items:[],next_cursor:null});
+ });
+ mount();await screen.findByTestId('finance-history');fireEvent.press(screen.getByTestId('finance-history'));
+ fireEvent.press(screen.getByTestId('finance-item-topup-existing'));
+ await waitFor(()=>expect(finish).toBeDefined());fireEvent.press(screen.getByTestId('nav-back'));
+ expect(screen.getByTestId('finance-topup')).toBeDisabled();
+ await act(async()=>finish(response(item)));
+ await waitFor(()=>expect(screen.getByTestId('finance-topup')).not.toBeDisabled());
+ expect(screen.queryByText('topup-existing')).toBeNull();
 });

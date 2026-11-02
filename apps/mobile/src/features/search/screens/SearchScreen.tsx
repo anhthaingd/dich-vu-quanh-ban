@@ -6,7 +6,8 @@ import {
   useState,
   useSyncExternalStore
 } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Modal, Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../app/navigation/routes';
@@ -34,13 +35,15 @@ import { ServiceFilter, type ServiceSelection } from '../components/ServiceFilte
 import { SearchResultsMap } from '../components/SearchResultsMap';
 import type { Mode, Point } from '../../partners/models';
 import type { SavedAddress } from '../../accounts/models';
+import { searchMessages } from '../messages';
 import { theme } from '../../../theme/tokens';
 export function SearchScreen({
   navigation,
   route
 }: NativeStackScreenProps<RootStackParamList, 'Search' | 'CatalogHome'>) {
+  const insets = useSafeAreaInsets();
   const api = usePartnersApi(),
-    { t } = useLocale(),
+    { t, locale } = useLocale(),
     { state: auth } = useAuth();
   const search = useMemo(() => new PartnerSearch(api), [api]);
   const state = useSyncExternalStore(
@@ -48,6 +51,7 @@ export function SearchScreen({
     search.getSnapshot,
     search.getSnapshot
   );
+  const copy = searchMessages[locale];
   const [placeText, setPlaceText] = useState('');
   const [sort,setSort]=useState<'distance'|'rating'|'recommended'>('distance');
   const [mapView,setMapView]=useState(false);
@@ -60,21 +64,32 @@ export function SearchScreen({
     [invalid, setInvalid] = useState(false);
   const [service, setService] = useState<ServiceSelection>(route.params ?? {});
   const [filtersOpen, setFiltersOpen] = useState(false);
-  useFocusEffect(useCallback(() => () => search.cancel(), [search]));
+  const [draft, setDraft] = useState({radius, mode, anyMode, verified, lat, lng, placeText});
+  const [filterInvalid, setFilterInvalid] = useState(false);
+  const openFilters = () => { setDraft({radius, mode, anyMode, verified, lat, lng, placeText}); setFilterInvalid(false); setFiltersOpen(true); };
+  useFocusEffect(useCallback(() => { void search.resume(); return () => search.cancel(); }, [search]));
   useEffect(() => {
-    setService({categoryId:route.params?.categoryId,skillId:route.params?.skillId});
+    const value = {categoryId:route.params?.categoryId,skillId:route.params?.skillId};
+    setService(value);
+    if (search.getSnapshot().searched) submit({service:value});
   }, [route.params?.categoryId, route.params?.skillId]);
-  useEffect(() => { search.reset(); }, [search, lat, lng, service.categoryId, service.skillId, radius, mode, anyMode, verified,sort]);
-  useEffect(() => { setLat(''); setLng(''); setPlaceText(''); }, [auth.user?.id]);
+
+  useEffect(() => { search.reset(); setLat(''); setLng(''); setPlaceText(''); setFiltersOpen(false); setInvalid(false); }, [search, auth.user?.id]);
   const choose = (p: Point, text = '') => {
+    if (p.latitude !== coordinateNumber(lat) || p.longitude !== coordinateNumber(lng)) {
+      search.reset();
+      setMapView(false);
+    }
+    setInvalid(false);
     setPlaceText(text);
     setLat(String(p.latitude));
     setLng(String(p.longitude));
   };
-  const submit = () => {
-    const latitude = coordinateNumber(lat),
-      longitude = coordinateNumber(lng),
-      radius_m = coordinateNumber(radius);
+  const submit = (overrides: Partial<{radius: string; mode: Mode; anyMode: boolean; verified: boolean; lat: string; lng: string; sort: typeof sort; service: ServiceSelection}> = {}) => {
+    const selection = {radius, mode, anyMode, verified, lat, lng, sort, service, ...overrides};
+    const latitude = coordinateNumber(selection.lat),
+      longitude = coordinateNumber(selection.lng),
+      radius_m = coordinateNumber(selection.radius);
     if (
       !Number.isFinite(latitude) ||
       Math.abs(latitude) > 90 ||
@@ -91,13 +106,21 @@ export function SearchScreen({
     void search.search({
       latitude,
       longitude,
-      radius_m,sort,
-      skill_id: service.skillId,
-      category_id: service.categoryId,
-      service_mode: anyMode ? undefined : mode,
-      verified
+      radius_m,sort: selection.sort,
+      skill_id: selection.service.skillId,
+      category_id: selection.service.categoryId,
+      service_mode: selection.anyMode ? undefined : selection.mode,
+      verified: selection.verified
     });
   };
+  const applyFilters = () => {
+    const n = coordinateNumber(draft.radius);
+    if (!Number.isSafeInteger(n) || n < 1 || n > 2147483647) { setFilterInvalid(true); return; }
+    setRadius(draft.radius); setMode(draft.mode); setAnyMode(draft.anyMode); setVerified(draft.verified);
+    setLat(draft.lat); setLng(draft.lng); setPlaceText(draft.placeText); setFiltersOpen(false); submit(draft);
+  };
+  const changeService = (value: ServiceSelection) => { setService(value); if (state.searched || state.busy) submit({service: value}); };
+  const clearFilters = () => { setRadius('10000'); setAnyMode(true); setMode('at_customer'); setVerified(false); submit({radius:'10000', anyMode:true, mode:'at_customer', verified:false}); };
   return (
     <ProductShell onWallet={id=>navigation.navigate('Finance',{id})}
       keyboardDismissMode="on-drag"
@@ -110,38 +133,42 @@ export function SearchScreen({
       onCatalog={() => navigation.popTo('CatalogHome')}
     >
       <View style={styles.intro}>
-        <AppText variant="title" accessibilityRole="header" style={styles.headline}>{t('home.headline')} <AppText style={styles.headline} tone="primary">{t('home.headlineAccent')}</AppText></AppText>
+        <AppText variant="caption" tone="primary">{copy.nearby}</AppText><AppText variant="title" accessibilityRole="header" style={styles.headline}>{copy.headline}</AppText>
       </View>
-      <ServiceFilter value={service} onChange={setService}
-        submitControl={<Pressable testID="search-submit" accessibilityRole="button" accessibilityLabel={t('search.submit')} onPress={submit} style={styles.submit}><Icon name="search" color="#fff" size={21}/></Pressable>}
+      <ServiceFilter value={service} onChange={changeService}
+        submitControl={<Button testID="search-submit" label={t('search.submit')} onPress={()=>submit()}/>}
         locationControl={<LocationField text={placeText} onChange={v=>{choose(v.point);setPlaceText(v.text);}} radius={Number(radius)} prefix="search" lat={lat} lng={lng}
           renderTrigger={open=><Pressable testID="search-pick-location" accessibilityRole="button" accessibilityLabel={t('location.open')} onPress={open} style={styles.location}>
             <Icon name="pin" size={20} color={theme.colors.primary}/><AppText tone="muted" style={styles.locationLabel}>{t('home.area')}</AppText><AppText numberOfLines={1} style={styles.locationValue}>{placeText || t('home.chooseArea')}</AppText>
           </Pressable>}/>} />
       <View style={styles.filters}>
-        <Pressable testID="search-filters-open" accessibilityRole="button" accessibilityLabel={t('home.filters')} onPress={()=>setFiltersOpen(true)} style={styles.filterButton}><Icon name="filters" size={16}/><AppText style={styles.small}>{t('home.radius',{km:Number(radius)/1000})}</AppText><Icon name="down" size={14}/></Pressable>
-        <Pressable testID="search-verified" accessibilityRole="checkbox" accessibilityState={{checked:verified}} onPress={()=>setVerified(v=>!v)} style={styles.verified}>
+        <Pressable testID="search-filters-open" accessibilityRole="button" accessibilityLabel={t('home.filters')} onPress={openFilters} style={styles.filterButton}><Icon name="filters" size={16}/><AppText style={styles.small}>{t('home.radius',{km:Number(radius)/1000})}</AppText><Icon name="down" size={14}/></Pressable>
+        <Pressable testID="search-verified" accessibilityRole="checkbox" accessibilityState={{checked:verified}} onPress={()=>{setVerified(!verified); submit({verified:!verified});}} style={styles.verified}>
           <View style={[styles.checkbox, verified && styles.checked]}>{verified && <AppText style={styles.checkMark} tone="surface">✓</AppText>}</View><AppText style={styles.small}>{t('search.verified')}</AppText>
         </Pressable>
+      {(radius !== '10000' || !anyMode || verified) && <Button testID="search-filters-clear" variant="link" label={copy.clear} onPress={clearFilters}/>}
+      {!anyMode && <AppText variant="caption">{t(`partners.${mode}`)}</AppText>}
       </View>
-      {invalid && <AppText accessibilityRole="alert" tone="error" style={styles.notice}>{t('search.invalid')}</AppText>}
+      {invalid && <AppText accessibilityRole="alert" tone="error" style={styles.notice}>{copy.locationRequired}</AppText>}
       {filtersOpen && <Modal visible animationType="slide" onRequestClose={()=>setFiltersOpen(false)}>
-      <View style={styles.filterModal}><ScrollView contentContainerStyle={styles.filterContent}>
+      <SafeAreaView style={{flex:1,backgroundColor:theme.colors.surface}}><KeyboardAvoidingView style={styles.filterModal} keyboardVerticalOffset={insets.top} behavior={Platform.OS==='ios'?'padding':Platform.OS==='android'?'height':undefined}><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.filterContent}>
         <AppText variant="title">{t('home.filters')}</AppText>
+        <AppText tone="muted">{copy.filterHint}</AppText>
         <Input
           testID="search-radius"
           label={t('search.radius')}
-          value={radius}
-          onChangeText={setRadius}
+          value={draft.radius}
+          onChangeText={radius=>setDraft(v=>({...v,radius}))}
           keyboardType="number-pad"
         />
         {auth.phase === 'authenticated' && auth.user && (
           <SavedPositions
             key={auth.user.id}
             owner={auth.user.id}
-            choose={choose}
+            choose={(point,text='')=>setDraft(v=>({...v,lat:String(point.latitude),lng:String(point.longitude),placeText:text}))}
           />
         )}
+        {!!draft.placeText && <AppText tone="muted">{draft.placeText}</AppText>}
         <View
           style={{
             flexDirection: 'row',
@@ -151,23 +178,26 @@ export function SearchScreen({
         >
           <Switch
             accessibilityLabel={t('search.allModes')}
-            value={anyMode}
-            onValueChange={setAnyMode}
+            value={draft.anyMode}
+            onValueChange={anyMode=>setDraft(v=>({...v,anyMode}))}
           />
           <AppText>{t('search.allModes')}</AppText>
         </View>
-        {!anyMode && (
+        {!draft.anyMode && (
           <Options
             values={['at_shop', 'at_customer', 'custom']}
-            value={mode}
-            onChange={setMode}
+            value={draft.mode}
+            onChange={mode=>setDraft(v=>({...v,mode}))}
             testID="search-mode"
           />
         )}
-      </ScrollView><Button testID="search-filters-apply" label={t('home.apply')} onPress={()=>setFiltersOpen(false)}/></View>
+        <View style={{flexDirection:'row',alignItems:'center',gap:12}}><Switch testID="search-filter-verified" accessibilityLabel={t('search.verified')} value={draft.verified} onValueChange={verified=>setDraft(v=>({...v,verified}))}/><AppText>{t('search.verified')}</AppText></View>
+        {filterInvalid && <AppText accessibilityRole="alert" tone="error">{copy.radiusInvalid}</AppText>}
+      </ScrollView><View style={{gap:8}}><Button testID="search-filters-apply" label={copy.apply} onPress={applyFilters}/><Button testID="search-filters-cancel" label={t('accountTools.cancel')} variant="secondary" onPress={()=>setFiltersOpen(false)}/></View></KeyboardAvoidingView></SafeAreaView>
       </Modal>}
       {!state.searched && !state.busy && !state.error && <View style={styles.empty}><AppText style={styles.resultTitle}>{t('home.start')}</AppText><AppText style={styles.small} tone="muted">{t('home.startHint')}</AppText></View>}
-      {state.busy && <LoadingState message={t('search.loading')} />}
+      {state.busy && (state.searched ? <AppText accessibilityLiveRegion="polite" style={styles.notice} tone="primary">{copy.updating}</AppText> : <LoadingState message={t('search.loading')} />)}
+      {state.error && state.items.length > 0 && <AppText tone="muted">{copy.previous}</AppText>}
       {state.error && (
         <ErrorState
           message={t('search.error')}
@@ -179,9 +209,9 @@ export function SearchScreen({
         <EmptyState message={t('search.empty')} />
       )}
       {state.searched && <>
-        <View style={styles.resultHeader}><View style={{flex:1,gap:4}}><AppText accessibilityRole="header" style={styles.resultTitle}>{t(state.next ? 'home.resultsMore' : 'home.results',{count:state.items.length})}</AppText><AppText style={styles.small} tone="muted">{t('home.radius',{km:Number(radius)/1000})} · {placeText}</AppText></View>
+        <View style={styles.resultHeader}><View style={{flex:1,gap:4}}><AppText accessibilityRole="header" style={styles.resultTitle}>{t(state.next ? 'home.resultsMore' : 'home.results',{count:state.items.length})}</AppText><AppText style={styles.small} tone="muted">{t('home.radius',{km:(state.criteria?.radius_m ?? Number(radius))/1000})}{state.criteria?.latitude === Number(lat) && state.criteria?.longitude === Number(lng) ? ` · ${placeText}` : ''}</AppText></View>
           <Pressable testID={mapView?'search-view-list':'search-view-map'} accessibilityRole="button" accessibilityLabel={t(mapView?'searchMap.list':'searchMap.map')} onPress={()=>setMapView(v=>!v)} style={styles.mapButton}><Icon name="map" size={17}/><AppText style={styles.small}>{t(mapView?'searchMap.list':'searchMap.map')}</AppText></Pressable>
-        </View><View style={{flexDirection:'row',gap:8,flexWrap:'wrap'}}>{(['distance','rating','recommended'] as const).map(v=><Button key={v} testID={`search-sort-${v}`} variant={sort===v?'primary':'secondary'} label={t(`search.${v}`)} onPress={()=>setSort(v)}/>)}</View>
+        </View><View style={{flexDirection:'row',gap:8,flexWrap:'wrap'}}>{(['distance','rating','recommended'] as const).map(v=><Button key={v} testID={`search-sort-${v}`} variant={sort===v?'primary':'secondary'} label={t(`search.${v}`)} accessibilityState={{selected:sort===v}} onPress={()=>{setSort(v); submit({sort:v});}}/>)}</View>
       </>}
       {mapView && state.searched && state.criteria && <SearchResultsMap
         key={`${state.criteria.latitude},${state.criteria.longitude},${state.criteria.radius_m},${state.criteria.service_mode},${state.criteria.verified},${state.criteria.skill_id},${state.criteria.category_id}`}
@@ -272,11 +302,11 @@ function SavedPositions({
 const styles=StyleSheet.create({
  intro:{marginBottom:16},eyebrow:{fontSize:8,lineHeight:14,fontWeight:'700',letterSpacing:1,color:'#58657A',marginBottom:14},
  headline:{fontSize:26,lineHeight:35,fontWeight:'700',letterSpacing:-0.5},introCopy:{fontSize:12,lineHeight:22,maxWidth:320,marginTop:14},
- submit:{width:46,height:46,borderRadius:11,backgroundColor:theme.colors.primary,alignItems:'center',justifyContent:'center'},
+ submit:{width:48,height:48,borderRadius:11,backgroundColor:theme.colors.primary,alignItems:'center',justifyContent:'center'},
  location:{flexDirection:'row',alignItems:'center',gap:10,paddingHorizontal:10,minHeight:44,borderTopWidth:1,borderColor:'#E1E6EE'},locationLabel:{fontSize:10,lineHeight:16},locationValue:{fontSize:12,lineHeight:18,fontWeight:'600',flex:1},
  filters:{flexDirection:'row',alignItems:'center',flexWrap:'wrap',gap:12,paddingBottom:22},filterButton:{flexDirection:'row',alignItems:'center',gap:6,borderWidth:1,borderColor:'#DEE5F0',borderRadius:8,minHeight:44,paddingHorizontal:10},
  verified:{flexDirection:'row',alignItems:'center',gap:6,minHeight:44},checkbox:{width:16,height:16,borderWidth:1,borderColor:'#78869E',borderRadius:3},checked:{backgroundColor:theme.colors.primary,borderColor:theme.colors.primary},checkMark:{fontSize:12,lineHeight:14,textAlign:'center'},
- small:{fontSize:13,lineHeight:20},notice:{fontSize:11,lineHeight:20,marginVertical:12},filterModal:{flex:1,padding:20,paddingTop:48,paddingBottom:32,backgroundColor:'#fff'},filterContent:{gap:16,paddingBottom:24},
+ small:{fontSize:13,lineHeight:20},notice:{fontSize:11,lineHeight:20,marginVertical:12},filterModal:{flex:1,padding:20,paddingBottom:16,backgroundColor:'#fff'},filterContent:{gap:16,paddingBottom:24},
  empty:{gap:8,paddingVertical:24,borderTopWidth:1,borderColor:theme.colors.border},resultHeader:{flexDirection:'row',alignItems:'center',gap:12,marginBottom:20},resultTitle:{fontSize:20,lineHeight:28,fontWeight:'700'},mapButton:{flexDirection:'row',gap:8,alignItems:'center',padding:12,borderWidth:1,borderColor:theme.colors.border,borderRadius:8},sort:{fontSize:11,lineHeight:18,textAlign:'right',marginBottom:12},
  providerAvatar:{width:48,height:48,borderRadius:16,backgroundColor:'#edf5ef',alignItems:'center',justifyContent:'center'},provider:{padding:18,borderWidth:1,borderRadius:18,borderColor:theme.colors.border,gap:12,marginTop:14},providerName:{flexDirection:'row',alignItems:'center',gap:8},providerTitle:{fontSize:18,lineHeight:26,fontWeight:'700',flex:1},reputation:{flexDirection:'row',flexWrap:'wrap',gap:12},providerBottom:{flexDirection:'row',alignItems:'center',gap:12,marginTop:8},price:{fontSize:18,lineHeight:26,fontWeight:'700'},
 });

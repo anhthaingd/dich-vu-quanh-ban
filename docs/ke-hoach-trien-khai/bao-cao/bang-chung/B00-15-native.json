@@ -1,0 +1,176 @@
+{
+  "date": "2026-11-02",
+  "database": "dvqb_local",
+  "devices": {
+    "ios": "iPhone 18 Pro / iOS 27 Simulator",
+    "android": "DVQB_API_36 emulator-5554"
+  },
+  "meaning": "Representative native flows, not all roles/buttons. Owner continuation follows initial profile-tab steps; iOS owner invoices resumes after wallet/profile inspection. Fixture suites use dvqb_test separately.",
+  "runs": [
+    {
+      "platform": "ios",
+      "name": "ios-final-customer",
+      "started": "2026-11-02T02:18:00.687Z",
+      "finished": "2026-11-02T02:19:39.948Z",
+      "code": 0,
+      "commands": 95,
+      "database": "dvqb_local"
+    },
+    {
+      "platform": "android",
+      "name": "android-final-customer",
+      "started": "2026-11-02T02:18:03.692Z",
+      "finished": "2026-11-02T02:22:16.190Z",
+      "code": 0,
+      "commands": 95,
+      "database": "dvqb_local"
+    },
+    {
+      "platform": "ios",
+      "name": "ios-owner-invoices",
+      "started": "2026-11-02T02:29:16.254Z",
+      "finished": "2026-11-02T02:29:43.890Z",
+      "code": 0,
+      "commands": 21,
+      "database": "dvqb_local"
+    },
+    {
+      "platform": "android",
+      "name": "android-owner-continue",
+      "started": "2026-11-02T02:27:20.248Z",
+      "finished": "2026-11-02T02:29:42.018Z",
+      "code": 0,
+      "commands": 51,
+      "database": "dvqb_local"
+    },
+    {
+      "platform": "ios",
+      "name": "ios-layout-final",
+      "started": "2026-11-02T02:33:30.599Z",
+      "finished": "2026-11-02T02:33:51.587Z",
+      "code": 0,
+      "commands": 13,
+      "database": "dvqb_local"
+    },
+    {
+      "platform": "android",
+      "name": "android-keyboard-final",
+      "started": "2026-11-02T02:32:18.140Z",
+      "finished": "2026-11-02T02:33:10.296Z",
+      "code": 0,
+      "commands": 19,
+      "database": "dvqb_local"
+    },
+    {
+      "platform": "ios",
+      "name": "ios-wallet-navigation-final",
+      "started": "2026-11-02T02:54:25.941Z",
+      "finished": "2026-11-02T02:55:04.994Z",
+      "code": 0,
+      "commands": 20,
+      "database": "dvqb_local"
+    },
+    {
+      "platform": "android",
+      "name": "android-wallet-navigation-final",
+      "started": "2026-11-02T02:54:28.362Z",
+      "finished": "2026-11-02T02:55:16.459Z",
+      "code": 0,
+      "commands": 20,
+      "database": "dvqb_local"
+    },
+    {
+      "platform": "android",
+      "name": "android-filter-verified",
+      "started": "2026-11-02T03:22:03.950Z",
+      "finished": "2026-11-02T03:22:44.746Z",
+      "code": 0,
+      "commands": 14,
+      "database": "dvqb_local"
+    }
+  ],
+  "databaseReadback": [
+    {
+      "database": "dvqb_local",
+      "body": "UX01 ios implementation message 20261102",
+      "created_at": "2026-11-02T02:19:30.373004+00:00"
+    },
+    {
+      "database": "dvqb_local",
+      "body": "UX01 android implementation message 20261102",
+      "created_at": "2026-11-02T02:22:10.914812+00:00"
+    }
+  ],
+  "limitations": [
+    "iOS software keyboard not shown; input-only check does not verify keyboard avoidance",
+    "No complete native rerun for all admin/team roles",
+    "No physical devices, live call media, real provider, CI or UAT",
+    "Earlier runs include real defects fixed (settings draft on pop, Android keyboard overlap) and automation failures; not counted as full passes"
+  ],
+  "screenshots": [
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-chat-keyboard-fixed.png",
+      "sha256": "edc48a017bf6a0dd87a08c9c2a05eb82343bde645f58277ac6b84e9af332a04f"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-home.png",
+      "sha256": "041ef33cb457b058ca32ae98f71ca5550a93e83d8b83436457765f92bef92815"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-invoice-keyboard-fixed.png",
+      "sha256": "de5e1d11395bea9874e3b0710cbdbf3cd0c2e967325dce12ad88773047504c5c"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-provider-draft-kept.png",
+      "sha256": "6fd3092bea74cc260202fee950bbe0a6ca6b847c898c4cb009c244c1020dc3b1"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-search-results.png",
+      "sha256": "1861b26817316e493fa9593e22a6582481012354e12c8d7d7e2beafad995b3d5"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-settings-kept.png",
+      "sha256": "4f7062b0006396a916aa85e6b20e259b5866283aa3266ade082ec69eeec1b6d0"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-wallet.png",
+      "sha256": "e1a064c08142ce9a109ada5af957d839d583112f7f73ed44073a28735d8a1322"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-chat-final.png",
+      "sha256": "0c1b66a674bb8afd169228a61bf7ba46df9d1229e737dd501e0068a312f0eb92"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-home.png",
+      "sha256": "4099679ebce926eab44d6c1d966166580e40229a40dc74c6a76147c91bed7653"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-invoice-final.png",
+      "sha256": "e921ab5fd8c9d6f572d9c363f66f6bfc02e4ceb87f8ec9ea22549a960bb70dba"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-provider-draft-kept.png",
+      "sha256": "bff5cee34fdedfd29fd71981830c67c952940455bdc80a6a1d48e9284681a383"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-search-results.png",
+      "sha256": "2295527996c9c196fdd5590fec414a079c63ff5eb0e6953c0f33276ccb09efa3"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-settings-kept.png",
+      "sha256": "22021ca54f4242fc1b4afd7e840bc5bcbe5149fcf943aad7a5f51ddb63efc910"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-wallet.png",
+      "sha256": "ee47657dfee34036fbb5f1527d5ae2a4a5fb488d1722241a807f81681310fba1"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-filter-keyboard.png",
+      "sha256": "48937863157011fd8f179693dac78c4fcf96a06f00485e3acf7797d4192b2e2a"
+    }
+  ],
+  "regressions": {
+    "financeBack": "Read refresh must not swallow Back; late detail read must not reopen old detail or leave money actions locked. Component checks cover pending reads; native checks cover the route with current local data.",
+    "filterKeyboard": "Android filter Apply and Cancel remain visible above software keyboard; opened and cancelled without writes."
+  }
+}

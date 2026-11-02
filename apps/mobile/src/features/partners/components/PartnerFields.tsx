@@ -1,4 +1,4 @@
-import { View, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { Button } from '../../../components/ui/Button';
 import { useLocale } from '../../../app/providers/LocaleProvider';
 import { theme } from '../../../theme/tokens';
@@ -36,8 +36,8 @@ export function Options<T extends Option>({
     areas: 'partners.tabAreas',
     locations: 'partners.tabLocations'
   } as const;
-  return (
-    <View style={styles.options}>
+  const content = (
+    <View style={[styles.options, layout === 'sections' && {flexWrap:'nowrap'}]}>
       {values.map((v) => (
         <View
           key={v}
@@ -59,9 +59,10 @@ export function Options<T extends Option>({
       ))}
     </View>
   );
+  return layout === 'sections' ? <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flexGrow:0}}>{content}</ScrollView> : content;
 }
 export const coordinateNumber = (v: string) => (v.trim() ? Number(v) : NaN);
 const styles = StyleSheet.create({
-  section: { width: '48%', flexGrow: 1 },
+  section: { flexShrink: 0 },
   options: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }
 });

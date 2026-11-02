@@ -6,6 +6,7 @@ import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { theme } from '../../../theme/tokens';
 import { formatBusinessDate } from '../../../lib/i18n/formatters';
+import { JobStatus } from './JobStatus';
 import type { Job } from '../models';
 import { businessDay, jobsByDay, monthCells, shiftMonth } from '../state/calendar';
 
@@ -19,7 +20,7 @@ export function JobCalendar({items, open, selected, setSelected, loading = false
   const today = businessDay(new Date()), cells = monthCells(month);
   const card = (j: Job) => <Card key={j.id} testID={`calendar-job-${j.id}`}>
     {j.scheduled_at && <AppText variant="card" tone="primary">{formatBusinessDate(new Date(j.scheduled_at), locale)}</AppText>}
-    <AppText>{t(`jobs.${j.state}`)}</AppText><AppText>{j.address.text}</AppText>
+    <JobStatus state={j.state}/><AppText>{j.address.text}</AppText>
     {!!j.note && <AppText tone="muted">{j.note}</AppText>}
     <Button testID={`job-open-${j.id}`} label={t('jobs.detail')} variant="secondary" onPress={() => open(j.id)}/>
   </Card>;

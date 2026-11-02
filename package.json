@@ -44,7 +44,13 @@
     "db:demo-partners": "npm run db:demo-partners -w services/api",
     "sdd:check": "node scripts/sdd/check.mjs",
     "sdd:run": "node scripts/sdd/run.mjs",
-    "admin": "npm run dev -w apps/admin"
+    "admin": "npm run dev -w apps/admin",
+    "db:operational:preview": "node --import tsx scripts/data/seed-operational.mjs --preview",
+    "db:operational:seed": "node --import tsx scripts/data/seed-operational.mjs --apply",
+    "db:operational:verify": "node --import tsx scripts/data/seed-operational.mjs --verify",
+    "review:screens:build": "node scripts/review/build-report.mjs",
+    "review:screens:check": "node scripts/review/check-report.mjs",
+    "review:mobile": "node scripts/review/start-operational-mobile.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

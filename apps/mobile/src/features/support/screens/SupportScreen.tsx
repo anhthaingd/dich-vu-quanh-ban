@@ -4,7 +4,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {LanguageSettings} from '../../accounts/components/LanguageSettings';
 import {translator} from '../../admin/messages';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
-import {View} from 'react-native';
+import {SegmentedTabs} from '../../../components/ui/SegmentedTabs';
 import * as ImagePicker from 'expo-image-picker';
 import {EvidencePhoto} from './EvidencePhoto';
 import type {EvidenceAsset} from '../api/support-api';
@@ -78,14 +78,15 @@ function Desk({owner,context,initialId}:{owner:string;context?:ReportContext;ini
   <AppText variant="title">{t('support.intro')}</AppText><AppText tone="muted">{t('support.privacy')}</AppText>
   <RefreshError error={error} busy={blocked} retry={reload}/>{busy&&!loaded&&<AppText>{t('accountTools.loading')}</AppText>}
   {(selected||creating)&&<Button testID="support-list" label={t('support.list')} variant="link" disabled={blocked} onPress={back}/>}
-  {selected?<Card><AppText testID="support-state" variant="section">{t(`support.${selected.state}`)}</AppText><AppText tone="muted">{selected.id}</AppText><AppText variant="section">{selected.subject}</AppText><AppText>{selected.body}</AppText>{selected.evidence_ids.map(id=><EvidencePhoto key={id} id={id} load={loadPhoto}/>)}{selected.job_id&&<AppText>{t('support.relatedJob',{id:selected.job_id})}</AppText>}
+  {selected?<Card><AppText testID="support-state" variant="section">{t(`support.${selected.state}`)}</AppText><AppText variant="section">{selected.subject}</AppText><AppText tone="muted" variant="caption">{selected.id}</AppText><AppText>{selected.body}</AppText>{selected.evidence_ids.map(id=><EvidencePhoto key={id} id={id} load={loadPhoto}/>)}{selected.job_id&&<AppText>{t('support.relatedJob',{id:selected.job_id})}</AppText>}
    {selected.updates.map((u,i)=><Card key={`${u.created_at}:${i}`}><AppText variant="caption">{t(u.actor_id===owner?'support.you':'support.team')}</AppText><AppText>{u.body}</AppText>{u.evidence_ids.map(id=><EvidencePhoto key={id} id={id} load={loadPhoto}/>)}<AppText tone="muted" variant="caption">{formatBusinessDate(new Date(u.created_at),locale)}</AppText></Card>)}
    {selected.state==='closed'?<AppText>{t('support.closedHint')}</AppText>:<><Input testID="support-body" label={t('support.addInfo')} multiline value={body} editable={!blocked} onChangeText={setBody}/>{photoEditor}<Button testID="support-send" label={t('support.sendUpdate')} disabled={blocked||!body.trim()||state.error==='STATE_CONFLICT'} onPress={send}/></>}
   </Card>:creating?<Card><AppText variant="section">{t('support.describe')}</AppText>{context?.job_id&&<AppText>{t('support.relatedJob',{id:context.job_id})}</AppText>}<Input testID="support-subject" label={t('support.subject')} value={subject} editable={!blocked} onChangeText={setSubject}/><Input testID="support-body" label={t('support.body')} multiline value={body} editable={!blocked} onChangeText={setBody}/>{photoEditor}<AppText tone="muted">{t('support.noMoney')}</AppText><Button testID="support-send" label={t('support.send')} disabled={blocked||!body.trim()||!subject.trim()} onPress={send}/></Card>:<>
    <Button testID="support-create" label={t('support.create')} disabled={blocked} onPress={()=>{setBody('');setSubject('');setPhotos([]);setCreating(true);}}/>
-   <View style={{flexDirection:'row',flexWrap:'wrap',gap:6}}>{(['all',...reportStates] as const).map(s=><Button key={s} testID={`support-filter-${s}`} label={t(`support.${s}`)} variant={filter===s?'primary':'secondary'} onPress={()=>setFilter(s)}/>)}</View>
+   <SegmentedTabs value={filter} onChange={setFilter} options={(['all',...reportStates] as const).map(value=>({value,label:t(`support.${value}`),testID:`support-filter-${value}`}))}/>
+
    {loaded&&!error&&!visible.length&&<AppText>{t('support.empty')}</AppText>}
-   {visible.map(r=><Card key={r.id}><AppText variant="caption">{t(`support.${r.state}`)}</AppText><AppText variant="section">{r.subject}</AppText><AppText numberOfLines={3}>{r.body}</AppText><Button testID={`support-open-${r.id}`} label={t('support.view')} disabled={blocked} onPress={()=>{setSelected(r);setBody('');}}/></Card>)}
+   {visible.map(r=><Card key={r.id}><AppText variant="caption">{t(`support.${r.state}`)}</AppText><AppText variant="section">{r.subject}</AppText><AppText numberOfLines={3}>{r.body}</AppText><Button testID={`support-open-${r.id}`} label={t('support.view')} variant="secondary" disabled={blocked} onPress={()=>{setSelected(r);setBody('');}}/></Card>)}
   </>}
   <JobFeedback error={up.error} pending={up.pending} busy={up.busy||auth.busy} retry={up.pending?()=>void upload.run().then(uploaded):undefined}/>
   <JobFeedback error={state.error} pending={state.pending} busy={state.busy||auth.busy} retry={state.pending?()=>void mutation.run().then(finish):undefined}/>

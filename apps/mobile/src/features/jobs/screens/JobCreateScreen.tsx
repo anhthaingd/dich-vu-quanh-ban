@@ -1,3 +1,4 @@
+import {usePageActions} from '../../../app/layout/ProductShell';
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../app/navigation/routes';
@@ -46,6 +47,7 @@ function Form({ owner, partnerId, done }: {
         if (value)
             done(value.id);
     };
+    usePageActions(profile ? <Button testID="job-submit" label={t('jobs.send')} disabled={blocked || !profile.can_hire} onPress={() => void send()}/> : null);
     if (!profile)
         return <><JobFeedback error={loadError} retry={() => setAttempt(v => v + 1)}/>{!loadError && <AppText>{t('accountTools.loading')}</AppText>}</>;
     return <><AppText variant="section">{profile.name}</AppText><AppText tone="muted">{t('jobs.createIntro')}</AppText>{!auth.user?.phone_verified && <AppText>{t('partners.verifyNeeded')}</AppText>}<Card><AppText variant="section">{t('jobs.chooseSkills')}</AppText>{profile.skills.map(s => <Button key={s.id} testID={`job-skill-${s.id}`} label={s.name} variant={selected.includes(s.id) ? 'primary' : 'secondary'} disabled={blocked} onPress={() => setSelected(v => v.includes(s.id) ? v.filter(x => x !== s.id) : [...v, s.id])}/>)}</Card>
@@ -59,5 +61,5 @@ function Form({ owner, partnerId, done }: {
  <Card><AppText variant="section">{t('jobs.where')}</AppText>{(['at_customer', 'at_shop', 'custom'] as const).map(m => <Button key={m} testID={`job-mode-${m}`} label={t(`partners.${m}`)} variant={mode === m ? 'primary' : 'secondary'} disabled={blocked || !selected.length || !selected.every(id => profile.service_modes.some(s => s.skill_id === id && s.modes.includes(m)))} onPress={() => setMode(m)}/>)}{mode === 'at_shop' ? profile.public_locations.map(l => <Button key={l.id} testID={`job-location-${l.id}`} label={l.address.text} disabled={blocked} variant={location === l.id ? 'primary' : 'secondary'} onPress={() => setLocation(l.id)}/>) : <LocationField prefix="job" lat={place ? String(place.point.latitude) : ''} lng={place ? String(place.point.longitude) : ''} text={place?.text} disabled={blocked} onChange={setPlace}/>}</Card>
  <Card><Button testID="job-time-now" label={t('jobs.now')} disabled={blocked} variant={scheduled ? 'secondary' : 'primary'} onPress={() => setScheduled(false)}/><Button testID="job-time-scheduled" label={t('jobs.scheduled')} disabled={blocked} variant={scheduled ? 'primary' : 'secondary'} onPress={() => setScheduled(true)}/>{scheduled && <><Input testID="job-date" label={t('jobs.date')} value={day} editable={!blocked} onChangeText={setDay}/><Input testID="job-time" label={t('jobs.time')} value={time} editable={!blocked} onChangeText={setTime}/><AppText tone="muted">{t('jobs.timeHint')}</AppText></>}<Input testID="job-note" label={t('jobs.note')} value={note} editable={!blocked} multiline onChangeText={setNote}/></Card>
  {invalid && <JobFeedback error="VALIDATION"/>}<JobFeedback error={state.error} pending={state.pending} busy={blocked && !state.pending} retry={state.pending ? () => void mutation.run().then(v => { if (v)
-        done(v.id); }) : undefined}/><Button testID="job-submit" label={t('jobs.send')} disabled={blocked || !profile.can_hire} onPress={() => void send()}/></>;
+        done(v.id); }) : undefined}/></>;
 }

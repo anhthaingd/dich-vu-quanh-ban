@@ -34,6 +34,15 @@ test('team follows member and invitation tabs, reauthenticates before grants and
 test('team clears private lists when access is revoked on reload',async()=>{
  const f=fixture();mount(f,'Team');await screen.findByTestId('team-remove-worker');f.team.memberships.mockResolvedValue({items:[],next_cursor:null});fireEvent.press(screen.getByTestId('team-reload'));await screen.findByRole('alert');expect(screen.queryByTestId('team-remove-worker')).toBeNull();
 });
+
+test('team shows the exact permission change before reauthentication and does not save an unchanged selection',async()=>{
+ const f=fixture();mount(f,'Team');await screen.findByTestId('team-invite-open');
+ fireEvent.press(screen.getByTestId('team-tab-permissions'));expect(screen.getByTestId('team-tab-permissions')).toHaveProp('accessibilityState',expect.objectContaining({selected:true}));
+ fireEvent.press(screen.getByTestId('team-grants-worker'));fireEvent.changeText(screen.getByTestId('team-grant-reason'),'Review permissions');fireEvent.changeText(screen.getByTestId('team-grant-password'),'DEMO password');
+ expect(screen.getByTestId('team-grant-save')).toBeDisabled();expect(screen.getByText('Chưa thay đổi quyền')).toBeTruthy();
+ fireEvent(screen.getByTestId('grant-jobs.assign'),'valueChange',true);expect(screen.getByTestId('team-grant-summary')).toBeTruthy();expect(screen.queryByText('Chưa thay đổi quyền')).toBeNull();expect(screen.getByTestId('team-grant-save')).toBeEnabled();
+ expect(f.team.reauth).not.toHaveBeenCalled();expect(f.team.grants).not.toHaveBeenCalled();
+});
 test('wallet-only staff has a wallet entry without profile or membership administration',async()=>{
  const f=fixture();f.team.memberships.mockResolvedValue({items:[{...mine,is_owner:false,permissions:['wallet.read']}],next_cursor:null});mount(f,'Organizations');await screen.findByTestId('membership-wallet-partner');expect(screen.queryByTestId('team-open-partner')).toBeNull();
  await waitFor(()=>expect(screen.getByTestId('memberships-reload')).toBeEnabled());

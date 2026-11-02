@@ -2,7 +2,7 @@ import {useProductRole} from '../providers/ProductRoleProvider';
 import {financeText} from '../../features/finance/messages';
 import {useNotifications} from '../../features/notifications/NotificationsProvider';
 import {useMessageUnread} from '../../features/chat/MessageUnreadProvider';
-import type { PropsWithChildren } from 'react';
+import {createContext,useContext,useLayoutEffect,useState,useSyncExternalStore,type ReactNode,type PropsWithChildren} from 'react';
 import { Pressable, StyleSheet, View, type ScrollViewProps } from 'react-native';
 import { useAuth } from '../providers/AuthProvider';
 import { useLocale } from '../providers/LocaleProvider';
@@ -12,6 +12,7 @@ import { Icon } from '../../components/ui/Icon';
 import { theme } from '../../theme/tokens';
 export type ShellProps = PropsWithChildren<{
   title?: string;
+  actions?: ReactNode;
   root?: boolean;
   scrollable?: boolean;
   onBack?: () => void;
@@ -27,7 +28,8 @@ export type ShellProps = PropsWithChildren<{
   refreshControl?: ScrollViewProps['refreshControl'];
 }>;
 // UI-16: avatar opens account; notifications have their own tab.
-export function ProductShell({ children, title, root = false, scrollable = true, onBack, onAccount, onCatalog, onJobs, onMessages, onNotifications, onWallet, activeTab = 'catalog', discovery, keyboardDismissMode, refreshControl }: ShellProps) {
+export function ProductShell({ children, actions, title, root = false, scrollable = true, onBack, onAccount, onCatalog, onJobs, onMessages, onNotifications, onWallet, activeTab = 'catalog', discovery, keyboardDismissMode, refreshControl }: ShellProps) {
+  const [actionStore]=useState(createActionStore);
   const { t,locale } = useLocale();
   const {membership}=useProductRole();
   const unread=useNotifications().items.filter(n=>!n.read_at).length;
@@ -67,10 +69,28 @@ export function ProductShell({ children, title, root = false, scrollable = true,
       <AppText style={[styles.destinationText, {color: activeTab === tab.id ? theme.colors.primary : '#78869E', fontWeight: activeTab === tab.id ? '700' : '400'}]}>{tab.label}</AppText>
     </Pressable>)}
   </View> : undefined;
-  return <Screen scrollable={scrollable} refreshControl={refreshControl} alwaysBounceVertical={refreshControl ? true : undefined} header={header} footer={footer} keyboardDismissMode={keyboardDismissMode}
-    style={discovery ? styles.white : undefined} contentContainerStyle={discovery ? styles.discovery : undefined}>{children}</Screen>;
+  return <PageActionsContext.Provider value={actionStore}><Screen scrollable={scrollable} refreshControl={refreshControl} alwaysBounceVertical={refreshControl ? true : undefined} header={header} footer={<><PageActionSlot store={actionStore} fallback={actions}/>{footer}</>} keyboardDismissMode={keyboardDismissMode}
+    style={discovery ? styles.white : undefined} contentContainerStyle={discovery ? styles.discovery : undefined}>{children}</Screen></PageActionsContext.Provider>;
 }
+
+function createActionStore(){
+ let value:ReactNode=null;const listeners=new Set<()=>void>();
+ return {get:()=>value,subscribe:(listener:()=>void)=>{listeners.add(listener);return()=>{listeners.delete(listener);};},set:(next:ReactNode)=>{if(value===next)return;value=next;listeners.forEach(listener=>listener());}};
+}
+const PageActionsContext=createContext<ReturnType<typeof createActionStore>|null>(null);
+// Only the footer slot subscribes. Updating an action never re-renders the screen
+// that owns its form, avoiding a registration/render loop or a lost draft.
+export function usePageActions(actions:ReactNode){
+ const store=useContext(PageActionsContext);
+ useLayoutEffect(()=>{store?.set(actions);return()=>store?.set(null);},[store,actions]);
+}
+function PageActionSlot({store,fallback}:{store:ReturnType<typeof createActionStore>;fallback?:ReactNode}){
+ const actions=useSyncExternalStore(store.subscribe,store.get,store.get)??fallback;
+ return actions?<View testID="page-actions" style={styles.actions}>{actions}</View>:null;
+}
+
 const styles = StyleSheet.create({
+  actions:{backgroundColor:theme.colors.surface,borderTopWidth:1,borderTopColor:theme.colors.border,paddingHorizontal:20,paddingVertical:12,gap:8,width:'100%',maxWidth:640,alignSelf:'center'},
   heading: {flex:1,flexDirection:'row',alignItems:'center',gap:8},
   back: {width:44,height:44,borderRadius:22,alignItems:'center',justifyContent:'center'},
   title: {flex:1,fontSize:18,lineHeight:26,fontWeight:'700'},

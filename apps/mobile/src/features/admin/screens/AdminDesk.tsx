@@ -3,6 +3,7 @@ import {AdminCompletion} from './AdminCompletion';
 import {useEffect,useRef,useState} from 'react';
 import {BackHandler,Image,View} from 'react-native';
 import {AppText} from '../../../components/ui/AppText';
+import {SegmentedTabs} from '../../../components/ui/SegmentedTabs';
 import {Button} from '../../../components/ui/Button';
 import {Input} from '../../../components/ui/Input';
 import {Card} from '../../../components/ui/Card';
@@ -40,7 +41,7 @@ export function AdminDesk({client,grants,t,locale,fail,lock}:{client:AdminApi;gr
  return <View style={{gap:20}} testID="admin-desk">
  <AppText variant="title" accessibilityRole="header">{t('intro')}</AppText><AppText tone="muted">{t('subtitle')}</AppText>
  <Button testID="admin-lock" label={t('lock')} variant="secondary" onPress={lock}/>
- <View accessibilityRole="tablist" style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>{sections.map(s=><Button key={s} testID={'admin-tab-'+s} label={t(s)} accessibilityRole="tab" accessibilityState={{selected:s===domain}} variant={s===domain?'primary':'secondary'} onPress={()=>change(s)}/>)}</View>
+ <SegmentedTabs value={domain} onChange={change} accessibilityLabel={t('title')} options={sections.map(value=>({value,label:t(value),testID:'admin-tab-'+value}))}/>
  {error&&<Card><AppText tone="error" accessibilityRole="alert">{errorText(error,t)}</AppText><Button label={t('retry')} disabled={busy} onPress={()=>selected?.id?void open(selected.id):void load()}/></Card>}
  {notice&&<AppText accessibilityLiveRegion="polite">{t(notice)}</AppText>}
  {busy&&<AppText accessibilityLiveRegion="polite">{t('load')}</AppText>}
@@ -58,6 +59,6 @@ export function AdminDesk({client,grants,t,locale,fail,lock}:{client:AdminApi;gr
  {(domain==='categories'||domain==='skills')?<CatalogEditor key={`${domain}:${selected.id}:${selected.version}`} domain={domain} item={selected.id?selected:null} client={client} t={t} saved={r=>{setSelected(r);setRequest(n=>n+1);}} fail={handle} reload={()=>void open(selected.id)}/>:<AdminDecision key={`${domain}:${selected.id}:${selected.version}`} item={selected} domain={domain} client={client} t={t} allowed={domain!=='reports'||grants.includes('support.manage')} saved={r=>{setSelected(r);setItems(all=>all.map(x=>x.id===r.id?r:x));setNotice('saved');}} fail={handle} reload={()=>void open(selected.id)}/>}
  </Card>:<Card testID="admin-queue"><Input testID="admin-search" label={t('q')} value={q} onChangeText={setQ} maxLength={200}/><AdminChoice id="admin-filter" label={t('filter')} value={state} choices={['all',...states[domain]]} onChange={setState} t={t}/>
  <Button testID="admin-search-submit" label={t('search')} disabled={busy} onPress={()=>{setItems([]);setCursor(null);params.current={q,state};setRequest(n=>n+1);}}/>
- <AppText tone="muted">{items.length} · {t('found')}</AppText>{items.map(r=><Button key={r.id} testID={'admin-item-'+r.id} label={title(r)+' · '+t(status(r))} variant="secondary" disabled={busy} onPress={()=>void open(r.id)}/>)}{loaded&&!items.length&&<AppText>{t('empty')}</AppText>}{cursor&&<Button label={t('more')} disabled={busy} onPress={()=>void load(true)}/>}</Card>}
+ {(q||state!=='all')&&<Button testID="admin-filter-reset" label={t('resetFilters')} variant="link" disabled={busy} onPress={()=>{setQ('');setState('all');params.current={q:'',state:'all'};setCursor(null);setRequest(n=>n+1);}}/>}<AppText tone="muted">{items.length} · {t('found')}</AppText>{items.map(r=><Button key={r.id} testID={'admin-item-'+r.id} label={title(r)+' · '+t(status(r))} variant="secondary" disabled={busy} onPress={()=>void open(r.id)}/>)}{loaded&&!items.length&&<AppText>{t('empty')}</AppText>}{cursor&&<Button label={t('more')} disabled={busy} onPress={()=>void load(true)}/>}</Card>}
  </View>;
 }

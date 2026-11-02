@@ -1,5 +1,48 @@
 # Checklist chức năng và bằng chứng
 
+**02/11/2026 — Hoàn tất chụp lại báo cáo tổng sau UX-01:** [B00-14](bao-cao/B00-14-bao-cao-man-hinh.html) có **268 ảnh chính, 134/135 mục trên cả Android và iOS**, cộng 2 ảnh lỗi xác minh. Mục CatalogCategory chưa có đường vào hiện hành. [Bảng 6 vấn đề](bao-cao/B00-14-bao-cao-man-hinh.md) tách lỗi/cấu hình/điểm vướng; có bộ lọc riêng trong HTML. Dùng `dvqb_local`, không reset dữ liệu; không coi chụp ảnh là đã kiểm mọi nút, thiết bị thật hoặc UAT. Ảnh cũ trước UX-01 đã dọn ở đợt trước; không đồng bộ Drive/`ui-ux`.
+
+## UX-01 — Áp dụng bản thiết kế đã duyệt, 02/11/2026
+
+- [x] Chủ dự án duyệt giao diện HTML và yêu cầu sửa app; D01–D04 chưa được duyệt.
+- [x] Áp dụng bố cục, thanh hành động, lọc nháp, phân cấp nút và giữ quyền/API hiện hành. [B00-15](bao-cao/B00-15-toi-uu-trai-nghiem.md).
+- [x] Kiểm logic toàn app, lint/typecheck; review lỗi giữ nháp/thử lại và trạng thái tài chính.
+- Bằng chứng native sau sửa và giới hạn: mục 7 B00-15. Không dùng ảnh cũ hoặc số test để đóng toàn bộ audit 444 mô tả nút.
+- SDD cuối dùng report/verify có snapshot khớp trong `test-results/sdd/SDD-PROJECT/`; CI/UAT chưa thực hiện cho bộ code này.
+
+
+## UX-01 — Bản thiết kế để duyệt, 02/11/2026
+
+- [x] Dựng [HTML tương tác](de-xuat/UX-01-thiet-ke-giao-dien.html): 30 màn mẫu, 7 vai, lọc/tìm màn, khung iPhone/Android, giải thích nút và tình huống.
+- [x] Kiểm luồng HTML chính và hiển thị danh mục theo vai trên trình duyệt; [phạm vi và giới hạn B00-16](bao-cao/B00-16-ban-thiet-ke-ux01.md). Không thay kiểm native/DB.
+- [ ] Chủ dự án duyệt thiết kế và phạm vi áp dụng vào code. Chưa triển khai app/API hoặc chốt D01–D04 từ bản mẫu.
+
+## UX-01 — Rà native đang thực hiện; sửa sản phẩm vẫn chờ duyệt, 31/10–01/11/2026
+
+- [x] Lập [kế hoạch chi tiết](de-xuat/UX-01-toi-uu-luong-va-nut.md) và [danh mục 30 nhóm tối ưu, ánh xạ đủ 135 mục B00-14](de-xuat/UX-01-danh-muc-man-va-nut.md); ghi mức kiểm source/ảnh/danh mục, không coi là đã kiểm lại tất cả nút trên native.
+- [x] Chủ dự án giao kiểm lại native trước khi chốt sửa; dùng `dvqb_local`, backup trước audit và bổ sung 10 ca UX-01 qua API thật, không reset DB.
+- [x] Tạo [bảng lọc bằng chứng từng mô tả nút](bao-cao/UX-01-kiem-nut-native.html) và [kết quả/giới hạn audit](de-xuat/UX-01-ket-qua-ra-soat-native.md); tách ghi có kiểm DB, điều hướng/form, bất tiện và chưa kiểm.
+- [x] Kiểm bộ lọc/liên kết/ảnh và SDD prepare; giữ riêng kết quả native với hồi quy fixture.
+- [ ] SDD verify mới: chưa đạt; lượt toàn dự án dừng ở API sau khoảng 10 phút, chưa có báo cáo API/evidence hợp lệ. Lint/typecheck/tooling/mobile đã đạt trước đó.
+- [ ] Đóng toàn bộ ma trận native: chưa đạt; đã ghi nhận kết quả lượt này, các mục chưa kiểm/kiểm một phần vẫn mở.
+- [ ] Chủ dự án duyệt phạm vi và D01–D04 (API lịch, lịch sử chat, lọc công việc và dữ liệu nhận diện admin).
+- [ ] Đo baseline, đối chiếu nút theo vai/quyền/trạng thái trên `dvqb_local`; triển khai các gói 1–5 theo kế hoạch.
+- [ ] Kiểm Android/iOS, hồi quy, SDD mới; cập nhật báo cáo trước/sau, ảnh và giới hạn; UAT ghi riêng.
+
+Đợt hiện tại chỉ audit và chỉnh mức chắc chắn của kế hoạch; chưa sửa UI/API. Có ghi dữ liệu mô phỏng qua native trên `dvqb_local` và đối chiếu DB. Các thay đổi sản phẩm/hạ tầng có trước được giữ nguyên. Không commit/push/deploy hoặc đồng bộ Drive/`ui-ux`.
+
+## B00-13 / B00-14 — Dữ liệu và báo cáo màn hình, 30/10/2026
+
+- [x] Theo lựa chọn của chủ dự án, dùng `dvqb_local`; backup trước seed, nạp bổ sung có định danh ổn định và kiểm giữ dữ liệu có trước. [B00-13](bao-cao/B00-13-du-lieu-van-hanh-local.md).
+- [x] Bổ sung 252 tài khoản, 72 hồ sơ, 1.008 công việc và dữ liệu liên quan; kiểm sổ cái, hóa đơn, quyền, đánh giá/ảnh, quan hệ đội ngũ và vùng phục vụ.
+- [x] Chạy một công việc mới qua API thật đến hoàn tất/quyết toán; kiểm truy cập chéo và hóa đơn nháp; tổng hiện tại 1.009 công việc. Không reset DB ứng dụng.
+- [x] Sửa mã tham chiếu rỗng của dòng Point khởi tạo cho đúng hợp đồng UUID; kiểm hồi quy hóa đơn/sổ cái và 93 kiểm API trên dữ liệu hiện tại đạt. Không đổi số dư hoặc công thức tiền.
+- [x] Kiểm kê 27 route cùng nhánh quản trị/hỗ trợ hạn chế, giải thích 135 màn/tab/trạng thái theo 9 luồng; báo cáo có tìm kiếm, bộ lọc kết hợp và hướng dẫn từng bước. [HTML](bao-cao/B00-14-bao-cao-man-hinh.html) · [Bằng chứng và giới hạn](bao-cao/B00-14-bao-cao-man-hinh.md).
+- [x] Ngày 02/11 chụp lại 134/135 mục trên cả Android Emulator và iOS Simulator: 268 ảnh chính + 2 ảnh lỗi xác minh; ledger đủ 270 vị trí, CatalogCategory thiếu đường vào có lý do cụ thể. Bảng 6 vấn đề và lọc ảnh có lỗi/không thể chụp đã bổ sung. Ảnh dùng `dvqb_local`, không thay ảnh thiếu bằng web.
+- [ ] Chứng nhận toàn bộ trạng thái trên cả hai nền tảng, thiết bị vật lý, tiếng Anh/Nhật, provider thật và UAT: chưa đạt; giữ rõ phần thiếu trong báo cáo.
+- SDD chạy với database kiểm thử riêng, ảnh và kiểm vận hành dùng `dvqb_local`. Không commit/push, triển khai AWS, đồng bộ Drive hoặc `ui-ux` trong đợt này.
+
+
 ## B00-11 — Áp dụng giao diện, 28/10/2026
 
 - [x] Chủ dự án duyệt triển khai từ B00-10: mũi tên không chữ, ẩn trên màn gốc; giữ quyền và nghiệp vụ/API.

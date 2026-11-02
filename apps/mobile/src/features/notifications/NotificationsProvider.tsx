@@ -1,16 +1,36 @@
 import {useRealtime} from '../../app/providers/RealtimeProvider';
 import {randomUUID} from 'expo-crypto';
-import {createContext,useCallback,useContext,useEffect,useRef,useState,type PropsWithChildren} from 'react';
+import {createContext,useCallback,useContext,useEffect,useMemo,useRef,useState,type PropsWithChildren} from 'react';
 import {AppState} from 'react-native';
 import {useAuth} from '../../app/providers/AuthProvider';
 import {ApiError,type ApiErrorCode} from '../../lib/http/api-error';
-import type {Notice} from './api/notifications-api';
+import {Mutation} from '../jobs/state/mutation';
+import type {Notice,NotificationSettings} from './api/notifications-api';
 type Inbox={items:Notice[];loading:boolean;loaded:boolean;error:ApiErrorCode|null;refresh:()=>Promise<void>;markRead:(ids:string[])=>Promise<void>};
 const Context=createContext<Inbox>({items:[],loading:false,loaded:false,error:null,refresh:async()=>{},markRead:async()=>{}});
 export const useNotifications=()=>useContext(Context);
+// The provider owns this store for the current authenticated session, not a screen.
+// A popped settings route may remount without losing its draft or uncertain save.
+class SettingsSession {
+  private value:{baseline:NotificationSettings|null;draft:NotificationSettings|null;version:number}={baseline:null,draft:null,version:0};
+  private listeners=new Set<()=>void>();
+  mutation=new Mutation<NotificationSettings>();
+  getSnapshot=()=>this.value;
+  subscribe=(listener:()=>void)=>{this.listeners.add(listener);return()=>{this.listeners.delete(listener);};};
+  private update=(baseline:NotificationSettings|null,draft:NotificationSettings|null)=>{this.value={baseline,draft,version:this.value.version+1};this.listeners.forEach(listener=>listener());};
+  load=(baseline:NotificationSettings,version:number)=>{if(version===this.value.version&&!this.value.draft&&!this.mutation.getSnapshot().pending)this.update(baseline,null);};
+  edit=(value:NotificationSettings)=>{const baseline=this.value.baseline,changed=!baseline||Object.keys(value).some(key=>value[key as keyof NotificationSettings]!==baseline[key as keyof NotificationSettings]);this.update(baseline,changed?value:null);};
+  saved=(value:NotificationSettings,version:number)=>{if(version===this.value.version)this.update(value,null);};
+  clear=()=>{this.mutation=new Mutation<NotificationSettings>();this.update(null,null);};
+}
+const SettingsContext=createContext<SettingsSession|null>(null);
+export function useNotificationSettingsSession(){const value=useContext(SettingsContext);if(!value)throw new Error('Notification settings require NotificationsProvider');return value;}
+
 export function NotificationsProvider({children}:PropsWithChildren){
   const realtime=useRealtime();
   const {manager,state}=useAuth(),owner=state.phase==='authenticated'&&state.user?.status==='active'?state.user.id:undefined;
+  const settingsSession=useMemo(()=>new SettingsSession(),[owner,manager]);
+  useEffect(()=>()=>settingsSession.clear(),[settingsSession]);
   const [data,setData]=useState<{owner?:string;items:Notice[];loading:boolean;loaded:boolean;error:ApiErrorCode|null}>({items:[],loading:false,loaded:false,error:null});
   const current=useRef(owner),running=useRef(false),last=useRef(0),dirty=useRef(false),generation=useRef(0),failures=useRef(0),invalidations=useRef(0);current.current=owner;
   const invalidate=useCallback(()=>{invalidations.current++;dirty.current=true;failures.current=0;},[]);
@@ -23,9 +43,9 @@ export function NotificationsProvider({children}:PropsWithChildren){
         if(cursor&&seen.has(cursor))throw new ApiError('INVALID_RESPONSE');if(cursor)seen.add(cursor);
       }while(cursor);
       if(current.current===owner&&epoch===generation.current){setData(previous=>({owner,items:[...found.values()].map(n=>({...n,read_at:n.read_at??(previous.owner===owner?previous.items.find(x=>x.id===n.id)?.read_at:null)??null})),loading:false,loaded:true,error:null}));last.current=Date.now();failures.current=0;}
-    }catch(e){if(current.current===owner&&epoch===generation.current){const code=e instanceof ApiError?e.code:'NETWORK';setData(d=>({...d,loading:false,error:code,items:['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)?[]:d.items}));last.current=Date.now();failures.current=invalidations.current===invalidation?Math.min(4,failures.current+1):0;}}
+    }catch(e){if(current.current===owner&&epoch===generation.current){const code=e instanceof ApiError?e.code:'NETWORK';if(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code))settingsSession.clear();setData(d=>({...d,loading:false,error:code,items:['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)?[]:d.items}));last.current=Date.now();failures.current=invalidations.current===invalidation?Math.min(4,failures.current+1):0;}}
     finally{running.current=false;}
-  },[manager,owner]);
+  },[manager,owner,settingsSession]);
   useEffect(()=>{generation.current++;last.current=0;failures.current=0;dirty.current=true;
     const unlisten=realtime?.listen(signal=>{if(signal.kind==='sync'||signal.kind==='event'&&signal.event.type.startsWith('notification.'))invalidate();});
     const timer=setInterval(()=>{if(AppState.currentState!=='background'&&Date.now()-last.current>=(failures.current?Math.min(120000,15000*2**failures.current):0)&&(dirty.current||Date.now()-last.current>=(realtime?.connected?60000:15000)))void refresh();},250);
@@ -41,5 +61,5 @@ export function NotificationsProvider({children}:PropsWithChildren){
     }
   },[manager,owner]);
   const visible=data.owner===owner&&owner?data:{items:[],loading:false,loaded:false,error:null};
-  return <Context.Provider value={{items:visible.items,loading:visible.loading,loaded:visible.loaded,error:visible.error,refresh,markRead}}>{children}</Context.Provider>;
+  return <SettingsContext.Provider value={settingsSession}><Context.Provider value={{items:visible.items,loading:visible.loading,loaded:visible.loaded,error:visible.error,refresh,markRead}}>{children}</Context.Provider></SettingsContext.Provider>;
 }

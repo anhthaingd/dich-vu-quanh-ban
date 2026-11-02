@@ -46,7 +46,7 @@ test('language changes keep form/session/category, translate errors and persist 
   await page.getByTestId('search-service-open').click();
   await expect(page.getByRole('button', { name: '家庭の電気工事', exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.getByRole('heading', { name: /暮らしの困りごとに/  })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'ぴったりの提供者を探す。', exact: true })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
   expect(await page.evaluate(() => ({ ...globalThis.localStorage }))).toEqual({ 'dvqb.locale.v1': 'ja' });
   expect((await environment.pool.query('SELECT locale,version FROM users WHERE id=$1', [account.id])).rows[0]).toEqual({ locale: 'ja', version: 2 });

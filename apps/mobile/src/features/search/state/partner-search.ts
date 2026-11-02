@@ -22,6 +22,8 @@ export class PartnerSearch {
   private request: AbortController | null = null;
   private query: SearchInput | null = null;
   private cursors = new Set<string>();
+  private interrupted = false;
+  private loadingMore = false;
   constructor(private api: PartnersApi) {}
   getSnapshot = () => this.state;
   subscribe = (f: () => void) => {
@@ -35,14 +37,15 @@ export class PartnerSearch {
     this.listeners.forEach((f) => f());
   }
   cancel = () => {
+    if (this.request && this.state.busy) this.interrupted = true;
     this.request?.abort();
     this.request = null;
     this.update({ busy: false });
   };
-  reset = () => { this.cancel(); this.query = null; this.cursors.clear(); this.update({ criteria: null, items: [], next: null, error: null, searched: false }); };
+  resume = () => this.interrupted && this.query ? this.load(this.loadingMore) : Promise.resolve();
+  reset = () => { this.cancel(); this.interrupted = false; this.query = null; this.cursors.clear(); this.update({ criteria: null, items: [], next: null, error: null, searched: false }); };
   search = (query: SearchInput) => {
     this.query = { ...query };
-    this.update({ criteria: { ...query } });
     this.cursors.clear();
     return this.load(false);
   };
@@ -52,16 +55,21 @@ export class PartnerSearch {
   private async load(more: boolean) {
     if (!this.query) return;
     this.cancel();
+    this.interrupted = false;
+    this.loadingMore = more;
     const controller = new AbortController();
+    const query = { ...this.query };
     this.request = controller;
     this.update({
       busy: true,
       error: null,
-      ...(!more ? { items: [], next: null, searched: false } : {})
+      // Keep the visible page while refreshing. Never expose its cursor to the
+      // new query: a failed refresh must not append a page from another scope.
+      ...(!more ? { next: null } : {})
     });
     try {
       const page = await this.api.search(
-        this.query,
+        query,
         more ? (this.state.next ?? undefined) : undefined,
         controller.signal
       );
@@ -75,6 +83,7 @@ export class PartnerSearch {
       );
       page.items.forEach((p) => items.set(p.id, p));
       this.update({
+        criteria: query,
         items: [...items.values()],
         next: page.next_cursor,
         searched: true
