@@ -1,6 +1,6 @@
 # B00-14 — Báo cáo màn hình Android và iPhone theo vai trò
 
-Cập nhật báo cáo: 02/11/2026 · Ảnh sau sửa: 02/11/2026 · Database: **dvqb_local** · [Mở báo cáo tương tác](B00-14-bao-cao-man-hinh.html) · [Dữ liệu vận hành](B00-13-du-lieu-van-hanh-local.md) · [Mục lục](../README.md).
+Cập nhật báo cáo: 04/11/2026 · Ảnh ghi ngày riêng 02/11 hoặc 04/11/2026 · Database: **dvqb_local** · [Mở báo cáo tương tác](B00-14-bao-cao-man-hinh.html) · [Dữ liệu vận hành](B00-13-du-lieu-van-hanh-local.md) · [Mục lục](../README.md).
 
 ## Cách xem dễ nhất
 
@@ -17,7 +17,7 @@ Báo cáo chạy bằng file local, không cần đăng nhập hay gửi thông 
 
 ## Hệ thống có những nhóm màn nào?
 
-Đã đối chiếu **27 route** trong `RootStackParamList`; khu quản trị và khu hỗ trợ tài khoản bị khóa còn được dựng có điều kiện ngoài danh sách route thông thường. Danh mục tương tác có **135 mục**, gồm màn, tab, biểu mẫu và trạng thái của cùng màn. Đây không phải 135 route độc lập.
+Đã đối chiếu **26 route** trong `RootStackParamList`; khu quản trị và khu hỗ trợ tài khoản bị khóa còn được dựng có điều kiện ngoài danh sách route thông thường. Danh mục tương tác có **134 mục**, gồm màn, tab, biểu mẫu và trạng thái của cùng màn. Đây không phải 134 route độc lập.
 
 | Luồng | Những phần được giải thích | Vai trò chính |
 |---|---|---|
@@ -31,7 +31,7 @@ Báo cáo chạy bằng file local, không cần đăng nhập hay gửi thông 
 | 08. Liên lạc | Hội thoại, nội dung chat, cuộc gọi, thông báo, công tắc thông báo | Các bên được phép tham gia |
 | 09. Hỗ trợ và quản trị | Báo cáo, phản hồi, hỗ trợ tài khoản bị khóa, MFA, các hàng đợi và màn tra cứu quản trị | Người gửi, quản trị theo quyền |
 
-`CatalogCategory` còn đăng ký trong Navigator nhưng không có điểm vào rõ ràng từ trang chủ hiện dùng `SearchScreen`. Báo cáo giữ mục này và ghi giới hạn, không gọi nó là luồng người dùng đã bấm qua.
+Ngày 04/11, chủ dự án chọn bỏ `CatalogCategory` cũ và giữ bộ lọc hiện hành. Đã gỡ route, component và test chỉ dành cho màn cũ; các ca danh mục cần thiết được kiểm trong `ServiceFilter`. Xem [B00-17](B00-17-sua-loi-sau-audit-native.md).
 
 ## Hiểu vai trò trước khi đọc các nút
 
@@ -68,45 +68,43 @@ flowchart LR
 
 ## Bằng chứng và cách đọc kết quả
 
-Ảnh được chụp từ app đã cài trên **Android Emulator DVQB_API_36 / Android 16** và **iPhone 18 Pro / iOS 27 Simulator**, đọc API thật nối `dvqb_local`. Không phải ảnh thiết kế hoặc trình duyệt giả lập kích thước điện thoại. Ngày chụp 02/11/2026 ghi tại từng khung ảnh; số mục có ảnh hiện trực tiếp ở đầu HTML và bộ lọc.
+Ảnh được chụp từ app đã cài trên **Android Emulator DVQB_API_36 / Android 16** và **iPhone 18 Pro / iOS 27 Simulator**, đọc API thật nối `dvqb_local`. Không phải ảnh thiết kế hoặc trình duyệt giả lập kích thước điện thoại. Ngày chụp 02/11 hoặc 04/11/2026 ghi tại từng khung ảnh; số mục có ảnh hiện trực tiếp ở đầu HTML và bộ lọc.
 
-**Đã hoàn tất đợt chụp lại: 134/135 mục có ảnh mới trên cả hai nền tảng, tổng 268 ảnh chính.** Thêm 2 ảnh lưu lỗi tải xác minh trước khi thử lại. Tất cả 270 vị trí cần kiểm (135 mục × 2 nền tảng) đã có ảnh hoặc lý do không thể chụp; không còn 127 mục chưa được chụp bổ sung như phiên trước.
+**134/134 mục hiện hành có ảnh trên cả hai nền tảng, tổng 268 ảnh chính.** Ngày 04/11 thay 8 ảnh chính của cuộc gọi, xác minh, chi tiết ví và kết quả tìm kiếm; thêm 2 ảnh kiểm nút Đóng khi thiếu media. Hai ảnh lỗi xác minh ngày 02/11 được giữ làm lịch sử, không phải trạng thái hiện tại. Không còn mục bị chặn vì CatalogCategory đã được bỏ theo duyệt.
 
 | Kết quả | Android | iOS |
 |---|---:|---:|
-| Mục có ảnh mới đã đối chiếu | 134 | 134 |
-| Trong đó có ghi nhận vấn đề | 4 | 4 |
-| Không có đường vào để chụp | 1 | 1 |
+| Mục có ảnh đã đối chiếu | 134 | 134 |
+| Trong đó còn ghi nhận vấn đề mở | 1 | 0 |
+| Không có đường vào để chụp | 0 | 0 |
 
 Ảnh có vấn đề vẫn được giữ để thể hiện đúng ứng dụng. **Có ảnh không đồng nghĩa màn không có lỗi hoặc mọi nút đã được thử.** Một số ảnh được cuộn tới nội dung chính, không phải ảnh toàn bộ trang dài. Vai trò chụp ở từng khung không được suy rộng thành bằng chứng cho mọi vai trò được bộ lọc liệt kê.
 
 Danh sách kiểm và dấu băm từng ảnh nằm trong [B00-14-native.json](bang-chung/B00-14-native.json). Dấu băm giúp phát hiện ảnh bị đổi sau khi đối chiếu. B00-15 giữ bằng chứng kiểm thao tác của đợt triển khai trước; bộ ảnh tổng hiện dùng thư mục riêng `anh/B00-14-UX01`.
 
-### Màn nào chưa thể chụp?
+### Mục từng chưa chụp và trạng thái sau sửa, 04/11/2026
 
-| Mục / trạng thái | Nền tảng | Nguyên nhân và kết luận |
+- **CatalogCategory:** đã bỏ theo lựa chọn của chủ dự án; không thêm nút hoặc ép route để chụp màn cũ. Bộ chọn dịch vụ hiện hành vẫn có ảnh và test.
+- **Cuộc gọi thành công:** đã chụp Android gọi iOS bằng LiveKit local, hai bên tắt mic và kết thúc. Chưa đo chất lượng nghe hoặc kiểm điện thoại thật. Dùng `npm run review:api -- --calls` để chủ động bật môi trường gọi; mặc định media tắt.
+
+### Các vấn đề đã điều tra và xử lý
+
+| Mã | Trước sửa | Kết quả hiện tại |
 |---|---|---|
-| **Danh mục theo ngành — CatalogCategory** | Android + iOS | Route còn đăng ký, nhưng trang chủ chạy SearchScreen và mở bộ chọn dịch vụ riêng. Lệnh chuyển vào CatalogCategory chỉ nằm trong CatalogScreen cũ; không có điểm vào từ giao diện đang dùng hoặc deep link được hỗ trợ. Đã kiểm đường Trang chủ → chọn dịch vụ và truy vết điều hướng. Không ép route để tạo ảnh. Đây là **1 mục thiếu ảnh trên hai nền tảng**, không phải app bị treo ở màn đó. |
-| **Cuộc gọi đã kết nối / đổ chuông** | Android + iOS | Mục “Gọi trong app” đã có ảnh **hộp thoại lỗi**, nhưng chưa thể chụp trạng thái gọi thành công do API local thiếu cấu hình media. Không tính ảnh lỗi là bằng chứng gọi được hoặc âm thanh hoạt động. |
+| NATIVE-01 | Thiếu cấu hình media local | Đã chuẩn hóa lệnh chạy, kiểm được hai bên kết nối. Không bật provider trả phí. |
+| NATIVE-02 | Lỗi gọi chỉ có Thử lại, thiếu Đóng | Đã giữ mã lỗi qua API/app; có Đóng với lỗi chưa tạo cuộc gọi. Với kết quả chưa rõ, giữ thao tác và mã chống trùng để mở lại/thử tiếp. |
+| NATIVE-03 | Xác minh tải đầu báo lỗi mạng | Đã xử lý tranh chấp phiên BUSY và bỏ lượt tải cũ. Hai nền tảng đọc được kết quả không cần thử lại. |
+| NATIVE-04 | Chi tiết ví nằm sau toàn bộ lịch sử | Đã mở màn chi tiết riêng; đóng quay lại danh sách. Hai nền tảng đã kiểm. |
+| **NATIVE-05 — còn mở** | Android SIGSEGV ngày 02/11, stack có MountingCoordinator | Release mới build: 10/10 lần mở có process sau 5 giây, chưa tái hiện. **Chưa có nguyên nhân hoặc bản sửa được chứng minh.** |
+| NATIVE-06 | Sao hiện 2.3333333333333335 | Cùng hồ sơ trên Android/iOS hiện **2,3 (3 đánh giá)**; giữ số gốc để tính/xếp hạng. |
 
-### Các lỗi và điểm vướng đã thấy
-
-| Mã · ưu tiên đề nghị | Màn / nền tảng | Hiện tượng có bằng chứng | Trạng thái / hướng xử lý |
-|---|---|---|---|
-| NATIVE-01 · Cao nếu cần dùng gọi | Gọi trong app · cả hai | Hiện “Chưa kết nối được máy chủ cuộc gọi”. [Android](anh/B00-14-UX01/android-call.png) · [iOS](anh/B00-14-UX01/ios-call.png) | Thiếu cấu hình LIVEKIT local; API trả CALLS_UNAVAILABLE khi không có media. Cần môi trường gọi và hai phía tham gia để kiểm thành công; chưa tự bật provider trả phí. |
-| NATIVE-02 · Cao | Hộp thoại gọi lỗi · cả hai | Khi thao tác còn chờ, chỉ có **Thử lại**, thiếu **Đóng/Hủy**. iOS phải mở lại app để rời; Android dùng được Back hệ thống. | Lỗi trải nghiệm có đối chiếu CallsProvider: nút đóng bị ẩn khi `pending`. Cần đường thoát rõ khi tạo cuộc gọi thất bại. Chưa sửa trong đợt chụp. |
-| NATIVE-03 · Vừa | Xác minh hồ sơ · cả hai | Lần đầu mở báo lỗi cập nhật/kết nối. Bấm **Thử lại / Tải lại kết quả** thì hiện “Đã xác minh”; iOS gặp ở hai lượt mở. [Lỗi Android](anh/B00-14-UX01/android-verification-initial-error.png) · [Lỗi iOS](anh/B00-14-UX01/ios-verification-initial-error.png) | **Đã chụp được sau khi thử lại**, chưa xác định nguyên nhân gốc. Cần ghi request/lifecycle lúc mở màn và kiểm lại đường tải đầu. |
-| NATIVE-04 · Vừa | Chi tiết giao dịch ví · cả hai | Bấm giao dịch nhưng chi tiết nằm **sau toàn bộ lịch sử**, không tự cuộn tới; dễ tưởng nút không hoạt động. [Android](anh/B00-14-UX01/android-finance-detail.png) · [iOS](anh/B00-14-UX01/ios-finance-detail.png) | **Đã chụp được bằng cách cuộn xuống**. Nên mở trang/hộp chi tiết riêng hoặc đưa vùng chi tiết vào tầm nhìn. |
-| NATIVE-05 · Cao để điều tra | Mở lại ứng dụng · Android | 18:16 ngày 02/11 app thoát; log có SIGSEGV trong `mqt_v_js` / `libreactnative.so`, stack chứa `MountingCoordinator::pullTransaction`. | Một lần quan sát sau thao tác dừng app và mở development-client; **mở lại đã tiếp tục chụp được**. Chưa có nguyên nhân gốc hay bằng chứng lỗi lặp trên bản release. Tóm tắt log trong [ledger](bang-chung/B00-14-native.json), mục `nativeCrash`. |
-| NATIVE-06 · Thấp | Kết quả tìm dịch vụ · iOS | Điểm hiện `2.3333333333333335 (3 đánh giá)`. [Ảnh](anh/B00-14-UX01/ios-search-results.png) | SearchScreen đưa giá trị sao trực tiếp vào câu. Cần định dạng/làm tròn thống nhất. Lỗi hiển thị được xác nhận trên iOS, chưa kiểm cùng bản ghi trên Android trong đợt này. |
-
-Sáu ghi nhận trên liên quan **5 mục báo cáo**, tương ứng **8 vị trí nền tảng có ghi chú vấn đề**. NATIVE-01 và NATIVE-02 cùng nằm ở mục cuộc gọi. NATIVE-05 được gắn vào Trang chủ Android để dễ tìm, dù ảnh chính là app đã mở thành công, không phải ảnh thời điểm crash. Mức ưu tiên là đề nghị để chọn đợt sửa, không phải kết luận nguyên nhân gốc hay xác nhận đã sửa.
+[B00-17 — giải thích code, test, ảnh và giới hạn](B00-17-sua-loi-sau-audit-native.md) có bằng chứng chi tiết. Bộ lọc “Ảnh có vấn đề / cần kiểm tiếp” hiện giữ Trang chủ Android cho NATIVE-05. Ảnh trang chủ là lúc app đã mở được, không phải thời điểm crash. Các lỗi đã xử lý có trạng thái `resolved-local` trong ledger; không đồng nghĩa đã có CI/UAT/production.
 
 Các hóa đơn Android từng được chụp khi dữ liệu chưa tải đủ đã được chụp lại: Point và ảnh kết quả đã hiện. Màn khách xem công việc có hóa đơn nháp hiện **“Hóa đơn sẽ xuất hiện ở đây”** là trạng thái chờ đúng quyền. Không gộp các trường hợp này vào danh sách lỗi chưa xử lý.
 
 Theo yêu cầu dọn ảnh cũ ngày 02/11, đã xóa 243 PNG trước sửa trong `anh/B00-14` và 14 PNG của audit trước sửa trong `anh/UX-01`, tổng **257 ảnh / 51.858.413 byte (~51,9 MB)**. Bảng audit cũ giữ nội dung và nhật ký, gỡ liên kết ảnh đã xóa và ghi là lịch sử. Không xóa ảnh của các báo cáo khác, ảnh thiết kế đã duyệt hoặc dữ liệu app/database.
 
-Sau khi kiểm đủ dấu băm của bộ ảnh xuất mới, đã dọn thêm **866 ảnh chụp thử/bản sao/ảnh ghép kiểm tra trong `.local/ux-01-recapture`, giải phóng 178.249.540 byte (~178,2 MB)**. Giữ 270 ảnh cần thiết cạnh báo cáo, metadata kết quả và backup database. Các log debug lớn có thể được nén `.gz`; không xóa bằng chứng lỗi cần tra cứu.
+Sau khi kiểm đủ dấu băm của bộ ảnh xuất mới, đã dọn thêm **866 ảnh chụp thử/bản sao/ảnh ghép kiểm tra trong `.local/ux-01-recapture`, giải phóng 178.249.540 byte (~178,2 MB)**. Ở mốc 02/11 đã giữ 270 ảnh cần thiết cạnh báo cáo, metadata kết quả và backup database. Các log debug lớn có thể được nén `.gz`; không xóa bằng chứng lỗi cần tra cứu.
 
 ### Lịch sử kiểm trước UX-01 — ngày 30/10/2026
 
@@ -122,11 +120,11 @@ Khi kiểm native phát hiện dòng Point khởi tạo có `reference_id=null`,
 
 Bộ đọc API đạt 93/93 kiểm trong lượt hậu kiểm, gồm các hàng đợi, chi tiết, ví/Point, trạng thái công việc, nhóm quyền quản trị và nội dung PNG xác minh riêng tư. Giới hạn đăng nhập trả 429 được tôn trọng theo `Retry-After`; không tắt hay nới bảo vệ để lấy kết quả xanh.
 
-## Kiểm lần cập nhật báo cáo ngày 02/11
+## Kiểm báo cáo hiện hành ngày 04/11
 
-Bộ kiểm báo cáo đối chiếu đủ 270 vị trí, dấu băm ảnh, lý do và bằng chứng cho mục không chụp được; kiểm tìm không dấu, vai/quyền/luồng, không có kết quả, chuyển bước, liên kết, URL, danh mục, lọc lỗi/không thể chụp theo nền tảng và phóng ảnh. Kiểm tải 268 ảnh chính, 2 ảnh lỗi bổ sung, cùng bố cục 1440/768/390/320 px. Kết quả có ngày chạy tại [report-check/result.json](../../../.local/seed-operational/report-check/result.json). Sơ đồ Mermaid giữ 12 nút và được kiểm render.
+Bộ kiểm báo cáo đối chiếu đủ 268 vị trí, dấu băm ảnh, lý do và bằng chứng cho mục không chụp được; kiểm tìm không dấu, vai/quyền/luồng, không có kết quả, chuyển bước, liên kết, URL, danh mục, lọc lỗi/không thể chụp theo nền tảng và phóng ảnh. Kiểm tải 268 ảnh chính, 4 ảnh bổ sung (2 ảnh lịch sử xác minh và 2 ảnh lỗi gọi có nút Đóng), cùng bố cục 1440/768/390/320 px. Kết quả có ngày chạy tại [report-check/result.json](../../../.local/seed-operational/report-check/result.json). Sơ đồ Mermaid giữ 12 nút và được kiểm render.
 
-Đợt này chụp lại app trên `dvqb_local`; không reset database, không duyệt tiền, xóa tài khoản, lưu quyền hay gửi tin nhắn thực. Đăng nhập, đọc hội thoại và thông báo có thể cập nhật phiên/dấu đã đọc, nên không gọi đây là đợt hoàn toàn không ghi DB. Có backup trước chụp tại `.local/ux-01-recapture/before-capture.dump`. Không sửa code sản phẩm trong đợt này; các lỗi ở bảng trên còn mở.
+Đợt này chụp lại app trên `dvqb_local`; không reset database, không duyệt tiền, xóa tài khoản, lưu quyền hay gửi tin nhắn thực. Đăng nhập, đọc hội thoại và thông báo có thể cập nhật phiên/dấu đã đọc, nên không gọi đây là đợt hoàn toàn không ghi DB. Có backup trước chụp tại `.local/ux-01-recapture/before-capture.dump`. Đó là phạm vi chụp ngày 02/11. Đợt 04/11 đã sửa code và kiểm thêm một cuộc gọi DEMO theo B00-17; chỉ NATIVE-05 còn mở.
 
 SDD chạy lại theo quy định repo, bằng chứng ở `test-results/sdd/SDD-PROJECT/`; chỉ dùng kết quả `verify` có snapshot khớp bộ file cuối. Hồi quy tự động không thay thế ảnh native, kiểm mọi nút hay UAT.
 
@@ -137,7 +135,7 @@ SDD chạy lại theo quy định repo, bằng chứng ở `test-results/sdd/SDD
 | Xem màn nào đã đăng ký | [routes.ts](../../../apps/mobile/src/app/navigation/routes.ts): `RootStackParamList`, `accountDestination`, `appLinkState` | Tên route, dữ liệu điều hướng và các deep link được chấp nhận |
 | Xem ai đi vào khu nào | [AppNavigator.tsx](../../../apps/mobile/src/app/navigation/AppNavigator.tsx) | Tài khoản thường, quản trị và tài khoản bị khóa dùng nhánh giao diện nào |
 | Đọc lời giải thích từng màn | [screen-catalog.mjs](../../../scripts/review/screen-catalog.mjs): `screens`, `add` | Mục đích, đường vào, vai trò, nút, quyền và link source thật |
-| Tạo file báo cáo | [build-report.mjs](../../../scripts/review/build-report.mjs) | Ghép mô tả UX-01, snapshot seed có ngày riêng và ledger ảnh native 270 vị trí vào HTML/JSON |
+| Tạo file báo cáo | [build-report.mjs](../../../scripts/review/build-report.mjs) | Ghép mô tả UX-01, snapshot seed có ngày riêng và ledger ảnh native 268 vị trí vào HTML/JSON |
 | Tìm/lọc/đi từng bước | [report-template.html](../../../scripts/review/report-template.html): `render`, `restore`, `imagePanel` | Bộ lọc kết hợp, ưu tiên tìm tên, vị trí trong URL, ảnh và màn liên quan |
 | Chụp native | [capture-native.mjs](../../../scripts/review/capture-native.mjs): `login`, `open`, `shot` | Mở app/route thật, đợi màn, chụp và xuất ảnh từ Maestro |
 | Kiểm với database hiện tại | [check-operational-api.mjs](../../../scripts/review/check-operational-api.mjs), [verify-operational-flow.mjs](../../../scripts/review/verify-operational-flow.mjs) | Đọc quyền/dữ liệu và chạy một công việc mô phỏng qua API |

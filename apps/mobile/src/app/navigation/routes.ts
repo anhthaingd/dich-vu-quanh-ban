@@ -52,7 +52,6 @@ export type RootStackParamList = {
   Conversations: {jobId?:string}|undefined;
   Conversation: {id:string;jobId?:string};
   CatalogHome: undefined;
-  CatalogCategory: { categoryId: string; parentId: string | null };
   Account: { returnTo?: AccountDestination } | undefined;
   Profile: undefined;
   Sessions: undefined;

@@ -1,3 +1,4 @@
+import {formatRating} from '../../../lib/i18n/formatters';
 import { LocationField } from '../../location/components/LocationField';
 import {
   useCallback,
@@ -222,7 +223,7 @@ export function SearchScreen({
             <View style={styles.providerAvatar}><AppText tone="success" style={{fontWeight:'700'}}>{p.name.trim().split(/\s+/).slice(0,2).map(w=>Array.from(w)[0]).join('')}</AppText></View><AppText style={styles.providerTitle}>{p.name}</AppText><Icon name="arrow" size={16}/>
           </Pressable>
           <AppText style={styles.small} tone="muted">{t(`partners.${p.kind}`)} · {t(p.distance_kind === 'shop' ? 'search.distanceShop' : 'search.distanceArea', {distance:(p.distance_m/1000).toFixed(1)})}</AppText>
-          <View style={styles.reputation}><AppText style={styles.small} tone="muted">{p.stars===null ? t('home.noReviews') : t('home.reviews',{stars:p.stars,count:p.review_count})}</AppText><AppText style={styles.small} tone={p.verification_status==='verified'?'success':'muted'}>{t(p.verification_status==='verified'?'partners.verified':'partners.unverified')}</AppText></View>
+          <View style={styles.reputation}><AppText style={styles.small} tone="muted">{p.stars===null ? t('home.noReviews') : t('home.reviews',{stars:formatRating(p.stars,locale),count:p.review_count})}</AppText><AppText style={styles.small} tone={p.verification_status==='verified'?'success':'muted'}>{t(p.verification_status==='verified'?'partners.verified':'partners.unverified')}</AppText></View>
           <View style={styles.providerBottom}><View style={{flex:1,gap:4}}><AppText tone="muted" style={styles.small}>{t('home.priceLabel')}</AppText><AppText style={styles.price}>{p.reference_labor===null?t('search.noPrice'):t('search.price',{price:new Intl.NumberFormat('vi-VN').format(Number(p.reference_labor))})}</AppText></View>
             <Button label={t('search.view')} variant="secondary" onPress={()=>navigation.navigate('PartnerProfile',{id:p.id})}/>
           </View>

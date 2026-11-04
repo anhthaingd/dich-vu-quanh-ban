@@ -1,4 +1,4 @@
-import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
+import {act,fireEvent,render,screen,waitFor,within} from '@testing-library/react-native';
 import {AppProviders} from '../../../app/providers/AppProviders';
 import {FinanceScreen} from './FinanceScreen';
 import type {Bank} from '../models';
@@ -11,6 +11,13 @@ const initial:Bank={partner_id:'partner',version:1,current:null,pending:null};
 let fetchMock:jest.Mock;
 beforeEach(()=>{process.env.EXPO_PUBLIC_API_URL='http://local/v1';mockManager.getWallet.mockResolvedValue(wallet);mockManager.getLedger.mockResolvedValue({items:[],next_cursor:null});mockManager.myMemberships.mockResolvedValue({items:[{partner_id:'partner',is_owner:true,active:true,permissions:[]}]});mockManager.featureOperation.mockImplementation(async(_owner,work)=>work('access'));fetchMock=jest.fn(async(url:string)=>response(url.endsWith('/bank')?initial:{items:[],next_cursor:null}));globalThis.fetch=fetchMock;});
 function mount(){render(<AppProviders api={{categories:jest.fn(),skills:jest.fn()}}><FinanceScreen partnerId="partner" onBack={jest.fn()}/></AppProviders>);}
+test('history opens detail above the list and dismisses back to the same filter',async()=>{
+ const item={id:'topup-existing',partner_id:'partner',version:1,state:'pending',amount:'50000',created_at:'2026-11-02T00:00:00Z',history:[]};
+ fetchMock.mockImplementation(async(url:string)=>response(url.endsWith('/topups/topup-existing')?item:url.endsWith('/bank')?initial:url.includes('/topups')?{items:[item],next_cursor:null}:{items:[],next_cursor:null}));
+ mount();await screen.findByTestId('finance-history');fireEvent.press(screen.getByTestId('finance-history'));fireEvent.press(screen.getByRole('tab',{name:'Nạp tiền'}));
+ fireEvent.press(screen.getByTestId('finance-item-topup-existing'));const modal=await screen.findByTestId('finance-detail-modal');expect(within(modal).getByText('topup-existing')).toBeTruthy();
+ fireEvent(modal,'requestClose');await waitFor(()=>expect(screen.queryByTestId('finance-detail-modal')).toBeNull());expect(screen.getByRole('tab',{name:'Nạp tiền'})).toHaveProp('accessibilityState',expect.objectContaining({selected:true}));
+});
 test.each(['network','malformed','schema'])('wallet bank request retains exact payload and grant after committed %s response and keeps current bank while pending',async(mode)=>{
  const proposed={...initial,version:2,pending:{id:'request',bank_code:'DEMO',account_last4:'7890',holder_name:'DEMO OWNER',status:'pending',version:2}};let attempts=0,current=initial;
  fetchMock.mockImplementation(async(url:string,init:{method:string})=>{
@@ -56,7 +63,7 @@ test('topup validates the amount, displays the recorded request and clears it be
  fireEvent.changeText(screen.getByTestId('finance-amount'),'50000');fireEvent.press(screen.getByTestId('finance-send'));
  await screen.findByText('topup-created');expect(screen.queryByTestId('finance-send')).toBeNull();expect(screen.getByText('Chờ duyệt')).toBeTruthy();
  await waitFor(()=>expect(screen.getByText('Đã lưu. Trạng thái tiền được đọc từ máy chủ.')).toBeTruthy());
- expect(fetchMock.mock.calls.filter(([,init])=>init.method==='POST')).toHaveLength(1);fireEvent.press(screen.getByTestId('nav-back'));fireEvent.press(screen.getByTestId('finance-topup'));expect(screen.getByTestId('finance-amount')).toHaveProp('value','');expect(screen.getByTestId('finance-send')).toBeDisabled();
+ expect(fetchMock.mock.calls.filter(([,init])=>init.method==='POST')).toHaveLength(1);fireEvent.press(within(screen.getByTestId('finance-detail-modal')).getByTestId('nav-back'));fireEvent.press(screen.getByTestId('nav-back'));fireEvent.press(screen.getByTestId('finance-topup'));expect(screen.getByTestId('finance-amount')).toHaveProp('value','');expect(screen.getByTestId('finance-send')).toBeDisabled();
 });
 
 

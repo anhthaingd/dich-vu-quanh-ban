@@ -42,7 +42,7 @@ export const vi = {
     pending: 'Chưa xác nhận được kết quả lưu. Bấm thử lại với cùng tên để kiểm tra kết quả.',
   },
   shell: { currentRole: 'Đang dùng', customerRole: 'Khách tìm dịch vụ', chooseProfile: 'Chọn vai trò / hồ sơ', useProfile: 'Dùng hồ sơ này', groups: 'Nhóm dịch vụ', findServices: 'Tìm dịch vụ', openAccount: 'Mở tài khoản và cài đặt ngôn ngữ', discover: 'DỊCH VỤ TẠI HÀ NỘI', categories: 'Chọn ngành dịch vụ', accountIntro: 'Quản lý đăng nhập và ngôn ngữ của bạn.', preferences: 'Tùy chọn hiển thị' },
-  common: { refresh: 'Làm mới', refreshFailed: 'Chưa thể cập nhật. Kiểm tra kết nối mạng rồi thử lại.', back: 'Quay lại', backButton: '← Quay lại', retry: 'Thử lại', account: 'Tài khoản', language: 'Ngôn ngữ' },
+  common: { refreshBusy: 'Ứng dụng đang xử lý tác vụ khác. Vui lòng thử lại sau giây lát.', refresh: 'Làm mới', refreshFailed: 'Chưa thể cập nhật. Kiểm tra kết nối mạng rồi thử lại.', back: 'Quay lại', backButton: '← Quay lại', retry: 'Thử lại', account: 'Tài khoản', language: 'Ngôn ngữ' },
   catalog: {
     viewServices: 'Xem dịch vụ →',
     title: 'Bạn cần dịch vụ gì?', subtitle: 'Khám phá các ngành dịch vụ tại Hà Nội.',

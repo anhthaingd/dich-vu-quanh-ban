@@ -657,14 +657,6 @@
       "kind": "product"
     },
     {
-      "path": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
-      "kind": "test"
-    },
-    {
-      "path": "apps/mobile/src/features/catalog/screens/CatalogScreen.tsx",
-      "kind": "product"
-    },
-    {
       "path": "apps/mobile/src/features/chat/.gitkeep",
       "kind": "placeholder"
     },
@@ -5875,6 +5867,62 @@
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-14-native.json",
       "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-17-sua-loi-sau-audit-native.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-call-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-call-unavailable-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-finance-detail-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-search-results-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-verification-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-call-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-call-unavailable-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-finance-detail-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-search-results-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-verification-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-17-native.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "scripts/review/start-operational-api.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/test/operational-runtime.test.mjs",
+      "kind": "test"
     }
   ],
   "tests": {
@@ -5908,8 +5956,8 @@
       "apps/mobile/src/features/calls/api/calls-api.test.ts",
       "apps/mobile/src/features/calls/media.native.test.ts",
       "apps/mobile/src/features/catalog/api/catalog-api.test.ts",
-      "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
       "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
+      "apps/mobile/src/features/chat/screens/ConversationUX.test.tsx",
       "apps/mobile/src/features/finance/api/finance-api.test.ts",
       "apps/mobile/src/features/finance/screens/AdminFinance.test.tsx",
       "apps/mobile/src/features/finance/screens/FinanceScreen.test.tsx",
@@ -5951,8 +5999,7 @@
       "apps/mobile/src/lib/i18n/locale-state.test.ts",
       "apps/mobile/src/lib/i18n/locale-storage.test.ts",
       "apps/mobile/src/lib/logging/logger.test.ts",
-      "apps/mobile/src/lib/realtime/realtime-client.test.ts",
-      "apps/mobile/src/features/chat/screens/ConversationUX.test.tsx"
+      "apps/mobile/src/lib/realtime/realtime-client.test.ts"
     ],
     "api": [
       "services/api/test/integration/account-management.test.ts",
@@ -6028,6 +6075,7 @@
       "scripts/test/coverage-gate.test.mjs",
       "scripts/test/native-options.test.mjs",
       "scripts/test/operational-model.test.mjs",
+      "scripts/test/operational-runtime.test.mjs",
       "scripts/test/restore-safety.test.mjs",
       "scripts/test/sdd-check.test.mjs",
       "scripts/test/sdd-project.test.mjs"

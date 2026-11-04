@@ -26,7 +26,6 @@ import { PartnerProfileScreen } from '../../features/partners/screens/PartnerPro
 import { SearchScreen } from '../../features/search/screens/SearchScreen';
 import { DefaultTheme, NavigationContainer,useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { CatalogScreen } from '../../features/catalog/screens/CatalogScreen';
 import { SessionsScreen } from '../../features/accounts/screens/SessionsScreen';
 import { AddressesScreen } from '../../features/accounts/screens/AddressesScreen';
 import { ProfileScreen } from '../../features/accounts/screens/ProfileScreen';
@@ -67,7 +66,6 @@ function Navigator() {
   return <NavigationContainer linking={Platform.OS==='web'?undefined:linking} ref={ref} onStateChange={()=>void role.refresh()} onReady={()=>setNavigationReady(true)} key="ordinary" theme={navigationTheme}>
     <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}>
       <Stack.Screen name="CatalogHome" component={SearchScreen} />
-      <Stack.Screen name="CatalogCategory" component={CatalogScreen} getId={({ params }) => params.categoryId} />
       <Stack.Screen name="Partners" component={PartnersScreen} />
       <Stack.Screen name="PartnerEditor" component={PartnerEditorScreen} />
       <Stack.Screen name="PartnerProfile" component={PartnerProfileScreen} />

@@ -15,7 +15,7 @@ import {Button} from '../../../components/ui/Button';
 import {Card} from '../../../components/ui/Card';
 import {RefreshError} from '../../../components/ui/Feedback';
 import {JobFeedback} from '../../jobs/components/JobFeedback';
-import {sessionReady} from '../../jobs/state/session-ready';
+import {sessionReady,sessionOperation} from '../../jobs/state/session-ready';
 import {Mutation} from '../../jobs/state/mutation';
 import {EvidencePhoto} from '../../support/screens/EvidencePhoto';
 import {ApiError,type ApiErrorCode} from '../../../lib/http/api-error';
@@ -31,8 +31,8 @@ export function VerificationDesk({owner,id}:{owner:string;id:string}){
  useEffect(()=>{if(m.error&&['FORBIDDEN','UNAUTHENTICATED','NOT_FOUND'].includes(m.error))clear();},[m.error,clear]);
  useRealtimeRefresh({busy:blocked||!!statement||photos.length>0,error,matches:s=>s.kind==='event'&&s.event.type==='verification.updated.v1',refresh:()=>{reload();},revoke:()=>{clear();}});
  useFocusEffect(useCallback(()=>{live.current=true;const gen=++generation.current;setBusy(true);setError(null);const valid=()=>live.current&&gen===generation.current;
-  void (async()=>{await sessionReady(manager,owner);const p=await manager.loadPartner(owner,id);if(valid())setPartnerKind(p.kind);
-   const all:Verification[]=[],seen=new Set<string>();let cursor:string|undefined;do{await sessionReady(manager,owner);if(!valid())return;const page=await manager.listVerifications(owner,id,cursor);all.push(...page.items);cursor=page.next_cursor??undefined;if(cursor&&seen.has(cursor))throw new ApiError('INVALID_RESPONSE');if(cursor)seen.add(cursor);}while(cursor&&valid());if(valid()){setItems(all);setLoaded(true);}
+  void (async()=>{const p=await sessionOperation(manager,owner,()=>manager.loadPartner(owner,id),valid);if(valid())setPartnerKind(p.kind);
+   const all:Verification[]=[],seen=new Set<string>();let cursor:string|undefined;do{if(!valid())return;const page=await sessionOperation(manager,owner,()=>manager.listVerifications(owner,id,cursor),valid);all.push(...page.items);cursor=page.next_cursor??undefined;if(cursor&&seen.has(cursor))throw new ApiError('INVALID_RESPONSE');if(cursor)seen.add(cursor);}while(cursor&&valid());if(valid()){setItems(all);setLoaded(true);}
   })().catch(e=>{if(valid()){const code=e instanceof ApiError?e.code:'NETWORK';setError(code);if(['FORBIDDEN','UNAUTHENTICATED','NOT_FOUND'].includes(code))clear();}}).finally(()=>{if(valid())setBusy(false);});return()=>{live.current=false;generation.current++;};
  },[manager,owner,id,attempt,clear]));
  const latest=items.find(r=>r.kind===kind),locked=latest?.state==='pending'||latest?.state==='approved';

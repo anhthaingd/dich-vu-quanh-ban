@@ -1,6 +1,18 @@
 # Checklist chức năng và bằng chứng
 
-**02/11/2026 — Hoàn tất chụp lại báo cáo tổng sau UX-01:** [B00-14](bao-cao/B00-14-bao-cao-man-hinh.html) có **268 ảnh chính, 134/135 mục trên cả Android và iOS**, cộng 2 ảnh lỗi xác minh. Mục CatalogCategory chưa có đường vào hiện hành. [Bảng 6 vấn đề](bao-cao/B00-14-bao-cao-man-hinh.md) tách lỗi/cấu hình/điểm vướng; có bộ lọc riêng trong HTML. Dùng `dvqb_local`, không reset dữ liệu; không coi chụp ảnh là đã kiểm mọi nút, thiết bị thật hoặc UAT. Ảnh cũ trước UX-01 đã dọn ở đợt trước; không đồng bộ Drive/`ui-ux`.
+## UX-01 — Sửa lỗi sau audit, 04/11/2026
+
+- [x] Bỏ màn danh mục cũ theo duyệt; giữ bộ lọc hiện hành và các test liên quan.
+- [x] Sửa mã lỗi/đóng cuộc gọi, tải xác minh, màn chi tiết ví và định dạng sao; kiểm native hai nền tảng trên dvqb_local.
+- [x] Chuẩn hóa runner media local; kiểm kết nối/tắt mic/kết thúc, không còn khóa cuộc gọi.
+- [x] Cập nhật ảnh, báo cáo B00-14/B00-17 và inventory/ánh xạ kiểm thử.
+- [ ] NATIVE-05: tìm nguyên nhân và chứng minh bản sửa crash Android.
+- SDD toàn dự án: kết quả nằm trong evidence khớp nguồn, xem B00-17; không tự đóng QA partial/unmapped, CI hoặc UAT.
+
+**04/11/2026 — Sửa các lỗi sau audit native:** [B00-17](bao-cao/B00-17-sua-loi-sau-audit-native.md) ghi các bản sửa gọi/xác minh/chi tiết ví/điểm sao và bằng chứng Android–iOS trên `dvqb_local`. Bỏ CatalogCategory theo duyệt; [B00-14](bao-cao/B00-14-bao-cao-man-hinh.html) còn 134 mục, đủ 268 ảnh chính. NATIVE-05 vẫn mở: release 10 lần khởi động chưa tái hiện, chưa chứng minh đã hết crash. Code local chưa có CI/push/UAT mới; xem evidence SDD theo nguồn hiện tại.
+
+
+**Mốc lịch sử 02/11/2026 — Chụp lại báo cáo tổng sau UX-01 (được cập nhật ở B00-17):** [B00-14](bao-cao/B00-14-bao-cao-man-hinh.html) có **268 ảnh chính, 134/135 mục trên cả Android và iOS**, cộng 2 ảnh lỗi xác minh. Mục CatalogCategory chưa có đường vào hiện hành. [Bảng 6 vấn đề](bao-cao/B00-14-bao-cao-man-hinh.md) tách lỗi/cấu hình/điểm vướng; có bộ lọc riêng trong HTML. Dùng `dvqb_local`, không reset dữ liệu; không coi chụp ảnh là đã kiểm mọi nút, thiết bị thật hoặc UAT. Ảnh cũ trước UX-01 đã dọn ở đợt trước; không đồng bộ Drive/`ui-ux`.
 
 ## UX-01 — Áp dụng bản thiết kế đã duyệt, 02/11/2026
 

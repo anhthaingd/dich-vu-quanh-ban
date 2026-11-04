@@ -25,6 +25,6 @@ export function RefreshError({ error, retry, busy }: { error: ApiErrorCode | nul
   const { t } = useLocale();
   if (!error) return null;
   const denied = ['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(error);
-  return <><AppText accessibilityRole="alert" tone="error">{t(denied ? 'jobs.denied' : 'common.refreshFailed')}</AppText>
+  return <><AppText accessibilityRole="alert" tone="error">{t(denied ? 'jobs.denied' : error==='BUSY' ? 'common.refreshBusy' : 'common.refreshFailed')}</AppText>
     <Button testID="refresh-retry" label={t('common.retry')} disabled={busy} onPress={retry}/></>;
 }

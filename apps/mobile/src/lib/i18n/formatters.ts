@@ -6,3 +6,6 @@ export const formatVnd = (amount: number, locale: Locale) => new Intl.NumberForm
 export const formatBusinessDate = (date: Date, locale: Locale) => new Intl.DateTimeFormat(locale, {
   timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
 }).format(date);
+
+// Round only the displayed score; preserve the API value for ordering.
+export const formatRating = (score: number, locale: Locale) => new Intl.NumberFormat(locale, {maximumFractionDigits:1}).format(score);

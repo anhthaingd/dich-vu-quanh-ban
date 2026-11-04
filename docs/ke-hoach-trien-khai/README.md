@@ -1,6 +1,9 @@
 # Kế hoạch triển khai và học code
 
-**02/11/2026 — Hoàn tất chụp lại báo cáo tổng sau UX-01:** [B00-14](bao-cao/B00-14-bao-cao-man-hinh.html) có **268 ảnh chính, 134/135 mục trên cả Android và iOS**, cộng 2 ảnh lỗi xác minh. Mục CatalogCategory chưa có đường vào hiện hành. [Bảng 6 vấn đề](bao-cao/B00-14-bao-cao-man-hinh.md) tách lỗi/cấu hình/điểm vướng; có bộ lọc riêng trong HTML. Dùng `dvqb_local`, không reset dữ liệu; không coi chụp ảnh là đã kiểm mọi nút, thiết bị thật hoặc UAT. Ảnh cũ trước UX-01 đã dọn ở đợt trước; không đồng bộ Drive/`ui-ux`.
+**04/11/2026 — Sửa các lỗi sau audit native:** [B00-17](bao-cao/B00-17-sua-loi-sau-audit-native.md) ghi các bản sửa gọi/xác minh/chi tiết ví/điểm sao và bằng chứng Android–iOS trên `dvqb_local`. Bỏ CatalogCategory theo duyệt; [B00-14](bao-cao/B00-14-bao-cao-man-hinh.html) còn 134 mục, đủ 268 ảnh chính. NATIVE-05 vẫn mở: release 10 lần khởi động chưa tái hiện, chưa chứng minh đã hết crash. Code local chưa có CI/push/UAT mới; xem evidence SDD theo nguồn hiện tại.
+
+
+**Mốc lịch sử 02/11/2026 — Chụp lại báo cáo tổng sau UX-01 (được cập nhật ở B00-17):** [B00-14](bao-cao/B00-14-bao-cao-man-hinh.html) có **268 ảnh chính, 134/135 mục trên cả Android và iOS**, cộng 2 ảnh lỗi xác minh. Mục CatalogCategory chưa có đường vào hiện hành. [Bảng 6 vấn đề](bao-cao/B00-14-bao-cao-man-hinh.md) tách lỗi/cấu hình/điểm vướng; có bộ lọc riêng trong HTML. Dùng `dvqb_local`, không reset dữ liệu; không coi chụp ảnh là đã kiểm mọi nút, thiết bị thật hoặc UAT. Ảnh cũ trước UX-01 đã dọn ở đợt trước; không đồng bộ Drive/`ui-ux`.
 
 **02/11/2026 — UX-01, áp dụng giao diện đã duyệt:** chủ dự án đã yêu cầu sửa app theo bản HTML. [B00-15 — thay đổi, cách học code và bằng chứng sau sửa](bao-cao/B00-15-toi-uu-trai-nghiem.md). Giữ API/quyền/công thức hiện hành; D01–D04 chưa mở. Nghiệm thu native dùng `dvqb_local`; kết quả trước ngày này không thay bằng chứng sau sửa.
 

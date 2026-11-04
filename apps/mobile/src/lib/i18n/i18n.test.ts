@@ -1,5 +1,5 @@
 import { createTranslator, locales, messages } from './index';
-import { formatBusinessDate, formatVnd } from './formatters';
+import { formatBusinessDate, formatVnd, formatRating } from './formatters';
 function flatten(value: object, prefix = ''): Record<string, string> {
   return Object.fromEntries(Object.entries(value).flatMap(([key, item]) => {
     const path = prefix ? `${prefix}.${key}` : key;
@@ -61,3 +61,5 @@ function checkTypes() {
   t('auth.login', { min: 1 });
 }
 void checkTypes;
+
+test('rating display rounds recurring averages by locale without changing integers',()=>{expect(formatRating(7/3,'vi')).toBe('2,3');expect(formatRating(7/3,'en')).toBe('2.3');expect(formatRating(7/3,'ja')).toBe('2.3');expect(formatRating(5,'vi')).toBe('5');});

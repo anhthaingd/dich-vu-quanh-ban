@@ -577,26 +577,32 @@
       ],
       "description": "UI duyệt ngành/nhóm và back, loading/rỗng/lỗi/retry không thay sample data",
       "code": [
-        "apps/mobile/src/features/catalog/screens/CatalogScreen.tsx"
+        "apps/mobile/src/features/search/components/ServiceFilter.tsx",
+        "apps/mobile/src/app/navigation/AppNavigator.tsx"
       ],
       "tests": [
         {
           "suite": "mobile",
-          "file": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
-          "name": "loading → industry → group and skills → back"
+          "file": "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
+          "name": "choose industry → group → service, cancel a draft, and explicitly clear selection"
         },
         {
           "suite": "mobile",
-          "file": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
-          "name": "empty is visible"
+          "file": "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
+          "name": "category-only selection and failed load retry never silently select all"
         },
         {
           "suite": "mobile",
-          "file": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
-          "name": "error has retry and never substitutes sample data"
+          "file": "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
+          "name": "empty catalog is explicit and never substitutes sample industries"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
+          "name": "browse back shows direct skills only and cancels pending category reads"
         }
       ],
-      "gaps": "Test navigator riêng retained browser; không tự chứng nhận màn home Storybook mới",
+      "gaps": "04/11 owner approved retiring unreachable CatalogCategory. Same browse/back/loading/empty/retry contract now checked on the active ServiceFilter; native separately.",
       "operations": [],
       "sources": [
         "QA-058"
@@ -646,18 +652,18 @@
       ],
       "description": "UI giữ ID khi đổi tiếng và bỏ response cũ; fallback notice cả title",
       "code": [
-        "apps/mobile/src/features/catalog/screens/CatalogScreen.tsx"
+        "apps/mobile/src/features/search/components/ServiceFilter.tsx"
       ],
       "tests": [
         {
           "suite": "mobile",
-          "file": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
-          "name": "localized names and title follow the same ID; stale locale replies cannot replace newer data"
+          "file": "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
+          "name": "locale changes preserve IDs and ignore an old response"
         },
         {
           "suite": "mobile",
-          "file": "apps/mobile/src/features/catalog/screens/CatalogScreen.test.tsx",
-          "name": "fallback notice is shown only for missing names, including the selected title"
+          "file": "apps/mobile/src/features/search/components/ServiceFilter.test.tsx",
+          "name": "fallback notice covers the selected category title and disappears in Vietnamese"
         }
       ],
       "gaps": "Chữ cỡ lớn/native không được chứng minh bằng Jest",
@@ -3169,7 +3175,9 @@
       "description": "Independent removal and moderation, audit/CAS, private customer reviews; public ratings count visible reviews only.",
       "code": [
         "services/api/src/modules/reviews/reviews.service.ts",
-        "services/api/src/modules/search/search.service.ts"
+        "services/api/src/modules/search/search.service.ts",
+        "apps/mobile/src/lib/i18n/formatters.ts",
+        "apps/mobile/src/features/search/screens/SearchScreen.tsx"
       ],
       "tests": [
         {
@@ -3181,6 +3189,11 @@
           "suite": "api",
           "file": "services/api/test/integration/reviews.test.ts",
           "name": "public search ratings count only visible customer-to-partner reviews and become null when none remain"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/lib/i18n/i18n.test.ts",
+          "name": "rating display rounds recurring averages by locale without changing integers"
         }
       ],
       "gaps": "B10-01 core criterion only; local images/replies are mapped separately by REV-03. Admin/support and cross-job customer history remain open. No physical-device/UAT/production certification.",
@@ -3623,6 +3636,16 @@
           "suite": "tooling",
           "file": "scripts/test/admin-client.test.mjs",
           "name": "admin client keeps retry payload and token scope, clears rejected sessions and rejects malformed pages"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/verification/screens/Verification.test.tsx",
+          "name": "verification first load retries session contention without presenting a network error"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/verification/screens/Verification.test.tsx",
+          "name": "leaving verification before the first await finishes never starts a stale partner request"
         }
       ],
       "gaps": "DEMO local/test only. No production, real identity documents, cloud storage, MFA recovery, chat evidence selection, financial administration or physical device/UAT certification.",
@@ -4490,7 +4513,8 @@
       ],
       "code": [
         "services/api/src/modules/finance/finance.service.ts",
-        "apps/mobile/src/features/organizations/screens/OrganizationsScreen.tsx"
+        "apps/mobile/src/features/organizations/screens/OrganizationsScreen.tsx",
+        "apps/mobile/src/features/finance/screens/FinanceScreen.tsx"
       ],
       "tests": [
         {
@@ -4502,6 +4526,11 @@
           "suite": "mobile",
           "file": "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
           "name": "wallet-only staff has a wallet entry without profile or membership administration"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/finance/screens/FinanceScreen.test.tsx",
+          "name": "history opens detail above the list and dismisses back to the same filter"
         }
       ],
       "qa": [
@@ -4589,7 +4618,10 @@
       ],
       "code": [
         "apps/mobile/src/features/calls/CallsProvider.tsx",
-        "apps/mobile/src/features/calls/media.native.ts"
+        "apps/mobile/src/features/calls/media.native.ts",
+        "services/api/src/common/http/http-exception.filter.ts",
+        "apps/mobile/src/lib/http/request.ts",
+        "scripts/review/start-operational-api.mjs"
       ],
       "tests": [
         {
@@ -4606,6 +4638,26 @@
           "suite": "mobile",
           "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
           "name": "media disconnect marks failure and polling cannot keep a dead media call accepted"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+          "name": "unconfigured call creation can close without trapping the user in uncertain retry"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+          "name": "closing an uncertain create keeps its retry payload and key, and system back uses the same safe dismissal"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/calls.test.ts",
+          "name": "HTTP without media preserves CALLS_UNAVAILABLE and never creates a call or active lock"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/operational-runtime.test.mjs",
+          "name": "operational runtime pins the existing local database and explicitly toggles local media"
         }
       ],
       "qa": [

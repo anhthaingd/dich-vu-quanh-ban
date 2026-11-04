@@ -26,6 +26,10 @@ async function ready(kind='solo'){
 async function rejected(work:Promise<unknown>,status:number){await assert.rejects(work,(e:unknown)=>!!e&&typeof e==='object'&&'getStatus' in e&&(e.getStatus as ()=>number)()===status);}
 const start=(a:Actor,job:string,peer:string,key=k())=>service.create(a.header,{job_id:job,recipient_id:peer},key);
 const action=(a:Actor,c:{id:string;version:number},kind:'accept'|'decline'|'end'|'fail',key=k())=>service.change(a.header,c.id,kind,{expected_version:c.version},key);
+test('HTTP without media preserves CALLS_UNAVAILABLE and never creates a call or active lock',async()=>{
+ const {j}=await ready();const r=await http(customer,'/calls','POST',{job_id:j.id,recipient_id:owner.id});assert.equal(r.status,503);assert.equal(r.body.code,'CALLS_UNAVAILABLE');
+ assert.equal((await f.pool.query('SELECT count(*) FROM calls')).rows[0].count,'0');assert.equal((await f.pool.query('SELECT count(*) FROM active_call_users')).rows[0].count,'0');
+});
 test('current job targets, both directions, recipient-only acceptance, private history and token isolation',async()=>{
  const {j}=await ready();assert.deepEqual((await service.targets(customer.header,j.id)).items.map(x=>x.role).sort(),['assigned','contact']);
  const input={job_id:j.id,target:'worker' as const},key=k();const c=await service.create(customer.header,input,key);assert.equal(c.state,'ringing');assert.deepEqual(await service.create(customer.header,input,key),c);

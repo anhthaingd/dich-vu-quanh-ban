@@ -50,7 +50,8 @@
     "db:operational:verify": "node --import tsx scripts/data/seed-operational.mjs --verify",
     "review:screens:build": "node scripts/review/build-report.mjs",
     "review:screens:check": "node scripts/review/check-report.mjs",
-    "review:mobile": "node scripts/review/start-operational-mobile.mjs"
+    "review:mobile": "node scripts/review/start-operational-mobile.mjs",
+    "review:api": "node scripts/review/start-operational-api.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

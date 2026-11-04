@@ -2,6 +2,10 @@ import { requestJson } from './request';
 import { createDiagnosticLogger } from '../logging/logger';
 const id = 'd28753c2-a88f-4eb5-9df1-e7c8fdfe604c';
 afterEach(() => jest.useRealTimers());
+test.each([['CALLS_UNAVAILABLE','CALLS_UNAVAILABLE'],['unknown','SERVICE_UNAVAILABLE']])('503 preserves only the allowlisted call error %s',async(serverCode,code)=>{
+ const fetcher=jest.fn().mockResolvedValue({ok:false,status:503,headers:new Headers(),json:async()=>({code:serverCode,message:'PRIVATE_CANARY'})});
+ const log=createDiagnosticLogger();await expect(requestJson('http://localhost/calls',fetcher,undefined,log)).rejects.toMatchObject({code});expect(log.exportJsonl()).not.toContain('PRIVATE_CANARY');
+});
 test('success sends client UUID and returns parsed JSON', async () => {
   const fetcher = jest.fn().mockResolvedValue({ ok: true, status: 200, headers: { get: () => id }, json: async () => ({ ok: true }) });
   expect(await requestJson('http://localhost', fetcher)).toEqual({ ok: true });

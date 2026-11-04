@@ -41,7 +41,7 @@ export const ja = {
     pending: '保存結果を確認できていません。同じ名前で再試行して結果を確認してください。',
   },
   shell: { currentRole: '利用中', customerRole: '顧客として探す', chooseProfile: '役割・プロフィールを選択', useProfile: 'このプロフィールを使う', groups: 'サービスの分類', findServices: 'サービスを探す', openAccount: 'アカウントと言語設定を開く', discover: 'ハノイのサービス', categories: 'サービスの分類を選ぶ', accountIntro: 'ログインと言語を管理できます。', preferences: '表示設定' },
-  common: { refresh: '更新', refreshFailed: '更新できませんでした。通信状況を確認して、もう一度お試しください。', back: '戻る', backButton: '← 戻る', retry: '再試行', account: 'アカウント', language: '言語' },
+  common: { refreshBusy: '別の処理を実行中です。少し待ってから再試行してください。', refresh: '更新', refreshFailed: '更新できませんでした。通信状況を確認して、もう一度お試しください。', back: '戻る', backButton: '← 戻る', retry: '再試行', account: 'アカウント', language: '言語' },
   catalog: {
     viewServices: 'サービスを見る →',
     title: 'どんなサービスをお探しですか？', subtitle: 'ハノイのサービスを探しましょう。',

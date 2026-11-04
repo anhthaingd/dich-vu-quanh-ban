@@ -41,7 +41,7 @@ export const en = {
     pending: 'The save result is not confirmed. Try again with the same name to check the result.',
   },
   shell: { currentRole: 'Current context', customerRole: 'Find services as a customer', chooseProfile: 'Choose role / profile', useProfile: 'Use this profile', groups: 'Service groups', findServices: 'Find services', openAccount: 'Open account and language settings', discover: 'SERVICES IN HANOI', categories: 'Choose a service category', accountIntro: 'Manage your sign-in and language.', preferences: 'Display preferences' },
-  common: { refresh: 'Refresh', refreshFailed: 'Could not update. Check your connection and try again.', back: 'Back', backButton: '← Back', retry: 'Try again', account: 'Account', language: 'Language' },
+  common: { refreshBusy: 'Another operation is in progress. Please try again shortly.', refresh: 'Refresh', refreshFailed: 'Could not update. Check your connection and try again.', back: 'Back', backButton: '← Back', retry: 'Try again', account: 'Account', language: 'Language' },
   catalog: {
     viewServices: 'View services →',
     title: 'What service do you need?', subtitle: 'Explore services in Hanoi.',

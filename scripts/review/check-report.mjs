@@ -11,9 +11,9 @@ const url=pathToFileURL(resolve('docs/ke-hoach-trien-khai/bao-cao/B00-14-bao-cao
 try{
  await page.goto(url);await page.locator('h2').waitFor();
  const data=await page.evaluate(()=>window.reportData);
- assert.equal(data.date,'02/11/2026');assert.equal(data.screens.length,135);
+ assert.equal(data.date,'04/11/2026');assert.equal(data.screens.length,134);
  const evidence=JSON.parse(await readFile('docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-14-native.json','utf8'));
- assert.equal(evidence.entries.length,270);assert.equal(new Set(evidence.entries.map(e=>e.platform+':'+e.key)).size,270);
+ assert.equal(evidence.entries.length,268);assert.equal(new Set(evidence.entries.map(e=>e.platform+':'+e.key)).size,268);
  for(const entry of evidence.entries){
   const screen=data.screens.find(s=>s.key===entry.key);assert.ok(screen,entry.key);
   assert.ok(['captured','captured-with-issue','blocked'].includes(entry.status));
@@ -25,7 +25,7 @@ try{
  for(const entry of evidence.supplemental){assert.ok(entry.image.startsWith('anh/B00-14-UX01/'));const bytes=await readFile(resolve('docs/ke-hoach-trien-khai/bao-cao',entry.image));assert.equal(createHash('sha256').update(bytes).digest('hex'),entry.sha256);}
  assert.ok(!data.screens.find(s=>s.key==='customer-invoice-completed').buttons.some(b=>['Đánh giá','Xác nhận hóa đơn'].includes(b[0])));
  assert.ok(!data.screens.find(s=>s.key==='owner-invoice-sent').buttons.some(b=>b[0]==='Lưu nháp'));
- checks.push('All 135 items / 270 platform slots have current capture evidence or a documented blocking reason; image SHA-256 verified');
+ checks.push('All 134 items / 268 platform slots have current capture evidence or a documented blocking reason; image SHA-256 verified');
  await page.locator('#q').fill('hoa don');assert.ok(await page.locator('.step').count()>4);assert.match(await page.locator('h2').textContent(),/hóa đơn/i);checks.push('Vietnamese accent-insensitive search');
  await page.locator('#reset').click();await page.locator('#role').selectOption('admin');await page.locator('#permission').selectOption('finance.read');assert.ok(await page.locator('.step').count()>0);assert.equal(await page.locator('.step').filter({hasText:'Tài khoản'}).count(),0);checks.push('Combined role and permission filters');
  await page.locator('#role').selectOption('guest');assert.equal(await page.locator('.empty').count(),1);await page.locator('[data-reset]').click();checks.push('Empty combination and recovery');

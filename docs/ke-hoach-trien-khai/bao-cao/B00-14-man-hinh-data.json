@@ -1,5 +1,5 @@
 {
-  "date": "02/11/2026",
+  "date": "04/11/2026",
   "database": "dvqb_local",
   "roles": {
     "guest": "Khách chưa đăng nhập",
@@ -188,10 +188,10 @@
     "meaning": "Historical seed/API snapshot at checkedAt; not a new database count or full native UX approval."
   },
   "nativeEvidence": {
-    "date": "02/11/2026",
+    "date": "04/11/2026",
     "source": "bang-chung/B00-14-native.json",
     "report": "B00-14-bao-cao-man-hinh.md",
-    "meaning": "135 report items, 270 platform slots. A screenshot proves that the recorded screen/state was reached, not that every button, permission permutation, or transition passed. Captured error states are explicitly labeled. No physical-device/UAT/production/media-quality claim.",
+    "meaning": "134 mục hiện hành, 268 vị trí nền tảng. Bỏ CatalogCategory theo duyệt 04/11/2026, giữ ServiceFilter. Ảnh chứng minh trạng thái đã mở, không thay kiểm mọi nút/quyền/UAT. Ngày kiểm riêng trên từng ảnh; ảnh không đổi vẫn ngày 02/11. Các lỗi đã xử lý local có trạng thái resolved-local; crash Android còn open.",
     "issues": [
       {
         "id": "NATIVE-01",
@@ -203,9 +203,11 @@
         "screens": [
           "call"
         ],
-        "title": "Cuộc gọi chưa kết nối được máy chủ",
-        "detail": "Cả hai nền tảng hiện lỗi kết nối. API local chưa có cấu hình LIVEKIT; CallsService trả CALLS_UNAVAILABLE khi thiếu media. Có ảnh hộp thoại lỗi, chưa có ảnh cuộc gọi kết nối/đổ chuông và chưa kiểm âm thanh.",
-        "source": "services/api/src/modules/calls/calls.service.ts"
+        "title": "Đã xử lý local — Cuộc gọi chưa kết nối được máy chủ",
+        "detail": "Đã có lệnh review:api -- --calls; kiểm kết nối Android → iOS ngày 04/11. Cấu hình media vẫn phải bật chủ động; mặc định tắt. Chưa kiểm chất lượng âm thanh trên thiết bị thật.",
+        "source": "services/api/src/modules/calls/calls.service.ts",
+        "status": "resolved-local",
+        "resolvedAt": "04/11/2026"
       },
       {
         "id": "NATIVE-02",
@@ -217,9 +219,11 @@
         "screens": [
           "call"
         ],
-        "title": "Hộp thoại gọi lỗi không có nút đóng khi còn thao tác chờ",
-        "detail": "Chỉ có Thử lại; call-close bị ẩn khi pending. iOS phải mở lại app để rời hộp thoại. Android thoát được bằng Back hệ thống. Cần bổ sung đường hủy/đóng phù hợp, chưa sửa code trong đợt chụp.",
-        "source": "apps/mobile/src/features/calls/CallsProvider.tsx"
+        "title": "Đã xử lý local — Hộp thoại gọi lỗi không có nút đóng khi còn thao tác chờ",
+        "detail": "Đã sửa API giữ mã CALLS_UNAVAILABLE và app cho đóng lỗi chắc chắn chưa tạo cuộc gọi. Kết quả chưa rõ được giữ cùng mã yêu cầu, có nút mở lại để thử tiếp. Native hai nền tảng kiểm nút Đóng; nhánh mạng chưa rõ được kiểm tự động.",
+        "source": "apps/mobile/src/features/calls/CallsProvider.tsx",
+        "status": "resolved-local",
+        "resolvedAt": "04/11/2026"
       },
       {
         "id": "NATIVE-03",
@@ -231,9 +235,11 @@
         "screens": [
           "verification"
         ],
-        "title": "Lần đầu mở xác minh báo lỗi; tải lại thì được",
-        "detail": "Android và iOS từng hiện Chưa thể cập nhật / kiểm tra kết nối. Bấm Thử lại hoặc Tải lại kết quả đã hiện Đã xác minh. iOS gặp ở hai lượt mở. Chưa kết luận nguyên nhân gốc.",
-        "source": "apps/mobile/src/features/verification/screens/VerificationScreen.tsx"
+        "title": "Đã xử lý local — Lần đầu mở xác minh báo lỗi; tải lại thì được",
+        "detail": "Đã dùng sessionOperation và kiểm lượt tải còn hiệu lực trước khi gọi. BUSY có thông báo riêng. Native hai nền tảng đọc được hồ sơ không cần thử lại; test tái hiện BUSY và rời màn trong lúc chờ. Chưa quy nguyên nhân hai callback cho một thư viện cụ thể.",
+        "source": "apps/mobile/src/features/verification/screens/VerificationScreen.tsx",
+        "status": "resolved-local",
+        "resolvedAt": "04/11/2026"
       },
       {
         "id": "NATIVE-04",
@@ -245,22 +251,27 @@
         "screens": [
           "finance-detail"
         ],
-        "title": "Chi tiết giao dịch nằm sau toàn bộ lịch sử ví",
-        "detail": "Bấm một giao dịch không đưa người dùng tới chi tiết. Phải cuộn qua danh sách dài mới thấy; dễ tưởng nút không hoạt động. Đã mở và chụp được chi tiết sau khi cuộn. Code dựng thẻ chi tiết sau danh sách, chưa sửa trong đợt này.",
-        "source": "apps/mobile/src/features/finance/screens/FinanceScreen.tsx"
+        "title": "Đã xử lý local — Chi tiết giao dịch nằm sau toàn bộ lịch sử ví",
+        "detail": "Đã mở chi tiết bằng Modal riêng, giữ lịch sử bên dưới. Hai nền tảng đã kiểm mở/đóng; test giữ bộ lọc khi đóng.",
+        "source": "apps/mobile/src/features/finance/screens/FinanceScreen.tsx",
+        "status": "resolved-local",
+        "resolvedAt": "04/11/2026"
       },
       {
         "id": "NATIVE-06",
         "kind": "display-defect",
         "platforms": [
+          "android",
           "ios"
         ],
         "screens": [
           "search-results"
         ],
-        "title": "Điểm đánh giá chưa làm tròn",
-        "detail": "Trên iOS, kết quả của Thợ Nguyễn Minh Anh hiển thị 2.3333333333333335 (3 đánh giá), làm thẻ khó đọc. SearchScreen đưa p.stars trực tiếp vào chuỗi. Chưa sửa; cần định dạng số thống nhất.",
-        "source": "apps/mobile/src/features/search/screens/SearchScreen.tsx"
+        "title": "Đã xử lý local — Điểm đánh giá chưa làm tròn",
+        "detail": "Đã định dạng tối đa 1 chữ số thập phân theo ngôn ngữ. Hai nền tảng kiểm cùng hồ sơ hiện 2,3; không sửa số gốc hay xếp hạng.",
+        "source": "apps/mobile/src/features/search/screens/SearchScreen.tsx",
+        "status": "resolved-local",
+        "resolvedAt": "04/11/2026"
       },
       {
         "id": "NATIVE-05",
@@ -272,8 +283,10 @@
           "home"
         ],
         "title": "Android bị thoát khi mở lại ứng dụng",
-        "detail": "18:16 ngày 02/11: SIGSEGV trong mqt_v_js / libreactnative.so, stack có MountingCoordinator::pullTransaction, sau stopApp và mở development-client. Mở lại sau đó chụp tìm kiếm/hỗ trợ thành công. Một lần quan sát, chưa kết luận nguyên nhân hoặc mức độ lặp lại.",
-        "log": "bang-chung/B00-14-native.json#nativeCrash"
+        "detail": "18:16 ngày 02/11: SIGSEGV trong mqt_v_js / libreactnative.so, stack có MountingCoordinator::pullTransaction, sau stopApp và mở development-client. Mở lại sau đó chụp tìm kiếm/hỗ trợ thành công. Một lần quan sát, chưa kết luận nguyên nhân hoặc mức độ lặp lại. 04/11: build release thành công; 10/10 lượt mở có process sau 5 giây, chưa tái hiện crash app. Chưa chứng minh hết lỗi; bản release chưa được dùng kiểm hành trình API local.",
+        "log": "bang-chung/B00-14-native.json#nativeCrash",
+        "status": "open",
+        "lastCheckedAt": "04/11/2026"
       }
     ]
   },
@@ -614,34 +627,32 @@
           "platform": "android",
           "key": "search-results",
           "status": "captured",
-          "role": "Tài khoản thường / khách thuê (seed 144 hoặc 180)",
-          "checkedAt": "02/11/2026",
-          "reviewedAt": "2026-11-02T09:51:27.367562+00:00",
-          "image": "anh/B00-14-UX01/android-search-results.png",
-          "sha256": "52d4f7997d69c914dc7fb32cc070ac33c43a62b1bf21f8ec1d2e76fbf87c6959",
+          "role": "Chủ hồ sơ (seed 0)",
+          "checkedAt": "04/11/2026",
+          "reviewedAt": "2026-11-04T01:45:54.238051+00:00",
+          "image": "anh/B00-14-UX01/android-search-results-20261104.png",
+          "sha256": "b24857aa382161b4d5c6d80d858c6c41eb52c98ec0353e7c6b38dc18a74dc7da",
           "captureMethod": "Installed native app, actual UI or supported dvqb deep link; screenshot visually reviewed",
-          "database": "dvqb_local"
+          "database": "dvqb_local",
+          "reason": "Cùng hồ sơ hiển thị 2,3 (3 đánh giá) trên hai nền tảng."
         },
         "ios": {
           "platform": "ios",
           "key": "search-results",
-          "status": "captured-with-issue",
-          "role": "Chủ hồ sơ (seed 0), đang tìm dịch vụ",
-          "checkedAt": "02/11/2026",
-          "reviewedAt": "2026-11-02T09:49:43.674314+00:00",
-          "image": "anh/B00-14-UX01/ios-search-results.png",
-          "sha256": "af3c834785521b55877688b25d62d0b6dde0b57852efc34e319045df53785607",
-          "issueIds": [
-            "NATIVE-06"
-          ],
-          "reason": "Điểm đánh giá chưa làm tròn. Trên iOS, kết quả của Thợ Nguyễn Minh Anh hiển thị 2.3333333333333335 (3 đánh giá), làm thẻ khó đọc. SearchScreen đưa p.stars trực tiếp vào chuỗi. Chưa sửa; cần định dạng số thống nhất.",
+          "status": "captured",
+          "role": "Chủ hồ sơ (seed 0)",
+          "checkedAt": "04/11/2026",
+          "reviewedAt": "2026-11-04T01:45:54.238051+00:00",
+          "image": "anh/B00-14-UX01/ios-search-results-20261104.png",
+          "sha256": "5223c52c7ffa496062eb97ed3086a7c3a285454940154a708db3856d4901036c",
+          "reason": "Cùng hồ sơ hiển thị 2,3 (3 đánh giá) trên hai nền tảng.",
           "captureMethod": "Installed native app, actual UI or supported dvqb deep link; screenshot visually reviewed",
           "database": "dvqb_local"
         }
       },
       "images": {
-        "android": "anh/B00-14-UX01/android-search-results.png",
-        "ios": "anh/B00-14-UX01/ios-search-results.png"
+        "android": "anh/B00-14-UX01/android-search-results-20261104.png",
+        "ios": "anh/B00-14-UX01/ios-search-results-20261104.png"
       }
     },
     {
@@ -705,92 +716,6 @@
       }
     },
     {
-      "key": "catalog-category",
-      "title": "Danh mục theo ngành",
-      "route": "CatalogCategory",
-      "flow": "discover",
-      "roles": [
-        "guest",
-        "customer",
-        "owner",
-        "employee",
-        "manager"
-      ],
-      "purpose": "Duyệt danh mục ngành/nhóm và kỹ năng qua route danh mục còn đăng ký trong ứng dụng.",
-      "entry": "Route có trong Navigator; điểm vào từ giao diện hiện tại cần đối chiếu riêng.",
-      "buttons": [
-        [
-          "Mục danh mục",
-          "Mở cấp con hoặc kỹ năng."
-        ],
-        [
-          "Mũi tên",
-          "Trở lại cấp/màn trước."
-        ]
-      ],
-      "source": "apps/mobile/src/features/catalog/screens/CatalogScreen.tsx",
-      "note": "Đây là route danh mục cũ còn trong code. Không suy ra nó là màn mặc định hiện tại; trang chủ hiện dùng SearchScreen.",
-      "reviewedAt": "02/11/2026",
-      "index": 6,
-      "branch": true,
-      "evidence": {
-        "android": {
-          "platform": "android",
-          "key": "catalog-category",
-          "status": "blocked",
-          "role": "Khách chưa đăng nhập",
-          "checkedAt": "02/11/2026",
-          "reason": "CatalogCategory còn đăng ký, nhưng trang chủ dùng SearchScreen và bộ chọn dịch vụ riêng. Không tìm thấy lối vào từ giao diện hiện hành hoặc deep link được hỗ trợ. Không ép route để tạo ảnh.",
-          "attempts": [
-            {
-              "kind": "native-navigation",
-              "detail": "Đã đi Trang chủ → chọn dịch vụ trên nền tảng này; mở bộ chọn dịch vụ của SearchScreen, không mở CatalogCategory.",
-              "evidence": "anh/B00-14-UX01/android-service-picker.png"
-            },
-            {
-              "kind": "source-trace",
-              "source": "apps/mobile/src/app/navigation/AppNavigator.tsx",
-              "detail": "CatalogHome dùng SearchScreen; CatalogCategory đăng ký CatalogScreen. Lệnh navigate duy nhất nằm trong CatalogScreen, không có điểm vào từ màn hiện hành."
-            },
-            {
-              "kind": "source-trace",
-              "source": "apps/mobile/src/app/navigation/routes.ts",
-              "detail": "accountDestination/appLinkState không hỗ trợ deep link catalog."
-            }
-          ]
-        },
-        "ios": {
-          "platform": "ios",
-          "key": "catalog-category",
-          "status": "blocked",
-          "role": "Khách chưa đăng nhập",
-          "checkedAt": "02/11/2026",
-          "reason": "CatalogCategory còn đăng ký, nhưng trang chủ dùng SearchScreen và bộ chọn dịch vụ riêng. Không tìm thấy lối vào từ giao diện hiện hành hoặc deep link được hỗ trợ. Không ép route để tạo ảnh.",
-          "attempts": [
-            {
-              "kind": "native-navigation",
-              "detail": "Đã đi Trang chủ → chọn dịch vụ trên nền tảng này; mở bộ chọn dịch vụ của SearchScreen, không mở CatalogCategory.",
-              "evidence": "anh/B00-14-UX01/ios-service-picker.png"
-            },
-            {
-              "kind": "source-trace",
-              "source": "apps/mobile/src/app/navigation/AppNavigator.tsx",
-              "detail": "CatalogHome dùng SearchScreen; CatalogCategory đăng ký CatalogScreen. Lệnh navigate duy nhất nằm trong CatalogScreen, không có điểm vào từ màn hiện hành."
-            },
-            {
-              "kind": "source-trace",
-              "source": "apps/mobile/src/app/navigation/routes.ts",
-              "detail": "accountDestination/appLinkState không hỗ trợ deep link catalog."
-            }
-          ]
-        }
-      },
-      "images": {
-        "android": null,
-        "ios": null
-      }
-    },
-    {
       "key": "public-profile",
       "title": "Hồ sơ công khai người cung cấp",
       "route": "PartnerProfile",
@@ -822,7 +747,7 @@
       ],
       "source": "apps/mobile/src/features/partners/screens/PartnerProfileScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 7,
+      "index": 6,
       "branch": false,
       "evidence": {
         "android": {
@@ -888,7 +813,7 @@
       "source": "apps/mobile/src/features/jobs/screens/JobCreateScreen.tsx",
       "note": "Có kiểm xác minh điện thoại. Xem được hồ sơ không đồng nghĩa đủ điều kiện gửi yêu cầu. Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
       "reviewedAt": "02/11/2026",
-      "index": 8,
+      "index": 7,
       "branch": false,
       "evidence": {
         "android": {
@@ -955,7 +880,7 @@
       ],
       "source": "apps/mobile/src/features/auth/screens/AccountScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 9,
+      "index": 8,
       "branch": false,
       "evidence": {
         "android": {
@@ -1011,7 +936,7 @@
       ],
       "source": "apps/mobile/src/features/auth/screens/AccountScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 10,
+      "index": 9,
       "branch": false,
       "evidence": {
         "android": {
@@ -1086,7 +1011,7 @@
       "source": "apps/mobile/src/features/auth/screens/AccountScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Menu mới chia Cá nhân, Công việc và hồ sơ, Bảo mật và hỗ trợ. Chọn vai/hồ sơ đổi ngữ cảnh theo tư cách thành viên, không tự cấp thêm quyền.",
-      "index": 11,
+      "index": 10,
       "branch": false,
       "evidence": {
         "android": {
@@ -1149,7 +1074,7 @@
       ],
       "source": "apps/mobile/src/features/accounts/screens/ProfileScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 12,
+      "index": 11,
       "branch": false,
       "evidence": {
         "android": {
@@ -1211,7 +1136,7 @@
       ],
       "source": "apps/mobile/src/features/accounts/screens/SessionsScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 13,
+      "index": 12,
       "branch": false,
       "evidence": {
         "android": {
@@ -1279,7 +1204,7 @@
       ],
       "source": "apps/mobile/src/features/accounts/screens/AddressesScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 14,
+      "index": 13,
       "branch": false,
       "evidence": {
         "android": {
@@ -1347,7 +1272,7 @@
       ],
       "source": "apps/mobile/src/features/accounts/screens/AddressesScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 15,
+      "index": 14,
       "branch": false,
       "evidence": {
         "android": {
@@ -1410,7 +1335,7 @@
       "source": "apps/mobile/src/features/organizations/screens/VerifyContactScreen.tsx",
       "note": "Bộ seed sử dụng liên hệ mô phỏng. Email local cần Mailpit; SMS chỉ ghi vào tệp local, không gửi tới số thật.",
       "reviewedAt": "02/11/2026",
-      "index": 16,
+      "index": 15,
       "branch": false,
       "evidence": {
         "android": {
@@ -1478,7 +1403,7 @@
       "source": "apps/mobile/src/features/account-security/screens/SecurityScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Chọn mục bằng dãy tab gọn. Mã xác minh và nút gửi lại phụ thuộc thời hạn/giới hạn máy chủ; đổi mục không tái sử dụng chứng cứ xóa tài khoản cũ.",
-      "index": 17,
+      "index": 16,
       "branch": false,
       "evidence": {
         "android": {
@@ -1534,7 +1459,7 @@
       "source": "apps/mobile/src/features/account-security/screens/SecurityScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Chọn mục bằng dãy tab gọn. Mã xác minh và nút gửi lại phụ thuộc thời hạn/giới hạn máy chủ; đổi mục không tái sử dụng chứng cứ xóa tài khoản cũ.",
-      "index": 18,
+      "index": 17,
       "branch": false,
       "evidence": {
         "android": {
@@ -1593,7 +1518,7 @@
       ],
       "source": "apps/mobile/src/features/account-security/screens/RecoveryScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 19,
+      "index": 18,
       "branch": false,
       "evidence": {
         "android": {
@@ -1654,7 +1579,7 @@
       ],
       "source": "apps/mobile/src/features/jobs/screens/JobsScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 20,
+      "index": 19,
       "branch": false,
       "evidence": {
         "android": {
@@ -1717,7 +1642,7 @@
       ],
       "source": "apps/mobile/src/features/jobs/components/JobCalendar.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 21,
+      "index": 20,
       "branch": false,
       "evidence": {
         "android": {
@@ -1780,7 +1705,7 @@
       "state": "Chờ tiếp nhận",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 22,
+      "index": 21,
       "branch": false,
       "evidence": {
         "android": {
@@ -1847,7 +1772,7 @@
       "state": "Đã nhận việc",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 23,
+      "index": 22,
       "branch": false,
       "evidence": {
         "android": {
@@ -1919,7 +1844,7 @@
       "state": "Hóa đơn nháp",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 24,
+      "index": 23,
       "branch": false,
       "evidence": {
         "android": {
@@ -1977,7 +1902,7 @@
       "state": "Hóa đơn nháp",
       "note": "Giao diện hiện thông báo “Hóa đơn sẽ xuất hiện ở đây” khi người thực hiện chưa gửi. Đây là trạng thái chờ có chủ đích, không phải lỗi tải hay bằng chứng khách đọc được bản nháp.",
       "reviewedAt": "02/11/2026",
-      "index": 25,
+      "index": 24,
       "branch": false,
       "evidence": {
         "android": {
@@ -2049,7 +1974,7 @@
       "state": "Hóa đơn đã gửi",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 26,
+      "index": 25,
       "branch": false,
       "evidence": {
         "android": {
@@ -2119,7 +2044,7 @@
       "state": "Hóa đơn đã gửi",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 27,
+      "index": 26,
       "branch": false,
       "evidence": {
         "android": {
@@ -2191,7 +2116,7 @@
       "state": "Khách yêu cầu sửa hóa đơn",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 28,
+      "index": 27,
       "branch": false,
       "evidence": {
         "android": {
@@ -2249,7 +2174,7 @@
       "state": "Khách yêu cầu sửa hóa đơn",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn. Khách đọc lý do sửa và chờ người thực hiện gửi lại; không có nút xác nhận hóa đơn ở trạng thái này.",
       "reviewedAt": "02/11/2026",
-      "index": 29,
+      "index": 28,
       "branch": false,
       "evidence": {
         "android": {
@@ -2313,7 +2238,7 @@
       "state": "Hóa đơn đã xác nhận",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 30,
+      "index": 29,
       "branch": false,
       "evidence": {
         "android": {
@@ -2375,7 +2300,7 @@
       "state": "Hóa đơn đã xác nhận",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 31,
+      "index": 30,
       "branch": false,
       "evidence": {
         "android": {
@@ -2439,7 +2364,7 @@
       "state": "Khách báo đã thanh toán",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 32,
+      "index": 31,
       "branch": false,
       "evidence": {
         "android": {
@@ -2497,7 +2422,7 @@
       "state": "Khách báo đã thanh toán",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 33,
+      "index": 32,
       "branch": false,
       "evidence": {
         "android": {
@@ -2566,7 +2491,7 @@
       "state": "Đã hoàn tất",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 34,
+      "index": 33,
       "branch": false,
       "evidence": {
         "android": {
@@ -2628,7 +2553,7 @@
       "state": "Đã hoàn tất",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 35,
+      "index": 34,
       "branch": false,
       "evidence": {
         "android": {
@@ -2697,7 +2622,7 @@
       "state": "Quản trị hoàn tất thay",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 36,
+      "index": 35,
       "branch": true,
       "evidence": {
         "android": {
@@ -2759,7 +2684,7 @@
       "state": "Quản trị hoàn tất thay",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 37,
+      "index": 36,
       "branch": true,
       "evidence": {
         "android": {
@@ -2818,7 +2743,7 @@
       "state": "Người cung cấp từ chối",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 38,
+      "index": 37,
       "branch": true,
       "evidence": {
         "android": {
@@ -2877,7 +2802,7 @@
       "state": "Khách rút yêu cầu",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 39,
+      "index": 38,
       "branch": true,
       "evidence": {
         "android": {
@@ -2936,7 +2861,7 @@
       "state": "Công việc đã dừng",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 40,
+      "index": 39,
       "branch": true,
       "evidence": {
         "android": {
@@ -3003,7 +2928,7 @@
       "state": "Đã đổi lịch",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 41,
+      "index": 40,
       "branch": true,
       "evidence": {
         "android": {
@@ -3070,7 +2995,7 @@
       "state": "Đã phân công",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 42,
+      "index": 41,
       "branch": true,
       "evidence": {
         "android": {
@@ -3139,7 +3064,7 @@
       "state": "Chờ tiếp nhận",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 43,
+      "index": 42,
       "branch": false,
       "evidence": {
         "android": {
@@ -3217,7 +3142,7 @@
       "state": "Đã nhận việc",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 44,
+      "index": 43,
       "branch": false,
       "evidence": {
         "android": {
@@ -3291,7 +3216,7 @@
       "state": "Hóa đơn nháp",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 45,
+      "index": 44,
       "branch": false,
       "evidence": {
         "android": {
@@ -3359,7 +3284,7 @@
       "state": "Hóa đơn nháp",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 46,
+      "index": 45,
       "branch": false,
       "evidence": {
         "android": {
@@ -3433,7 +3358,7 @@
       "state": "Hóa đơn đã gửi",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 47,
+      "index": 46,
       "branch": false,
       "evidence": {
         "android": {
@@ -3493,7 +3418,7 @@
       "state": "Hóa đơn đã gửi",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn. Đang chờ khách kiểm; không có Lưu nháp hoặc Gửi hóa đơn ở trạng thái sent.",
       "reviewedAt": "02/11/2026",
-      "index": 48,
+      "index": 47,
       "branch": false,
       "evidence": {
         "android": {
@@ -3567,7 +3492,7 @@
       "state": "Khách yêu cầu sửa hóa đơn",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 49,
+      "index": 48,
       "branch": false,
       "evidence": {
         "android": {
@@ -3635,7 +3560,7 @@
       "state": "Khách yêu cầu sửa hóa đơn",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 50,
+      "index": 49,
       "branch": false,
       "evidence": {
         "android": {
@@ -3701,7 +3626,7 @@
       "state": "Hóa đơn đã xác nhận",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 51,
+      "index": 50,
       "branch": false,
       "evidence": {
         "android": {
@@ -3769,7 +3694,7 @@
       "state": "Hóa đơn đã xác nhận",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 52,
+      "index": 51,
       "branch": false,
       "evidence": {
         "android": {
@@ -3835,7 +3760,7 @@
       "state": "Khách báo đã thanh toán",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 53,
+      "index": 52,
       "branch": false,
       "evidence": {
         "android": {
@@ -3903,7 +3828,7 @@
       "state": "Khách báo đã thanh toán",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 54,
+      "index": 53,
       "branch": false,
       "evidence": {
         "android": {
@@ -3974,7 +3899,7 @@
       "state": "Đã hoàn tất",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 55,
+      "index": 54,
       "branch": false,
       "evidence": {
         "android": {
@@ -4038,7 +3963,7 @@
       "state": "Đã hoàn tất",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 56,
+      "index": 55,
       "branch": false,
       "evidence": {
         "android": {
@@ -4109,7 +4034,7 @@
       "state": "Quản trị hoàn tất thay",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 57,
+      "index": 56,
       "branch": true,
       "evidence": {
         "android": {
@@ -4173,7 +4098,7 @@
       "state": "Quản trị hoàn tất thay",
       "note": "Các nút xuất hiện theo vai trò và trạng thái. Không phải mọi nút trong phần giải thích đều hiện cùng lúc. Toàn bộ tiền trong bộ dữ liệu này là mô phỏng local. Sau UX-01: chi phí và nội dung trước ảnh; thanh dưới giữ hành động của bước hiện tại. Không tải được Point thì chưa cho xác nhận, không coi là số dư 0. Lỗi ảnh có thử lại riêng, không che nội dung hóa đơn.",
       "reviewedAt": "02/11/2026",
-      "index": 58,
+      "index": 57,
       "branch": true,
       "evidence": {
         "android": {
@@ -4234,7 +4159,7 @@
       "state": "Người cung cấp từ chối",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 59,
+      "index": 58,
       "branch": true,
       "evidence": {
         "android": {
@@ -4295,7 +4220,7 @@
       "state": "Khách rút yêu cầu",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 60,
+      "index": 59,
       "branch": true,
       "evidence": {
         "android": {
@@ -4356,7 +4281,7 @@
       "state": "Công việc đã dừng",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 61,
+      "index": 60,
       "branch": true,
       "evidence": {
         "android": {
@@ -4434,7 +4359,7 @@
       "state": "Đã đổi lịch",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 62,
+      "index": 61,
       "branch": true,
       "evidence": {
         "android": {
@@ -4512,7 +4437,7 @@
       "state": "Đã phân công",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 63,
+      "index": 62,
       "branch": true,
       "evidence": {
         "android": {
@@ -4584,7 +4509,7 @@
       ],
       "source": "apps/mobile/src/features/reviews/screens/ReviewsScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 64,
+      "index": 63,
       "branch": false,
       "evidence": {
         "android": {
@@ -4658,7 +4583,7 @@
       ],
       "source": "apps/mobile/src/features/reviews/screens/ReviewsScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 65,
+      "index": 64,
       "branch": false,
       "evidence": {
         "android": {
@@ -4721,7 +4646,7 @@
       ],
       "source": "apps/mobile/src/features/partners/screens/PartnersScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 66,
+      "index": 65,
       "branch": false,
       "evidence": {
         "android": {
@@ -4779,7 +4704,7 @@
       "source": "apps/mobile/src/features/partners/screens/PartnerEditorScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Các nhóm Giới thiệu, Kỹ năng và giá, Vùng phục vụ, Địa điểm, Ảnh công khai nằm trong dãy tab. Chuyển nhóm giữ nội dung đang nhập; chỉ nút Lưu của nhóm mới ghi dữ liệu. Công khai hồ sơ khác với bật nhận việc.",
-      "index": 67,
+      "index": 66,
       "branch": false,
       "evidence": {
         "android": {
@@ -4846,7 +4771,7 @@
       "source": "apps/mobile/src/features/partners/screens/PartnerEditorScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Các nhóm Giới thiệu, Kỹ năng và giá, Vùng phục vụ, Địa điểm, Ảnh công khai nằm trong dãy tab. Chuyển nhóm giữ nội dung đang nhập; chỉ nút Lưu của nhóm mới ghi dữ liệu. Công khai hồ sơ khác với bật nhận việc.",
-      "index": 68,
+      "index": 67,
       "branch": false,
       "evidence": {
         "android": {
@@ -4899,7 +4824,7 @@
       "source": "apps/mobile/src/features/partners/screens/PartnerEditorScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Các nhóm Giới thiệu, Kỹ năng và giá, Vùng phục vụ, Địa điểm, Ảnh công khai nằm trong dãy tab. Chuyển nhóm giữ nội dung đang nhập; chỉ nút Lưu của nhóm mới ghi dữ liệu. Công khai hồ sơ khác với bật nhận việc.",
-      "index": 69,
+      "index": 68,
       "branch": false,
       "evidence": {
         "android": {
@@ -4956,7 +4881,7 @@
       "source": "apps/mobile/src/features/partners/screens/PartnerEditorScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Các nhóm Giới thiệu, Kỹ năng và giá, Vùng phục vụ, Địa điểm, Ảnh công khai nằm trong dãy tab. Chuyển nhóm giữ nội dung đang nhập; chỉ nút Lưu của nhóm mới ghi dữ liệu. Công khai hồ sơ khác với bật nhận việc.",
-      "index": 70,
+      "index": 69,
       "branch": false,
       "evidence": {
         "android": {
@@ -5013,7 +4938,7 @@
       "source": "apps/mobile/src/features/partners/screens/PartnerEditorScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Các nhóm Giới thiệu, Kỹ năng và giá, Vùng phục vụ, Địa điểm, Ảnh công khai nằm trong dãy tab. Chuyển nhóm giữ nội dung đang nhập; chỉ nút Lưu của nhóm mới ghi dữ liệu. Công khai hồ sơ khác với bật nhận việc.",
-      "index": 71,
+      "index": 70,
       "branch": false,
       "evidence": {
         "android": {
@@ -5075,7 +5000,7 @@
       "source": "apps/mobile/src/features/partners/screens/PartnerEditorScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Các nhóm Giới thiệu, Kỹ năng và giá, Vùng phục vụ, Địa điểm, Ảnh công khai nằm trong dãy tab. Chuyển nhóm giữ nội dung đang nhập; chỉ nút Lưu của nhóm mới ghi dữ liệu. Công khai hồ sơ khác với bật nhận việc.",
-      "index": 72,
+      "index": 71,
       "branch": false,
       "evidence": {
         "android": {
@@ -5136,7 +5061,7 @@
       "source": "apps/mobile/src/features/partners/screens/PartnerEditorScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Các nhóm Giới thiệu, Kỹ năng và giá, Vùng phục vụ, Địa điểm, Ảnh công khai nằm trong dãy tab. Chuyển nhóm giữ nội dung đang nhập; chỉ nút Lưu của nhóm mới ghi dữ liệu. Công khai hồ sơ khác với bật nhận việc.",
-      "index": 73,
+      "index": 72,
       "branch": false,
       "evidence": {
         "android": {
@@ -5196,45 +5121,39 @@
       ],
       "source": "apps/mobile/src/features/verification/screens/VerificationScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 74,
+      "index": 73,
       "branch": false,
       "evidence": {
         "android": {
           "platform": "android",
           "key": "verification",
-          "status": "captured-with-issue",
+          "status": "captured",
           "role": "Chủ hồ sơ (seed 0)",
-          "checkedAt": "02/11/2026",
-          "reviewedAt": "2026-11-02T09:08:38.742620+00:00",
-          "image": "anh/B00-14-UX01/android-verification.png",
-          "sha256": "c90abb85dcee917f5ed9b23d11a5c05c5e2e5814dca9892787a01fd1cb23728d",
-          "issueIds": [
-            "NATIVE-03"
-          ],
-          "reason": "Lần đầu mở xác minh báo lỗi; tải lại thì được. Android và iOS từng hiện Chưa thể cập nhật / kiểm tra kết nối. Bấm Thử lại hoặc Tải lại kết quả đã hiện Đã xác minh. iOS gặp ở hai lượt mở. Chưa kết luận nguyên nhân gốc.",
+          "checkedAt": "04/11/2026",
+          "reviewedAt": "2026-11-04T01:45:54.238051+00:00",
+          "image": "anh/B00-14-UX01/android-verification-20261104.png",
+          "sha256": "f56d2b16d5581e4c2a7b36227c8449da12907abeadb4f581361f96ee6e400e33",
+          "reason": "Mở và đọc được Đã xác minh, không bấm thử lại.",
           "captureMethod": "Installed native app, actual UI or supported dvqb deep link; screenshot visually reviewed",
           "database": "dvqb_local"
         },
         "ios": {
           "platform": "ios",
           "key": "verification",
-          "status": "captured-with-issue",
+          "status": "captured",
           "role": "Chủ hồ sơ (seed 0)",
-          "checkedAt": "02/11/2026",
-          "reviewedAt": "2026-11-02T08:58:38.519378+00:00",
-          "image": "anh/B00-14-UX01/ios-verification.png",
-          "sha256": "e18bedd97b8f6443eedc0d08b928dd3def6675718f40d1f5b92cbe3f2b90193c",
-          "issueIds": [
-            "NATIVE-03"
-          ],
-          "reason": "Lần đầu mở xác minh báo lỗi; tải lại thì được. Android và iOS từng hiện Chưa thể cập nhật / kiểm tra kết nối. Bấm Thử lại hoặc Tải lại kết quả đã hiện Đã xác minh. iOS gặp ở hai lượt mở. Chưa kết luận nguyên nhân gốc.",
+          "checkedAt": "04/11/2026",
+          "reviewedAt": "2026-11-04T01:45:54.238051+00:00",
+          "image": "anh/B00-14-UX01/ios-verification-20261104.png",
+          "sha256": "daf801532b5c2afdaf71ee86fa2421629739e966d5bf18989cba819c9cbcece1",
+          "reason": "Mở và đọc được Đã xác minh, không bấm thử lại.",
           "captureMethod": "Installed native app, actual UI or supported dvqb deep link; screenshot visually reviewed",
           "database": "dvqb_local"
         }
       },
       "images": {
-        "android": "anh/B00-14-UX01/android-verification.png",
-        "ios": "anh/B00-14-UX01/ios-verification.png"
+        "android": "anh/B00-14-UX01/android-verification-20261104.png",
+        "ios": "anh/B00-14-UX01/ios-verification-20261104.png"
       }
     },
     {
@@ -5272,7 +5191,7 @@
       ],
       "source": "apps/mobile/src/features/organizations/screens/OrganizationsScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 75,
+      "index": 74,
       "branch": false,
       "evidence": {
         "android": {
@@ -5335,7 +5254,7 @@
       "source": "apps/mobile/src/features/organizations/screens/TeamScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Dãy tab chuyển giữa các nhóm thành viên. Quyền được trình bày bằng tên và mô tả; kiểm tóm tắt cấp thêm/thu hồi trước Lưu quyền. Không có thay đổi thì nút lưu bị khóa.",
-      "index": 76,
+      "index": 75,
       "branch": false,
       "evidence": {
         "android": {
@@ -5397,7 +5316,7 @@
       "source": "apps/mobile/src/features/organizations/screens/TeamScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Dãy tab chuyển giữa các nhóm thành viên. Quyền được trình bày bằng tên và mô tả; kiểm tóm tắt cấp thêm/thu hồi trước Lưu quyền. Không có thay đổi thì nút lưu bị khóa.",
-      "index": 77,
+      "index": 76,
       "branch": false,
       "evidence": {
         "android": {
@@ -5454,7 +5373,7 @@
       "source": "apps/mobile/src/features/organizations/screens/TeamScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Dãy tab chuyển giữa các nhóm thành viên. Quyền được trình bày bằng tên và mô tả; kiểm tóm tắt cấp thêm/thu hồi trước Lưu quyền. Không có thay đổi thì nút lưu bị khóa.",
-      "index": 78,
+      "index": 77,
       "branch": false,
       "evidence": {
         "android": {
@@ -5512,7 +5431,7 @@
       "source": "apps/mobile/src/features/organizations/screens/TeamScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Dãy tab chuyển giữa các nhóm thành viên. Quyền được trình bày bằng tên và mô tả; kiểm tóm tắt cấp thêm/thu hồi trước Lưu quyền. Không có thay đổi thì nút lưu bị khóa.",
-      "index": 79,
+      "index": 78,
       "branch": false,
       "evidence": {
         "android": {
@@ -5573,7 +5492,7 @@
       "source": "apps/mobile/src/features/organizations/screens/TeamScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Dãy tab chuyển giữa các nhóm thành viên. Quyền được trình bày bằng tên và mô tả; kiểm tóm tắt cấp thêm/thu hồi trước Lưu quyền. Không có thay đổi thì nút lưu bị khóa.",
-      "index": 80,
+      "index": 79,
       "branch": false,
       "evidence": {
         "android": {
@@ -5638,7 +5557,7 @@
       "source": "apps/mobile/src/features/organizations/screens/TeamScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Dãy tab chuyển giữa các nhóm thành viên. Quyền được trình bày bằng tên và mô tả; kiểm tóm tắt cấp thêm/thu hồi trước Lưu quyền. Không có thay đổi thì nút lưu bị khóa.",
-      "index": 81,
+      "index": 80,
       "branch": false,
       "evidence": {
         "android": {
@@ -5699,7 +5618,7 @@
       "source": "apps/mobile/src/features/organizations/screens/TeamScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Dãy tab chuyển giữa các nhóm thành viên. Quyền được trình bày bằng tên và mô tả; kiểm tóm tắt cấp thêm/thu hồi trước Lưu quyền. Không có thay đổi thì nút lưu bị khóa.",
-      "index": 82,
+      "index": 81,
       "branch": false,
       "evidence": {
         "android": {
@@ -5757,7 +5676,7 @@
       "source": "apps/mobile/src/features/organizations/screens/OrganizationsScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Dãy tab chuyển giữa các nhóm thành viên. Quyền được trình bày bằng tên và mô tả; kiểm tóm tắt cấp thêm/thu hồi trước Lưu quyền. Không có thay đổi thì nút lưu bị khóa.",
-      "index": 83,
+      "index": 82,
       "branch": false,
       "evidence": {
         "android": {
@@ -5826,7 +5745,7 @@
       "source": "apps/mobile/src/features/finance/screens/FinanceScreen.tsx",
       "note": "Nhân viên chỉ xem/thao tác nếu được cấp quyền tương ứng. Ngân hàng và tiền trong đợt seed là mô phỏng local. Quay lại tổng quan ví vẫn dùng được khi đang đọc dữ liệu, nhưng bị chặn trong lúc gửi/thử lại giao dịch. Gửi thành công mở chi tiết yêu cầu thật; chưa có nghĩa tiền đã được ngân hàng xử lý.",
       "reviewedAt": "02/11/2026",
-      "index": 84,
+      "index": 83,
       "branch": false,
       "evidence": {
         "android": {
@@ -5883,7 +5802,7 @@
       "source": "apps/mobile/src/features/finance/screens/FinanceScreen.tsx",
       "note": "Nhân viên chỉ xem/thao tác nếu được cấp quyền tương ứng. Ngân hàng và tiền trong đợt seed là mô phỏng local. Quay lại tổng quan ví vẫn dùng được khi đang đọc dữ liệu, nhưng bị chặn trong lúc gửi/thử lại giao dịch. Gửi thành công mở chi tiết yêu cầu thật; chưa có nghĩa tiền đã được ngân hàng xử lý.",
       "reviewedAt": "02/11/2026",
-      "index": 85,
+      "index": 84,
       "branch": false,
       "evidence": {
         "android": {
@@ -5940,7 +5859,7 @@
       "source": "apps/mobile/src/features/finance/screens/FinanceScreen.tsx",
       "note": "Nhân viên chỉ xem/thao tác nếu được cấp quyền tương ứng. Ngân hàng và tiền trong đợt seed là mô phỏng local. Quay lại tổng quan ví vẫn dùng được khi đang đọc dữ liệu, nhưng bị chặn trong lúc gửi/thử lại giao dịch. Gửi thành công mở chi tiết yêu cầu thật; chưa có nghĩa tiền đã được ngân hàng xử lý.",
       "reviewedAt": "02/11/2026",
-      "index": 86,
+      "index": 85,
       "branch": false,
       "evidence": {
         "android": {
@@ -5997,7 +5916,7 @@
       "source": "apps/mobile/src/features/finance/screens/FinanceScreen.tsx",
       "note": "Nhân viên chỉ xem/thao tác nếu được cấp quyền tương ứng. Ngân hàng và tiền trong đợt seed là mô phỏng local. Quay lại tổng quan ví vẫn dùng được khi đang đọc dữ liệu, nhưng bị chặn trong lúc gửi/thử lại giao dịch. Gửi thành công mở chi tiết yêu cầu thật; chưa có nghĩa tiền đã được ngân hàng xử lý.",
       "reviewedAt": "02/11/2026",
-      "index": 87,
+      "index": 86,
       "branch": false,
       "evidence": {
         "android": {
@@ -6048,7 +5967,7 @@
         ],
         [
           "Dòng giao dịch",
-          "Mở chi tiết trạng thái và lịch sử xử lý.",
+          "Mở màn chi tiết riêng ngay trên lịch sử; đóng để giữ bộ lọc và vị trí đọc.",
           "finance-detail"
         ],
         [
@@ -6059,7 +5978,7 @@
       "source": "apps/mobile/src/features/finance/screens/FinanceScreen.tsx",
       "note": "Nhân viên chỉ xem/thao tác nếu được cấp quyền tương ứng. Ngân hàng và tiền trong đợt seed là mô phỏng local. Quay lại tổng quan ví vẫn dùng được khi đang đọc dữ liệu, nhưng bị chặn trong lúc gửi/thử lại giao dịch. Gửi thành công mở chi tiết yêu cầu thật; chưa có nghĩa tiền đã được ngân hàng xử lý.",
       "reviewedAt": "02/11/2026",
-      "index": 88,
+      "index": 87,
       "branch": false,
       "evidence": {
         "android": {
@@ -6101,7 +6020,7 @@
         "owner",
         "manager"
       ],
-      "purpose": "Xem trạng thái xử lý, chứng cứ và các lần quyết định.",
+      "purpose": "Xem trạng thái, chứng cứ và quyết định trong màn chi tiết riêng.",
       "entry": "Ví của hồ sơ → Chi tiết giao dịch.",
       "buttons": [
         [
@@ -6121,45 +6040,39 @@
       "source": "apps/mobile/src/features/finance/screens/FinanceScreen.tsx",
       "note": "Nhân viên chỉ xem/thao tác nếu được cấp quyền tương ứng. Ngân hàng và tiền trong đợt seed là mô phỏng local. Quay lại tổng quan ví vẫn dùng được khi đang đọc dữ liệu, nhưng bị chặn trong lúc gửi/thử lại giao dịch. Gửi thành công mở chi tiết yêu cầu thật; chưa có nghĩa tiền đã được ngân hàng xử lý.",
       "reviewedAt": "02/11/2026",
-      "index": 89,
+      "index": 88,
       "branch": false,
       "evidence": {
         "android": {
           "platform": "android",
           "key": "finance-detail",
-          "status": "captured-with-issue",
+          "status": "captured",
           "role": "Chủ hồ sơ (seed 0)",
-          "checkedAt": "02/11/2026",
-          "reviewedAt": "2026-11-02T09:08:38.739903+00:00",
-          "image": "anh/B00-14-UX01/android-finance-detail.png",
-          "sha256": "d4921157511b41d4804ecade1a96cdfd2ab8ee1bc93aa646df63eec208f2790d",
-          "issueIds": [
-            "NATIVE-04"
-          ],
-          "reason": "Chi tiết giao dịch nằm sau toàn bộ lịch sử ví. Bấm một giao dịch không đưa người dùng tới chi tiết. Phải cuộn qua danh sách dài mới thấy; dễ tưởng nút không hoạt động. Đã mở và chụp được chi tiết sau khi cuộn. Code dựng thẻ chi tiết sau danh sách, chưa sửa trong đợt này.",
+          "checkedAt": "04/11/2026",
+          "reviewedAt": "2026-11-04T01:45:54.238051+00:00",
+          "image": "anh/B00-14-UX01/android-finance-detail-20261104.png",
+          "sha256": "b048289228d8541c9ecd97c8ba967748fe09c895068412d4d7010abdae914360",
+          "reason": "Bấm giao dịch mở màn chi tiết riêng; đóng quay lại lịch sử.",
           "captureMethod": "Installed native app, actual UI or supported dvqb deep link; screenshot visually reviewed",
           "database": "dvqb_local"
         },
         "ios": {
           "platform": "ios",
           "key": "finance-detail",
-          "status": "captured-with-issue",
+          "status": "captured",
           "role": "Chủ hồ sơ (seed 0)",
-          "checkedAt": "02/11/2026",
-          "reviewedAt": "2026-11-02T09:47:27.542978+00:00",
-          "image": "anh/B00-14-UX01/ios-finance-detail.png",
-          "sha256": "58f4ff0353223500c335d1b4e646848f0e9ac9ba2fca058c97245685bc8235b0",
-          "issueIds": [
-            "NATIVE-04"
-          ],
-          "reason": "Chi tiết giao dịch nằm sau toàn bộ lịch sử ví. Bấm một giao dịch không đưa người dùng tới chi tiết. Phải cuộn qua danh sách dài mới thấy; dễ tưởng nút không hoạt động. Đã mở và chụp được chi tiết sau khi cuộn. Code dựng thẻ chi tiết sau danh sách, chưa sửa trong đợt này.",
+          "checkedAt": "04/11/2026",
+          "reviewedAt": "2026-11-04T01:45:54.238051+00:00",
+          "image": "anh/B00-14-UX01/ios-finance-detail-20261104.png",
+          "sha256": "7fe5aad2ecff674c9220141c9288ba79a4c4dd6068dea8b45f141b409d7305c7",
+          "reason": "Bấm giao dịch mở màn chi tiết riêng; đóng quay lại lịch sử.",
           "captureMethod": "Installed native app, actual UI or supported dvqb deep link; screenshot visually reviewed",
           "database": "dvqb_local"
         }
       },
       "images": {
-        "android": "anh/B00-14-UX01/android-finance-detail.png",
-        "ios": "anh/B00-14-UX01/ios-finance-detail.png"
+        "android": "anh/B00-14-UX01/android-finance-detail-20261104.png",
+        "ios": "anh/B00-14-UX01/ios-finance-detail-20261104.png"
       }
     },
     {
@@ -6188,7 +6101,7 @@
       ],
       "source": "apps/mobile/src/features/chat/screens/ConversationsScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 90,
+      "index": 89,
       "branch": false,
       "evidence": {
         "android": {
@@ -6260,7 +6173,7 @@
       "source": "apps/mobile/src/features/chat/screens/ConversationScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Chỉ khi đang ở cuối mới cập nhật mốc đọc. Mất quyền thì bỏ dữ liệu hội thoại và khóa ô soạn. Bàn phím Android đã kiểm; bàn phím ảo iOS chưa xác nhận.",
-      "index": 91,
+      "index": 90,
       "branch": false,
       "evidence": {
         "android": {
@@ -6322,52 +6235,52 @@
         [
           "Kết thúc",
           "Kết thúc phiên gọi."
+        ],
+        [
+          "Đóng",
+          "Đóng lỗi không tạo được cuộc gọi; giữ tác vụ chưa rõ kết quả để đối soát."
+        ],
+        [
+          "Xem cuộc gọi chưa xác nhận",
+          "Mở lại tác vụ chưa rõ kết quả và thử lại bằng cùng mã yêu cầu."
         ]
       ],
       "source": "apps/mobile/src/features/calls",
       "note": "Ảnh và thao tác cuộc gọi cần LiveKit local đang chạy. Không dùng một dòng lịch sử gọi để chứng minh âm thanh đã hoạt động.",
       "reviewedAt": "02/11/2026",
-      "index": 92,
+      "index": 91,
       "branch": false,
       "evidence": {
         "android": {
           "platform": "android",
           "key": "call",
-          "status": "captured-with-issue",
+          "status": "captured",
           "role": "Chủ hồ sơ (seed 0)",
-          "checkedAt": "02/11/2026",
-          "reviewedAt": "2026-11-02T09:25:32.358276+00:00",
-          "image": "anh/B00-14-UX01/android-call.png",
-          "sha256": "9cb97f0e7c01ef50f6d04b6b8ab19640f8bf72db8a792f2c63240759fdeb2868",
-          "issueIds": [
-            "NATIVE-01",
-            "NATIVE-02"
-          ],
-          "reason": "Cuộc gọi chưa kết nối được máy chủ. Cả hai nền tảng hiện lỗi kết nối. API local chưa có cấu hình LIVEKIT; CallsService trả CALLS_UNAVAILABLE khi thiếu media. Có ảnh hộp thoại lỗi, chưa có ảnh cuộc gọi kết nối/đổ chuông và chưa kiểm âm thanh. Hộp thoại gọi lỗi không có nút đóng khi còn thao tác chờ. Chỉ có Thử lại; call-close bị ẩn khi pending. iOS phải mở lại app để rời hộp thoại. Android thoát được bằng Back hệ thống. Cần bổ sung đường hủy/đóng phù hợp, chưa sửa code trong đợt chụp.",
+          "checkedAt": "04/11/2026",
+          "reviewedAt": "2026-11-04T01:45:54.238051+00:00",
+          "image": "anh/B00-14-UX01/android-call-20261104.png",
+          "sha256": "c156c0778eef0c388828e211dc061a7a10bb7f0b554129e087f75ef0427ed810",
+          "reason": "Đã kết nối Android gọi iOS bằng LiveKit local; tắt mic cả hai bên và kết thúc. Chưa đo chất lượng thoại.",
           "captureMethod": "Installed native app, actual UI or supported dvqb deep link; screenshot visually reviewed",
           "database": "dvqb_local"
         },
         "ios": {
           "platform": "ios",
           "key": "call",
-          "status": "captured-with-issue",
-          "role": "Chủ hồ sơ (seed 0)",
-          "checkedAt": "02/11/2026",
-          "reviewedAt": "2026-11-02T08:58:38.513045+00:00",
-          "image": "anh/B00-14-UX01/ios-call.png",
-          "sha256": "ff37d2ee43de10a85549f081e8b79bd2c88257a61a609338a46fece0f97322e4",
-          "issueIds": [
-            "NATIVE-01",
-            "NATIVE-02"
-          ],
-          "reason": "Cuộc gọi chưa kết nối được máy chủ. Cả hai nền tảng hiện lỗi kết nối. API local chưa có cấu hình LIVEKIT; CallsService trả CALLS_UNAVAILABLE khi thiếu media. Có ảnh hộp thoại lỗi, chưa có ảnh cuộc gọi kết nối/đổ chuông và chưa kiểm âm thanh. Hộp thoại gọi lỗi không có nút đóng khi còn thao tác chờ. Chỉ có Thử lại; call-close bị ẩn khi pending. iOS phải mở lại app để rời hộp thoại. Android thoát được bằng Back hệ thống. Cần bổ sung đường hủy/đóng phù hợp, chưa sửa code trong đợt chụp.",
+          "status": "captured",
+          "role": "Khách thuê (seed 151)",
+          "checkedAt": "04/11/2026",
+          "reviewedAt": "2026-11-04T01:45:54.238051+00:00",
+          "image": "anh/B00-14-UX01/ios-call-20261104.png",
+          "sha256": "f0678faba72762731b85bb93cfd652f59bd2c7ff5614a5ca7735c35995b2b9dd",
+          "reason": "Đã kết nối Android gọi iOS bằng LiveKit local; tắt mic cả hai bên và kết thúc. Chưa đo chất lượng thoại.",
           "captureMethod": "Installed native app, actual UI or supported dvqb deep link; screenshot visually reviewed",
           "database": "dvqb_local"
         }
       },
       "images": {
-        "android": "anh/B00-14-UX01/android-call.png",
-        "ios": "anh/B00-14-UX01/ios-call.png"
+        "android": "anh/B00-14-UX01/android-call-20261104.png",
+        "ios": "anh/B00-14-UX01/ios-call-20261104.png"
       }
     },
     {
@@ -6399,7 +6312,7 @@
       ],
       "source": "apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 93,
+      "index": 92,
       "branch": false,
       "evidence": {
         "android": {
@@ -6467,7 +6380,7 @@
       "source": "apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Giữ nháp không đồng nghĩa đã lưu. Không cam kết giữ nháp sau khi đóng app, không chứng minh push thật.",
-      "index": 94,
+      "index": 93,
       "branch": false,
       "evidence": {
         "android": {
@@ -6536,7 +6449,7 @@
       "source": "apps/mobile/src/features/support/screens/SupportScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Dãy tab lọc báo cáo theo trạng thái; thẻ ưu tiên tiêu đề trước mã. Mở thẻ để xem chi tiết và phản hồi đúng báo cáo.",
-      "index": 95,
+      "index": 94,
       "branch": false,
       "evidence": {
         "android": {
@@ -6594,7 +6507,7 @@
       ],
       "source": "apps/mobile/src/features/support/screens/SupportScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 96,
+      "index": 95,
       "branch": false,
       "evidence": {
         "android": {
@@ -6652,7 +6565,7 @@
       ],
       "source": "apps/mobile/src/features/support/screens/SupportScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 97,
+      "index": 96,
       "branch": false,
       "evidence": {
         "android": {
@@ -6707,7 +6620,7 @@
       ],
       "source": "apps/mobile/src/features/support/screens/SupportScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 98,
+      "index": 97,
       "branch": false,
       "evidence": {
         "android": {
@@ -6766,7 +6679,7 @@
       ],
       "source": "apps/mobile/src/features/admin/screens/AdminScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 99,
+      "index": 98,
       "branch": false,
       "evidence": {
         "android": {
@@ -6832,7 +6745,7 @@
       "source": "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
       "permission": "accounts.manage",
       "reviewedAt": "02/11/2026",
-      "index": 100,
+      "index": 99,
       "branch": false,
       "evidence": {
         "android": {
@@ -6894,7 +6807,7 @@
       "permission": "accounts.manage",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 101,
+      "index": 100,
       "branch": false,
       "evidence": {
         "android": {
@@ -6960,7 +6873,7 @@
       "source": "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
       "permission": "moderation.manage",
       "reviewedAt": "02/11/2026",
-      "index": 102,
+      "index": 101,
       "branch": false,
       "evidence": {
         "android": {
@@ -7026,7 +6939,7 @@
       "permission": "moderation.manage",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 103,
+      "index": 102,
       "branch": false,
       "evidence": {
         "android": {
@@ -7092,7 +7005,7 @@
       "source": "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
       "permission": "catalog.manage",
       "reviewedAt": "02/11/2026",
-      "index": 104,
+      "index": 103,
       "branch": false,
       "evidence": {
         "android": {
@@ -7154,7 +7067,7 @@
       "permission": "catalog.manage",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 105,
+      "index": 104,
       "branch": false,
       "evidence": {
         "android": {
@@ -7220,7 +7133,7 @@
       "source": "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
       "permission": "catalog.manage",
       "reviewedAt": "02/11/2026",
-      "index": 106,
+      "index": 105,
       "branch": false,
       "evidence": {
         "android": {
@@ -7282,7 +7195,7 @@
       "permission": "catalog.manage",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 107,
+      "index": 106,
       "branch": false,
       "evidence": {
         "android": {
@@ -7348,7 +7261,7 @@
       "source": "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
       "permission": "support.read / support.manage",
       "reviewedAt": "02/11/2026",
-      "index": 108,
+      "index": 107,
       "branch": false,
       "evidence": {
         "android": {
@@ -7418,7 +7331,7 @@
       "permission": "support.read / support.manage",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 109,
+      "index": 108,
       "branch": false,
       "evidence": {
         "android": {
@@ -7484,7 +7397,7 @@
       "source": "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
       "permission": "moderation.manage",
       "reviewedAt": "02/11/2026",
-      "index": 110,
+      "index": 109,
       "branch": false,
       "evidence": {
         "android": {
@@ -7550,7 +7463,7 @@
       "permission": "moderation.manage",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 111,
+      "index": 110,
       "branch": false,
       "evidence": {
         "android": {
@@ -7616,7 +7529,7 @@
       "source": "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
       "permission": "moderation.manage",
       "reviewedAt": "02/11/2026",
-      "index": 112,
+      "index": 111,
       "branch": false,
       "evidence": {
         "android": {
@@ -7678,7 +7591,7 @@
       "permission": "moderation.manage",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 113,
+      "index": 112,
       "branch": false,
       "evidence": {
         "android": {
@@ -7738,7 +7651,7 @@
       "source": "apps/mobile/src/features/admin/screens/AdminDesk.tsx",
       "permission": "audit.read",
       "reviewedAt": "02/11/2026",
-      "index": 114,
+      "index": 113,
       "branch": false,
       "evidence": {
         "android": {
@@ -7804,7 +7717,7 @@
       "source": "apps/mobile/src/features/finance/screens/AdminFinance.tsx",
       "permission": "finance.read / finance.review",
       "reviewedAt": "02/11/2026",
-      "index": 115,
+      "index": 114,
       "branch": false,
       "evidence": {
         "android": {
@@ -7882,7 +7795,7 @@
       "permission": "finance.read / finance.review",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 116,
+      "index": 115,
       "branch": false,
       "evidence": {
         "android": {
@@ -7948,7 +7861,7 @@
       "source": "apps/mobile/src/features/admin/screens/P2Desk.tsx",
       "permission": "finance.read",
       "reviewedAt": "02/11/2026",
-      "index": 117,
+      "index": 116,
       "branch": false,
       "evidence": {
         "android": {
@@ -8005,7 +7918,7 @@
       "permission": "finance.read",
       "note": "Màn tra cứu chỉ đọc; không có nút quyết định trạng thái hay sửa số tiền. Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
       "reviewedAt": "02/11/2026",
-      "index": 118,
+      "index": 117,
       "branch": false,
       "evidence": {
         "android": {
@@ -8061,7 +7974,7 @@
       "source": "apps/mobile/src/features/backoffice/BackofficePanel.tsx",
       "permission": "reports.read",
       "reviewedAt": "02/11/2026",
-      "index": 119,
+      "index": 118,
       "branch": false,
       "evidence": {
         "android": {
@@ -8127,7 +8040,7 @@
       "source": "apps/mobile/src/features/admin/screens/P2Desk.tsx",
       "permission": "reports.read",
       "reviewedAt": "02/11/2026",
-      "index": 120,
+      "index": 119,
       "branch": false,
       "evidence": {
         "android": {
@@ -8184,7 +8097,7 @@
       "permission": "reports.read",
       "note": "Màn tra cứu chỉ đọc; không có nút quyết định trạng thái hay sửa số tiền. Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
       "reviewedAt": "02/11/2026",
-      "index": 121,
+      "index": 120,
       "branch": false,
       "evidence": {
         "android": {
@@ -8250,7 +8163,7 @@
       "source": "apps/mobile/src/features/admin/screens/RecoveryPanel.tsx",
       "permission": "accounts.manage",
       "reviewedAt": "02/11/2026",
-      "index": 122,
+      "index": 121,
       "branch": false,
       "evidence": {
         "android": {
@@ -8312,7 +8225,7 @@
       "permission": "accounts.manage",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 123,
+      "index": 122,
       "branch": false,
       "evidence": {
         "android": {
@@ -8378,7 +8291,7 @@
       "source": "apps/mobile/src/features/admin/screens/RecoveryPanel.tsx",
       "permission": "accounts.manage",
       "reviewedAt": "02/11/2026",
-      "index": 124,
+      "index": 123,
       "branch": false,
       "evidence": {
         "android": {
@@ -8444,7 +8357,7 @@
       "permission": "accounts.manage",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 125,
+      "index": 124,
       "branch": false,
       "evidence": {
         "android": {
@@ -8510,7 +8423,7 @@
       "source": "apps/mobile/src/features/admin/screens/P2Desk.tsx",
       "permission": "grant.manage",
       "reviewedAt": "02/11/2026",
-      "index": 126,
+      "index": 125,
       "branch": false,
       "evidence": {
         "android": {
@@ -8576,7 +8489,7 @@
       "permission": "grant.manage",
       "reviewedAt": "02/11/2026",
       "note": "Mục xét duyệt có lựa chọn hành động, nội dung/lý do và một nút gửi. Đọc kỹ lựa chọn trước khi gửi; thử lại giữ yêu cầu đang chờ. Chỉ có quyền đọc thì không được ra quyết định.",
-      "index": 127,
+      "index": 126,
       "branch": false,
       "evidence": {
         "android": {
@@ -8635,7 +8548,7 @@
       "source": "apps/mobile/src/features/auth/screens/AccountScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Menu mới chia Cá nhân, Công việc và hồ sơ, Bảo mật và hỗ trợ. Chọn vai/hồ sơ đổi ngữ cảnh theo tư cách thành viên, không tự cấp thêm quyền.",
-      "index": 128,
+      "index": 127,
       "branch": false,
       "evidence": {
         "android": {
@@ -8692,7 +8605,7 @@
       ],
       "source": "apps/mobile/src/features/organizations/screens/OrganizationsScreen.tsx",
       "reviewedAt": "02/11/2026",
-      "index": 129,
+      "index": 128,
       "branch": false,
       "evidence": {
         "android": {
@@ -8751,7 +8664,7 @@
       "source": "apps/mobile/src/features/jobs/screens/JobDetailScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Sau UX-01: hành động chính nằm ở thanh dưới màn hình; lý do, thời gian và người được giao ở phần nội dung. Rút/từ chối/dừng tách khỏi bước tiếp theo; máy chủ vẫn quyết định nút hợp lệ.",
-      "index": 130,
+      "index": 129,
       "branch": false,
       "evidence": {
         "android": {
@@ -8809,7 +8722,7 @@
       "source": "apps/mobile/src/features/auth/screens/AccountScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Menu mới chia Cá nhân, Công việc và hồ sơ, Bảo mật và hỗ trợ. Chọn vai/hồ sơ đổi ngữ cảnh theo tư cách thành viên, không tự cấp thêm quyền.",
-      "index": 131,
+      "index": 130,
       "branch": false,
       "evidence": {
         "android": {
@@ -8868,7 +8781,7 @@
       "source": "apps/mobile/src/features/account-security/screens/SecurityScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Chọn mục bằng dãy tab gọn. Mã xác minh và nút gửi lại phụ thuộc thời hạn/giới hạn máy chủ; đổi mục không tái sử dụng chứng cứ xóa tài khoản cũ.",
-      "index": 132,
+      "index": 131,
       "branch": false,
       "evidence": {
         "android": {
@@ -8931,7 +8844,7 @@
       "source": "apps/mobile/src/features/account-security/screens/SecurityScreen.tsx",
       "reviewedAt": "02/11/2026",
       "note": "Chọn mục bằng dãy tab gọn. Mã xác minh và nút gửi lại phụ thuộc thời hạn/giới hạn máy chủ; đổi mục không tái sử dụng chứng cứ xóa tài khoản cũ.",
-      "index": 133,
+      "index": 132,
       "branch": false,
       "evidence": {
         "android": {
@@ -8995,7 +8908,7 @@
       "source": "apps/mobile/src/features/admin/screens/MfaSecurity.tsx",
       "note": "Ảnh chỉ chụp biểu mẫu khi chưa tạo/hiển thị mã bí mật.",
       "reviewedAt": "02/11/2026",
-      "index": 134,
+      "index": 133,
       "branch": false,
       "evidence": {
         "android": {
@@ -9145,9 +9058,6 @@
     ],
     "CatalogHome": [
       "home"
-    ],
-    "CatalogCategory": [
-      "catalog-category"
     ],
     "Account": [
       "login",

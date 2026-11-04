@@ -1,0 +1,153 @@
+{
+  "checkedAt": "04/11/2026",
+  "database": "dvqb_local",
+  "devices": {
+    "android": "DVQB_API_36 / Android 16 Emulator",
+    "ios": "iPhone 18 Pro / iOS 27 Simulator"
+  },
+  "scope": "working tree; local emulator/simulator; not CI, physical device or UAT",
+  "call": {
+    "before-call": {
+      "at": "2026-11-04T01:40:09.371Z",
+      "calls": 2,
+      "locks": 0
+    },
+    "livekit-connected": {
+      "at": "2026-11-04T01:41:47.836Z",
+      "rooms": [
+        {
+          "room": "dvqb-call-3d9d22b1-b4b8-4622-a9bc-e5de8f6f9e13",
+          "participants": [
+            {
+              "state": 2,
+              "tracks": [
+                {
+                  "source": 2,
+                  "type": 0,
+                  "muted": false
+                }
+              ]
+            },
+            {
+              "state": 2,
+              "tracks": [
+                {
+                  "source": 2,
+                  "type": 0,
+                  "muted": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "livekit-muted": {
+      "at": "2026-11-04T01:42:14.887Z",
+      "rooms": [
+        {
+          "room": "dvqb-call-3d9d22b1-b4b8-4622-a9bc-e5de8f6f9e13",
+          "participants": [
+            {
+              "state": 2,
+              "tracks": [
+                {
+                  "source": 2,
+                  "type": 0,
+                  "muted": true
+                }
+              ]
+            },
+            {
+              "state": 2,
+              "tracks": [
+                {
+                  "source": 2,
+                  "type": 0,
+                  "muted": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "after-call": {
+      "at": "2026-11-04T01:43:43.732Z",
+      "call": {
+        "id": "3d9d22b1-b4b8-4622-a9bc-e5de8f6f9e13",
+        "state": "ended",
+        "cleanup_pending": false
+      },
+      "locks": 0
+    }
+  },
+  "androidReleaseReopen": [
+    {
+      "iteration": 1,
+      "at": "2026-11-04T10:20:53.162299+09:00",
+      "launchExit": 0,
+      "pid": "15156"
+    },
+    {
+      "iteration": 2,
+      "at": "2026-11-04T10:20:58.440457+09:00",
+      "launchExit": 0,
+      "pid": "15276"
+    },
+    {
+      "iteration": 3,
+      "at": "2026-11-04T10:21:03.728928+09:00",
+      "launchExit": 0,
+      "pid": "15362"
+    },
+    {
+      "iteration": 4,
+      "at": "2026-11-04T10:21:08.960031+09:00",
+      "launchExit": 0,
+      "pid": "15457"
+    },
+    {
+      "iteration": 5,
+      "at": "2026-11-04T10:21:14.142582+09:00",
+      "launchExit": 0,
+      "pid": "15541"
+    },
+    {
+      "iteration": 6,
+      "at": "2026-11-04T10:21:19.303668+09:00",
+      "launchExit": 0,
+      "pid": "15632"
+    },
+    {
+      "iteration": 7,
+      "at": "2026-11-04T10:21:24.484246+09:00",
+      "launchExit": 0,
+      "pid": "15717"
+    },
+    {
+      "iteration": 8,
+      "at": "2026-11-04T10:21:29.644710+09:00",
+      "launchExit": 0,
+      "pid": "15805"
+    },
+    {
+      "iteration": 9,
+      "at": "2026-11-04T10:21:34.810708+09:00",
+      "launchExit": 0,
+      "pid": "15891"
+    },
+    {
+      "iteration": 10,
+      "at": "2026-11-04T10:21:40.279655+09:00",
+      "launchExit": 0,
+      "pid": "15979"
+    }
+  ],
+  "limitations": [
+    "Không đo chất lượng thoại hoặc loa ngoài, background, mạng di động.",
+    "Release chỉ kiểm khởi động; các luồng DB dùng development build mới.",
+    "NATIVE-05 chưa có nguyên nhân, không đánh dấu đã sửa.",
+    "Mất mạng với kết quả chưa rõ được kiểm bằng test, chưa gây lỗi mạng trên native."
+  ]
+}

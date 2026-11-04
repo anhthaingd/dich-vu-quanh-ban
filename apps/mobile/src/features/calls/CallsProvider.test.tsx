@@ -19,6 +19,18 @@ beforeEach(()=>{jest.useFakeTimers();mockOwner='recipient';for(const f of [mockO
  api={targets:jest.fn().mockResolvedValue({items:[{user_id:'recipient',display_name:'DEMO thợ',role:'assigned'}]}),create:jest.fn().mockResolvedValue(call),list:jest.fn().mockResolvedValue({items:[call],next_cursor:null}),get:jest.fn().mockResolvedValue(call),action:jest.fn().mockImplementation(async(_t,c,a)=>({...c,state:a==='accept'?'accepted':a==='decline'?'declined':a==='fail'?'failed':'ended',version:c.version+1})),media:jest.fn().mockResolvedValue({call_id:'call1',url:'ws://127.0.0.1:7880',token:'test-media-token-only',expires_at:'2099-01-01T00:00:00Z'}),heartbeat:jest.fn().mockResolvedValue(call)};
 });
 afterEach(()=>{jest.useRealTimers();});
+test('unconfigured call creation can close without trapping the user in uncertain retry',async()=>{
+ mockOwner='caller';api.list.mockResolvedValue({items:[],next_cursor:null});api.create.mockRejectedValue(new ApiError('CALLS_UNAVAILABLE'));
+ render(<CallsProvider api={api}><CallButton jobId="job1"/></CallsProvider>);await flush();fireEvent.press(screen.getByTestId('call-target-assigned'));await flush();
+ expect(screen.queryByTestId('call-retry')).toBeNull();fireEvent.press(screen.getByTestId('call-close'));await flush();expect(screen.queryByTestId('call-close')).toBeNull();expect(screen.getByTestId('call-target-assigned')).not.toBeDisabled();
+});
+test('closing an uncertain create keeps its retry payload and key, and system back uses the same safe dismissal',async()=>{
+ mockOwner='caller';api.list.mockResolvedValue({items:[],next_cursor:null});api.create.mockRejectedValueOnce(new ApiError('TIMEOUT'));
+ render(<CallsProvider api={api}><CallButton jobId="job1"/></CallsProvider>);await flush();fireEvent.press(screen.getByTestId('call-target-assigned'));await flush();const first=api.create.mock.calls[0];
+ fireEvent.press(screen.getByTestId('call-close'));await flush();expect(screen.queryByTestId('call-retry')).toBeNull();expect(screen.getByTestId('call-target-assigned')).toBeDisabled();
+ fireEvent.press(screen.getByTestId('call-resume'));await flush();fireEvent(screen.getByTestId('call-modal'),'requestClose');await flush();
+ fireEvent.press(screen.getByTestId('call-resume'));await flush();fireEvent.press(screen.getByTestId('call-retry'));await flush();expect(api.create.mock.calls[1]).toEqual(first);
+});
 test('incoming recipient accepts, enables media and actual controls, then closes tracks when ending',async()=>{
  render(<CallsProvider api={api}/>);await flush();expect(screen.getByTestId('call-state')).toHaveTextContent('Đang chờ trả lời');
  fireEvent.press(screen.getByTestId('call-accept'));await flush();expect(mockPrepare).toHaveBeenCalledTimes(1);expect(api.action).toHaveBeenCalledWith('test-token',call,'accept',expect.any(String));expect(mockConnect).toHaveBeenCalledTimes(1);expect(screen.getByTestId('call-state')).toHaveTextContent('Đang trò chuyện');
