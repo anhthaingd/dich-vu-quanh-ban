@@ -26,17 +26,24 @@ export class ModerationService {
   return {id:r.id,partner_id:r.partner_id,partner_name:partner.name,kind:r.kind,details:JSON.parse(this.admin.secrets.decrypt(r.private_cipher)),state:r.state,version:r.version,reason:r.reason,created_at:r.created_at.toISOString(),document_asset_ids:assets.map(a=>a.asset_id),history};
  }
  get(header:string|undefined,token:string|undefined,d:Domain,id:string){return this.admin.read(header,token,this.permission(d),async(db,a)=>{const value=await this.detail(db,d,id);await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,$2,$3,'Admin detail read','{}')",[a.user.id,`admin.${d}.read`,id]);return value;});}
- list(header:string|undefined,token:string|undefined,d:Domain,q:ReturnType<typeof queueInput>){return this.admin.read(header,token,this.permission(d),async(db,a)=>{
-  const valid=d==='reports'?['all','open','reviewing','awaiting_evidence','resolved','closed']:d==='verifications'?['all','pending','awaiting_evidence','approved','rejected']:['all','visible','hidden','removed'];if(!valid.includes(q.state))throw new BadRequestException();
-  const scope=`admin:${d}:${a.user.id}:${JSON.stringify([q.q,q.state])}`,after=this.cursor.decode(q.cursor,scope);
+ list(header:string|undefined,token:string|undefined,d:Domain,q:ReturnType<typeof queueInput>&{from?:string;to?:string;sort?:'newest'|'oldest'}){return this.admin.read(header,token,this.permission(d),async(db,a)=>{
+  const valid=d==='reports'?['all','open','reviewing','awaiting_evidence','resolved','closed','done']:d==='verifications'?['all','pending','awaiting_evidence','approved','rejected']:['all','visible','hidden','removed'];if(!valid.includes(q.state))throw new BadRequestException();
+  const scope=`admin:${d}:${a.user.id}:${JSON.stringify([q.q,q.state,q.from,q.to,q.sort])}`,after=this.cursor.decode(q.cursor,scope);
   const table=d==='verifications'?'verification_requests':d;
   const name=d==='reports'?"r.subject||' '||r.body||' '||(SELECT display_name FROM users WHERE id=r.reporter_id)":d==='verifications'?"(SELECT name FROM partners WHERE id=r.partner_id)":'r.body';
   const state=d==='reviews'?"CASE WHEN r.removed_at IS NOT NULL THEN 'removed' WHEN r.hidden_at IS NOT NULL THEN 'hidden' ELSE 'visible' END":'r.state';
+  const asc=d==='reports'&&q.sort==='oldest',comparison=asc?'>':'<',direction=asc?'ASC':'DESC';
   const {rows}=await db.query(`SELECT r.id,date_trunc('milliseconds',r.created_at) AS created_at FROM ${table} r
    WHERE ($1='' OR position(lower($1) in lower(r.id::text||' '||${name}))>0)
-   AND ($2='all' OR ${state}=$2) AND ($3::timestamptz IS NULL OR (date_trunc('milliseconds',r.created_at),r.id)<($3::timestamptz,$4::uuid))
-   ORDER BY date_trunc('milliseconds',r.created_at) DESC,r.id DESC LIMIT $5`,[q.q,q.state,after?.created_at??null,after?.id??null,q.limit+1]);
+   AND ($2='all' OR ${state}=$2 ${d==='reports'?"OR ($2='done' AND r.state IN ('resolved','closed'))":''}) AND ($6::timestamptz IS NULL OR r.created_at>=$6) AND ($7::timestamptz IS NULL OR r.created_at<$7) AND ($3::timestamptz IS NULL OR (date_trunc('milliseconds',r.created_at),r.id)${comparison}($3::timestamptz,$4::uuid))
+   ORDER BY date_trunc('milliseconds',r.created_at) ${direction},r.id ${direction} LIMIT $5`,[q.q,q.state,after?.created_at??null,after?.id??null,q.limit+1,q.from??null,q.to??null]);
   const items=rows.slice(0,q.limit),last=items.at(-1);await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,$2,$1,'Admin queue read',$3)",[a.user.id,`admin.${d}.list`,JSON.stringify({resource_ids:items.map(r=>r.id)})]);return {items:await Promise.all(items.map(r=>this.detail(db,d,r.id))),next_cursor:rows.length>q.limit?this.cursor.encode({id:last.id,created_at:last.created_at.toISOString()},scope):null};
+ });}
+ reportSummary(header:string|undefined,token:string|undefined,q:{from?:string;to?:string}){return this.admin.read(header,token,'support.read',async(db,a)=>{
+  const rows=(await db.query("SELECT state,count(*)::text AS count FROM reports WHERE ($1::timestamptz IS NULL OR created_at>=$1) AND ($2::timestamptz IS NULL OR created_at<$2) GROUP BY state",[q.from??null,q.to??null])).rows;
+  const counts=Object.fromEntries(['open','reviewing','awaiting_evidence','resolved','closed'].map(s=>[s,rows.find(r=>r.state===s)?.count??'0']));
+  await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.reports.summary',$1,'Read support counts','{}')",[a.user.id]);
+  return {counts,from:q.from??null,to:q.to??null,as_of:new Date().toISOString()};
  });}
  decide(header:string|undefined,token:string|undefined,d:Domain,id:string,input:ReturnType<typeof decisionInput>,key:string){
   return this.tx.run(header,`admin.${d}.decision:${id}`,key,input,async(db,a)=>{

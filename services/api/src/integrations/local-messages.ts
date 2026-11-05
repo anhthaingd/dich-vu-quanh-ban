@@ -33,7 +33,7 @@ export class LocalMessages implements OnModuleInit, OnModuleDestroy {
  requireContact(contact: string) {
   if (!this.settings || !this.settings.contacts.includes(contact)) throw new ServiceUnavailableException();
  }
- async queue(db: PoolClient, kind: 'challenge'|'invitation', id: string, message: LocalMessage, expiry: Date) {
+ async queue(db: PoolClient, kind: 'challenge'|'invitation'|'admin_invitation', id: string, message: LocalMessage, expiry: Date) {
   this.requireContact(message.contact);
   await db.query(`INSERT INTO local_deliveries(${kind}_id,payload_cipher,expires_at) VALUES($1,$2,$3)`,
    [id,this.secrets.encrypt(JSON.stringify(message)),expiry]);
@@ -57,6 +57,7 @@ export class LocalMessages implements OnModuleInit, OnModuleDestroy {
    if (!d) { await db.query('COMMIT'); return; }
    const live=d.challenge_id
     ? (await db.query('SELECT 1 FROM auth_challenges WHERE id=$1 AND consumed_at IS NULL AND invalidated_at IS NULL AND attempts<5 AND expires_at>clock_timestamp()',[d.challenge_id])).rowCount
+    : d.admin_invitation_id ? (await db.query("SELECT 1 FROM admin_invitations WHERE id=$1 AND status='pending' AND expires_at>clock_timestamp()",[d.admin_invitation_id])).rowCount
     : (await db.query("SELECT 1 FROM member_invitations WHERE id=$1 AND status='pending' AND expires_at>clock_timestamp()",[d.invitation_id])).rowCount;
    if (!live || d.expires_at<=new Date() || d.attempts>=3) {
     await db.query("UPDATE local_deliveries SET payload_cipher=NULL,state=CASE WHEN state='submitted' THEN state ELSE 'failed' END WHERE id=$1",[d.id]);

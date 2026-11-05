@@ -18,6 +18,7 @@ const review:Item={id:'review',version:1,stars:4,body:'DEMO review',hidden:false
 function fixture(permissions=grants){
  const f=authFixture('saved');const user={...session.user,admin_permissions:permissions};
  f.api.refresh.mockResolvedValue({...session,user});f.api.me.mockResolvedValue(user);
+ jest.spyOn(AdminApi.prototype,'request').mockResolvedValue({counts:{open:'1',reviewing:'0',awaiting_evidence:'0',resolved:'0',closed:'0'}});
  const status=jest.spyOn(AdminApi.prototype,'status').mockResolvedValue(true);
  const verify=jest.spyOn(AdminApi.prototype,'verify').mockResolvedValue(undefined);
  jest.spyOn(AdminApi.prototype,'expiresAt','get').mockReturnValue(Date.now()+900000);
@@ -36,32 +37,32 @@ afterEach(()=>{jest.restoreAllMocks();jest.mocked(AppState.addEventListener).moc
 test('admin login routes to a dedicated mobile console and never renders customer tabs; lock removes private data',async()=>{
  const f=fixture();mount(f);await enter();expect(screen.queryByTestId('nav-catalog')).toBeNull();expect(screen.queryByTestId('nav-jobs')).toBeNull();expect(screen.queryByTestId('nav-messages')).toBeNull();
  fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByText('DEMO body');expect(screen.queryByTestId('admin-queue')).toBeNull();
- fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO reason');fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Đã lưu quyết định và nhật ký.');
+ fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO reason');fireEvent.press(screen.getByTestId('admin-save'));expect(f.decision).not.toHaveBeenCalled();fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Đã lưu quyết định và nhật ký.');
  expect(f.decision).toHaveBeenCalledWith('reports','report',{expected_version:1,state:'reviewing',reason:'DEMO reason'},expect.any(String));
  fireEvent.press(screen.getByTestId('admin-lock'));await screen.findByTestId('admin-password');expect(screen.queryByText('DEMO body')).toBeNull();expect(f.lock).toHaveBeenCalled();
  fireEvent.press(screen.getByTestId('admin-logout'));await waitFor(()=>expect(f.manager.getSnapshot().phase).toBe('anonymous'));expect(screen.queryByTestId('admin-root')).toBeNull();
 });
 test('mobile admin retries the exact decision after a lost response and reloads a conflicting version',async()=>{
  const f=fixture();f.decision.mockRejectedValueOnce(new ApiError('NETWORK')).mockRejectedValueOnce(new ApiError('VERSION_CONFLICT'));mount(f);await enter();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-reason');
- fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO retry');fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Chưa xác nhận được kết quả. Giữ nguyên nội dung để thử lại.');expect(screen.getByTestId('admin-reason')).toHaveProp('editable',false);
+ fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO retry');fireEvent.press(screen.getByTestId('admin-save'));fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Chưa xác nhận được kết quả. Giữ nguyên nội dung để thử lại.');expect(screen.getByTestId('admin-reason')).toHaveProp('editable',false);
  fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Hồ sơ đã thay đổi. Tải lại dữ liệu để xem trước khi quyết định.');expect(f.decision.mock.calls[0]).toEqual(f.decision.mock.calls[1]);
- f.item.mockResolvedValueOnce({...report,version:3});fireEvent.press(screen.getByText('Tải lại dữ liệu'));await waitFor(()=>expect(screen.getByTestId('admin-reason')).toHaveProp('value',''));
+ f.item.mockResolvedValueOnce({...report,version:3});fireEvent.press(screen.getByTestId('admin-decision-refresh'));await waitFor(()=>expect(screen.getByTestId('admin-reason')).toHaveProp('value',''));
 });
 test('mobile admin filters queues, reviews private verification evidence, moderates reviews and reads audit',async()=>{
- const f=fixture();mount(f);await enter();fireEvent.changeText(screen.getByTestId('admin-search'),'DEMO');fireEvent.press(screen.getByTestId('admin-filter'));fireEvent.press(screen.getByTestId('admin-filter-open'));fireEvent.press(screen.getByTestId('admin-search-submit'));await waitFor(()=>expect(f.page).toHaveBeenLastCalledWith('reports','DEMO','open',undefined));
- fireEvent.press(screen.getByTestId('admin-tab-verifications'));fireEvent.press(await screen.findByTestId('admin-item-verify'));await screen.findByLabelText('Ảnh chứng cứ');fireEvent.press(screen.getByTestId('admin-action'));fireEvent.press(screen.getByTestId('admin-action-approve'));fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO checked');expect(screen.getByTestId('admin-save')).toBeDisabled();fireEvent(screen.getByTestId('admin-checked'),'valueChange',true);
+ const f=fixture();mount(f);await enter();fireEvent.changeText(screen.getByTestId('admin-search'),'DEMO');fireEvent.press(screen.getByTestId('admin-filter'));fireEvent.press(screen.getByTestId('admin-filter-open'));fireEvent.press(screen.getByTestId('admin-search-submit'));await waitFor(()=>expect(f.page).toHaveBeenLastCalledWith('reports','DEMO','open',undefined,expect.objectContaining({from:expect.any(String),to:expect.any(String),sort:'newest'})));
+ fireEvent.press(screen.getByTestId('p2-admin-more'));fireEvent.press(screen.getByTestId('admin-tab-verifications'));fireEvent.press(await screen.findByTestId('admin-item-verify'));await screen.findByLabelText('Ảnh chứng cứ');fireEvent.press(screen.getByTestId('admin-action'));fireEvent.press(screen.getByTestId('admin-action-approve'));fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO checked');expect(screen.getByTestId('admin-save')).toBeDisabled();fireEvent(screen.getByTestId('admin-checked'),'valueChange',true);
  f.decision.mockResolvedValueOnce({...verification,version:2,state:'approved'});fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Hồ sơ này chỉ đọc.');
- fireEvent.press(screen.getByTestId('admin-close-detail'));await screen.findByTestId('admin-queue');fireEvent.press(screen.getByTestId('admin-tab-reviews'));fireEvent.press(await screen.findByTestId('admin-item-review'));await screen.findByText('DEMO review');fireEvent.press(screen.getByTestId('admin-action'));fireEvent.press(screen.getByTestId('admin-action-hide'));fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO hidden');f.decision.mockResolvedValueOnce({...review,hidden:true,version:2});fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Đang ẩn');
- fireEvent.press(screen.getByTestId('admin-tab-audit'));await screen.findByText('DEMO audit');
+ fireEvent.press(screen.getByTestId('admin-close-detail'));await screen.findByTestId('admin-queue');fireEvent.press(screen.getByTestId('p2-admin-more'));fireEvent.press(screen.getByTestId('admin-tab-reviews'));fireEvent.press(await screen.findByTestId('admin-item-review'));await screen.findByText('DEMO review');fireEvent.press(screen.getByTestId('admin-action'));fireEvent.press(screen.getByTestId('admin-action-hide'));fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO hidden');f.decision.mockResolvedValueOnce({...review,hidden:true,version:2});fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Đang ẩn');
+ fireEvent.press(screen.getByTestId('p2-admin-more'));fireEvent.press(screen.getByTestId('admin-tab-audit'));await screen.findByText('DEMO audit');
 });
 
 test('admin keeps the applied queue criteria when closing a record and clears them with one action',async()=>{
  const f=fixture(['support.read']);mount(f);await enter();
  fireEvent.changeText(screen.getByTestId('admin-search'),'DEMO');fireEvent.press(screen.getByTestId('admin-filter'));fireEvent.press(screen.getByTestId('admin-filter-open'));fireEvent.press(screen.getByTestId('admin-search-submit'));
- await waitFor(()=>expect(f.page).toHaveBeenLastCalledWith('reports','DEMO','open',undefined));
+ await waitFor(()=>expect(f.page).toHaveBeenLastCalledWith('reports','DEMO','open',undefined,expect.objectContaining({from:expect.any(String),to:expect.any(String),sort:'newest'})));
  fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-detail');fireEvent.press(screen.getByTestId('admin-close-detail'));
  expect(screen.getByTestId('admin-search')).toHaveProp('value','DEMO');fireEvent.press(screen.getByTestId('admin-filter'));expect(screen.getByTestId('admin-filter-open')).toHaveProp('accessibilityState',expect.objectContaining({selected:true}));fireEvent.press(screen.getByTestId('admin-filter-open'));
- fireEvent.press(screen.getByTestId('admin-filter-reset'));await waitFor(()=>expect(f.page).toHaveBeenLastCalledWith('reports','','all',undefined));expect(screen.getByTestId('admin-search')).toHaveProp('value','');
+ fireEvent.press(screen.getByRole('tab',{name:'Cũ nhất trước'}));fireEvent.press(screen.getByTestId('admin-filter-reset'));expect(screen.getByRole('tab',{name:'Mới nhất trước'})).toHaveProp('accessibilityState',expect.objectContaining({selected:true}));await waitFor(()=>expect(f.page).toHaveBeenLastCalledWith('reports','','all',undefined,expect.objectContaining({from:expect.any(String),to:expect.any(String),sort:'newest'})));expect(screen.getByTestId('admin-search')).toHaveProp('value','');
 });
 test('admin setup requires confirmation and backgrounding clears the MFA secret and console',async()=>{
  const f=fixture();f.status.mockResolvedValue(false);const onChange=new Set<(s:AppStateStatus)=>void>();jest.spyOn(AppState,'addEventListener').mockImplementation((type,listener)=>{if(type==='change')onChange.add(listener);return {remove:()=>onChange.delete(listener)};});mount(f);await screen.findByTestId('admin-password');
@@ -115,8 +116,8 @@ test('restricted support disables notification chat polling and realtime without
 });
 test('mobile internal note is a separate private action and retries the captured body without changing report state',async()=>{
  const f=fixture(),note=jest.spyOn(AdminApi.prototype,'note').mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValue({...report,version:2,internal_notes:[{id:'note',actor_id:'admin',body:'DEMO internal only',created_at:'2026-10-20T00:00:00Z'}]});
- mount(f);await enter();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-reason');fireEvent.press(screen.getByTestId('admin-action'));fireEvent.press(screen.getByTestId('admin-action-internal_note'));
- fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO internal only');fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Chưa xác nhận được kết quả. Giữ nguyên nội dung để thử lại.');fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Ghi chú riêng của admin hỗ trợ');
+ mount(f);await enter();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-reason');fireEvent.press(screen.getByText('Ghi chú riêng của admin hỗ trợ'));
+ fireEvent.changeText(screen.getByTestId('admin-reason'),'DEMO internal only');fireEvent.press(screen.getByTestId('admin-save'));fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('Chưa xác nhận được kết quả. Giữ nguyên nội dung để thử lại.');fireEvent.press(screen.getByTestId('admin-save'));await screen.findByText('DEMO internal only');
  expect(note.mock.calls[0]).toEqual(note.mock.calls[1]);expect(note.mock.calls[0]).toEqual(['report',{expected_version:1,body:'DEMO internal only'},expect.any(String)]);expect(f.decision).not.toHaveBeenCalled();
 });
 
@@ -125,14 +126,14 @@ test('admin backup recovery uses the one-use-code path and hides generated codes
  const generated=jest.spyOn(AdminApi.prototype,'backupCodes').mockResolvedValue(codes);mount(f);await screen.findByTestId('admin-password');
  fireEvent.press(screen.getByTestId('admin-recovery-toggle'));fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.changeText(screen.getByTestId('admin-code'),codes[0]);fireEvent.press(screen.getByTestId('admin-verify'));
  await screen.findByTestId('admin-queue');expect(f.verify).toHaveBeenCalledWith('DEMO password',codes[0],false,true);
- fireEvent.press(screen.getByTestId('mfa-security-toggle'));fireEvent.press(screen.getByTestId('mfa-generate'));await screen.findByTestId('mfa-backup-codes');expect(generated).toHaveBeenCalledTimes(1);
+ fireEvent.press(screen.getByTestId('p2-admin-more'));fireEvent.press(screen.getByTestId('mfa-security-toggle'));fireEvent.press(screen.getByTestId('mfa-generate'));await screen.findByTestId('mfa-backup-codes');expect(generated).toHaveBeenCalledTimes(1);
  fireEvent.press(screen.getByTestId('admin-lock'));await screen.findByTestId('admin-password');expect(screen.queryByTestId('mfa-backup-codes')).toBeNull();
 });
 test('admin reset keeps target version reason and retry key; TOTP replacement returns to confirmation',async()=>{
  const f=fixture([...grants,'grant.manage']),target={id:'00000000-0000-4000-8000-000000000077',name:'DEMO target',version:3};
- const request=jest.spyOn(AdminApi.prototype,'request').mockResolvedValueOnce(target).mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValueOnce({id:target.id,version:4,state:'mfa_reset'});
+ const request=jest.fn().mockResolvedValueOnce(target).mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValueOnce({id:target.id,version:4,state:'mfa_reset'});jest.spyOn(AdminApi.prototype,'request').mockImplementation((path,...args)=>path.startsWith('/admin/reports-summary')?Promise.resolve({counts:{open:'1',reviewing:'0',awaiting_evidence:'0',resolved:'0',closed:'0'}}) as never:request(path,...args));
  const replace=jest.spyOn(AdminApi.prototype,'replace').mockResolvedValue({secret:'DEMO-REPLACEMENT',uri:'demo'});
- mount(f);await enter();fireEvent.press(screen.getByTestId('mfa-security-toggle'));fireEvent.changeText(screen.getByTestId('mfa-target'),target.id);fireEvent.press(screen.getByTestId('mfa-target-load'));await screen.findByText('DEMO target · '+target.id);
+ mount(f);await enter();fireEvent.press(screen.getByTestId('p2-admin-more'));fireEvent.press(screen.getByTestId('mfa-security-toggle'));fireEvent.changeText(screen.getByTestId('mfa-target'),target.id);fireEvent.press(screen.getByTestId('mfa-target-load'));await screen.findByText('DEMO target · '+target.id);
  fireEvent.changeText(screen.getByTestId('mfa-reset-reason'),'DEMO identity checked');fireEvent(screen.getByTestId('mfa-reset-checked'),'valueChange',true);fireEvent.press(screen.getByTestId('mfa-reset'));await screen.findByText('Thử lại cùng yêu cầu');expect(screen.getByTestId('mfa-reset-reason')).toHaveProp('editable',false);fireEvent.press(screen.getByTestId('mfa-reset'));await screen.findByText('Đã reset. Admin cần thiết lập TOTP lại.');expect(request.mock.calls[1]).toEqual(request.mock.calls[2]);expect(request.mock.calls[1][2]).toEqual({expected_version:3,reason:'DEMO identity checked'});
  fireEvent.changeText(screen.getByLabelText('Mật khẩu hiện tại để thay TOTP'),'DEMO password');f.status.mockResolvedValue(false);fireEvent.press(screen.getByText('Thiết lập TOTP mới'));await screen.findByText('DEMO-REPLACEMENT');expect(replace).toHaveBeenCalledWith('DEMO password');expect(screen.queryByTestId('admin-queue')).toBeNull();
 });

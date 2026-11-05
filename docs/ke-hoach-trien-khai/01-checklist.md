@@ -1,5 +1,33 @@
 # Checklist chức năng và bằng chứng
 
+## B00-14 — Cập nhật báo cáo tổng UX-02, 05/11/2026
+
+- [x] Theo yêu cầu chủ dự án: cập nhật catalog, HTML/JSON, ledger ảnh, mô tả đường vào/nút và liên kết B00-19; 141 mục, giữ đủ route hiện có.
+- [x] Sau phản hồi về ảnh cũ: chụp lại 80 ảnh quản trị/Tài khoản trên Android và iOS ngày 05/11; thay ảnh trước thay đổi trong B00-14. Đủ 282 vị trí native; ảnh web không thay native. Giữ NATIVE-05 còn mở và ngày kiểm riêng của các màn ngoài UX-02.
+- Kết quả kiểm giao diện báo cáo và SDD theo bộ nguồn cuối: [B00-14](bao-cao/B00-14-bao-cao-man-hinh.md). Không mở thêm phạm vi đồng bộ Drive/Excel/`ui-ux`.
+
+
+## UX-02 — Triển khai sau duyệt, 05/11/2026
+
+- [x] Chủ dự án duyệt implement cả web/mobile và lời mời 7 ngày, xác minh đúng email, MFA, gửi lại/hủy, hộp thư local.
+- [x] Nối migration/API/app cho Tổng quan, hỗ trợ, nhân sự có sẵn và lời mời; bảo toàn quyền backend, nhật ký, phiên bản và gửi lại không trùng.
+- [x] Kiểm API/mobile/web tập trung; thư Mailpit local; áp dụng migration 025 có sao lưu DB local.
+- [x] Chụp app chạy trên web, iOS Simulator và Android Emulator; sơ đồ Mermaid đã render. [B00-19](bao-cao/B00-19-trien-khai-quan-tri.md).
+- [x] Review inventory/route/QA-110/4 tiêu chí mới; giữ QA partial/unmapped và khoảng trống OpenAPI. Kết quả hồi quy toàn repo nằm trong SDD evidence khớp nguồn hiện tại, xem B00-19.
+- [ ] Kiểm toàn bộ hành trình trên thiết bị thật, CI remote và UAT chủ dự án; chưa bật email bên ngoài/production.
+
+Các mục thiết kế dưới đây giữ bằng chứng lịch sử; phê duyệt và triển khai mới được ghi ở mục này. D04 ngoài phạm vi hỗ trợ và PROMO-02 vẫn chưa mở.
+
+## UX-02 — Thiết kế quản trị trước khi áp dụng, 04/11/2026
+
+- [x] 05/11: bổ sung hai cách thêm quản trị viên theo yêu cầu; kiểm nháp/đầu vào/trùng/lời mời chờ và bố cục mobile; hướng dẫn bản mẫu nằm ngoài menu app. Chỉ thiết kế, chưa gửi email/cấp quyền thật.
+- [x] Dựng [HTML tương tác](de-xuat/UX-02-quan-tri.html) cho web và điện thoại: Tổng quan, hàng đợi, chi tiết hỗ trợ và quyền truy cập.
+- [x] Kiểm thao tác, quyền chỉ xem, xác nhận/lỗi thử lại, bố cục 360–1440 px và mở file offline; [ảnh và giới hạn B00-18](bao-cao/B00-18-ban-thiet-ke-quan-tri.md).
+- [x] Cập nhật inventory cho tài liệu/bản mẫu/ảnh; không đổi tiêu chí hoặc nguồn chuẩn.
+- [ ] Chủ dự án duyệt bố cục/hành vi và chốt phần cần đối chiếu API; D04 chưa được phê duyệt.
+- [ ] Áp dụng vào code ứng dụng và kiểm native/CI/UAT sau duyệt; chưa thực hiện trong đợt thiết kế.
+- 05/11: kiểm HTML mới đạt; SDD toàn repo **chưa đạt** do 1/31 bài web đánh giá lỗi định vị hai phần tử. Chạy lại riêng đạt nhưng không thay lượt SDD bị dừng; `verify` thiếu evidence, ba bước sau web chưa chạy. [Chi tiết B00-18](bao-cao/B00-18-ban-thiet-ke-quan-tri.md).
+
 ## UX-01 — Sửa lỗi sau audit, 04/11/2026
 
 - [x] Bỏ màn danh mục cũ theo duyệt; giữ bộ lọc hiện hành và các test liên quan.

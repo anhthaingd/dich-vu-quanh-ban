@@ -31,8 +31,8 @@ export class AdminApi {
   replace(password:string){return this.call('/admin/auth/replacement',(v):v is {secret:string;uri:string}=>record(v)&&typeof v.secret==='string'&&typeof v.uri==='string',{password});}
   async backupCodes(){return (await this.call('/admin/auth/backup-codes',(v):v is {codes:string[]}=>record(v)&&Array.isArray(v.codes)&&v.codes.length===10&&v.codes.every(c=>typeof c==='string'&&/^[a-f0-9]{32}$/.test(c)),{})).codes;}
   async lock(){this.clear();await this.call('/admin/auth/lock',(v):v is Record<string,unknown>=>record(v),{});}
-  page(domain:Domain,q:string,state:string,cursor?:string){
-    const params=new URLSearchParams({q,state,...(cursor?{cursor}:{})});
+  page(domain:Domain,q:string,state:string,cursor?:string,options?:{from?:string;to?:string;sort?:string}){
+    const params=new URLSearchParams({q,state,...options,...(cursor?{cursor}:{})});
     return this.call('/admin/'+domain+'?'+params,(v):v is Page=>record(v)&&Array.isArray(v.items)&&v.items.every(isItem)&&(v.next_cursor===null||typeof v.next_cursor==='string'));
   }
   item(domain:Domain,id:string){return this.call('/admin/'+domain+'/'+encodeURIComponent(id),isItem);}

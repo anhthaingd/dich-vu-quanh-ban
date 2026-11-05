@@ -1,3 +1,4 @@
+import {queueInput} from '../moderation/moderation.input.js';
 import {BadRequestException} from '@nestjs/common';
 import {identifier,object,pageInput} from '../accounts/accounts.input.js';
 import {text} from '../moderation/moderation.input.js';
@@ -7,3 +8,5 @@ export type ReadDomain='jobs'|'invoices'|'grant-users';
 export function metricsInput(value:Record<string,unknown>){object(value,['from','to']);const {from,to}=value;if(typeof from!=='string'||typeof to!=='string'||!/^\d{4}-\d\d-\d\dT/.test(from)||!/^\d{4}-\d\d-\d\dT/.test(to)||!Number.isFinite(Date.parse(from))||!Number.isFinite(Date.parse(to))||Date.parse(from)>=Date.parse(to))throw new BadRequestException();return {from:new Date(from).toISOString(),to:new Date(to).toISOString()};}
 
 export function auditInput(v:Record<string,unknown>){object(v,['resource_id','cursor','limit']);return {...pageInput({...(v.cursor===undefined?{}:{cursor:v.cursor}),...(v.limit===undefined?{}:{limit:v.limit})}),resource_id:v.resource_id===undefined?undefined:identifier(v.resource_id)};}
+
+export function grantDirectoryInput(v:Record<string,unknown>){object(v,['q','state','cursor','limit','role']);const {role,...base}=v;if(role!==undefined&&!['all','admins','candidates'].includes(String(role)))throw new BadRequestException();return {...queueInput(base),role:role as 'all'|'admins'|'candidates'|undefined};}

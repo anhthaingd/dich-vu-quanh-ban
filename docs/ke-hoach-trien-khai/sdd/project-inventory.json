@@ -41,6 +41,10 @@
       "kind": "documentation"
     },
     {
+      "path": "README.md",
+      "kind": "documentation"
+    },
+    {
       "path": "apps/admin/index.html",
       "kind": "product"
     },
@@ -49,15 +53,11 @@
       "kind": "product"
     },
     {
-      "path": "apps/admin/src/App.tsx",
+      "path": "apps/admin/src/AdminTeam.tsx",
       "kind": "product"
     },
     {
-      "path": "apps/admin/src/app/.gitkeep",
-      "kind": "placeholder"
-    },
-    {
-      "path": "apps/admin/src/backoffice-messages.ts",
+      "path": "apps/admin/src/App.tsx",
       "kind": "product"
     },
     {
@@ -69,11 +69,39 @@
       "kind": "product"
     },
     {
-      "path": "apps/admin/src/client.ts",
+      "path": "apps/admin/src/Completion.tsx",
       "kind": "product"
     },
     {
-      "path": "apps/admin/src/Completion.tsx",
+      "path": "apps/admin/src/FinancePanel.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/MfaSecurity.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/P2Desk.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/RecoveryPanel.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/SupportOverview.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/app/.gitkeep",
+      "kind": "placeholder"
+    },
+    {
+      "path": "apps/admin/src/backoffice-messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/client.ts",
       "kind": "product"
     },
     {
@@ -93,10 +121,6 @@
       "kind": "product"
     },
     {
-      "path": "apps/admin/src/FinancePanel.tsx",
-      "kind": "product"
-    },
-    {
       "path": "apps/admin/src/i18n.ts",
       "kind": "product"
     },
@@ -113,23 +137,23 @@
       "kind": "product"
     },
     {
-      "path": "apps/admin/src/MfaSecurity.tsx",
-      "kind": "product"
-    },
-    {
       "path": "apps/admin/src/operations-messages.ts",
       "kind": "product"
     },
     {
-      "path": "apps/admin/src/P2Desk.tsx",
-      "kind": "product"
-    },
-    {
-      "path": "apps/admin/src/RecoveryPanel.tsx",
-      "kind": "product"
-    },
-    {
       "path": "apps/admin/src/style.css",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/useAdminTeam.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/useSupportOverview.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/admin/src/ux-messages.ts",
       "kind": "product"
     },
     {
@@ -193,15 +217,15 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/assets/icons/LICENSE",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/assets/icons/Laptop.png",
       "kind": "product"
     },
     {
       "path": "apps/mobile/assets/icons/LayoutGrid.png",
-      "kind": "product"
-    },
-    {
-      "path": "apps/mobile/assets/icons/LICENSE",
       "kind": "product"
     },
     {
@@ -305,12 +329,12 @@
       "kind": "product"
     },
     {
-      "path": "apps/mobile/src/app/navigation/account-return.test.tsx",
-      "kind": "test"
-    },
-    {
       "path": "apps/mobile/src/app/navigation/AppNavigator.tsx",
       "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/app/navigation/account-return.test.tsx",
+      "kind": "test"
     },
     {
       "path": "apps/mobile/src/app/navigation/routes.ts",
@@ -353,10 +377,6 @@
       "kind": "product"
     },
     {
-      "path": "apps/mobile/src/components/ui/controls.test.tsx",
-      "kind": "test"
-    },
-    {
       "path": "apps/mobile/src/components/ui/Feedback.tsx",
       "kind": "product"
     },
@@ -371,6 +391,14 @@
     {
       "path": "apps/mobile/src/components/ui/Screen.tsx",
       "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/SegmentedTabs.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/controls.test.tsx",
+      "kind": "test"
     },
     {
       "path": "apps/mobile/src/features/account-security/api/security-api.test.ts",
@@ -485,6 +513,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/admin/api/admin-invitations-api.ts",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/admin/messages.ts",
       "kind": "product"
     },
@@ -498,6 +530,10 @@
     },
     {
       "path": "apps/mobile/src/features/admin/operations-messages.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/AcceptAdminInvitation.tsx",
       "kind": "product"
     },
     {
@@ -529,6 +565,14 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/admin/screens/AdminTeam.test.tsx",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/AdminTeam.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/admin/screens/CatalogEditor.tsx",
       "kind": "product"
     },
@@ -541,15 +585,31 @@
       "kind": "product"
     },
     {
-      "path": "apps/mobile/src/features/admin/screens/presentation.ts",
-      "kind": "product"
-    },
-    {
       "path": "apps/mobile/src/features/admin/screens/RecoveryPanel.test.tsx",
       "kind": "test"
     },
     {
       "path": "apps/mobile/src/features/admin/screens/RecoveryPanel.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/SupportOverview.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/screens/presentation.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/useAdminTeam.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/useSupportOverview.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/admin/ux-messages.ts",
       "kind": "product"
     },
     {
@@ -601,14 +661,6 @@
       "kind": "product"
     },
     {
-      "path": "apps/mobile/src/features/calls/api/calls-api.test.ts",
-      "kind": "test"
-    },
-    {
-      "path": "apps/mobile/src/features/calls/api/calls-api.ts",
-      "kind": "product"
-    },
-    {
       "path": "apps/mobile/src/features/calls/CallHistory.tsx",
       "kind": "product"
     },
@@ -618,6 +670,14 @@
     },
     {
       "path": "apps/mobile/src/features/calls/CallsProvider.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/api/calls-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/api/calls-api.ts",
       "kind": "product"
     },
     {
@@ -661,15 +721,15 @@
       "kind": "placeholder"
     },
     {
-      "path": "apps/mobile/src/features/chat/api/chat-api.ts",
-      "kind": "product"
-    },
-    {
       "path": "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
       "kind": "test"
     },
     {
       "path": "apps/mobile/src/features/chat/MessageUnreadProvider.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/chat/api/chat-api.ts",
       "kind": "product"
     },
     {
@@ -679,6 +739,10 @@
     {
       "path": "apps/mobile/src/features/chat/screens/ConversationScreen.tsx",
       "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/chat/screens/ConversationUX.test.tsx",
+      "kind": "test"
     },
     {
       "path": "apps/mobile/src/features/chat/screens/ConversationsScreen.tsx",
@@ -773,6 +837,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/jobs/components/JobStatus.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/jobs/models.ts",
       "kind": "product"
     },
@@ -853,15 +921,15 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/location/components/PublicLocation.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/location/components/map-css.d.ts",
       "kind": "product"
     },
     {
       "path": "apps/mobile/src/features/location/components/map-model.ts",
-      "kind": "product"
-    },
-    {
-      "path": "apps/mobile/src/features/location/components/PublicLocation.tsx",
       "kind": "product"
     },
     {
@@ -879,14 +947,6 @@
     {
       "path": "apps/mobile/src/features/notifications/.gitkeep",
       "kind": "placeholder"
-    },
-    {
-      "path": "apps/mobile/src/features/notifications/api/notifications-api.test.ts",
-      "kind": "test"
-    },
-    {
-      "path": "apps/mobile/src/features/notifications/api/notifications-api.ts",
-      "kind": "product"
     },
     {
       "path": "apps/mobile/src/features/notifications/NotificationsProvider.test.tsx",
@@ -926,6 +986,14 @@
     },
     {
       "path": "apps/mobile/src/features/notifications/PushListener.web.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/api/notifications-api.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/notifications/api/notifications-api.ts",
       "kind": "product"
     },
     {
@@ -1009,6 +1077,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/partners/messages.ts",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/partners/models.ts",
       "kind": "product"
     },
@@ -1077,14 +1149,6 @@
       "kind": "placeholder"
     },
     {
-      "path": "apps/mobile/src/features/search/components/results-map-model.test.ts",
-      "kind": "test"
-    },
-    {
-      "path": "apps/mobile/src/features/search/components/results-map-model.ts",
-      "kind": "product"
-    },
-    {
       "path": "apps/mobile/src/features/search/components/ResultsMap.native.test.tsx",
       "kind": "test"
     },
@@ -1114,6 +1178,18 @@
     },
     {
       "path": "apps/mobile/src/features/search/components/ServiceFilter.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/results-map-model.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/search/components/results-map-model.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/search/messages.ts",
       "kind": "product"
     },
     {
@@ -1289,6 +1365,14 @@
       "kind": "placeholder"
     },
     {
+      "path": "docs/UI-comparison-v0.1.zip",
+      "kind": "compatibility"
+    },
+    {
+      "path": "docs/UI-comparison-v0.2.zip",
+      "kind": "compatibility"
+    },
+    {
       "path": "docs/design-audit-v0.21",
       "kind": "compatibility"
     },
@@ -1329,6 +1413,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/huong-dan-mobile/README.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/huong-dan-mobile/huong-dan-mobile-v1.0.zip",
       "kind": "documentation"
     },
@@ -1342,10 +1430,6 @@
     },
     {
       "path": "docs/huong-dan-mobile/huong-dan-mobile-v1.3.zip",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/huong-dan-mobile/README.md",
       "kind": "documentation"
     },
     {
@@ -1390,6 +1474,270 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/03-thu-tu-trien-khai.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/README.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-01-nen-tang-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-05-khung-giao-dien.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-06-trang-chinh-theo-storybook.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-07-bo-kiem-sdd-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-08-sdd-toan-du-an.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-09-luong-local-va-dieu-huong.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-10-de-xuat-giao-dien.html",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-10-ra-soat-bao-mat-va-giao-dien.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-11-trien-khai-giao-dien.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-13-du-lieu-van-hanh-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-14-bao-cao-man-hinh.html",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-14-bao-cao-man-hinh.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-14-man-hinh-data.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-15-toi-uu-trai-nghiem.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-16-ban-thiet-ke-ux01.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-17-sua-loi-sau-audit-native.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-18-ban-thiet-ke-quan-tri.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-19-trien-khai-quan-tri.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-04-ho-so-ten-hien-thi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-04-phien-va-dia-chi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-08-bao-mat-khoi-phuc-va-xoa.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-ra-soat-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-thay-du-lieu-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-04-nop-va-xet-xac-minh.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-05-gallery-va-ngung-nhan-viec.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-01-chon-dia-diem-va-ban-do.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-03-bo-nhap-toa-do.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-06-da-giac-gom-cum-va-xep-hang.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-01-thong-bao-va-nhac-lich.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-02-realtime-inbox-va-chat.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-03-tach-tin-nhan-va-thong-bao.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-04-lich-tong-hop-cong-viec.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-05-cap-nhat-tu-dong-va-keo-lam-moi.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-06-su-kien-va-expo-push.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B06-01-hoa-don-va-quyet-toan-test.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B08-01-ngan-hang-va-nap-rut-test.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-01-ho-tro-va-bao-cao.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-02-admin-ho-tro-va-kiem-duyet.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-03-admin-tren-dien-thoai.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-04-admin-hoan-tat-thay.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-06-ghi-chu-noi-bo.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-01-danh-gia-sau-cong-viec.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-04-lich-su-khach-va-dau-nhan-tien.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-05-cuoc-goi-livekit-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-01-quyen-tra-cuu-va-bao-cao.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-02-dien-tap-phuc-hoi-local.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-03-tong-ket-p2.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-04-nhat-ky-admin-tong-hop.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-05-khoi-phuc-mfa.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-06-backup-day-du-demo.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-01-nen-da-ngon-ngu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-04-danh-muc-da-ngon-ngu.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-05-ngon-ngu-tai-khoan.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/MAU-BAO-CAO.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/UX-01-kiem-nut-native.html",
       "kind": "documentation"
     },
     {
@@ -1454,6 +1802,1674 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-09/web-employee-tabs.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/android-address-keyboard.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/android-profile-saved.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/ios-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/ios-invoice.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/ios-job-accepted.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/ios-wallet-large.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/proposal-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/proposal-profile-back.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/web-admin.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/android-chat.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/android-job.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/ios-chat.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/ios-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/ios-job.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-admin.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-chat.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-invoice.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-job.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-profile.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-wallet.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-address-form.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-addresses.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-audit.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-categories-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-categories.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-deletion-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-deletion.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-finance-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-finance.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-grants-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-grants.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-invoices-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-invoices.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-jobs-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-jobs.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-metrics.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-mfa.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-partners-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-partners.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-recovery-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-recovery.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-reports-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-reports.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-reviews-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-reviews.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-security.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-skills-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-skills.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-users-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-users.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-verifications-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-verifications.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-bank.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-calendar.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-call-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-call-unavailable-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-call.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-conversation.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-conversations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-admin_completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-locked.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-payment_reported.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-revision_requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-sent.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-accepted.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-admin_completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-assigned.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-declined.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-locked.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-payment_reported.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-rescheduled.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-revision_requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-sent.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-stopped.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-withdrawn.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-jobs.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-reviews.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-employee-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-employee-job.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-employee-organizations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-finance-detail-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-finance-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-finance-history.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-job-create.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-location-picker.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-login.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-notification-settings.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-notifications.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-organizations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-admin_completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-locked.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-payment_reported.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-revision_requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-sent.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-accepted.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-admin_completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-assigned.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-declined.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-locked.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-payment_reported.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-rescheduled.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-revision_requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-sent.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-stopped.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-withdrawn.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-reviews.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-areas.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-create.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-editor.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-gallery.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-locations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-profile.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-skills.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partners.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-payout.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-profile.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-public-profile.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-recovery.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-register.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-restricted-support.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-search-filters.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-search-map.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-search-results-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-search-results.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-security-anonymous.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-security-delete.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-security-identity.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-security.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-service-picker.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-sessions.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-support-create.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-support-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-support.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-grants.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-invite.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-invites.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-leave.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-left.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-members.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-permissions.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-remove.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-topup.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-verification-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-verification-initial-error.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-verification.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-verify-contact.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-wallet.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-address-form.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-addresses.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-audit.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-categories-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-categories.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-deletion-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-deletion.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-finance-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-finance.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-grants-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-grants.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-invoices-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-invoices.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-jobs-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-jobs.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-metrics.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-mfa.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-partners-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-partners.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-recovery-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-recovery.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-reports-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-reports.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-reviews-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-reviews.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-security.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-skills-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-skills.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-users-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-users.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-verifications-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-verifications.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-bank.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-calendar.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-call-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-call-unavailable-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-call.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-conversation.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-conversations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-admin_completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-locked.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-payment_reported.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-revision_requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-sent.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-accepted.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-admin_completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-assigned.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-declined.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-locked.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-payment_reported.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-rescheduled.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-revision_requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-sent.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-stopped.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-withdrawn.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-jobs.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-reviews.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-employee-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-employee-job.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-employee-organizations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-finance-detail-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-finance-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-finance-history.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-job-create.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-location-picker.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-login.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-notification-settings.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-notifications.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-organizations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-admin_completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-locked.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-payment_reported.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-revision_requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-sent.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-accepted.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-admin_completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-assigned.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-completed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-declined.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-draft.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-locked.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-payment_reported.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-rescheduled.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-revision_requested.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-sent.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-stopped.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-withdrawn.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-reviews.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-areas.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-create.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-editor.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-gallery.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-locations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-profile.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-skills.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partners.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-payout.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-profile.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-public-profile.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-recovery.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-register.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-restricted-support.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-search-filters.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-search-map.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-search-results-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-search-results.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-security-anonymous.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-security-delete.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-security-identity.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-security.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-service-picker.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-sessions.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-support-create.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-support-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-support.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-grants.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-invite.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-invites.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-leave.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-left.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-members.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-permissions.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-remove.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-topup.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-verification-20261104.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-verification-initial-error.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-verification.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-verify-contact.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-wallet.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-accept-invitation.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-audit.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-categories-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-categories.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-deletion-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-deletion.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-finance-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-finance.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-grant-add.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-grants-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-grants.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-invitations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-invite-review.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-invite.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-invoices-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-invoices.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-jobs-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-jobs.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-metrics.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-mfa.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-overview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-partners-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-partners.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-recovery-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-recovery.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-reports-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-reports-history.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-reports.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-reviews-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-reviews.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-security.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-skills-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-skills.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-users-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-users.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-verifications-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-admin-verifications.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-employee-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/android-owner-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-accept-invitation.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-audit.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-categories-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-categories.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-deletion-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-deletion.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-finance-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-finance.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-grant-add.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-grants-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-grants.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-invitations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-invite-review.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-invite.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-invoices-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-invoices.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-jobs-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-jobs.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-metrics.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-mfa.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-overview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-partners-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-partners.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-recovery-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-recovery.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-reports-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-reports-history.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-reports.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-reviews-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-reviews.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-security.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-skills-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-skills.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-users-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-users.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-verifications-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-admin-verifications.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-employee-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX02/ios-owner-account.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-chat-keyboard-fixed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-filter-keyboard.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-invoice-keyboard-fixed.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-provider-draft-kept.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-search-results.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-settings-kept.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-wallet.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-chat-final.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-home.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-invoice-final.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-provider-draft-kept.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-search-results.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-settings-kept.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-wallet.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-18/loi-moi-dang-cho.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-18/phone-chi-tiet.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-18/phone-hang-doi.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-18/phone-moi-quan-tri.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-18/them-quan-tri.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-18/web-chi-tiet.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-18/web-phan-quyen.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-18/web-tong-quan.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/android-invitations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/android-overview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/android-team.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/ios-invitations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/ios-overview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/ios-support-detail.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/ios-team.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/mobile-web-overview.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/mobile-web-team.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/web-invitations.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/web-invite-review.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-19/web-overview.png",
       "kind": "documentation"
     },
     {
@@ -2221,195 +4237,19 @@
       "kind": "documentation"
     },
     {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-01-nen-tang-danh-muc.md",
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-14-native.json",
       "kind": "documentation"
     },
     {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-05-khung-giao-dien.md",
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-15-native.json",
       "kind": "documentation"
     },
     {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-06-trang-chinh-theo-storybook.md",
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-17-native.json",
       "kind": "documentation"
     },
     {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-07-bo-kiem-sdd-local.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-08-sdd-toan-du-an.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-09-luong-local-va-dieu-huong.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-04-ho-so-ten-hien-thi.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-04-phien-va-dia-chi.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-07-tiep-tuc-tai-khoan-va-thu-hoi-phien.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B01-08-bao-mat-khoi-phuc-va-xoa.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-ra-soat-danh-muc.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-01-thay-du-lieu-danh-muc.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-03-nguon-cung-va-tim-dich-vu.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-04-nop-va-xet-xac-minh.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B02-05-gallery-va-ngung-nhan-viec.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-01-chon-dia-diem-va-ban-do.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-02-ban-do-ket-qua-tim-kiem.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-03-bo-nhap-toa-do.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-04-yeu-cau-nhan-viec-va-chat.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-05-chon-dich-vu-truoc-khi-tim.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B03-06-da-giac-gom-cum-va-xep-hang.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B04-01-doi-ngu-va-xac-thuc-local.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B04-02-quyen-va-ban-giao-doi-ngu.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-01-thong-bao-va-nhac-lich.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-02-realtime-inbox-va-chat.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-03-tach-tin-nhan-va-thong-bao.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-04-lich-tong-hop-cong-viec.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-05-cap-nhat-tu-dong-va-keo-lam-moi.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B05-06-su-kien-va-expo-push.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B06-01-hoa-don-va-quyet-toan-test.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B08-01-ngan-hang-va-nap-rut-test.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-01-ho-tro-va-bao-cao.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-02-admin-ho-tro-va-kiem-duyet.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-03-admin-tren-dien-thoai.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-04-admin-hoan-tat-thay.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-05-admin-tai-khoan-va-danh-muc.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B09-06-ghi-chu-noi-bo.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-01-danh-gia-sau-cong-viec.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-03-anh-va-phan-hoi-danh-gia.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-04-lich-su-khach-va-dau-nhan-tien.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B10-05-cuoc-goi-livekit-local.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-01-quyen-tra-cuu-va-bao-cao.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-02-dien-tap-phuc-hoi-local.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-03-tong-ket-p2.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-04-nhat-ky-admin-tong-hop.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-05-khoi-phuc-mfa.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B11-06-backup-day-du-demo.md",
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-19-local-mail.json",
       "kind": "documentation"
     },
     {
@@ -2417,19 +4257,15 @@
       "kind": "documentation"
     },
     {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-01-nen-da-ngon-ngu.md",
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/UX-01/button-matrix.json",
       "kind": "documentation"
     },
     {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-04-danh-muc-da-ngon-ngu.md",
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/UX-01/images.json",
       "kind": "documentation"
     },
     {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/I18N-05-ngon-ngu-tai-khoan.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/MAU-BAO-CAO.md",
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/UX-01/native-events.json",
       "kind": "documentation"
     },
     {
@@ -2493,7 +4329,39 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-ket-qua-ra-soat-native.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-thiet-ke-giao-dien.html",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-thiet-ke-giao-dien.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-thiet-ke/app.js",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-thiet-ke/style.css",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-toi-uu-luong-va-nut.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-02-quan-tri.html",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-02-quan-tri/app.js",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-02-quan-tri/style.css",
       "kind": "documentation"
     },
     {
@@ -2501,7 +4369,7 @@
       "kind": "documentation"
     },
     {
-      "path": "docs/ke-hoach-trien-khai/README.md",
+      "path": "docs/ke-hoach-trien-khai/sdd/README.md",
       "kind": "documentation"
     },
     {
@@ -2514,10 +4382,6 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/sdd/project-inventory.json",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/sdd/README.md",
       "kind": "documentation"
     },
     {
@@ -2593,11 +4457,11 @@
       "kind": "spec"
     },
     {
-      "path": "docs/project-docs/architecture/architecture.json",
+      "path": "docs/project-docs/architecture/README.md",
       "kind": "spec"
     },
     {
-      "path": "docs/project-docs/architecture/README.md",
+      "path": "docs/project-docs/architecture/architecture.json",
       "kind": "spec"
     },
     {
@@ -2629,6 +4493,10 @@
       "kind": "spec"
     },
     {
+      "path": "docs/technical-design/README.md",
+      "kind": "spec"
+    },
+    {
       "path": "docs/technical-design/backlog.json",
       "kind": "spec"
     },
@@ -2650,10 +4518,6 @@
     },
     {
       "path": "docs/technical-design/qa-cases.json",
-      "kind": "spec"
-    },
-    {
-      "path": "docs/technical-design/README.md",
       "kind": "spec"
     },
     {
@@ -2686,14 +4550,6 @@
     },
     {
       "path": "docs/ui-comparison",
-      "kind": "compatibility"
-    },
-    {
-      "path": "docs/UI-comparison-v0.1.zip",
-      "kind": "compatibility"
-    },
-    {
-      "path": "docs/UI-comparison-v0.2.zip",
       "kind": "compatibility"
     },
     {
@@ -2757,15 +4613,23 @@
       "kind": "placeholder"
     },
     {
-      "path": "README.md",
-      "kind": "documentation"
-    },
-    {
       "path": "scripts/build/api.mjs",
       "kind": "tooling"
     },
     {
       "path": "scripts/build/clean-api.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/data/complete-operational.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/data/operational-model.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/data/seed-operational.mjs",
       "kind": "tooling"
     },
     {
@@ -2794,6 +4658,42 @@
     },
     {
       "path": "scripts/ops/restore-drill.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/review/build-report.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/review/capture-native.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/review/check-operational-api.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/review/check-report.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/review/report-template.html",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/review/screen-catalog.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/review/start-operational-api.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/review/start-operational-mobile.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/review/verify-operational-flow.mjs",
       "kind": "tooling"
     },
     {
@@ -2846,6 +4746,14 @@
     },
     {
       "path": "scripts/test/native.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/operational-model.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/operational-runtime.test.mjs",
       "kind": "test"
     },
     {
@@ -2962,6 +4870,10 @@
     },
     {
       "path": "services/api/migrations/024_local_gallery_mfa.sql",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/migrations/025_admin_invitations.sql",
       "kind": "product"
     },
     {
@@ -3198,6 +5110,18 @@
     },
     {
       "path": "services/api/src/modules/auth/password.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/backoffice/admin-invitations.controller.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/backoffice/admin-invitations.input.ts",
+      "kind": "product"
+    },
+    {
+      "path": "services/api/src/modules/backoffice/admin-invitations.service.ts",
       "kind": "product"
     },
     {
@@ -3597,6 +5521,10 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/integration/admin-invitations.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/integration/admin-moderation.test.ts",
       "kind": "test"
     },
@@ -3817,6 +5745,10 @@
       "kind": "test"
     },
     {
+      "path": "tests/e2e/web/admin-invitations.spec.mjs",
+      "kind": "test"
+    },
+    {
       "path": "tests/e2e/web/admin-moderation.spec.mjs",
       "kind": "test"
     },
@@ -3941,6 +5873,10 @@
       "kind": "tooling"
     },
     {
+      "path": "ui-ux/README.md",
+      "kind": "reference"
+    },
+    {
       "path": "ui-ux/archive/design-audit-v0.21/counts.json",
       "kind": "reference"
     },
@@ -3965,6 +5901,10 @@
       "kind": "reference"
     },
     {
+      "path": "ui-ux/archive/figma/README.md",
+      "kind": "reference"
+    },
+    {
       "path": "ui-ux/archive/figma/button.png",
       "kind": "reference"
     },
@@ -3974,10 +5914,6 @@
     },
     {
       "path": "ui-ux/archive/figma/foundations.png",
-      "kind": "reference"
-    },
-    {
-      "path": "ui-ux/archive/figma/README.md",
       "kind": "reference"
     },
     {
@@ -3994,14 +5930,6 @@
     },
     {
       "path": "ui-ux/archive/ux-next-organization.md",
-      "kind": "reference"
-    },
-    {
-      "path": "ui-ux/exports/UI-comparison-v0.1.zip",
-      "kind": "reference"
-    },
-    {
-      "path": "ui-ux/exports/UI-comparison-v0.2.zip",
       "kind": "reference"
     },
     {
@@ -4081,6 +6009,14 @@
       "kind": "reference"
     },
     {
+      "path": "ui-ux/exports/UI-comparison-v0.1.zip",
+      "kind": "reference"
+    },
+    {
+      "path": "ui-ux/exports/UI-comparison-v0.2.zip",
+      "kind": "reference"
+    },
+    {
       "path": "ui-ux/prototype/.storybook/main.js",
       "kind": "prototype"
     },
@@ -4101,7 +6037,39 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/account/account.css",
+      "path": "ui-ux/prototype/src/App.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/App.stories.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/Journey.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/Membership.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/Partner.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/ProfileEditor.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/SkillPicker.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/Team.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/WorkArt.jsx",
       "kind": "prototype"
     },
     {
@@ -4121,14 +6089,6 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/account/model.mjs",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/account/model.test.mjs",
-      "kind": "prototype"
-    },
-    {
       "path": "ui-ux/prototype/src/account/Onboarding.jsx",
       "kind": "prototype"
     },
@@ -4137,7 +6097,15 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/activity/activity.css",
+      "path": "ui-ux/prototype/src/account/account.css",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/model.mjs",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/account/model.test.mjs",
       "kind": "prototype"
     },
     {
@@ -4149,19 +6117,19 @@
       "kind": "prototype"
     },
     {
+      "path": "ui-ux/prototype/src/activity/NotificationBell.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/activity/activity.css",
+      "kind": "prototype"
+    },
+    {
       "path": "ui-ux/prototype/src/activity/model.mjs",
       "kind": "prototype"
     },
     {
       "path": "ui-ux/prototype/src/activity/model.test.mjs",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/activity/NotificationBell.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/admin/admin.css",
       "kind": "prototype"
     },
     {
@@ -4173,6 +6141,10 @@
       "kind": "prototype"
     },
     {
+      "path": "ui-ux/prototype/src/admin/admin.css",
+      "kind": "prototype"
+    },
+    {
       "path": "ui-ux/prototype/src/admin/model.mjs",
       "kind": "prototype"
     },
@@ -4181,15 +6153,11 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/App.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/App.stories.jsx",
-      "kind": "prototype"
-    },
-    {
       "path": "ui-ux/prototype/src/finance/AdminFinance.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/finance/WalletPanel.jsx",
       "kind": "prototype"
     },
     {
@@ -4202,10 +6170,6 @@
     },
     {
       "path": "ui-ux/prototype/src/finance/model.test.mjs",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/finance/WalletPanel.jsx",
       "kind": "prototype"
     },
     {
@@ -4237,15 +6201,7 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/Journey.jsx",
-      "kind": "prototype"
-    },
-    {
       "path": "ui-ux/prototype/src/main.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/Membership.jsx",
       "kind": "prototype"
     },
     {
@@ -4265,19 +6221,7 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/Partner.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/ProfileEditor.jsx",
-      "kind": "prototype"
-    },
-    {
       "path": "ui-ux/prototype/src/skill-catalog.mjs",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/SkillPicker.jsx",
       "kind": "prototype"
     },
     {
@@ -4286,6 +6230,10 @@
     },
     {
       "path": "ui-ux/prototype/src/support/AdminOperations.jsx",
+      "kind": "prototype"
+    },
+    {
+      "path": "ui-ux/prototype/src/support/SupportDesk.jsx",
       "kind": "prototype"
     },
     {
@@ -4301,10 +6249,6 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/support/SupportDesk.jsx",
-      "kind": "prototype"
-    },
-    {
       "path": "ui-ux/prototype/src/team-model.mjs",
       "kind": "prototype"
     },
@@ -4313,19 +6257,11 @@
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/prototype/src/Team.jsx",
-      "kind": "prototype"
-    },
-    {
-      "path": "ui-ux/prototype/src/WorkArt.jsx",
-      "kind": "prototype"
-    },
-    {
       "path": "ui-ux/prototype/vite.config.js",
       "kind": "prototype"
     },
     {
-      "path": "ui-ux/README.md",
+      "path": "ui-ux/research/README.md",
       "kind": "reference"
     },
     {
@@ -4343,10 +6279,6 @@
     {
       "path": "ui-ux/research/react",
       "kind": "compatibility"
-    },
-    {
-      "path": "ui-ux/research/README.md",
-      "kind": "reference"
     },
     {
       "path": "ui-ux/research/research.md",
@@ -4449,6 +6381,10 @@
       "kind": "reference"
     },
     {
+      "path": "ui-ux/wireframes/technical-design/README.md",
+      "kind": "reference"
+    },
+    {
       "path": "ui-ux/wireframes/technical-design/backlog.json",
       "kind": "reference"
     },
@@ -4473,10 +6409,6 @@
       "kind": "reference"
     },
     {
-      "path": "ui-ux/wireframes/technical-design/README.md",
-      "kind": "reference"
-    },
-    {
       "path": "ui-ux/wireframes/technical-design/realtime.json",
       "kind": "reference"
     },
@@ -4491,1438 +6423,6 @@
     {
       "path": "ui-ux/wireframes/technical-design/technical-design.html",
       "kind": "reference"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-10-de-xuat-giao-dien.html",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-10-ra-soat-bao-mat-va-giao-dien.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/ios-home.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/ios-invoice.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/ios-wallet-large.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/proposal-home.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/web-admin.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/ios-job-accepted.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/android-address-keyboard.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/android-profile-saved.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-10/proposal-profile-back.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-11-trien-khai-giao-dien.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-invoice.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-wallet.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-profile.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/ios-home.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-chat.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/ios-job.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-job.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-admin.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/ios-chat.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-home.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/web-account.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/android-chat.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-11/android-job.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-13-du-lieu-van-hanh-local.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-14-bao-cao-man-hinh.html",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-14-bao-cao-man-hinh.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-14-man-hinh-data.json",
-      "kind": "documentation"
-    },
-    {
-      "path": "scripts/data/complete-operational.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/data/operational-model.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/data/seed-operational.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/review/build-report.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/review/capture-native.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/review/check-operational-api.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/review/check-report.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/review/report-template.html",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/review/screen-catalog.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/review/start-operational-mobile.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/review/verify-operational-flow.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/test/operational-model.test.mjs",
-      "kind": "test"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-ket-qua-ra-soat-native.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/UX-01-kiem-nut-native.html",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/UX-01/images.json",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/UX-01/native-events.json",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/UX-01/button-matrix.json",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-thiet-ke-giao-dien.html",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-thiet-ke-giao-dien.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-thiet-ke/style.css",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/de-xuat/UX-01-thiet-ke/app.js",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-16-ban-thiet-ke-ux01.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "apps/mobile/src/components/ui/SegmentedTabs.tsx",
-      "kind": "product"
-    },
-    {
-      "path": "apps/mobile/src/features/jobs/components/JobStatus.tsx",
-      "kind": "product"
-    },
-    {
-      "path": "apps/mobile/src/features/chat/screens/ConversationUX.test.tsx",
-      "kind": "test"
-    },
-    {
-      "path": "apps/mobile/src/features/search/messages.ts",
-      "kind": "product"
-    },
-    {
-      "path": "apps/mobile/src/features/partners/messages.ts",
-      "kind": "product"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-15-toi-uu-trai-nghiem.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-wallet.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-chat-final.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-home.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-invoice-keyboard-fixed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-chat-keyboard-fixed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-settings-kept.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-provider-draft-kept.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-settings-kept.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-provider-draft-kept.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-home.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-search-results.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/ios-invoice-final.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-search-results.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-wallet.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-15-native.json",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-15/android-filter-keyboard.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-account.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-address-form.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-addresses.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-audit.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-categories-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-categories.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-deletion-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-deletion.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-finance-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-finance.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-grants-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-grants.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-invoices-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-invoices.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-jobs-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-jobs.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-metrics.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-mfa.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-partners-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-partners.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-recovery-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-recovery.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-reports-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-reports.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-reviews-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-reviews.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-security.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-skills-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-skills.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-users-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-users.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-verifications-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-admin-verifications.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-bank.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-calendar.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-call.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-conversation.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-conversations.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-admin_completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-draft.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-locked.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-payment_reported.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-revision_requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-invoice-sent.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-accepted.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-admin_completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-assigned.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-declined.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-draft.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-locked.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-payment_reported.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-rescheduled.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-revision_requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-sent.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-stopped.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-job-withdrawn.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-jobs.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-customer-reviews.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-employee-account.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-employee-job.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-employee-organizations.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-finance-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-finance-history.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-home.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-job-create.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-location-picker.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-login.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-notification-settings.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-notifications.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-organizations.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-account.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-admin_completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-draft.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-locked.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-payment_reported.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-revision_requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-invoice-sent.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-accepted.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-admin_completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-assigned.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-declined.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-draft.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-locked.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-payment_reported.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-rescheduled.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-revision_requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-sent.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-stopped.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-job-withdrawn.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-owner-reviews.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-areas.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-create.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-editor.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-gallery.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-locations.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-profile.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partner-skills.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-partners.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-payout.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-profile.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-public-profile.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-recovery.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-register.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-restricted-support.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-search-filters.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-search-map.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-search-results.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-security-anonymous.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-security-delete.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-security-identity.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-security.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-service-picker.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-sessions.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-support-create.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-support-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-support.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-grants.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-invite.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-invites.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-leave.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-left.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-members.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-permissions.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-team-remove.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-topup.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-verification-initial-error.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-verification.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-verify-contact.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-wallet.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-account.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-address-form.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-addresses.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-audit.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-categories-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-categories.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-deletion-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-deletion.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-finance-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-finance.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-grants-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-grants.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-invoices-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-invoices.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-jobs-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-jobs.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-metrics.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-mfa.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-partners-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-partners.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-recovery-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-recovery.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-reports-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-reports.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-reviews-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-reviews.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-security.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-skills-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-skills.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-users-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-users.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-verifications-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-admin-verifications.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-bank.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-calendar.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-call.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-conversation.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-conversations.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-admin_completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-draft.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-locked.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-payment_reported.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-revision_requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-invoice-sent.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-accepted.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-admin_completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-assigned.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-declined.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-draft.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-locked.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-payment_reported.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-rescheduled.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-revision_requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-sent.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-stopped.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-job-withdrawn.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-jobs.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-customer-reviews.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-employee-account.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-employee-job.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-employee-organizations.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-finance-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-finance-history.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-home.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-job-create.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-location-picker.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-login.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-notification-settings.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-notifications.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-organizations.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-account.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-admin_completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-draft.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-locked.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-payment_reported.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-revision_requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-invoice-sent.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-accepted.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-admin_completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-assigned.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-completed.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-declined.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-draft.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-locked.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-payment_reported.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-rescheduled.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-revision_requested.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-sent.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-stopped.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-job-withdrawn.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-owner-reviews.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-areas.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-create.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-editor.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-gallery.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-locations.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-profile.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partner-skills.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-partners.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-payout.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-profile.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-public-profile.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-recovery.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-register.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-restricted-support.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-search-filters.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-search-map.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-search-results.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-security-anonymous.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-security-delete.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-security-identity.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-security.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-service-picker.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-sessions.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-support-create.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-support-detail.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-support.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-grants.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-invite.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-invites.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-leave.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-left.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-members.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-permissions.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-team-remove.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-topup.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-verification-initial-error.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-verification.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-verify-contact.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-wallet.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-14-native.json",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-17-sua-loi-sau-audit-native.md",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-call-20261104.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-call-unavailable-20261104.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-finance-detail-20261104.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-search-results-20261104.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/android-verification-20261104.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-call-20261104.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-call-unavailable-20261104.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-finance-detail-20261104.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-search-results-20261104.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-14-UX01/ios-verification-20261104.png",
-      "kind": "documentation"
-    },
-    {
-      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-17-native.json",
-      "kind": "documentation"
-    },
-    {
-      "path": "scripts/review/start-operational-api.mjs",
-      "kind": "tooling"
-    },
-    {
-      "path": "scripts/test/operational-runtime.test.mjs",
-      "kind": "test"
     }
   ],
   "tests": {
@@ -5946,6 +6446,7 @@
       "apps/mobile/src/features/admin/api/admin-api.test.ts",
       "apps/mobile/src/features/admin/screens/Admin.test.tsx",
       "apps/mobile/src/features/admin/screens/AdminCompletion.test.tsx",
+      "apps/mobile/src/features/admin/screens/AdminTeam.test.tsx",
       "apps/mobile/src/features/admin/screens/RecoveryPanel.test.tsx",
       "apps/mobile/src/features/auth/api/auth-api.test.ts",
       "apps/mobile/src/features/auth/screens/AccountScreen.test.tsx",
@@ -6005,6 +6506,7 @@
       "services/api/test/integration/account-management.test.ts",
       "services/api/test/integration/account-security.test.ts",
       "services/api/test/integration/admin-completion.test.ts",
+      "services/api/test/integration/admin-invitations.test.ts",
       "services/api/test/integration/admin-moderation.test.ts",
       "services/api/test/integration/admin-operations.test.ts",
       "services/api/test/integration/assets.test.ts",
@@ -6043,6 +6545,7 @@
       "tests/e2e/web/account-management.spec.mjs",
       "tests/e2e/web/account-security.spec.mjs",
       "tests/e2e/web/admin-completion.spec.mjs",
+      "tests/e2e/web/admin-invitations.spec.mjs",
       "tests/e2e/web/admin-moderation.spec.mjs",
       "tests/e2e/web/admin-operations.spec.mjs",
       "tests/e2e/web/auth.spec.mjs",
@@ -6232,7 +6735,11 @@
     "LOCAL-01-AUDIT",
     "LOCAL-01-GALLERY",
     "LOCAL-01-MFA",
-    "LOCAL-01-BACKUP"
+    "LOCAL-01-BACKUP",
+    "UX-02-SUPPORT",
+    "UX-02-INVITE",
+    "UX-02-TEAM",
+    "UX-02-E2E"
   ],
   "qa": [
     {
@@ -7216,6 +7723,17 @@
         "P2-ADMIN-02"
       ],
       "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
+    },
+    {
+      "id": "QA-110",
+      "status": "partial",
+      "criteria": [
+        "UX-02-SUPPORT",
+        "UX-02-INVITE",
+        "UX-02-TEAM",
+        "UX-02-E2E"
+      ],
+      "reason": "Reviewed local/API/mobile component and browser branches only. Native evidence and Mailpit delivery recorded separately; no production, external provider or owner UAT certification."
     }
   ],
   "operations": [
@@ -10390,6 +10908,41 @@
       "method": "PUT",
       "path": "/partners/{id}/gallery",
       "file": "services/api/src/modules/partners/partners.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/reports-summary",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/invitations",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/invitations",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/invitations/{id}/resend",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/invitations/{id}/revoke",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin-invitations/preview",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin-invitations/accept",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts"
     }
   ],
   "contractGaps": [
@@ -10440,6 +10993,48 @@
       "path": "/partners/{id}/gallery",
       "file": "services/api/src/modules/partners/partners.controller.ts",
       "reason": "LOCAL-01: owner explicitly approved grouped gallery/MFA rules 23/10/2026. Implementation contract documented in B02-05/B11-05; OpenAPI/Drive/ui-ux synchronization was not requested. Reviewed local/test route, not production contract certification."
+    },
+    {
+      "method": "GET",
+      "path": "/admin/reports-summary",
+      "file": "services/api/src/modules/moderation/moderation.controller.ts",
+      "reason": "UX-02: owner approved implementation on web/mobile and 7-day verified-email invitations with MFA, resend/revoke and local delivery on 05/11/2026. Implementation contract and limits in B00-19. OpenAPI/Drive/ui-ux sync not requested; local/test evidence only."
+    },
+    {
+      "method": "GET",
+      "path": "/admin/invitations",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts",
+      "reason": "UX-02: owner approved implementation on web/mobile and 7-day verified-email invitations with MFA, resend/revoke and local delivery on 05/11/2026. Implementation contract and limits in B00-19. OpenAPI/Drive/ui-ux sync not requested; local/test evidence only."
+    },
+    {
+      "method": "POST",
+      "path": "/admin/invitations",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts",
+      "reason": "UX-02: owner approved implementation on web/mobile and 7-day verified-email invitations with MFA, resend/revoke and local delivery on 05/11/2026. Implementation contract and limits in B00-19. OpenAPI/Drive/ui-ux sync not requested; local/test evidence only."
+    },
+    {
+      "method": "POST",
+      "path": "/admin/invitations/{id}/resend",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts",
+      "reason": "UX-02: owner approved implementation on web/mobile and 7-day verified-email invitations with MFA, resend/revoke and local delivery on 05/11/2026. Implementation contract and limits in B00-19. OpenAPI/Drive/ui-ux sync not requested; local/test evidence only."
+    },
+    {
+      "method": "POST",
+      "path": "/admin/invitations/{id}/revoke",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts",
+      "reason": "UX-02: owner approved implementation on web/mobile and 7-day verified-email invitations with MFA, resend/revoke and local delivery on 05/11/2026. Implementation contract and limits in B00-19. OpenAPI/Drive/ui-ux sync not requested; local/test evidence only."
+    },
+    {
+      "method": "POST",
+      "path": "/admin-invitations/preview",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts",
+      "reason": "UX-02: owner approved implementation on web/mobile and 7-day verified-email invitations with MFA, resend/revoke and local delivery on 05/11/2026. Implementation contract and limits in B00-19. OpenAPI/Drive/ui-ux sync not requested; local/test evidence only."
+    },
+    {
+      "method": "POST",
+      "path": "/admin-invitations/accept",
+      "file": "services/api/src/modules/backoffice/admin-invitations.controller.ts",
+      "reason": "UX-02: owner approved implementation on web/mobile and 7-day verified-email invitations with MFA, resend/revoke and local delivery on 05/11/2026. Implementation contract and limits in B00-19. OpenAPI/Drive/ui-ux sync not requested; local/test evidence only."
     }
   ],
   "knownGaps": [

@@ -1,3 +1,4 @@
+import {AcceptAdminInvitation} from '../../admin/screens/AcceptAdminInvitation';
 import {sessionOperation} from '../../jobs/state/session-ready';
 import {formatInteger} from '../../invoices/format-amount';
 import {type PointWallet} from '../../invoices/models';
@@ -84,7 +85,7 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
         <AccountLink testID="sessions-open" label={t('sessions.title')} disabled={state.busy} onPress={() => navigation.navigate('Sessions')} />
         <AccountLink testID="support-open" label={t('support.title')} disabled={state.busy} onPress={() => navigation.navigate('Support')} />
       </Card>
-      <Card><AppText variant="card">{t('shell.preferences')}</AppText><LanguageSettings /></Card>
+      <AcceptAdminInvitation key={'admin-invitation:'+state.user!.id} owner={state.user!.id} verified={state.user!.email_verified}/><Card><AppText variant="card">{t('shell.preferences')}</AppText><LanguageSettings /></Card>
       <View style={styles.logout}><Button testID="auth-logout" variant="danger" label={t('auth.logout')} loading={state.busy} onPress={() => void manager.logout()} /></View>
     </>}
     {state.phase === 'anonymous' && <Card>

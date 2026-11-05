@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light"><title>UX-02 · Không gian quản trị — Dịch vụ quanh bạn</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="UX-02-quan-tri/style.css">
+</head>
+<body>
+<header class="review-bar">
+ <div class="review-brand"><span class="review-dot"></span><strong>UX-02</strong><span>Bản thiết kế để duyệt</span></div>
+ <div class="review-controls"><div class="device-switch" aria-label="Kích thước xem trước"><button data-device="desktop" aria-pressed="true">Máy tính</button><button data-device="phone" aria-pressed="false">Điện thoại</button></div><label class="role-picker"><span>Góc nhìn</span><select id="role"><option value="manager">Quản trị đầy đủ</option><option value="support">Nhân viên hỗ trợ</option><option value="reader">Hỗ trợ chỉ xem</option></select></label><button class="review-link" id="scope">Hướng dẫn bản mẫu</button><button class="review-link" id="reset">Đặt lại</button></div>
+</header>
+<div class="preview" id="preview"><div class="app" id="app"><div id="shell"></div></div></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<dialog id="modal" aria-labelledby="modal-title"><div id="modal-content"></div></dialog>
+<noscript><p class="noscript">Bật JavaScript để thử chuyển màn và thao tác trong bản thiết kế này. Bản mẫu không kết nối hệ thống thật.</p></noscript>
+<script src="UX-02-quan-tri/app.js"></script>
+</body>
+</html>

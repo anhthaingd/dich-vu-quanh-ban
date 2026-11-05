@@ -1,6 +1,23 @@
 # B00-14 — Báo cáo màn hình Android và iPhone theo vai trò
 
-Cập nhật báo cáo: 04/11/2026 · Ảnh ghi ngày riêng 02/11 hoặc 04/11/2026 · Database: **dvqb_local** · [Mở báo cáo tương tác](B00-14-bao-cao-man-hinh.html) · [Dữ liệu vận hành](B00-13-du-lieu-van-hanh-local.md) · [Mục lục](../README.md).
+Cập nhật báo cáo: 05/11/2026 · Ảnh ghi ngày riêng 02/11, 04/11 hoặc 05/11/2026 · Database: **dvqb_local** (native), **dvqb_test/schema riêng** (ảnh web UX-02) · [Mở báo cáo tương tác](B00-14-bao-cao-man-hinh.html) · [Dữ liệu vận hành](B00-13-du-lieu-van-hanh-local.md) · [Mục lục](../README.md).
+
+## Cập nhật quản trị UX-02 ngày 05/11/2026
+
+Đã ghép kết quả triển khai [B00-19](B00-19-trien-khai-quan-tri.md) vào báo cáo tổng, theo yêu cầu chủ dự án. Mở HTML → **Vai trò: Quản trị viên → Luồng: Hỗ trợ và quản trị**. Sau MFA là Tổng quan, hàng đợi/chi tiết/lịch sử hỗ trợ, Nhân sự, thêm tài khoản có sẵn, mời email, xác nhận và danh sách lời mời. Nhận lời mời nằm trong luồng **Tài khoản và bảo mật** của người dùng thường, trước khi có quyền quản trị.
+
+- Tổng quan đếm toàn bộ hồ sơ được tạo trong kỳ 7/30 ngày; bộ lọc ngày, trạng thái và mới/cũ gắn với phân trang.
+- Xử lý hỗ trợ tách nội dung/lịch sử, ghi chú riêng và quyết định; có bước kiểm tra trước khi ghi. Chỉ `support.manage` mới xử lý được.
+- Nhân sự có hai cách thêm: chọn tài khoản đang có hoặc mời người mới qua email. Lời mời 7 ngày, đúng email đã xác minh, vẫn cần MFA; gửi lại thay mã cũ, có hủy. Chỉ thử thư Mailpit local.
+- Mobile dùng Tổng quan / Xử lý / Quyền / Khác. Web dùng menu trái. Những màn quản trị còn lại nằm trong **Khác / Chức năng khác**, theo quyền hiện có.
+
+Báo cáo có **141 mục / 282 vị trí native**, đủ ảnh trên cả Android và iOS. Sau phản hồi của chủ dự án, đã **chụp lại 80 ảnh** ngày 05/11/2026: 37 mục quản trị/nhận lời mời và 3 mục Tài khoản (khách, chủ hồ sơ, nhân viên), mỗi mục trên hai nền tảng. Những mục này dùng ảnh app đang chạy theo UX-02 trong `anh/B00-14-UX02`, không còn dùng ảnh trước thay đổi. Các màn ngoài phạm vi UX-02 giữ ảnh và ngày kiểm riêng 02/11 hoặc 04/11; không gọi toàn bộ 282 ảnh là vừa chụp mới.
+
+Không còn vị trí dùng ảnh lịch sử thay giao diện UX-02 hoặc vị trí thiếu ảnh trong danh mục hiện tại. Trang chủ Android vẫn gắn **NATIVE-05 còn mở**. **5 ảnh web/mobile-web** từ B00-19 được trình bày riêng, không tính thành native.
+
+Ảnh mới dùng `dvqb_local` hiện có. Danh sách lời mời đang rỗng; biểu mẫu mời được điền DEMO và chụp tới bước kiểm tra, **chưa bấm Xác nhận thực hiện**. Tab lịch sử hỗ trợ được chụp ở hồ sơ chưa có quyết định trước đó. Màn nhận lời mời chụp biểu mẫu trước khi nhập mã. Đây là bằng chứng đúng trạng thái giao diện, không chứng nhận đã thực hiện mọi thao tác trong luồng. Không gửi thêm lời mời, đổi quyền, duyệt tiền hay reset dữ liệu để tạo ảnh.
+
+Bằng chứng triển khai trước đợt cập nhật báo cáo: 396 test mobile, 192 test API, 32 hành trình web đạt; SDD verify đạt trên bộ nguồn lúc bàn giao code. Đợt cập nhật báo cáo chạy lại kiểm HTML/ảnh/bộ lọc và SDD theo nguồn cuối; xem [kết quả kiểm báo cáo](../../../.local/seed-operational/report-check/result.json) và `test-results/sdd/SDD-PROJECT/`. Không dùng số lần trước thay bằng chứng mới. Chưa có CI remote/thiết bị vật lý/UAT mới. Ngoài ảnh và báo cáo, đã sửa khóa React bị trùng giữa phần Point và nhận lời mời trên Tài khoản; bài hồi quy tái hiện trước sửa và cả 7 test Tài khoản đạt sau sửa, xem [B00-19](B00-19-trien-khai-quan-tri.md#bổ-sung-khi-chụp-lại-báo-cáo-tổng-05112026). Không đồng bộ Drive/Excel/`ui-ux`.
 
 ## Cách xem dễ nhất
 
@@ -9,15 +26,15 @@ Mở file HTML bằng trình duyệt. Chọn **Vai trò → Luồng sử dụng 
 - **Tìm kiếm:** nhập tên màn hoặc chức năng, có thể bỏ dấu. Ví dụ `hoa don`, `phan quyen`, `rut`. Ưu tiên mục có tên khớp; tránh trả “hoạt động” khi tìm “hóa đơn”.
 - **Luồng chính / nhánh:** tách từ chối, khách rút, dừng, đổi lịch, phân công và quản trị hoàn tất thay. Những nhánh này không phải bước bắt buộc của mọi công việc.
 - **Quyền quản trị:** lọc riêng hỗ trợ, kiểm duyệt, tài khoản, danh mục, tài chính và báo cáo. Nhìn thấy màn không tự đồng nghĩa có quyền thực hiện mọi nút.
-- **Ảnh đã kiểm:** chọn có ảnh cả hai nền tảng, còn thiếu ảnh, **Ảnh có vấn đề / cần kiểm tiếp** hoặc **Không thể chụp qua luồng hiện tại**. Bộ lọc xét đúng nền tảng đang chọn; mỗi ảnh ghi vai trò, ngày kiểm và vấn đề liên quan.
+- **Ảnh đã kiểm:** chọn có ảnh hiện hành cả hai nền tảng, thiếu ảnh hiện hành, ảnh lịch sử trước UX-02, **Ảnh có vấn đề / cần kiểm tiếp** hoặc **Không thể chụp qua luồng hiện tại**. Bộ lọc xét đúng nền tảng đang chọn; mỗi ảnh ghi vai trò, ngày kiểm và vấn đề liên quan.
 - **Danh mục:** xem nhanh toàn bộ mục đang khớp, rồi chọn một mục để quay lại hướng dẫn từng bước.
-- **Sao chép vị trí:** đường dẫn ghi nhớ bộ lọc và màn đang xem. Khi chuyển sang máy khác, cần gửi kèm file HTML và thư mục `anh/B00-14-UX01`; đường dẫn local không tự trở thành liên kết Internet.
+- **Sao chép vị trí:** đường dẫn ghi nhớ bộ lọc và màn đang xem. Khi chuyển sang máy khác, cần gửi kèm file HTML và các thư mục `anh/B00-14-UX01`, `anh/B00-14-UX02`, `anh/B00-19`; đường dẫn local không tự trở thành liên kết Internet.
 
 Báo cáo chạy bằng file local, không cần đăng nhập hay gửi thông tin lên dịch vụ khác. Phần dữ liệu mô tả được nhúng trong HTML; ảnh lấy từ thư mục bên cạnh. Không chứa mật khẩu, token hay khóa TOTP.
 
 ## Hệ thống có những nhóm màn nào?
 
-Đã đối chiếu **26 route** trong `RootStackParamList`; khu quản trị và khu hỗ trợ tài khoản bị khóa còn được dựng có điều kiện ngoài danh sách route thông thường. Danh mục tương tác có **134 mục**, gồm màn, tab, biểu mẫu và trạng thái của cùng màn. Đây không phải 134 route độc lập.
+Đã đối chiếu **26 route** trong `RootStackParamList`; khu quản trị và khu hỗ trợ tài khoản bị khóa còn được dựng có điều kiện ngoài danh sách route thông thường. Danh mục tương tác có **141 mục**, gồm màn, tab, biểu mẫu và trạng thái của cùng màn. Đây không phải 141 route độc lập.
 
 | Luồng | Những phần được giải thích | Vai trò chính |
 |---|---|---|
@@ -68,19 +85,19 @@ flowchart LR
 
 ## Bằng chứng và cách đọc kết quả
 
-Ảnh được chụp từ app đã cài trên **Android Emulator DVQB_API_36 / Android 16** và **iPhone 18 Pro / iOS 27 Simulator**, đọc API thật nối `dvqb_local`. Không phải ảnh thiết kế hoặc trình duyệt giả lập kích thước điện thoại. Ngày chụp 02/11 hoặc 04/11/2026 ghi tại từng khung ảnh; số mục có ảnh hiện trực tiếp ở đầu HTML và bộ lọc.
+Ảnh được chụp từ app đã cài trên **Android Emulator DVQB_API_36 / Android 16** và **iPhone 18 Pro / iOS 27 Simulator**, đọc API thật nối `dvqb_local`. Không phải ảnh thiết kế hoặc trình duyệt giả lập kích thước điện thoại. Ngày chụp 02/11, 04/11 hoặc 05/11/2026 ghi tại từng khung ảnh; số mục có ảnh hiện trực tiếp ở đầu HTML và bộ lọc.
 
-**134/134 mục hiện hành có ảnh trên cả hai nền tảng, tổng 268 ảnh chính.** Ngày 04/11 thay 8 ảnh chính của cuộc gọi, xác minh, chi tiết ví và kết quả tìm kiếm; thêm 2 ảnh kiểm nút Đóng khi thiếu media. Hai ảnh lỗi xác minh ngày 02/11 được giữ làm lịch sử, không phải trạng thái hiện tại. Không còn mục bị chặn vì CatalogCategory đã được bỏ theo duyệt.
+**Hiện tại: 141/141 mục có ảnh trên cả hai nền tảng, tổng 282 ảnh chính.** Trong đó 80 ảnh vừa chụp lại ngày 05/11 cho phạm vi UX-02. Ở mốc lịch sử ngày 04/11, bộ cũ có 134 mục/268 ảnh chính và đã thay 8 ảnh chính của cuộc gọi, xác minh, chi tiết ví và kết quả tìm kiếm; thêm 2 ảnh kiểm nút Đóng khi thiếu media. Hai ảnh lỗi xác minh ngày 02/11 được giữ làm lịch sử, không phải trạng thái hiện tại. Không còn mục bị chặn vì CatalogCategory đã được bỏ theo duyệt.
 
 | Kết quả | Android | iOS |
 |---|---:|---:|
-| Mục có ảnh đã đối chiếu | 134 | 134 |
+| Mục có ảnh đã đối chiếu | 141 | 141 |
 | Trong đó còn ghi nhận vấn đề mở | 1 | 0 |
 | Không có đường vào để chụp | 0 | 0 |
 
 Ảnh có vấn đề vẫn được giữ để thể hiện đúng ứng dụng. **Có ảnh không đồng nghĩa màn không có lỗi hoặc mọi nút đã được thử.** Một số ảnh được cuộn tới nội dung chính, không phải ảnh toàn bộ trang dài. Vai trò chụp ở từng khung không được suy rộng thành bằng chứng cho mọi vai trò được bộ lọc liệt kê.
 
-Danh sách kiểm và dấu băm từng ảnh nằm trong [B00-14-native.json](bang-chung/B00-14-native.json). Dấu băm giúp phát hiện ảnh bị đổi sau khi đối chiếu. B00-15 giữ bằng chứng kiểm thao tác của đợt triển khai trước; bộ ảnh tổng hiện dùng thư mục riêng `anh/B00-14-UX01`.
+Danh sách kiểm và dấu băm từng ảnh nằm trong [B00-14-native.json](bang-chung/B00-14-native.json). Dấu băm giúp phát hiện ảnh bị đổi sau khi đối chiếu. B00-15 giữ bằng chứng kiểm thao tác của đợt triển khai trước; bộ ảnh tổng dùng `anh/B00-14-UX01` cho các màn ngoài phạm vi UX-02 và `anh/B00-14-UX02` cho các màn vừa chụp lại.
 
 ### Mục từng chưa chụp và trạng thái sau sửa, 04/11/2026
 
@@ -120,7 +137,7 @@ Khi kiểm native phát hiện dòng Point khởi tạo có `reference_id=null`,
 
 Bộ đọc API đạt 93/93 kiểm trong lượt hậu kiểm, gồm các hàng đợi, chi tiết, ví/Point, trạng thái công việc, nhóm quyền quản trị và nội dung PNG xác minh riêng tư. Giới hạn đăng nhập trả 429 được tôn trọng theo `Retry-After`; không tắt hay nới bảo vệ để lấy kết quả xanh.
 
-## Kiểm báo cáo hiện hành ngày 04/11
+## Mốc kiểm báo cáo ngày 04/11 — trước UX-02
 
 Bộ kiểm báo cáo đối chiếu đủ 268 vị trí, dấu băm ảnh, lý do và bằng chứng cho mục không chụp được; kiểm tìm không dấu, vai/quyền/luồng, không có kết quả, chuyển bước, liên kết, URL, danh mục, lọc lỗi/không thể chụp theo nền tảng và phóng ảnh. Kiểm tải 268 ảnh chính, 4 ảnh bổ sung (2 ảnh lịch sử xác minh và 2 ảnh lỗi gọi có nút Đóng), cùng bố cục 1440/768/390/320 px. Kết quả có ngày chạy tại [report-check/result.json](../../../.local/seed-operational/report-check/result.json). Sơ đồ Mermaid giữ 12 nút và được kiểm render.
 
@@ -135,7 +152,7 @@ SDD chạy lại theo quy định repo, bằng chứng ở `test-results/sdd/SDD
 | Xem màn nào đã đăng ký | [routes.ts](../../../apps/mobile/src/app/navigation/routes.ts): `RootStackParamList`, `accountDestination`, `appLinkState` | Tên route, dữ liệu điều hướng và các deep link được chấp nhận |
 | Xem ai đi vào khu nào | [AppNavigator.tsx](../../../apps/mobile/src/app/navigation/AppNavigator.tsx) | Tài khoản thường, quản trị và tài khoản bị khóa dùng nhánh giao diện nào |
 | Đọc lời giải thích từng màn | [screen-catalog.mjs](../../../scripts/review/screen-catalog.mjs): `screens`, `add` | Mục đích, đường vào, vai trò, nút, quyền và link source thật |
-| Tạo file báo cáo | [build-report.mjs](../../../scripts/review/build-report.mjs) | Ghép mô tả UX-01, snapshot seed có ngày riêng và ledger ảnh native 268 vị trí vào HTML/JSON |
+| Tạo file báo cáo | [build-report.mjs](../../../scripts/review/build-report.mjs) | Ghép mô tả UX-01/UX-02, snapshot seed có ngày riêng và ledger 282 vị trí native; ảnh web tách riêng vào HTML/JSON |
 | Tìm/lọc/đi từng bước | [report-template.html](../../../scripts/review/report-template.html): `render`, `restore`, `imagePanel` | Bộ lọc kết hợp, ưu tiên tìm tên, vị trí trong URL, ảnh và màn liên quan |
 | Chụp native | [capture-native.mjs](../../../scripts/review/capture-native.mjs): `login`, `open`, `shot` | Mở app/route thật, đợi màn, chụp và xuất ảnh từ Maestro |
 | Kiểm với database hiện tại | [check-operational-api.mjs](../../../scripts/review/check-operational-api.mjs), [verify-operational-flow.mjs](../../../scripts/review/verify-operational-flow.mjs) | Đọc quyền/dữ liệu và chạy một công việc mô phỏng qua API |

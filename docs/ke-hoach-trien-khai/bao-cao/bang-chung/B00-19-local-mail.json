@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-05T01:58:32.231Z",
+  "mailbox": "Mailpit localhost:8025",
+  "delivery": "submitted",
+  "recipient": "synthetic allowlisted test address",
+  "invitation_id": "e804d8c2-8e26-4612-861b-752eab8ab349",
+  "mail_found": true,
+  "external_provider": false
+}

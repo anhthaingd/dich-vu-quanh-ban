@@ -1294,5 +1294,17 @@
     "level": "API DB + mobile + web",
     "priority": "P2",
     "status": "Ánh xạ kiểm thử local; chưa chứng nhận provider/native/UAT. Căn cứ P2-01."
+  },
+  {
+    "id": "QA-110",
+    "group": "UX-02 approved admin web/mobile",
+    "requirement": "UX-02",
+    "operation": "Support overview, grant directory and admin invitation lifecycle",
+    "setup": "Isolated test database; admin with fresh MFA and scoped grants; allowlisted local email; matching verified and nonmatching recipient accounts.",
+    "steps": "Count all reports in creation period; paginate with bound filters; review existing-account grants; invite and retry after lost response; resend/revoke/expire; preview and accept with verified email; revoke issuer authority before use; enter MFA.",
+    "expected": "Exact full-period counts; explicit review before writes; no self or excessive grants; invitation alone grants nothing; 7-day single-use code; replacements invalidate old codes; live authority and verified email required; exact retry grants once; MFA remains required. No token/full email in admin list.",
+    "level": "API/DB integration, mobile component and browser E2E; native screenshots and Mailpit evidence separate",
+    "priority": "P0",
+    "status": "Partial: automated cases listed in UX-02 criteria. Native device matrix, external email provider, remote CI and owner UAT are not certified."
   }
 ]

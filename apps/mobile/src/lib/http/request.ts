@@ -35,13 +35,13 @@ export async function requestJson(url: string, request: typeof fetch, signal?: A
         const codes: Record<number, ApiErrorCode> = { 400: 'VALIDATION', 401: 'UNAUTHENTICATED', 403: 'FORBIDDEN', 404: 'NOT_FOUND', 429: 'RATE_LIMITED', 500: 'INTERNAL', 503: 'SERVICE_UNAVAILABLE', 504: 'TIMEOUT' };
         let code = codes[status] ?? 'HTTP';
         if (status === 503) {
-          try { const body: unknown = await response.json(); if (body && typeof body === 'object' && 'code' in body && body.code === 'CALLS_UNAVAILABLE') code = 'CALLS_UNAVAILABLE'; } catch { /* Keep generic 503 uncertain. */ }
+          try { const body: unknown = await response.json(); if (body && typeof body === 'object' && 'code' in body && (body.code === 'CALLS_UNAVAILABLE'||body.code === 'LOCAL_CONTACT_NOT_ALLOWED')) code = body.code; } catch { /* Keep generic 503 uncertain. */ }
         }
         if (status === 400 || status === 403 || status === 409 || status === 422) {
           try {
             const body: unknown = await response.json();
             const conflict = body && typeof body === 'object' && 'code' in body ? body.code : null;
-            if (conflict === 'CHALLENGE_INVALID' || conflict === 'CHALLENGE_EXPIRED' || conflict === 'REAUTH_REQUIRED' || conflict === 'STATE_CONFLICT' || conflict === 'VERSION_CONFLICT' || conflict === 'IDEMPOTENCY_MISMATCH' || conflict === 'INSUFFICIENT_POINTS' || conflict === 'PARTNER_FUNDING_REQUIRED') code = conflict;
+            if (conflict === 'ACCOUNT_EXISTS' || conflict === 'INVITATION_PENDING' || conflict === 'CHALLENGE_INVALID' || conflict === 'CHALLENGE_EXPIRED' || conflict === 'REAUTH_REQUIRED' || conflict === 'STATE_CONFLICT' || conflict === 'VERSION_CONFLICT' || conflict === 'IDEMPOTENCY_MISMATCH' || conflict === 'INSUFFICIENT_POINTS' || conflict === 'PARTNER_FUNDING_REQUIRED') code = conflict;
           } catch { /* Unknown error bodies stay generic and never enter logs. */ }
         }
         const retry = Number(response.headers?.get('retry-after'));

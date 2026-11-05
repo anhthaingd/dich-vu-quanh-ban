@@ -5037,6 +5037,110 @@
       ],
       "evidenceStatus": "mapping-reviewed-not-executed",
       "gaps": "Approved local/test implementation. Native and actual DB restore evidence reported separately. Existing QA remains partial; OpenAPI sync not requested, new routes tracked as reviewed contract gaps. No real device, UAT, provider or production certification."
+    },
+    {
+      "id": "UX-02-SUPPORT",
+      "requirement": "UX-02",
+      "description": "Full-period support summary, date/sort-bound pagination and done filter preserve support permission boundary.",
+      "sources": [
+        "ux02-implementation",
+        "QA-110"
+      ],
+      "code": [
+        "services/api/src/modules/moderation/moderation.service.ts",
+        "apps/mobile/src/features/admin/screens/SupportOverview.tsx",
+        "apps/admin/src/SupportOverview.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-invitations.test.ts",
+          "name": "support overview counts the full period and queue pagination binds dates, sort and completion filters"
+        }
+      ]
+    },
+    {
+      "id": "UX-02-INVITE",
+      "requirement": "UX-02",
+      "description": "Fresh live grant authority, 7-day verified-email recipient, exact retry, replacement, revocation and MFA after acceptance. Local integration only.",
+      "sources": [
+        "ux02-implementation",
+        "QA-110"
+      ],
+      "code": [
+        "services/api/src/modules/backoffice/admin-invitations.service.ts",
+        "services/api/src/integrations/local-messages.ts",
+        "services/api/migrations/025_admin_invitations.sql"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-invitations.test.ts",
+          "name": "admin invitation needs live fresh authority and verified recipient; lost responses grant once and still require MFA"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-invitations.test.ts",
+          "name": "resend replaces token, revoke and expiry block acceptance, and authority is rechecked at use"
+        }
+      ]
+    },
+    {
+      "id": "UX-02-TEAM",
+      "requirement": "UX-02",
+      "description": "Existing-account selection, masked email, explicit review, exact retry and no self changes.",
+      "sources": [
+        "ux02-implementation",
+        "QA-110"
+      ],
+      "code": [
+        "services/api/src/modules/backoffice/backoffice.service.ts",
+        "apps/mobile/src/features/admin/useAdminTeam.ts",
+        "apps/mobile/src/features/admin/screens/AdminTeam.tsx",
+        "apps/admin/src/AdminTeam.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/admin-invitations.test.ts",
+          "name": "grant directory separates admins and candidates and searches email without returning it in full"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/AdminTeam.test.tsx",
+          "name": "admin team reviews existing-account changes and retries the captured request after lost response"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/AdminTeam.test.tsx",
+          "name": "admin team invites separately from active admins and confirms a versioned cancellation"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/admin/screens/AdminTeam.test.tsx",
+          "name": "admin team disables self changes"
+        }
+      ]
+    },
+    {
+      "id": "UX-02-E2E",
+      "requirement": "UX-02",
+      "description": "Web invitation and mobile-web recipient acceptance connect to real isolated API/DB; does not certify native devices or production email.",
+      "sources": [
+        "ux02-implementation",
+        "QA-110"
+      ],
+      "code": [
+        "apps/admin/src/AdminTeam.tsx",
+        "apps/mobile/src/features/admin/screens/AcceptAdminInvitation.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/admin-invitations.spec.mjs",
+          "name": "UX-02 admin invites with reviewed permissions and exact retry; verified recipient accepts on mobile and enters MFA"
+        }
+      ]
     }
   ]
 }

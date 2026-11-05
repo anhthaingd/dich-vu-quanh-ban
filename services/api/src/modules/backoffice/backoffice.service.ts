@@ -21,7 +21,7 @@ export class BackofficeService {
   const items=rows.slice(0,q.limit),last=items.at(-1);
   return {items,next_cursor:rows.length>q.limit?this.cursor.encode({id:last.id,created_at:last.created_at.toISOString()},scope):null};
  });}
- private async grantDetail(db:PoolClient,id:string){const r=(await db.query('SELECT id,display_name AS name,status,version FROM users WHERE id=$1',[id])).rows[0];if(!r)throw new NotFoundException();return {...r,permissions:(await db.query('SELECT permission FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL ORDER BY permission',[id])).rows.map(r=>r.permission)};}
+ private async grantDetail(db:PoolClient,id:string){const r=(await db.query(`SELECT id,display_name AS name,status,version,(SELECT left(subject,1)||'***@'||split_part(subject,'@',2) FROM identities WHERE user_id=users.id AND provider='email' LIMIT 1) AS email_masked FROM users WHERE id=$1`,[id])).rows[0];if(!r)throw new NotFoundException();return {...r,permissions:(await db.query('SELECT permission FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL ORDER BY permission',[id])).rows.map(r=>r.permission)};}
  grants(header:string|undefined,token:string|undefined,id:string){return this.admin.read(header,token,'grant.manage',async(db,a)=>{const r=await this.grantDetail(db,id);await this.audit(db,a.user.id,'admin.grants.read',id,{});return r;});}
  async saveGrants(header:string|undefined,token:string|undefined,id:string,input:ReturnType<typeof grantsInput>,key:string){
   const initial=await this.auth.authenticate(header);if(initial.user.id===id)throw new ForbiddenException();
@@ -71,12 +71,12 @@ export class BackofficeService {
   if(d==='invoices'){const i=(await db.query('SELECT job_id FROM invoices WHERE id=$1',[id])).rows[0];if(!i)throw new NotFoundException();return readInvoice(db,i.job_id);}
   const j=(await db.query('SELECT id,version,state,customer_id,partner_id,service_mode,time_mode,scheduled_at,accepted_at,completed_at,created_at FROM jobs WHERE id=$1',[id])).rows[0];if(!j)throw new NotFoundException();return j;
  }
- list(header:string|undefined,token:string|undefined,d:ReadDomain,q:ReturnType<typeof queueInput>){return this.admin.read(header,token,this.permission(d),async(db,a)=>{
+ list(header:string|undefined,token:string|undefined,d:ReadDomain,q:ReturnType<typeof queueInput>&{role?:'all'|'admins'|'candidates'}){return this.admin.read(header,token,this.permission(d),async(db,a)=>{
   const table=d==='grant-users'?'users':d,state=d==='grant-users'?'status':'state';
   const allowed=d==='grant-users'?['active','suspended','deletion_requested','anonymized']:d==='jobs'?['requested','accepted','awaiting_settlement','completed','declined','withdrawn','stopped']:['draft','sent','revision_requested','locked','settled'];
   if(q.state!=='all'&&!allowed.includes(q.state))throw new BadRequestException();
-  const scope=`backoffice:${d}:${a.user.id}:${JSON.stringify([q.q,q.state])}`,after=this.cursor.decode(q.cursor,scope);
-  const {rows}=await db.query(`SELECT id,date_trunc('milliseconds',created_at) AS created_at FROM ${table} WHERE ($1='' OR position(lower($1) in lower(id::text${d==='grant-users'?"||' '||display_name":d==='invoices'?"||' '||job_id::text":"||' '||partner_id::text"}))>0) AND ($2='all' OR ${state}=$2) AND ($3::timestamptz IS NULL OR (date_trunc('milliseconds',created_at),id)<($3::timestamptz,$4::uuid)) ORDER BY date_trunc('milliseconds',created_at) DESC,id DESC LIMIT $5`,[q.q,q.state,after?.created_at??null,after?.id??null,q.limit+1]);
+  const scope=`backoffice:${d}:${a.user.id}:${JSON.stringify([q.q,q.state,q.role])}`,after=this.cursor.decode(q.cursor,scope);
+  const {rows}=await db.query(`SELECT id,date_trunc('milliseconds',created_at) AS created_at FROM ${table} WHERE ($1='' OR position(lower($1) in lower(id::text${d==='grant-users'?"||' '||display_name||' '||COALESCE((SELECT string_agg(subject,' ') FROM identities WHERE user_id=users.id AND provider='email'),'')":d==='invoices'?"||' '||job_id::text":"||' '||partner_id::text"}))>0) AND ($2='all' OR ${state}=$2) ${d==='grant-users'&&q.role==='admins'?"AND EXISTS(SELECT 1 FROM admin_grants WHERE user_id=users.id AND revoked_at IS NULL)":d==='grant-users'&&q.role==='candidates'?"AND status='active' AND NOT EXISTS(SELECT 1 FROM admin_grants WHERE user_id=users.id AND revoked_at IS NULL)":''} AND ($3::timestamptz IS NULL OR (date_trunc('milliseconds',created_at),id)<($3::timestamptz,$4::uuid)) ORDER BY date_trunc('milliseconds',created_at) DESC,id DESC LIMIT $5`,[q.q,q.state,after?.created_at??null,after?.id??null,q.limit+1]);
   const page=rows.slice(0,q.limit),last=page.at(-1);const items=[];for(const r of page)items.push(await this.detail(db,d,r.id));
   await this.audit(db,a.user.id,`admin.${d}.read`,a.user.id,{resource_ids:page.map(r=>r.id)});
   return {items,next_cursor:rows.length>q.limit?this.cursor.encode({id:last.id,created_at:last.created_at.toISOString()},scope):null};

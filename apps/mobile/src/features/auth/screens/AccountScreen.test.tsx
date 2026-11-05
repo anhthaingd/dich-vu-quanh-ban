@@ -70,3 +70,15 @@ test('account groups preserve personal, work, membership selection and support d
  expect(within(security).queryByTestId('auth-logout')).toBeNull();expect(screen.getByTestId('auth-logout')).toBeVisible();
  fireEvent.press(screen.getByTestId('team-open'));expect(await screen.findByTestId('memberships-reload')).toBeVisible();
 });
+
+test('account renders Point and invitation independently without duplicate React keys',async()=>{
+ const errors=jest.spyOn(console,'error').mockImplementation(()=>{});
+ try{
+  const f=authFixture('saved');jest.spyOn(f.manager,'getPoints').mockResolvedValue({balance:'12000',held:'2000',available:'10000'});
+  await mount(f);expect(await screen.findByTestId('account-points')).toHaveTextContent('10.000 Point');
+  fireEvent.press(screen.getByRole('button',{name:'Nhận lời mời quản trị'}));
+  expect(await screen.findByText('Cần xác minh đúng email nhận lời mời trước khi tiếp tục.')).toBeVisible();
+  expect(screen.getByTestId('account-points')).toHaveTextContent('10.000 Point');
+  expect(errors.mock.calls.filter(args=>String(args[0]).includes('same key'))).toEqual([]);
+ }finally{errors.mockRestore();}
+});

@@ -1,0 +1,23 @@
+import {fireEvent,render,screen,waitFor} from '@testing-library/react-native';
+import {AdminTeam} from './AdminTeam';
+import type {AdminApi} from '../api/admin-api';
+import {ApiError} from '../../../lib/http/api-error';
+const target={id:'target',name:'DEMO Target',version:3,status:'active',permissions:[],email_masked:'t***@example.test'};
+const page={items:[target],next_cursor:null};
+test('admin team reviews existing-account changes and retries the captured request after lost response',async()=>{
+ const posts:unknown[][]=[];const request=jest.fn(async(path:string,_validate:unknown,body?:unknown,key?:string)=>{if(body){posts.push([path,body,key]);if(posts.length===1)throw new ApiError('NETWORK');return {...target,version:4,permissions:['support.read']};}return path==='/admin/users/target/grants'?target:page;});
+ render(<AdminTeam client={{request} as unknown as AdminApi} owner="admin" grants={['grant.manage','support.read']} locale="vi" fail={jest.fn()}/>);
+ await screen.findByText('DEMO Target');fireEvent.press(screen.getByText('Thêm nhân sự'));await waitFor(()=>expect(request).toHaveBeenCalledWith(expect.stringContaining('role=candidates'),expect.any(Function),undefined,undefined));
+ fireEvent.press(screen.getByText('Chọn một mục để xem chi tiết'));await screen.findByLabelText('Xem yêu cầu hỗ trợ');fireEvent(screen.getByLabelText('Xem yêu cầu hỗ trợ'),'valueChange',true);expect(screen.getByLabelText('Duyệt tài chính')).toBeDisabled();fireEvent.changeText(screen.getByLabelText('Lý do thay đổi'),'DEMO grant support');fireEvent.press(screen.getByText('Kiểm tra trước khi lưu'));expect(posts).toHaveLength(0);
+ fireEvent.press(screen.getByText('Xác nhận thực hiện'));await screen.findByText('Thử lại cùng thao tác');expect(screen.getByLabelText('Lý do thay đổi')).toHaveProp('editable',false);fireEvent.press(screen.getByText('Thử lại cùng thao tác'));await screen.findByText('Đã lưu');expect(posts[0]).toEqual(posts[1]);expect(posts[0][1]).toEqual({expected_version:3,permissions:['support.read'],reason:'DEMO grant support'});
+});
+test('admin team invites separately from active admins and confirms a versioned cancellation',async()=>{
+ const invitation={...target,id:'invite',contact_masked:'t***@example.test',permissions:['support.read'],status:'pending',expires_at:'2026-11-12T00:00:00Z',delivery_state:'queued'},writes:unknown[][]=[];
+ const request=jest.fn(async(path:string,_validate:unknown,body?:unknown,key?:string)=>{if(body){writes.push([path,body,key]);return {...invitation,status:path.endsWith('/revoke')?'revoked':'pending'};}return {items:path.startsWith('/admin/invitations')?[invitation]:[],next_cursor:null};});
+ render(<AdminTeam client={{request} as unknown as AdminApi} owner="admin" grants={['grant.manage','support.read']} locale="vi" fail={jest.fn()}/>);await screen.findByText('Chưa có dữ liệu');fireEvent.press(screen.getByText('Mời qua email'));fireEvent.changeText(screen.getByLabelText('Họ và tên'),'DEMO Target');fireEvent.changeText(screen.getByLabelText('Email'),'target@example.test');fireEvent(screen.getByLabelText('Xem yêu cầu hỗ trợ'),'valueChange',true);fireEvent.changeText(screen.getByLabelText('Lý do thay đổi'),'DEMO staffing');fireEvent.press(screen.getByText('Kiểm tra trước khi lưu'));expect(writes).toHaveLength(0);fireEvent.press(screen.getByText('Xác nhận thực hiện'));await screen.findByText('Đã lưu');await screen.findByText('DEMO Target');
+ fireEvent.press(screen.getByText('Chọn một mục để xem chi tiết'));await screen.findByLabelText('Lý do thay đổi');fireEvent.changeText(screen.getByLabelText('Lý do thay đổi'),'DEMO cancel');fireEvent.press(screen.getByText('Hủy lời mời'));expect(writes).toHaveLength(1);fireEvent.press(screen.getByText('Xác nhận thực hiện'));await waitFor(()=>expect(writes).toHaveLength(2));expect(writes[1][0]).toBe('/admin/invitations/invite/revoke');expect(writes[1][1]).toEqual({expected_version:3,reason:'DEMO cancel'});
+});
+test('admin team disables self changes',async()=>{
+ const self={...target,id:'admin',permissions:['grant.manage']};const request=jest.fn(async(path:string)=>path==='/admin/users/admin/grants'?self:{items:[self],next_cursor:null});
+ render(<AdminTeam client={{request} as unknown as AdminApi} owner="admin" grants={['grant.manage']} locale="vi" fail={jest.fn()}/>);await screen.findByText('DEMO Target');fireEvent.press(screen.getByText('Chọn một mục để xem chi tiết'));await screen.findByText('Bạn không thể tự sửa quyền của mình.');expect(screen.getByLabelText('Quản lý quyền quản trị')).toBeDisabled();expect(screen.getByText('Kiểm tra trước khi lưu')).toBeDisabled();
+});

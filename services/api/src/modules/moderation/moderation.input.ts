@@ -12,3 +12,11 @@ export function decisionInput(value:unknown,d:Domain){const v=object(value,d==='
 }
 
 export function noteInput(value:unknown){const v=object(value,['expected_version','body']);if(!Number.isSafeInteger(v.expected_version)||Number(v.expected_version)<1)throw new BadRequestException();return {expected_version:Number(v.expected_version),body:text(v.body)};}
+
+export function reportQueueInput(v:Record<string,unknown>){
+ object(v,['q','state','cursor','limit','from','to','sort']);
+ const {from,to,sort,...base}=v;
+ if((from===undefined)!==(to===undefined)||from!==undefined&&(typeof from!=='string'||typeof to!=='string'||!Number.isFinite(Date.parse(from))||!Number.isFinite(Date.parse(to))||Date.parse(from)>=Date.parse(to)))throw new BadRequestException();
+ if(sort!==undefined&&!['newest','oldest'].includes(String(sort)))throw new BadRequestException();
+ return {...queueInput(base),...(from===undefined?{}:{from:new Date(String(from)).toISOString(),to:new Date(String(to)).toISOString()}),sort:sort==='oldest'?'oldest' as const:'newest' as const};
+}

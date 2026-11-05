@@ -1,3 +1,4 @@
+import {uxText} from '../ux-messages';
 import {MfaSecurity} from './MfaSecurity';
 import {mfaText} from '../mfa-messages';
 import {useEffect,useMemo,useRef,useState} from 'react';
@@ -39,10 +40,11 @@ export function AdminScreen(){
   finally{if(gen===generation.current)setBusy(false);}
  };
  const lock=async()=>{clear();try{await client.lock();}catch(e){setError(codeOf(e));}};
+ if(ready)return <SafeAreaView style={styles.root} testID="admin-root"><KeyboardAvoidingView style={styles.root} behavior={Platform.OS==='ios'?'padding':undefined}><View style={[styles.top,{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}]}><AppText tone="surface" variant="card">Dịch vụ quanh bạn</AppText><Button testID="admin-lock" label={uxText(locale,'lockShort')} variant="secondary" onPress={()=>void lock()}/></View><P2Desk key={epoch} owner={state.user!.id} client={client} grants={state.user!.admin_permissions} t={t} locale={locale} fail={fail} lock={()=>void lock()} tools={<><MfaSecurity client={client} owner={state.user!.id} canReset={state.user!.admin_permissions.includes('grant.manage')} fail={fail} replaced={secret=>{clear();setEnrolled(false);setSetup(secret);setEnrollmentPending(true);}}/><Card><LanguageSettings/><Button testID="admin-logout" label={t('logout')} variant="secondary" disabled={state.busy} onPress={()=>{clear();void manager.logout();}}/></Card></>}/></KeyboardAvoidingView></SafeAreaView>;
  return <SafeAreaView style={styles.root} testID="admin-root"><KeyboardAvoidingView style={styles.root} behavior={Platform.OS==='ios'?'padding':undefined}>
   <View style={styles.top}><AppText tone="surface" variant="card">Dịch vụ quanh bạn</AppText><AppText tone="surface" variant="caption">{t('eyebrow')}</AppText></View>
   <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={styles.content}>
-   {ready?<><MfaSecurity client={client} owner={state.user!.id} canReset={state.user!.admin_permissions.includes('grant.manage')} fail={fail} replaced={secret=>{clear();setEnrolled(false);setSetup(secret);setEnrollmentPending(true);}}/><P2Desk key={epoch} owner={state.user!.id} client={client} grants={state.user!.admin_permissions} t={t} locale={locale} fail={fail} lock={()=>void lock()}/></>:<Card>
+   {<Card>
     <AppText variant="title" accessibilityRole="header">{t(enrolled?'reauth':'setup')}</AppText>
     {enrolled===null?<Button label={t('retry')} onPress={()=>{setError('');setEpoch(n=>n+1);}}/>:<>
     {setup&&<><AppText>{t('setupHint')}</AppText><AppText>{t('secret')}</AppText><AppText selectable testID="admin-setup-secret">{setup}</AppText></>}

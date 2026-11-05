@@ -1,5 +1,13 @@
 # Kế hoạch triển khai và học code
 
+**05/11/2026 — Cập nhật báo cáo tổng theo UX-02:** [B00-14 HTML](bao-cao/B00-14-bao-cao-man-hinh.html) có 141 mục, đường vào/nút quản trị mới và 80 ảnh native chụp lại trên dvqb_local ngày 05/11 cho quản trị/Tài khoản. Đủ 282 vị trí native; không dùng ảnh trước thay đổi cho UX-02; 5 ảnh web riêng. [Phạm vi và kiểm chứng](bao-cao/B00-14-bao-cao-man-hinh.md).
+
+**05/11/2026 — UX-02 đã triển khai web và mobile:** [B00-19 — luồng, code, ảnh app và kiểm chứng](bao-cao/B00-19-trien-khai-quan-tri.md). Tổng quan/hỗ trợ/nhân sự, cấp quyền tài khoản có sẵn và lời mời email 7 ngày đã xác minh, MFA, gửi lại/hủy. Đã kiểm local và chụp iOS Simulator/Android Emulator; kết quả SDD theo evidence khớp nguồn, CI remote/UAT chưa kiểm. Không đổi infra, không push. Các mục bản mẫu bên dưới là lịch sử trước khi duyệt triển khai.
+
+**05/11/2026 — UX-02, bổ sung bản mẫu:** thêm quản trị viên từ tài khoản có sẵn hoặc mời người mới; lời mời chờ tách khỏi tài khoản có quyền. Đưa hướng dẫn bản mẫu ra ngoài menu mobile. [Mở HTML](de-xuat/UX-02-quan-tri.html) · [B00-18 và ảnh mới](bao-cao/B00-18-ban-thiet-ke-quan-tri.md). Chỉ sửa thiết kế để duyệt, chưa áp dụng app/API hoặc gửi email thật.
+
+**04/11/2026 — UX-02, thiết kế quản trị để duyệt:** [HTML tương tác web/điện thoại](de-xuat/UX-02-quan-tri.html) gồm Tổng quan, hàng đợi, chi tiết hỗ trợ và quyền truy cập. [B00-18 — cách thử, ảnh và giới hạn](bao-cao/B00-18-ban-thiet-ke-quan-tri.md). Chỉ bản mẫu dữ liệu hư cấu; chờ duyệt trước khi áp dụng vào code sản phẩm, D04 vẫn chưa chốt.
+
 **04/11/2026 — Sửa các lỗi sau audit native:** [B00-17](bao-cao/B00-17-sua-loi-sau-audit-native.md) ghi các bản sửa gọi/xác minh/chi tiết ví/điểm sao và bằng chứng Android–iOS trên `dvqb_local`. Bỏ CatalogCategory theo duyệt; [B00-14](bao-cao/B00-14-bao-cao-man-hinh.html) còn 134 mục, đủ 268 ảnh chính. NATIVE-05 vẫn mở: release 10 lần khởi động chưa tái hiện, chưa chứng minh đã hết crash. Code local chưa có CI/push/UAT mới; xem evidence SDD theo nguồn hiện tại.
 
 
@@ -97,7 +105,7 @@ Sơ đồ Mermaid nằm ngay trong từng file `.md`. Mở báo cáo bằng Mark
 
 ## Báo cáo đã có
 
-- [B00-14 — Báo cáo tương tác các màn Android/iPhone](bao-cao/B00-14-bao-cao-man-hinh.html): 135 mục theo 9 luồng, lọc vai trò/quyền/nền tảng, giải thích nút và ảnh native trên `dvqb_local`; [cách đọc và giới hạn](bao-cao/B00-14-bao-cao-man-hinh.md).
+- [B00-14 — Báo cáo tương tác các màn Android/iPhone](bao-cao/B00-14-bao-cao-man-hinh.html): 141 mục theo 9 luồng, lọc vai trò/quyền/nền tảng, giải thích nút và ảnh native trên `dvqb_local`; [cách đọc và giới hạn](bao-cao/B00-14-bao-cao-man-hinh.md).
 - [B00-13 — Dữ liệu vận hành local](bao-cao/B00-13-du-lieu-van-hanh-local.md): seed bổ sung, giữ dữ liệu cũ, kiểm quan hệ và luồng API thật; tài khoản/backup lưu riêng trong `.local`.
 
 - [B01-08 — Bảo mật, khôi phục và xóa tài khoản](bao-cao/B01-08-bao-mat-khoi-phuc-va-xoa.md).
