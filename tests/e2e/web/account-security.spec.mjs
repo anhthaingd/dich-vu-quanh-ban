@@ -28,9 +28,17 @@ test('bulk revocation covers all pages, survives a lost response and resumes onl
   expect((await page.request.get(environment.apiUrl+'/me',{headers:{Authorization:'Bearer '+later.access_token}})).status()).toBe(200);
   await page.unroute('**/v1/me/sessions/*/revoke');
   await page.getByRole('button',{name:'Quay lại',exact:true}).click();await page.getByTestId('addresses-open').click();await page.getByTestId('address-add').click();await page.getByTestId('address-label').fill('Do not replay this draft');
-  await environment.pool.query('UPDATE sessions SET revoked_at=now()');
-  // A fresh authenticated read discovers revocation and removes the private draft.
+  // Revoke after the reload click reaches the API. Otherwise calls polling can
+  // discover revocation first and remove the reload button while Playwright clicks it.
+  let revokedOnRead=false;
+  await page.route(/\/v1\/me\/addresses(?:\?.*)?$/,async route=>{
+    expect(route.request().method()).toBe('GET');
+    await environment.pool.query('UPDATE sessions SET revoked_at=now()');
+    revokedOnRead=true;await route.continue();
+  },{times:1});
+  // The real API rejects the revoked session and removes the private draft.
   await page.getByTestId('account-reload').click();await page.getByTestId('account-continue-login').click();
+  expect(revokedOnRead).toBe(true);await expect(page.getByTestId('address-label')).toHaveCount(0);
   await page.getByRole('textbox',{name:'Email',exact:true}).fill(email);await page.getByRole('textbox',{name:'Mật khẩu',exact:true}).fill(password);await page.getByRole('button',{name:'Đăng nhập',exact:true}).click();
   await expect(page.getByTestId('addresses-empty')).toBeVisible();await expect(page.getByTestId('address-label')).toHaveCount(0);
   expect((await environment.pool.query('SELECT count(*)::int n FROM saved_addresses')).rows[0].n).toBe(0);

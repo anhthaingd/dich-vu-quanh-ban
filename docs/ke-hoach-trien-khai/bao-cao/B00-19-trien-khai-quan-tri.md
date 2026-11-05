@@ -97,6 +97,12 @@ Trong `AccountScreen`, phần Point và phần nhận lời mời cùng dùng m�
 
 Bài hồi quy mới trong `AccountScreen.test.tsx` tái hiện cảnh báo trước sửa, rồi kiểm đồng thời Point và phần nhận lời mời sau sửa; cả 7 bài Tài khoản đạt. Đã chụp lại các vai trò sau sửa. Bộ ảnh đầy đủ của phạm vi UX-02 nằm trong [B00-14](B00-14-bao-cao-man-hinh.md), dùng `dvqb_local` và không gửi lời mời/đổi quyền/duyệt tiền trong đợt chụp. SDD cuối vẫn cần khớp toàn bộ nguồn như quy định phía trên.
 
+### Hậu kiểm khi push bản không infra, 05/11/2026
+
+[CI 41968152175](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/41968152175) trên commit `3deb744` đã đạt 397 test mobile, 184 test API và build; web đạt 31/32. Bài thu hồi phiên trong `account-security.spec.mjs` bị timeout khi tìm nút tải lại: trace cho thấy polling cuộc gọi đã nhận `401`, app chuyển đúng sang yêu cầu đăng nhập lại và gỡ nút đó trước khi Playwright bấm xong. Đây là race trong cách bố trí bài kiểm, không phải bằng chứng bản nháp bị giữ lại.
+
+Đã chuyển thời điểm thu hồi phiên trong DB test vào request GET địa chỉ do nút tải lại tạo ra, rồi tiếp tục request tới API thật. Giữ toàn bộ kiểm tra thu hồi 22 phiên, khóa retry, phiên tạo sau, xóa bản nháp và không tự lưu sau đăng nhập lại; bổ sung xác nhận bước thu hồi đã chạy. Bài này đạt 3/3 lần kiểm local trên bản không infra. Không tăng timeout, bật retry, bỏ assertion hoặc sửa hành vi ứng dụng. Kết quả CI cuối phải đọc theo check **SDD project** của commit bàn giao; lượt thất bại ở trên vẫn được giữ làm bằng chứng.
+
 ### Web quản trị
 
 ![Tổng quan web có dữ liệu và bảng yêu cầu](anh/B00-19/web-overview.png)

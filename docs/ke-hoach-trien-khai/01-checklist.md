@@ -14,6 +14,7 @@
 - [x] Kiểm API/mobile/web tập trung; thư Mailpit local; áp dụng migration 025 có sao lưu DB local.
 - [x] Chụp app chạy trên web, iOS Simulator và Android Emulator; sơ đồ Mermaid đã render. [B00-19](bao-cao/B00-19-trien-khai-quan-tri.md).
 - [x] Review inventory/route/QA-110/4 tiêu chí mới; giữ QA partial/unmapped và khoảng trống OpenAPI. Kết quả hồi quy toàn repo nằm trong SDD evidence khớp nguồn hiện tại, xem B00-19.
+- 05/11, hậu kiểm push không infra: CI đầu đạt mobile/API/build, web 31/32 do race giữa polling phát hiện hết phiên và nút tải lại. Đã đồng bộ thời điểm thu hồi trong test, kiểm local 3/3; giữ lượt CI lỗi và theo dõi check của commit cuối tại [B00-19](bao-cao/B00-19-trien-khai-quan-tri.md).
 - [ ] Kiểm toàn bộ hành trình trên thiết bị thật, CI remote và UAT chủ dự án; chưa bật email bên ngoài/production.
 
 Các mục thiết kế dưới đây giữ bằng chứng lịch sử; phê duyệt và triển khai mới được ghi ở mục này. D04 ngoài phạm vi hỗ trợ và PROMO-02 vẫn chưa mở.
