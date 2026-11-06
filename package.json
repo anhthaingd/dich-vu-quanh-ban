@@ -51,7 +51,13 @@
     "review:screens:build": "node scripts/review/build-report.mjs",
     "review:screens:check": "node scripts/review/check-report.mjs",
     "review:mobile": "node scripts/review/start-operational-mobile.mjs",
-    "review:api": "node scripts/review/start-operational-api.mjs"
+    "review:api": "node scripts/review/start-operational-api.mjs",
+    "lab:init": "node scripts/aws/lab.mjs init",
+    "lab:up": "node scripts/aws/lab.mjs up",
+    "lab:down": "node scripts/aws/lab.mjs down",
+    "lab:status": "node scripts/aws/lab.mjs status",
+    "lab:admin": "node scripts/aws/lab.mjs admin",
+    "lab:media-check": "node scripts/aws/lab.mjs media-check"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

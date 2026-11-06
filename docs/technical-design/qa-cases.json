@@ -1296,6 +1296,18 @@
     "status": "Ánh xạ kiểm thử local; chưa chứng nhận provider/native/UAT. Căn cứ P2-01."
   },
   {
+    "id": "QA-109",
+    "group": "AWS-01 cloud preparation authorized 28/10/2026",
+    "requirement": "AWS-01",
+    "operation": "Cloud infrastructure and adapters; no new API route",
+    "setup": "Invited pilot configuration, isolated TLS PostGIS, mocked S3/SES/SNS, Terraform mock provider",
+    "steps": "Reject unsafe configuration and uninvited registration; verify CA and runtime DB privileges; upload/read/revoke shared assets; route email and opt-in SMS; bootstrap independent secrets; validate infra and container.",
+    "expected": "Private DB/storage, fail-closed configuration and TLS, preserved ACL/revocation/MFA, explicit opt-in delivery, no secret output; deployment and scaling runbook. Live IAM/providers/backup restore/native/load/UAT remain unverified.",
+    "level": "Local API DB + tooling + container + Terraform mock; separate live AWS acceptance",
+    "priority": "P0",
+    "status": "Partial: automated local criteria only. No certification of real AWS, provider delivery, real money or production readiness."
+  },
+  {
     "id": "QA-110",
     "group": "UX-02 approved admin web/mobile",
     "requirement": "UX-02",
@@ -1306,5 +1318,65 @@
     "level": "API/DB integration, mobile component and browser E2E; native screenshots and Mailpit evidence separate",
     "priority": "P0",
     "status": "Partial: automated cases listed in UX-02 criteria. Native device matrix, external email provider, remote CI and owner UAT are not certified."
+  },
+  {
+    "id": "QA-111",
+    "group": "AWS-02 disposable lab approved 05/11/2026",
+    "requirement": "AWS-02",
+    "operation": "Lab lifecycle and proxy configuration; no new API operation",
+    "setup": "Isolated lab root, owner Cloudflare domain, mocked CLI/DNS/AWS and local HTTP test database",
+    "steps": "Reject wrong account/state/DNS ownership; test partial apply, retry, teardown audit failure and pagination; enforce two-hop IP and HTTPS; complete two mocked lifecycle cycles.",
+    "expected": "No cross-lab mutation, no implicit apply, private state and secrets, no publication on failed/rolled-back API, no clean claim with failed scan or remaining resources. Preserve pilot guards and business rules.",
+    "level": "Local tooling/CLI simulation, API HTTP and Terraform mock; live acceptance separate",
+    "priority": "P0",
+    "status": "Partial: named local tests only. AWS permissions/quotas, live deployment/delivery/cleanup, billing, native and owner UAT unverified."
+  },
+  {
+    "id": "QA-112",
+    "group": "AWS-02 email OTP lab approved 05/11/2026",
+    "requirement": "AWS-02-EMAIL",
+    "operation": "Existing verification/provider/job operations; optional session user verification_policy",
+    "setup": "Isolated local test DB with explicit email_lab policy; mocked Resend and CLI; default phone regression",
+    "steps": "Register; reject unverified provider/job; verify real challenge by email; create/publish provider; hire and accept; revoke email verification; exercise Resend retry/error and private key wiring.",
+    "expected": "Email enables only lab service eligibility. Phone remains unverified, OTP quotas and single use remain, ACLs/MFA/default phone remain. No secrets in web build or CLI arguments.",
+    "level": "Local API, web, mobile component and mocked provider/CLI/Terraform",
+    "priority": "P0",
+    "status": "Partial: live Resend/DNS/AWS, native and UAT not verified."
+  },
+  {
+    "id": "QA-113",
+    "group": "AWS-02 communications approved 06/11/2026",
+    "requirement": "AWS-02-COMMS",
+    "operation": "Existing realtime, calls and notifications; lab lifecycle only",
+    "setup": "Local PostgreSQL singleton lease, real Socket.IO/browser sessions, mocked LiveKit Cloud/Expo/CLI and Terraform",
+    "steps": "Reject concurrent runtime owner; terminate lease session and exercise heartbeat timeout; require explicit rooms and scoped microphone tokens; revoke both call identities before deleting room; enforce push permission and ringing TTL; guard deploy and stop tasks before scoped media cleanup with retry.",
+    "expected": "Fail closed on lease or media-policy failure, retain business ACLs and durable cleanup, keep provider secrets out of app build. No claim of live audio, token revocation or device push from mocks.",
+    "level": "Local API/WebSocket/web and mocked provider/CLI/Terraform",
+    "priority": "P0",
+    "status": "Partial: live AWS/LiveKit/FCM/APNs, physical devices, background native incoming-call UI and UAT unverified."
+  },
+  {
+    "id": "QA-114",
+    "group": "AWS-02 test money approved 06/11/2026",
+    "requirement": "AWS-02-FINANCE",
+    "operation": "Existing finance and wallet operations; cloud lab simulator mode",
+    "setup": "Explicit lab finance flag, independent persistent key, isolated PostgreSQL and DEMO bank/amounts; mocked AWS CLI/Terraform",
+    "steps": "Reject non-lab/invalid secret; preserve key and bootstrap reviewer scope; create audited fake deposit with fresh MFA; approve topup; reserve payout; lose response then reconcile once; load wallet with banking unavailable then recover, clear private data on denied access.",
+    "expected": "No external banking or real money. Source deposit alone does not credit wallet. ACL/MFA/holds/ledger/idempotency remain. Balance and ledger stay visible on temporary banking failure; money controls disabled. Test labels visible.",
+    "level": "Local API, web/component and infrastructure mocks",
+    "priority": "P0",
+    "status": "Partial: AWS persistence/deploy, native devices and owner UAT unverified; real finance excluded."
+  },
+  {
+    "id": "QA-115",
+    "group": "Android calls approved 06/11/2026",
+    "requirement": "ANDROID-CALLS",
+    "operation": "registerDevice/startCall/actOnCall/heartbeat and Android native lifecycle",
+    "setup": "Android capable build, authorized job participants, Expo transport mock, native emulator with mock HTTP",
+    "steps": "Register capability; inspect private expiring push and dismiss; accept/decline using current account/version; reject stale/other owner actions; fail service startup; compile native and exercise incoming, Home heartbeat, end and expired session.",
+    "expected": "No media credentials in push; legacy/iOS preserved; only authenticated eligible recipient accepts; native actions cannot be forged through launcher extras; service and notification stop safely.",
+    "level": "Local API/components/plugin; Android emulator UI/service with mock transport",
+    "priority": "P0",
+    "status": "Partial: actual FCM, LiveKit background audio, physical devices, release, AWS and UAT remain unverified."
   }
 ]

@@ -8,7 +8,7 @@ export const isSettings=(v:unknown):v is NotificationSettings=>record(v)&&['mess
 export const isNotice=(v:unknown):v is Notice=>record(v)&&typeof v.id==='string'&&typeof v.kind==='string'&&record(v.resource_ref)
   &&['job_id','conversation_id','invoice_id','report_id','verification_id','partner_id','review_id'].every(k=>v.resource_ref && (v.resource_ref as Record<string,unknown>)[k]===undefined || typeof (v.resource_ref as Record<string,unknown>)[k]==='string')
   &&(v.read_at===null||typeof v.read_at==='string'&&Number.isFinite(Date.parse(v.read_at)))&&typeof v.created_at==='string'&&Number.isFinite(Date.parse(v.created_at));
-export type NotificationsApi={registerDevice:(token:string,device:{token:string;platform:string},key:string)=>Promise<unknown>;list:(token:string,cursor?:string)=>Promise<Page<Notice>>;read:(token:string,id:string,key:string)=>Promise<unknown>;settings:(token:string)=>Promise<NotificationSettings>;save:(token:string,input:NotificationSettings,key:string)=>Promise<NotificationSettings>};
+export type NotificationsApi={registerDevice:(token:string,device:{token:string;platform:string;android_calls?:boolean},key:string)=>Promise<unknown>;list:(token:string,cursor?:string)=>Promise<Page<Notice>>;read:(token:string,id:string,key:string)=>Promise<unknown>;settings:(token:string)=>Promise<NotificationSettings>;save:(token:string,input:NotificationSettings,key:string)=>Promise<NotificationSettings>};
 export function createNotificationsApi(base:string|undefined,transport:typeof fetch=fetch):NotificationsApi{
   async function call<T>(path:string,token:string,validate:(v:unknown)=>v is T,method:'GET'|'POST'|'PUT'='GET',body?:unknown,key?:string):Promise<T>{
     if(!base||!/^https?:\/\//.test(base))throw new ApiError('CONFIG');

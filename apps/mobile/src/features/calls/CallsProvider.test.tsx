@@ -1,3 +1,4 @@
+import {AppState} from 'react-native';
 import {act,fireEvent,render,screen} from '@testing-library/react-native';
 import {CallsProvider,CallButton} from './CallsProvider';
 import {CallHistory} from './CallHistory';
@@ -5,6 +6,9 @@ import type {CallsApi} from './api/calls-api';
 import {ApiError} from '../../lib/http/api-error';
 import type {Call,MediaToken} from './models';
 let mockOwner:string|undefined='recipient';
+const mockNativeConfigure=jest.fn(),mockNativeConsume=jest.fn(),mockNativeStart=jest.fn(),mockNativeUpdate=jest.fn(),mockNativeRunning=jest.fn(),mockNativeStop=jest.fn();
+jest.mock('./android-call-ui',()=>({androidCallUi:{available:true,configure:(...a:unknown[])=>mockNativeConfigure(...a),consumeAction:()=>mockNativeConsume(),start:(...a:unknown[])=>mockNativeStart(...a),updateToken:(...a:unknown[])=>mockNativeUpdate(...a),running:(...a:unknown[])=>mockNativeRunning(...a),stop:(...a:unknown[])=>mockNativeStop(...a)}}));
+
 const mockOperation=jest.fn(async (_owner:string,work:(token:string)=>Promise<unknown>)=>work('test-token'));
 const mockManager={featureOperation:mockOperation};
 jest.mock('../../app/providers/AuthProvider',()=>({useAuth:()=>({manager:mockManager,state:{phase:mockOwner?'authenticated':'anonymous',user:mockOwner?{id:mockOwner,status:'active'}:null,busy:false}})}));
@@ -15,7 +19,7 @@ jest.mock('./media',()=>({prepareMicrophone:()=>mockPrepare(),createMediaSession
 const call:Call={id:'call1',job_id:'job1',conversation_id:'room1',caller_id:'caller',recipient_id:'recipient',state:'ringing',version:1,created_at:'2026-10-21T00:00:00Z',ring_until:'2099-01-01T00:00:00Z',answered_at:null,ended_at:null};
 let api:jest.Mocked<CallsApi>;
 const flush=async()=>{await act(async()=>{});};
-beforeEach(()=>{jest.useFakeTimers();mockOwner='recipient';for(const f of [mockOperation,mockPrepare,mockConnect,mockMute,mockSpeaker,mockClose,mockResume])f.mockClear();mockPrepare.mockResolvedValue(undefined);mockClose.mockResolvedValue(undefined);mockMute.mockResolvedValue(undefined);mockSpeaker.mockResolvedValue(undefined);mockConnect.mockImplementation(async(_c,status)=>{status('connected');});
+beforeEach(()=>{AppState.currentState='active';for(const f of [mockNativeConfigure,mockNativeConsume,mockNativeStart,mockNativeUpdate,mockNativeRunning,mockNativeStop])f.mockReset().mockResolvedValue(undefined);mockNativeConsume.mockResolvedValue(null);mockNativeRunning.mockResolvedValue(true);jest.useFakeTimers();mockOwner='recipient';for(const f of [mockOperation,mockPrepare,mockConnect,mockMute,mockSpeaker,mockClose,mockResume])f.mockClear();mockPrepare.mockResolvedValue(undefined);mockClose.mockResolvedValue(undefined);mockMute.mockResolvedValue(undefined);mockSpeaker.mockResolvedValue(undefined);mockConnect.mockImplementation(async(_c,status)=>{status('connected');});
  api={targets:jest.fn().mockResolvedValue({items:[{user_id:'recipient',display_name:'DEMO thợ',role:'assigned'}]}),create:jest.fn().mockResolvedValue(call),list:jest.fn().mockResolvedValue({items:[call],next_cursor:null}),get:jest.fn().mockResolvedValue(call),action:jest.fn().mockImplementation(async(_t,c,a)=>({...c,state:a==='accept'?'accepted':a==='decline'?'declined':a==='fail'?'failed':'ended',version:c.version+1})),media:jest.fn().mockResolvedValue({call_id:'call1',url:'ws://127.0.0.1:7880',token:'test-media-token-only',expires_at:'2099-01-01T00:00:00Z'}),heartbeat:jest.fn().mockResolvedValue(call)};
 });
 afterEach(()=>{jest.useRealTimers();});
@@ -69,4 +73,44 @@ test('call modal never puts raw text inside a native View',async()=>{
  const view=render(<CallsProvider api={api}/>);await flush();
  function check(node:unknown):void{if(!node||typeof node!=='object')return;if(Array.isArray(node)){node.forEach(check);return;}const n=node as {type?:string;children?:unknown[]};if(n.type==='View')expect((n.children??[]).filter(c=>typeof c==='string')).toEqual([]);n.children?.forEach(check);}
  check(view.toJSON());fireEvent.press(screen.getByTestId('call-accept'));await flush();check(view.toJSON());
+});
+
+test('Android answer refetches current call and starts native foreground audio only after authenticated acceptance',async()=>{
+ mockNativeConsume.mockResolvedValueOnce({id:call.id,owner:'recipient',action:'accept'});
+ render(<CallsProvider api={api}/>);await flush();
+ expect(api.get).toHaveBeenCalledWith('test-token',call.id);
+ expect(api.action).toHaveBeenCalledWith('test-token',call,'accept',expect.any(String));
+ expect(mockNativeStart).toHaveBeenCalledWith(expect.objectContaining({state:'accepted'}),'recipient','test-token');
+ expect(mockNativeStart.mock.invocationCallOrder[0]).toBeLessThan(mockConnect.mock.invocationCallOrder[0]);
+ fireEvent.press(screen.getByTestId('call-end'));await flush();expect(mockNativeStop).toHaveBeenCalledWith(call.id);
+});
+test('Android stale and other-account actions cannot accept a call or request microphone',async()=>{
+ mockNativeConsume.mockResolvedValueOnce({id:call.id,owner:'other',action:'accept'});
+ render(<CallsProvider api={api}/>);await flush();expect(api.get).not.toHaveBeenCalled();expect(mockPrepare).not.toHaveBeenCalled();
+ mockNativeConsume.mockResolvedValueOnce({id:call.id,owner:'recipient',action:'accept'});api.get.mockResolvedValue({...call,state:'ended',version:2});
+ await act(async()=>{jest.advanceTimersByTime(500);});await flush();expect(api.action).not.toHaveBeenCalled();expect(mockPrepare).not.toHaveBeenCalled();expect(mockNativeStart).not.toHaveBeenCalled();
+});
+test('Android decline uses the freshly fetched version and never starts microphone',async()=>{
+ const fresh={...call,version:4};api.get.mockResolvedValue(fresh);mockNativeConsume.mockResolvedValueOnce({id:call.id,owner:'recipient',action:'decline'});
+ render(<CallsProvider api={api}/>);await flush();expect(api.action).toHaveBeenCalledWith('test-token',fresh,'decline',expect.any(String));expect(mockPrepare).not.toHaveBeenCalled();expect(mockNativeStart).not.toHaveBeenCalled();
+});
+test('Android service startup failure fails the accepted call instead of opening media without background protection',async()=>{
+ mockNativeStart.mockRejectedValue(new Error('service denied'));render(<CallsProvider api={api}/>);await flush();fireEvent.press(screen.getByTestId('call-accept'));await flush();
+ expect(mockConnect).not.toHaveBeenCalled();expect(api.action.mock.calls.some(c=>c[2]==='fail')).toBe(true);
+});
+
+test('Android terminal heartbeat still updates the app after the native service has already stopped',async()=>{
+ const accepted={...call,state:'accepted' as const,version:2};api.list.mockResolvedValue({items:[accepted],next_cursor:null});api.heartbeat.mockResolvedValue({...accepted,state:'ended',version:3});mockNativeRunning.mockResolvedValue(false);
+ render(<CallsProvider api={api}/>);await flush();AppState.currentState='background';
+ await act(async()=>{jest.advanceTimersByTime(5000);});await flush();
+ expect(screen.getByTestId('call-state')).toHaveTextContent('Đã kết thúc');expect(mockClose).toHaveBeenCalled();expect(api.action).not.toHaveBeenCalled();
+});
+
+test('second-device UI does not fail or end the call accepted on the first device',async()=>{
+ const accepted={...call,state:'accepted' as const,version:2};api.list.mockResolvedValue({items:[accepted],next_cursor:null});api.media.mockRejectedValue(new ApiError('FORBIDDEN'));api.get.mockResolvedValue(accepted);
+ render(<CallsProvider api={api}/>);await flush();
+ expect(api.action).not.toHaveBeenCalled();expect(mockNativeStart).not.toHaveBeenCalled();expect(mockConnect).not.toHaveBeenCalled();
+ expect(screen.getByTestId('call-state')).toHaveTextContent('Cuộc gọi đang ở thiết bị khác.');
+ await act(async()=>{jest.advanceTimersByTime(20000);});await flush();expect(api.heartbeat).not.toHaveBeenCalled();expect(api.get).toHaveBeenCalled();expect(api.action).not.toHaveBeenCalled();
+ expect(screen.queryByTestId('call-end')).toBeNull();fireEvent.press(screen.getByTestId('call-close'));await flush();expect(api.action).not.toHaveBeenCalled();
 });

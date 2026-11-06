@@ -17,11 +17,12 @@ function VerifyForm({owner}:{owner:string}){
  useEffect(()=>{const timer=setInterval(()=>setClock(Date.now()),1000);return()=>clearInterval(timer);},[]);
  const send=async()=>{if(busy||state.busy||Date.now()<until)return;setBusy(true);setError(null);setDone(false);setCode('');try{const c=await manager.requestChallenge(owner,contact);setChallenge(c);setUntil(Date.now()+c.resend_after_seconds*1000);}catch(e){setError(e instanceof ApiError?e.code:'NETWORK');setUntil(Date.now()+60000);}finally{setBusy(false);}};
  const verify=async()=>{if(!challenge||busy||state.busy)return;setBusy(true);setError(null);const value=code;setCode('');try{await manager.verifyChallenge(owner,challenge.id,value);await manager.loadProfile(owner);setDone(true);setChallenge(null);}catch(e){setError(e instanceof ApiError?e.code:'NETWORK');}finally{setBusy(false);}};
+ const emailLab=state.user?.verification_policy==='email_lab';
  const disabled=busy||state.busy,seconds=Math.max(0,Math.ceil((until-clock)/1000));
- return <><AppText tone="muted">{t('team.localHint')}</AppText><Card>
+ return <><AppText tone="muted">{t(emailLab?'verification.emailHint':'team.localHint')}</AppText><Card>
   <AppText>{t(state.user?.email_verified?'team.emailVerified':'team.emailUnverified')}</AppText><AppText>{t(state.user?.phone_verified?'team.phoneVerified':'team.phoneUnverified')}</AppText>
-  <Input testID="verify-contact" label={t('team.contact')} hint={t('team.contactHint')} value={contact} editable={!disabled} autoCapitalize="none" autoCorrect={false} onChangeText={v=>{setContact(v);setChallenge(null);setDone(false);setCode('');}}/>
-  <Button testID="verify-send" label={seconds?t('team.wait',{seconds}):t(challenge?'team.resendCode':'team.sendCode')} disabled={disabled||!contact.trim()||seconds>0} onPress={()=>void send()}/>
+  <Input testID="verify-contact" label={t(emailLab?'verification.emailLabel':'team.contact')} hint={t(emailLab?'verification.emailContactHint':'team.contactHint')} keyboardType={emailLab?'email-address':'default'} value={contact} editable={!disabled} autoCapitalize="none" autoCorrect={false} onChangeText={v=>{setContact(v);setChallenge(null);setDone(false);setCode('');}}/>
+  <Button testID="verify-send" label={seconds?t('team.wait',{seconds}):t(challenge?'team.resendCode':'team.sendCode')} disabled={disabled||!contact.trim()||(emailLab&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.trim()))||seconds>0} onPress={()=>void send()}/>
   {challenge&&<><AppText>{t('team.codeSent')}</AppText><Input testID="verify-code" label={t('team.code')} value={code} onChangeText={setCode} editable={!disabled} keyboardType="number-pad" secureTextEntry maxLength={6}/><Button testID="verify-confirm" label={t('team.verify')} disabled={disabled||!/^\d{6}$/.test(code)} onPress={()=>void verify()}/></>}
   <TeamFeedback error={error}/>{done&&<AppText testID="verify-done" accessibilityLiveRegion="polite">{t('team.verified')}</AppText>}
  </Card></>;

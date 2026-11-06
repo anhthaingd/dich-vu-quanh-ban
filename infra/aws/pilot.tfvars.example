@@ -1,0 +1,19 @@
+region = "ap-southeast-1"
+environment = "pilot"
+# Existing Route53 public hosted zone for a domain you control.
+zone_id = "Z_REPLACE_ME"
+api_domain = "api.example.com"
+ses_domain = "example.com"
+ses_from = "noreply@example.com"
+alert_email = "owner@example.com"
+pilot_emails = ["owner@example.com", "tester@example.com"]
+monthly_budget_usd = "100"
+service_enabled = false
+image_digest = ""
+min_tasks = 1
+max_tasks = 1
+# Later: min_tasks=2, max_tasks=4, db_class="db.t4g.small", db_multi_az=true.
+# Do not enable REALTIME_ENABLED across replicas without a shared fan-out adapter.
+# Enable after SMS sandbox/identity and account spend limit are configured.
+sms_enabled = false
+pilot_phones = []

@@ -23,3 +23,13 @@ storybook-static/
 # Expo CNG: app.json and config plugins are the native source of truth.
 /apps/mobile/android/
 /apps/mobile/ios/
+
+# AWS infrastructure: state and environment inputs never enter Git.
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+infra/aws/backend.hcl
+infra/aws/crash.log

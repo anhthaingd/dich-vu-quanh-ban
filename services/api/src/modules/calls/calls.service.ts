@@ -1,3 +1,4 @@
+import type {RuntimeLease} from '../../database/runtime-lease.js';
 import {ConflictException,ForbiddenException,NotFoundException,ServiceUnavailableException,type OnModuleDestroy,type OnModuleInit} from '@nestjs/common';
 import type {Pool,PoolClient} from 'pg';
 import type {AuthService} from '../auth/auth.service.js';
@@ -13,7 +14,7 @@ const active=(c:CallRow)=>['ringing','accepted'].includes(c.state);
 const dto=(c:CallRow)=>({id:c.id,job_id:c.job_id,conversation_id:c.conversation_id,caller_id:c.caller_id,recipient_id:c.recipient_id,state:c.state,version:c.version,created_at:c.created_at.toISOString(),answered_at:c.answered_at?.toISOString()??null,ended_at:c.ended_at?.toISOString()??null,ring_until:c.ring_until.toISOString()});
 export class CallsService implements OnModuleInit,OnModuleDestroy {
  private readonly tx:AccountTransaction;private timer?:ReturnType<typeof setInterval>;private running?:Promise<void>;private unsubscribe?:()=>void;
- constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly media:CallMedia|undefined,private readonly cursor:Cursor){this.tx=new AccountTransaction(pool,auth);}
+ constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly media:CallMedia|undefined,private readonly cursor:Cursor,private readonly runtime?:RuntimeLease){this.tx=new AccountTransaction(pool,auth);}
  onModuleInit(){this.unsubscribe=this.auth.onAccessChange(()=>this.sweep());this.timer=setInterval(()=>{void this.sweep().catch(()=>{});},1000);this.timer.unref();}
  async onModuleDestroy(){clearInterval(this.timer);this.unsubscribe?.();await this.running?.catch(()=>{});}
  private async locked(db:PoolClient){await db.query('SELECT pg_advisory_xact_lock(2026102105)');}
@@ -27,6 +28,7 @@ export class CallsService implements OnModuleInit,OnModuleDestroy {
   await db.query('DELETE FROM active_call_users WHERE call_id=$1',[c.id]);await this.changed(db,next);return next;
  }
  private async changed(db:PoolClient,c:CallRow){
+  if(c.state!=='ringing'&&c.state!=='busy')await queuePush(db,`call:${c.id}:dismiss:${c.version}`,'call.dismiss.v1',{conversation_id:c.conversation_id,job_id:c.job_id},[{user_id:c.caller_id},{user_id:c.recipient_id}]);
   // Private, minimal event; media URL, JWT and participant session families never enter the outbox.
   await db.query(`INSERT INTO outbox_events(event_key,aggregate_id,aggregate_version,event_type,payload,correlation_id) VALUES($1,$2,$3,'call.updated.v1',$4,gen_random_uuid()) ON CONFLICT(event_key) DO NOTHING`,[`call:${c.id}:${c.version}`,c.id,c.version,JSON.stringify({call_id:c.id,conversation_id:c.conversation_id,job_id:c.job_id,state:c.state,version:c.version})]);
   const e=(await db.query('SELECT id FROM outbox_events WHERE event_key=$1',[`call:${c.id}:${c.version}`])).rows[0];
@@ -42,6 +44,7 @@ export class CallsService implements OnModuleInit,OnModuleDestroy {
  }
  targets(header:string|undefined,id:string){return this.readTx(header,async(db,user)=>({items:await callTargets(db,id,user)}));}
  async create(header:string|undefined,input:ReturnType<typeof callCreate>,key:string){
+  await this.runtime?.check();
   if(!this.media)throw new ServiceUnavailableException({code:'CALLS_UNAVAILABLE'});
   await this.sweep();
   return this.tx.run(header,'startCall',key,input,async(db,a)=>{
@@ -86,12 +89,14 @@ export class CallsService implements OnModuleInit,OnModuleDestroy {
   await this.cleanup();return result;
  }
  async mediaToken(header:string|undefined,id:string){
+  await this.runtime?.check();
   if(!this.media)throw new ServiceUnavailableException({code:'CALLS_UNAVAILABLE'});
   await this.sweep();
   return this.readTx(header,async(db,user,session)=>{
    const c=await this.row(db,id,user);await callRelation(db,c);if(c.state!=='accepted')throw new ConflictException({code:'STATE_CONFLICT'});
    if(await this.family(db,session)!==(user===c.caller_id?c.caller_family:c.recipient_family))throw new ForbiddenException();
    let result;try{result=await this.media!.token(roomName(id),user);}catch{throw new ServiceUnavailableException({code:'CALLS_UNAVAILABLE'});}
+   await this.runtime?.check();
    await db.query(`UPDATE calls SET media_issued_until=clock_timestamp()+interval '35 seconds',caller_heartbeat=CASE WHEN caller_id=$2 THEN clock_timestamp() ELSE caller_heartbeat END,recipient_heartbeat=CASE WHEN recipient_id=$2 THEN clock_timestamp() ELSE recipient_heartbeat END WHERE id=$1`,[id,user]);
    return {call_id:id,...result};
   });
@@ -111,6 +116,6 @@ export class CallsService implements OnModuleInit,OnModuleDestroy {
   await this.cleanup();
  }
  private async cleanup(){if(!this.media)return;const rows=(await this.pool.query<CallRow>('SELECT * FROM calls WHERE cleanup_pending ORDER BY ended_at LIMIT 100')).rows;
-  for(const c of rows){try{await this.media.close(roomName(c.id));await this.pool.query('UPDATE calls SET cleanup_pending=COALESCE(media_issued_until>clock_timestamp(),false) WHERE id=$1',[c.id]);}catch{/* Durable retry: the next worker pass closes this room again. Never log media credentials. */}}
+  for(const c of rows){try{await this.media.close(roomName(c.id),[c.caller_id,c.recipient_id]);await this.pool.query('UPDATE calls SET cleanup_pending=COALESCE(media_issued_until>clock_timestamp(),false) WHERE id=$1',[c.id]);}catch{/* Durable retry: the next worker pass closes this room again. Never log media credentials. */}}
  }
 }

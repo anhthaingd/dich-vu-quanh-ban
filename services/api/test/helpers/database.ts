@@ -10,13 +10,13 @@ import { createApp } from '../../src/bootstrap.js';
 import { migrate } from '../../src/database/migrate.js';
 import { seed } from '../../src/database/seed.js';
 import { captureLogs } from './logs.js';
-export async function databaseFixture(authSecret?: string, assets = false, localMessages?:LocalMessagesConfig, realtimeEnabled=false, adminConfig?:{secret:string}, p2:Pick<Config,'finance'|'calls'>={}) {
+export async function databaseFixture(authSecret?: string, assets = false, localMessages?:LocalMessagesConfig, realtimeEnabled=false, adminConfig?:{secret:string}, p2:Pick<Config,'finance'|'calls'|'trustProxy'|'proxyMode'|'verificationPolicy'|'labRealtime'|'push'>={},store?:import('../../src/integrations/cloud.js').AssetStore) {
   const connectionString = process.env.TEST_DATABASE_URL ?? 'postgresql://dvqb_test:test-only-password@127.0.0.1:55433/dvqb_test';
   if (new URL(connectionString).pathname !== '/dvqb_test') throw new Error('Integration requires isolated database dvqb_test');
   const schema = `test_${randomUUID().replaceAll('-', '')}`;
   const admin = new Pool({ connectionString, connectionTimeoutMillis: 3000 });
   const pool = new Pool({ connectionString, options: `-c search_path=${schema},public`, statement_timeout: 5000, connectionTimeoutMillis: 3000 });
-  const localAssets = assets ? {directory:await mkdtemp(join(tmpdir(),'dvqb-assets-')),origin:'http://127.0.0.1'} : undefined;
+  const localAssets = assets ? {store,directory:await mkdtemp(join(tmpdir(),'dvqb-assets-')),origin:'http://127.0.0.1'} : undefined;
   const logs = captureLogs();
   let app: INestApplication | undefined;
   let created = false;

@@ -53,7 +53,7 @@ const initial: Partner = {
   areas: [],
   locations: []
 };
-function fixture(saved: string | null = 'saved', verified = true) {
+function fixture(saved: string | null = 'saved', verified = true, emailLab = false) {
   let value = { ...initial };
   const api: jest.Mocked<PartnersApi> = {
     create: jest.fn<
@@ -104,7 +104,7 @@ function fixture(saved: string | null = 'saved', verified = true) {
     })
   };
   const f = authFixture(saved, api);
-  const user = { ...session.user, phone_verified: verified, partner_ids: [id] };
+  const user = { ...session.user, phone_verified: verified, ...(emailLab?{verification_policy:'email_lab' as const,email_verified:true}:{}), partner_ids: [id] };
   f.api.refresh.mockResolvedValue({ ...session, user });
   f.api.me.mockResolvedValue(user);
   render(
@@ -368,4 +368,12 @@ test('changing the picked location clears previous results and ignores an in-fli
  expect(!!screen.queryByTestId(`search-result-${id}`)).toBe(false);
  fireEvent.press(screen.getByTestId('search-submit'));
  await waitFor(()=>expect(f.partners.search).toHaveBeenLastCalledWith(expect.objectContaining({latitude:10,longitude:105,sort:'rating'}),undefined,expect.anything()));
+});
+
+test('verified email enables lab provider creation even when phone remains unverified',async()=>{
+ fixture('saved',false,true);
+ fireEvent.press(await screen.findByTestId('nav-account'));fireEvent.press(await screen.findByTestId('partners-open'));
+ await waitFor(()=>expect(screen.getByTestId('partner-create-open')).toBeEnabled());
+ fireEvent.press(screen.getByTestId('partner-create-open'));fireEvent.changeText(await screen.findByTestId('partner-name'),'DEMO email lab');
+ expect(screen.getByTestId('partner-create')).toBeEnabled();
 });

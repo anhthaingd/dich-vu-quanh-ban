@@ -1,3 +1,4 @@
+import {androidCallUi} from './android-call-ui';
 import {createContext,useContext,useEffect,useRef,useState,type PropsWithChildren} from 'react';
 import {AppState,Modal,StyleSheet,View} from 'react-native';
 import {randomUUID} from 'expo-crypto';
@@ -23,16 +24,19 @@ export function CallsProvider({children,api:provided}:PropsWithChildren<{api?:Ca
  const owner=auth.phase==='authenticated'&&auth.user?.status==='active'?auth.user.id:null;
  const ownerRef=useRef(owner);ownerRef.current=owner;
  const [dismissed,setDismissed]=useState(false);
- const [call,setCall]=useState<Call|null>(null),[busy,setBusy]=useState(false),[pending,setPending]=useState<Pending|null>(null),[error,setError]=useState<ReturnType<typeof callError>|'microphone'|'background'|null>(null),[mediaStatus,setMediaStatus]=useState<MediaStatus|null>(null),[muted,setMuted]=useState(false),[speaker,setSpeaker]=useState(false);
+ const [call,setCall]=useState<Call|null>(null),[busy,setBusy]=useState(false),[pending,setPending]=useState<Pending|null>(null),[error,setError]=useState<ReturnType<typeof callError>|'microphone'|'background'|null>(null),[mediaStatus,setMediaStatus]=useState<MediaStatus|'elsewhere'|null>(null),[muted,setMuted]=useState(false),[speaker,setSpeaker]=useState(false);
  const [peerName,setPeerName]=useState<{scope:string;name:string}|null>(null);
  const peerId=call?(call.caller_id===owner?call.recipient_id:call.caller_id):null;
  const peerScope=owner&&call&&peerId?`${owner}:${call.id}:${peerId}`:null;
  const current=useRef(call);current.current=call;const media=useRef<CallMediaSession|null>(null),alive=useRef(true),operation=useRef(false),refreshRef=useRef(()=>{});
  const text=(key:Parameters<typeof callText>[1])=>callText(locale,key);
- const closeMedia=async()=>{const m=media.current;media.current=null;await m?.close().catch(()=>{});};
+ const elsewhere=useRef<string|null>(null);
+ const mediaId=useRef<string|null>(null);
+ const closeMedia=async()=>{const m=media.current;media.current=null;const id=mediaId.current;mediaId.current=null;await m?.close().catch(()=>{});if(id)await androidCallUi.stop(id).catch(()=>{});};
  const publish=(value:Call)=>{if(!alive.current)return;setCall(old=>old&&((old.id===value.id&&old.version>value.version)||(old.id!==value.id&&isActive(old)))?old:value);};
+ useEffect(()=>{if(auth.phase==='authenticated'||auth.phase==='anonymous')void androidCallUi.configure(owner,locale).catch(()=>{});},[auth.phase,owner,locale]);
  useEffect(()=>{alive.current=true;return ()=>{alive.current=false;void closeMedia();};},[]);
- useEffect(()=>{current.current=null;setDismissed(false);setCall(null);setPeerName(null);setPending(null);setBusy(false);setError(null);setMediaStatus(null);void closeMedia();},[owner]);
+ useEffect(()=>{elsewhere.current=null;const old=current.current;if(old)void androidCallUi.stop(old.id).catch(()=>{});current.current=null;setDismissed(false);setCall(null);setPeerName(null);setPending(null);setBusy(false);setError(null);setMediaStatus(null);void closeMedia();},[owner]);
  useEffect(()=>{
   if(!owner||!call||!peerId||!peerScope)return;
   let live=true;const id=call.id,scope=peerScope;
@@ -49,13 +53,13 @@ export function CallsProvider({children,api:provided}:PropsWithChildren<{api?:Ca
    try{
     const old=current.current;
     if(old&&isActive(old)){
-     const next=await manager.featureOperation(owner,t=>api.heartbeat(t,old.id),true);
+     const next=await manager.featureOperation(owner,t=>(elsewhere.current===old.id?api.get:api.heartbeat)(t,old.id),true);
      if(live&&ownerRef.current===owner)publish(next);
     }else{
      const page=await manager.featureOperation(owner,t=>api.list(t,{active:true}),true);
      if(live&&ownerRef.current===owner&&page.items[0])publish(page.items[0]);
     }
-   }catch(e){if(!live||ownerRef.current!==owner)return;const code=e instanceof ApiError?e.code:'NETWORK';if(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)){await closeMedia();setCall(null);setPending(null);setError(null);} }
+   }catch(e){if(!live||ownerRef.current!==owner)return;const code=e instanceof ApiError?e.code:'NETWORK';if(code==='FORBIDDEN'&&current.current?.state==='accepted'){elsewhere.current=current.current.id;await closeMedia();setMediaStatus('elsewhere');setError(null);}else if(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)){await closeMedia();setCall(null);setPending(null);setError(null);} }
    finally{loading=false;}
   };
   refreshRef.current=()=>{void refresh();};void refresh();const timer=setInterval(()=>void refresh(),2500);
@@ -65,17 +69,17 @@ export function CallsProvider({children,api:provided}:PropsWithChildren<{api?:Ca
  },[owner,manager,api,realtime]);
  useEffect(()=>{
   if(!owner||!call||call.state!=='accepted'){void closeMedia();setMediaStatus(null);return;}
-  let live=true;const id=call.id;const m=createMediaSession();media.current=m;setMuted(false);setSpeaker(false);setMediaStatus(null);
+  let live=true;const id=call.id;const m=createMediaSession();media.current=m;mediaId.current=id;setMuted(false);setSpeaker(false);setMediaStatus(null);
   const run=async()=>{
-   try{const credentials=await manager.featureOperation(owner,t=>api.media(t,id),true);if(!live||ownerRef.current!==owner)return;await m.connect(credentials,s=>{if(live&&ownerRef.current===owner)setMediaStatus(s);});}
-   catch(e){if(live&&ownerRef.current===owner){setMediaStatus('failed');setError(e instanceof ApiError?callError(e.code):'microphone');}}
-  };void run();return ()=>{live=false;if(media.current===m)media.current=null;void m.close().catch(()=>{});};
+   try{const credentials=await manager.featureOperation(owner,async t=>{const result=await api.media(t,id);if(live&&ownerRef.current===owner&&elsewhere.current!==id)await androidCallUi.start(call,owner,t);return result;},true);if(!live||ownerRef.current!==owner||elsewhere.current===id)return;await m.connect(credentials,s=>{if(live&&ownerRef.current===owner)setMediaStatus(s);});}
+   catch(e){if(live&&ownerRef.current===owner){if(e instanceof ApiError&&e.code==='FORBIDDEN'){elsewhere.current=id;setMediaStatus('elsewhere');setError(null);}else{setMediaStatus('failed');setError(e instanceof ApiError?callError(e.code):'microphone');}}}
+  };void run();return ()=>{live=false;if(media.current===m)media.current=null;void m.close().catch(()=>{});void androidCallUi.stop(id).catch(()=>{});};
  },[owner,call?.id,call?.state,manager,api]);
  // Stop publishing when authorization cannot be refreshed, even while the network is down.
- useEffect(()=>{if(!owner||!call||call.state!=='accepted')return;let live=true,lastOk=Date.now();
-  const timer=setInterval(()=>{void manager.featureOperation(owner,t=>api.heartbeat(t,call.id),true).then(next=>{if(live&&ownerRef.current===owner){lastOk=Date.now();publish(next);}}).catch(()=>{if(live&&Date.now()-lastOk>15000){void closeMedia();setMediaStatus('failed');}});},5000);
+ useEffect(()=>{if(!owner||!call||call.state!=='accepted'||elsewhere.current===call.id)return;let live=true,lastOk=Date.now();
+  const timer=setInterval(()=>{void manager.featureOperation(owner,async t=>{await androidCallUi.updateToken(call.id,t);const next=await api.heartbeat(t,call.id);if(next.state==='accepted'&&!await androidCallUi.running(call.id))throw new ApiError('NETWORK');return next;},true).then(next=>{if(live&&ownerRef.current===owner){lastOk=Date.now();publish(next);}}).catch(()=>{if(live&&elsewhere.current!==call.id&&Date.now()-lastOk>15000){void closeMedia();setMediaStatus('failed');}});},5000);
   return ()=>{live=false;clearInterval(timer);};
- },[owner,call?.id,call?.state,manager,api]);
+ },[owner,call?.id,call?.state,mediaStatus==='elsewhere',manager,api]);
  const execute=async(p:Pending)=>{
   if(!owner||operation.current||auth.busy)return;operation.current=true;setDismissed(false);setBusy(true);setError(null);
   try{
@@ -85,14 +89,36 @@ export function CallsProvider({children,api:provided}:PropsWithChildren<{api?:Ca
   }catch(e){if(ownerRef.current===owner){const code=e instanceof ApiError?e.code:'NETWORK';setError(callError(code));if(['NETWORK','TIMEOUT','INTERNAL','SERVICE_UNAVAILABLE','INVALID_RESPONSE',...(p.kind==='create'?[]:['CALLS_UNAVAILABLE'])].includes(code))setPending(p);else{setPending(null);refreshRef.current();}}}
   finally{operation.current=false;if(alive.current)setBusy(false);}
  };
- useEffect(()=>{if(mediaStatus==='failed'&&call?.state==='accepted'&&owner&&!pending&&!busy)void execute({kind:'action',call,action:'fail',key:randomUUID()});},[mediaStatus,call?.id,call?.state,owner]);
+ useEffect(()=>{if(mediaStatus==='failed'&&elsewhere.current!==call?.id&&call?.state==='accepted'&&owner&&!pending&&!busy)void execute({kind:'action',call,action:'fail',key:randomUUID()});},[mediaStatus,call?.id,call?.state,owner]);
+ // Native buttons are hints only: refetch with this account before mutating or acquiring the mic.
+ const nativeBusy=useRef(false);
+ useEffect(()=>{
+  if(!owner||auth.busy)return;let live=true;
+  const consume=async()=>{
+   if(!live||nativeBusy.current||operation.current||AppState.currentState!=='active')return;
+   nativeBusy.current=true;
+   try {
+    const action=await androidCallUi.consumeAction();if(!action||action.owner!==owner)return;
+    const fresh=await manager.featureOperation(owner,t=>api.get(t,action.id),true);
+    if(!live||ownerRef.current!==owner)return;
+    publish(fresh);
+    if(action.action==='open')return;
+    if(!isActive(fresh)||(action.action!=='end'&&(fresh.state!=='ringing'||fresh.recipient_id!==owner)))return;
+    await execute({kind:'action',call:fresh,action:action.action,key:randomUUID()});
+   }catch {if(live)refreshRef.current();}finally{nativeBusy.current=false;}
+  };
+  void consume();const timer=setInterval(()=>void consume(),500);
+  const sub=AppState.addEventListener('change',s=>{if(s==='active')void consume();});
+  return()=>{live=false;clearInterval(timer);sub.remove();};
+ },[owner,auth.busy,manager,api]);
+ useEffect(()=>{if(call&&!isActive(call))void androidCallUi.stop(call.id).catch(()=>{});},[call?.id,call?.state]);
  const act=(action:'accept'|'decline'|'end'|'fail')=>{if(!call)return;const p:Pending={kind:'action',call,action,key:randomUUID()};if(action==='end'||action==='fail')void closeMedia();void execute(p);};
  const value:ContextValue={api,call,busy:busy||!!pending,start:async(job,target)=>{await execute({kind:'create',job,target,key:randomUUID()});},refresh:()=>refreshRef.current()};
  const toggle=async(kind:'mute'|'speaker')=>{const m=media.current;if(!m)return;try{if(kind==='mute'){await m.mute(!muted);setMuted(!muted);}else{await m.speaker(!speaker);setSpeaker(!speaker);}}catch{setError('microphone');}};
  useEffect(()=>{if(call&&isActive(call))setDismissed(false);},[call?.id,call?.state]);
- const dismiss=()=>{if(busy)return;if(call&&isActive(call)){act('end');return;}if(pending){setDismissed(true);return;}setCall(null);setError(null);};
+ const dismiss=()=>{if(busy)return;if(mediaStatus==='elsewhere'){setDismissed(true);return;}if(call&&isActive(call)){act('end');return;}if(pending){setDismissed(true);return;}setCall(null);setError(null);};
  const show=!!owner&&!dismissed&&(!!call||!!error||!!pending);
- return <Context.Provider value={value}>{children}{owner&&dismissed&&pending&&<View style={styles.resume}><Button testID="call-resume" label={text('resumePending')} onPress={()=>setDismissed(false)}/></View>}<Modal testID="call-modal" visible={show} transparent animationType="fade" onRequestClose={dismiss}><View style={styles.shade}><View style={styles.panel}><AppText variant="title" accessibilityRole="header">{call?.state==='ringing'?text(call.recipient_id===owner?'incoming':'outgoing'):text('title')}</AppText><AppText tone="muted">{text('hint')}</AppText>{call&&<><AppText testID="call-state">{text(call.state==='accepted'?(mediaStatus==='connected'?'connected':mediaStatus==='reconnecting'?'reconnecting':mediaStatus==='failed'?'failed':'accepted'):call.state)}</AppText><AppText variant="caption">{text(call.caller_id===owner?'to':'from')}: {peerName?.scope===peerScope?peerName.name:text('peer')}</AppText></>}{error&&<AppText tone="error" accessibilityRole="alert">{text(error)}</AppText>}{call?.state==='ringing'&&call.recipient_id===owner&&<><Button testID="call-accept" label={text('accept')} disabled={busy||auth.busy||!!pending} onPress={()=>act('accept')}/><Button testID="call-decline" label={text('decline')} variant="secondary" disabled={busy||auth.busy||!!pending} onPress={()=>act('decline')}/></>}{call?.state==='accepted'&&mediaStatus==='connected'&&<><Button testID="call-mute" accessibilityState={{selected:muted}} label={text(muted?'unmute':'mute')} variant="secondary" onPress={()=>void toggle('mute')}/>{media.current?.supportsSpeaker&&<Button testID="call-speaker" accessibilityState={{selected:speaker}} label={text(speaker?'earpiece':'speaker')} variant="secondary" onPress={()=>void toggle('speaker')}/>}</>}{mediaStatus==='audioError'&&<Button label={text('resumeAudio')} onPress={()=>void media.current?.resume().then(()=>setMediaStatus('connected')).catch(()=>setError('microphone'))}/>}{call&&isActive(call)&&<Button testID="call-end" variant="danger" label={text('end')} disabled={busy||auth.busy} onPress={()=>act('end')}/>}{pending&&<Button testID="call-retry" label={text('retry')} disabled={busy||auth.busy} onPress={()=>void execute(pending)}/>}{(!call||!isActive(call))&&<Button testID="call-close" label={text('close')} variant="secondary" disabled={busy} onPress={dismiss}/>}</View></View></Modal></Context.Provider>;
+ return <Context.Provider value={value}>{children}{owner&&dismissed&&pending&&<View style={styles.resume}><Button testID="call-resume" label={text('resumePending')} onPress={()=>setDismissed(false)}/></View>}<Modal testID="call-modal" visible={show} transparent animationType="fade" onRequestClose={dismiss}><View style={styles.shade}><View style={styles.panel}><AppText variant="title" accessibilityRole="header">{call?.state==='ringing'?text(call.recipient_id===owner?'incoming':'outgoing'):text('title')}</AppText><AppText tone="muted">{text('hint')}</AppText>{call&&<><AppText testID="call-state">{text(call.state==='accepted'?(mediaStatus==='connected'?'connected':mediaStatus==='reconnecting'?'reconnecting':mediaStatus==='failed'?'failed':mediaStatus==='elsewhere'?'elsewhere':'accepted'):call.state)}</AppText><AppText variant="caption">{text(call.caller_id===owner?'to':'from')}: {peerName?.scope===peerScope?peerName.name:text('peer')}</AppText></>}{error&&<AppText tone="error" accessibilityRole="alert">{text(error)}</AppText>}{call?.state==='ringing'&&call.recipient_id===owner&&<><Button testID="call-accept" label={text('accept')} disabled={busy||auth.busy||!!pending} onPress={()=>act('accept')}/><Button testID="call-decline" label={text('decline')} variant="secondary" disabled={busy||auth.busy||!!pending} onPress={()=>act('decline')}/></>}{call?.state==='accepted'&&mediaStatus==='connected'&&<><Button testID="call-mute" accessibilityState={{selected:muted}} label={text(muted?'unmute':'mute')} variant="secondary" onPress={()=>void toggle('mute')}/>{media.current?.supportsSpeaker&&<Button testID="call-speaker" accessibilityState={{selected:speaker}} label={text(speaker?'earpiece':'speaker')} variant="secondary" onPress={()=>void toggle('speaker')}/>}</>}{mediaStatus==='audioError'&&<Button label={text('resumeAudio')} onPress={()=>void media.current?.resume().then(()=>setMediaStatus('connected')).catch(()=>setError('microphone'))}/>}{call&&isActive(call)&&mediaStatus!=='elsewhere'&&<Button testID="call-end" variant="danger" label={text('end')} disabled={busy||auth.busy} onPress={()=>act('end')}/>}{pending&&<Button testID="call-retry" label={text('retry')} disabled={busy||auth.busy} onPress={()=>void execute(pending)}/>}{(!call||!isActive(call)||mediaStatus==='elsewhere')&&<Button testID="call-close" label={text('close')} variant="secondary" disabled={busy} onPress={dismiss}/>}</View></View></Modal></Context.Provider>;
 }
 export function CallButton({jobId}:{jobId:string}){
  const calls=useCalls(),{manager,state}=useAuth(),{locale}=useLocale();const owner=state.user?.id;const [targets,setTargets]=useState<CallTarget[]>([]),[error,setError]=useState(false),[attempt,setAttempt]=useState(0);

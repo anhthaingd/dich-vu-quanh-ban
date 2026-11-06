@@ -1,3 +1,4 @@
+import {hasServiceVerification} from '../../auth/models/auth.types';
 import {usePageActions} from '../../../app/layout/ProductShell';
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -50,7 +51,7 @@ function Form({ owner, partnerId, done }: {
     usePageActions(profile ? <Button testID="job-submit" label={t('jobs.send')} disabled={blocked || !profile.can_hire} onPress={() => void send()}/> : null);
     if (!profile)
         return <><JobFeedback error={loadError} retry={() => setAttempt(v => v + 1)}/>{!loadError && <AppText>{t('accountTools.loading')}</AppText>}</>;
-    return <><AppText variant="section">{profile.name}</AppText><AppText tone="muted">{t('jobs.createIntro')}</AppText>{!auth.user?.phone_verified && <AppText>{t('partners.verifyNeeded')}</AppText>}<Card><AppText variant="section">{t('jobs.chooseSkills')}</AppText>{profile.skills.map(s => <Button key={s.id} testID={`job-skill-${s.id}`} label={s.name} variant={selected.includes(s.id) ? 'primary' : 'secondary'} disabled={blocked} onPress={() => setSelected(v => v.includes(s.id) ? v.filter(x => x !== s.id) : [...v, s.id])}/>)}</Card>
+    return <><AppText variant="section">{profile.name}</AppText><AppText tone="muted">{t('jobs.createIntro')}</AppText>{!hasServiceVerification(auth.user) && <AppText>{t(auth.user?.verification_policy==='email_lab'?'verification.emailNeeded':'partners.verifyNeeded')}</AppText>}<Card><AppText variant="section">{t('jobs.chooseSkills')}</AppText>{profile.skills.map(s => <Button key={s.id} testID={`job-skill-${s.id}`} label={s.name} variant={selected.includes(s.id) ? 'primary' : 'secondary'} disabled={blocked} onPress={() => setSelected(v => v.includes(s.id) ? v.filter(x => x !== s.id) : [...v, s.id])}/>)}</Card>
  {profile.skills.filter(s => selected.includes(s.id)).map(s => { const properties = (s.form_schema as {
         properties?: Record<string, {
             title?: string;

@@ -1,3 +1,4 @@
+import type {RoomServiceClient} from 'livekit-server-sdk';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
@@ -16,4 +17,17 @@ test('adapter fails closed on auto-created room policy, issues only microphone b
  try{const provider=new LiveKitMedia({url:`ws://127.0.0.1:${(server.address() as {port:number}).port}`,apiKey:'DEMO_KEY',apiSecret:'test-local-only-secret'.repeat(2)});await assert.rejects(provider.token('room-a','user-a'),/LIVEKIT_EXPLICIT_ROOMS_REQUIRED/);assert.equal(creates,0);secure=true;
   const a=await provider.token('room-a','user-a'),b=await provider.token('room-a','user-b');const claims=decodeJwt(a.token),other=decodeJwt(b.token);assert.equal(claims.sub,'user-a');assert.equal(other.sub,'user-b');assert.equal(Number(claims.exp)-Number(claims.nbf),30);assert.deepEqual(claims.video,{roomJoin:true,room:'room-a',roomCreate:false,canPublish:true,canPublishSources:['microphone'],canSubscribe:true,canPublishData:false,canUpdateOwnMetadata:false});await provider.close('room-a');assert.equal(deletes,1);
  }finally{await new Promise<void>(r=>server.close(()=>r()));}
+});
+
+test('cloud media scopes rooms, preserves explicit-room probe and revokes both durable identities before deletion',async()=>{
+ const operations:string[]=[],revokes:bigint[]=[],prefix='dvqb-lab-123456789012-learn-call-';let exists=true,policy=true,fail=false;
+ const rooms={createRoom:async(input:{name:string;maxParticipants:number})=>{assert.equal(input.maxParticipants,2);operations.push('create:'+input.name);},listRooms:async()=>exists?[{name:prefix+'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa'}]:[],removeParticipant:async(room:string,user:string,options:{revokeTokenTs:bigint})=>{operations.push('remove:'+room+':'+user);revokes.push(options.revokeTokenTs);if(fail)throw Error('provider failure');},deleteRoom:async(room:string)=>{operations.push('delete:'+room);exists=false;}};
+ const provider=new LiveKitMedia({url:'wss://owned.livekit.cloud',apiKey:'test-key',apiSecret:'s'.repeat(48),mode:'cloud',roomPrefix:prefix},rooms as unknown as RoomServiceClient,async()=>new Response(policy?'requested room does not exist':'success',{status:policy?404:200}));
+ const room='dvqb-call-aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa';
+ const issued=await provider.token(room,'caller');const claims=decodeJwt(issued.token);assert.equal((claims.video as {room:string}).room,prefix+room.slice(10));assert.equal(Number(claims.exp)-Number(claims.nbf),30);
+ policy=false;await assert.rejects(provider.token(room,'recipient'),/EXPLICIT_ROOMS/);policy=true;
+ fail=true;await assert.rejects(provider.close(room,['caller','recipient']));assert.ok(!operations.some(x=>x.startsWith('delete:')));fail=false;
+ await provider.close(room,['caller','recipient']);assert.deepEqual(operations.slice(-3).map(x=>x.split(':')[0]),['remove','remove','delete']);assert.ok(revokes.every(x=>x>BigInt(Math.floor(Date.now()/1000))));
+ const before=operations.length;await provider.close(room,['caller','recipient']);assert.equal(operations.length,before);
+ await assert.rejects(provider.token('unscoped','user'));exists=true;await assert.rejects(provider.close(room),/identities/);
 });

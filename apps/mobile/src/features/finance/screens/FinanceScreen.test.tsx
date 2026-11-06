@@ -96,3 +96,23 @@ test('back ignores a late finance detail response and unlocks the overview when 
  await waitFor(()=>expect(screen.getByTestId('finance-topup')).not.toBeDisabled());
  expect(screen.queryByText('topup-existing')).toBeNull();
 });
+
+test('wallet keeps balance and ledger visible when banking is unavailable and recovers on refresh',async()=>{
+ mockManager.getLedger.mockResolvedValue({items:[{id:'entry',kind:'invoice_settlement',amount:'-10000',unit:'VND',created_at:'2026-11-06T00:00:00Z',reference_id:'invoice',posting_code:'invoice_net'}],next_cursor:null});
+ fetchMock.mockResolvedValue({ok:false,status:503,headers:new Headers(),json:async()=>({code:'SERVICE_UNAVAILABLE'})});
+ mount();await screen.findByText('100.000 ₫');expect(screen.getByTestId('finance-topup')).toBeDisabled();expect(screen.getByTestId('finance-payout')).toBeDisabled();
+ expect(screen.getByTestId('finance-bank-unavailable')).toBeTruthy();fireEvent.press(screen.getByTestId('finance-history'));expect(screen.getByText(/10.000/)).toBeTruthy();
+ fireEvent.press(screen.getByTestId('nav-back'));
+ fetchMock.mockImplementation(async(url:string)=>response(url.endsWith('/bank')?initial:{items:[],next_cursor:null}));
+ fireEvent.press(screen.getByRole('button',{name:'Tải lại'}));await waitFor(()=>expect(screen.getByTestId('finance-topup')).not.toBeDisabled());expect(screen.queryByTestId('finance-bank-unavailable')).toBeNull();
+});
+
+test('wallet and banking screens label balances as test money without real payment value',async()=>{
+ mount();await screen.findByText('100.000 ₫');expect(screen.getByText('TIỀN TEST — không có giá trị thanh toán')).toBeTruthy();
+ fireEvent.press(screen.getByTestId('finance-bank'));expect(screen.getByText('TIỀN TEST — không có giá trị thanh toán')).toBeTruthy();
+});
+
+test('banking permission loss clears wallet data instead of being treated as a temporary outage',async()=>{
+ mount();await screen.findByText('100.000 ₫');await waitFor(()=>expect(screen.getByRole('button',{name:'Tải lại'})).not.toBeDisabled());fetchMock.mockResolvedValue({ok:false,status:403,headers:new Headers(),json:async()=>({code:'FORBIDDEN'})});
+ await act(async()=>{fireEvent.press(screen.getByRole('button',{name:'Tải lại'}));});await waitFor(()=>expect(screen.queryByText('100.000 ₫')).toBeNull());expect(screen.queryByTestId('finance-bank-unavailable')).toBeNull();expect(screen.queryByTestId('finance-topup')).toBeNull();
+});

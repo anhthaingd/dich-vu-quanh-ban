@@ -78,7 +78,8 @@
           "microphonePermission": "Cho phép dùng micro khi bạn bắt đầu hoặc nhận cuộc gọi."
         }
       ],
-      "./plugins/with-call-audio-only.cjs"
+      "./plugins/with-call-audio-only.cjs",
+      "./plugins/with-android-calls.cjs"
     ],
     "extra": {
       "eas": {

@@ -1,3 +1,4 @@
+import {hasServiceVerification} from '../../auth/models/auth.types';
 import {partnerMessages} from '../messages';
 import {GalleryEditor} from '../components/GalleryEditor';
 import {PolygonEditor} from '../components/PolygonEditor';
@@ -224,13 +225,13 @@ function Editor({
               onChangeText={setName}
               editable={!blocked}
             />
-            {!auth.user?.phone_verified && (
-              <AppText>{t('partners.verifyNeeded')}</AppText>
+            {!hasServiceVerification(auth.user) && (
+              <AppText>{t(auth.user?.verification_policy==='email_lab'?'verification.emailNeeded':'partners.verifyNeeded')}</AppText>
             )}
             <Button
               testID="partner-create"
               label={t('partners.create')}
-              disabled={blocked || !name.trim() || !auth.user?.phone_verified}
+              disabled={blocked || !name.trim() || !hasServiceVerification(auth.user)}
               onPress={() => void editor.create({ kind, name })}
             />
           </Card>

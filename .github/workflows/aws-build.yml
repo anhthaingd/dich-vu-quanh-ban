@@ -1,0 +1,45 @@
+name: AWS pilot image
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+concurrency:
+  group: aws-pilot-image
+  cancel-in-progress: false
+jobs:
+  image:
+    if: github.ref == 'refs/heads/main'
+    environment: aws-pilot
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Require successful SDD on this exact commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/workflows/quality.yml/runs?head_sha=$GITHUB_SHA&status=success&event=push" --jq ' .workflow_runs | length > 0' | grep -qx true
+      - name: Obtain short-lived AWS credentials using OIDC
+        env:
+          ROLE_ARN: ${{ vars.AWS_BUILD_ROLE_ARN }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: |
+          set +x
+          TOKEN=$(curl --fail --silent --show-error -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" | jq -r .value)
+          CREDENTIALS=$(aws sts assume-role-with-web-identity --role-arn "$ROLE_ARN" --role-session-name "dvqb-$GITHUB_RUN_ID" --web-identity-token "$TOKEN" --duration-seconds 1800 --query Credentials --output json)
+          for KEY in AccessKeyId SecretAccessKey SessionToken; do echo "::add-mask::$(jq -r ".$KEY" <<< "$CREDENTIALS")"; done
+          echo "AWS_ACCESS_KEY_ID=$(jq -r .AccessKeyId <<< "$CREDENTIALS")" >> "$GITHUB_ENV"
+          echo "AWS_SECRET_ACCESS_KEY=$(jq -r .SecretAccessKey <<< "$CREDENTIALS")" >> "$GITHUB_ENV"
+          echo "AWS_SESSION_TOKEN=$(jq -r .SessionToken <<< "$CREDENTIALS")" >> "$GITHUB_ENV"
+          echo "AWS_DEFAULT_REGION=$AWS_REGION" >> "$GITHUB_ENV"
+      - name: Build immutable release image
+        env:
+          ECR_URL: ${{ vars.AWS_ECR_URL }}
+        run: |
+          aws ecr get-login-password | docker login --username AWS --password-stdin "${ECR_URL%%/*}"
+          docker build --platform linux/amd64 -f infra/aws/Dockerfile -t "$ECR_URL:$GITHUB_SHA" .
+          docker push "$ECR_URL:$GITHUB_SHA"
+          DIGEST=$(aws ecr describe-images --repository-name "${ECR_URL#*/}" --image-ids "imageTag=$GITHUB_SHA" --query 'imageDetails[0].imageDigest' --output text)
+          echo "Use image_digest=$DIGEST in the reviewed Terraform plan, then run migration before enabling/updating API." >> "$GITHUB_STEP_SUMMARY"

@@ -1,7 +1,7 @@
 import {test,expect} from './fixtures.mjs';
 import {randomUUID} from 'node:crypto';
 import {mkdir,writeFile} from 'node:fs/promises';
-test.use({realtime:true});
+test.use({realtime:true,singleton:true});
 test('realtime two accounts: visible chat, offline catch-up and inbox read on another session',async({page,browser,environment})=>{
  const password='DEMO realtime password 2026';
  const call=async(token,path,body)=>{const r=await page.request.fetch(environment.apiUrl+path,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+token,'Idempotency-Key':randomUUID()},...(body===undefined?{}:{data:body})});expect(r.ok(),await r.text()).toBeTruthy();return r.json();};

@@ -3,6 +3,27 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal"
+    },
+    "pilot": {
+      "distribution": "internal",
+      "environment": "preview",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_REALTIME_ENABLED": "0"
+      }
+    },
+    "lab": {
+      "distribution": "internal",
+      "environment": "preview",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_REALTIME_ENABLED": "1",
+        "EXPO_PUBLIC_PUSH_ENABLED": "1"
+      }
     }
   }
 }

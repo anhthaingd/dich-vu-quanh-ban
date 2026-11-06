@@ -1,3 +1,4 @@
+import type {RuntimeLease} from '../../database/runtime-lease.js';
 import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type { Pool } from 'pg';
@@ -8,12 +9,13 @@ export class RealtimeWorker implements OnModuleInit,OnModuleDestroy {
   private timer?:ReturnType<typeof setInterval>;
   private running?:Promise<void>;
   readonly metrics={processed:0,retried:0,failed:0,lastLagMs:0};
-  constructor(private readonly pool:Pool,private readonly gateway:RealtimeGateway,private readonly log:AppLog){}
+  constructor(private readonly pool:Pool,private readonly gateway:RealtimeGateway,private readonly log:AppLog,private readonly runtime?:RuntimeLease){}
   onModuleInit(){this.timer=setInterval(()=>{void this.drain().catch(e=>this.log.error(e));},100);this.timer.unref();}
   async onModuleDestroy(){clearInterval(this.timer);await this.running?.catch(()=>{});}
   drain(){if(!this.running)this.running=this.process().finally(()=>{this.running=undefined;});return this.running;}
   private async process(){
     for(let i=0;i<100;i++){
+      await this.runtime?.check();
       const lease=randomUUID();
       const {rows:[d]}=await this.pool.query(`UPDATE realtime_deliveries SET lease_until=clock_timestamp()+interval '30 seconds',lease_token=$1,attempts=attempts+1
         WHERE id=(SELECT id FROM realtime_deliveries WHERE processed_at IS NULL AND failed_at IS NULL AND next_attempt_at<=clock_timestamp()

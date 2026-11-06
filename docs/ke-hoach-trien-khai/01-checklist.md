@@ -1,5 +1,20 @@
 # Checklist chức năng và bằng chứng
 
+## AWS-02 — Lab với iimissher.com, 05/11/2026
+
+- [x] Bổ sung [kế hoạch realtime/gọi thoại/push và dự toán](de-xuat/AWS-02-lab-khong-phi-khi-tat.md#8-bổ-sung-chat-realtime-gọi-thoại-và-thông-báo-nền): ưu tiên một API + LiveKit Build + Expo Push, 5–10 USD/tháng cho giả định 30 giờ tài nguyên; chưa phải hóa đơn hoặc code cloud đã bật.
+- [ ] Kiểm chính sách phòng/token LiveKit Cloud, triển khai realtime một task và gọi thoại hai máy khác mạng; chưa được chỉ đổi cờ cấu hình.
+- [ ] Push và nhận cuộc gọi nền/khóa màn/đóng app trên Android/iOS thật; ghi bằng chứng từng trạng thái, không suy ra từ gọi foreground.
+- [ ] Mở rộng dọn/audit phiên media và đo AWS Billing/LiveKit usage; giữ quota miễn phí và không tự nâng gói.
+- [x] Root Terraform lab riêng, state local, domain Cloudflare, CloudFront → ALB private, xóa dữ liệu thử; bảo vệ pilot giữ nguyên.
+- [x] Công cụ init/up/down/status/admin, kiểm account/state/DNS sở hữu, khóa đồng thời và journal; gửi secret qua stdin.
+- [x] Kiểm proxy HTTP: hai hop, quota theo client, giả header không vượt hạn mức; giữ pilot/local.
+- [x] Terraform validate/mock và kiểm tooling local; chi tiết và lệnh ở [B00-20](bao-cao/B00-20-lab-aws02.md).
+- Kết quả toàn repo đọc từ SDD evidence khớp nguồn cuối; không dùng test riêng thay SDD hoặc AWS live.
+- [ ] Chủ tài khoản cấu hình SSO/ACM/SES/Cloudflare, review plan và chi phí.
+- [ ] Hai chu kỳ dựng/thử/dọn AWS thật; kiểm đủ quyền audit và Billing sau dọn. Chưa chứng minh không có phí khi nghỉ.
+- [ ] Commit/push, CI mới, native distribution và UAT theo phạm vi được chủ dự án cho phép.
+
 ## B00-14 — Cập nhật báo cáo tổng UX-02, 05/11/2026
 
 - [x] Theo yêu cầu chủ dự án: cập nhật catalog, HTML/JSON, ledger ảnh, mô tả đường vào/nút và liên kết B00-19; 141 mục, giữ đủ route hiện có.
@@ -82,6 +97,30 @@ Các mục thiết kế dưới đây giữ bằng chứng lịch sử; phê duy
 - [x] Ngày 02/11 chụp lại 134/135 mục trên cả Android Emulator và iOS Simulator: 268 ảnh chính + 2 ảnh lỗi xác minh; ledger đủ 270 vị trí, CatalogCategory thiếu đường vào có lý do cụ thể. Bảng 6 vấn đề và lọc ảnh có lỗi/không thể chụp đã bổ sung. Ảnh dùng `dvqb_local`, không thay ảnh thiếu bằng web.
 - [ ] Chứng nhận toàn bộ trạng thái trên cả hai nền tảng, thiết bị vật lý, tiếng Anh/Nhật, provider thật và UAT: chưa đạt; giữ rõ phần thiếu trong báo cáo.
 - SDD chạy với database kiểm thử riêng, ảnh và kiểm vận hành dùng `dvqb_local`. Không commit/push, triển khai AWS, đồng bộ Drive hoặc `ui-ux` trong đợt này.
+
+
+## AWS-02 — Môi trường học không giữ phí sau khi dọn, 29/10/2026
+
+- [x] Theo yêu cầu mới: xem xét tính khả thi và lập [kế hoạch thay thế AWS-01](de-xuat/AWS-02-lab-khong-phi-khi-tat.md); mục tiêu không có phí lab mới sau khi AWS dọn xong, không hứa hóa đơn bằng 0 ngay khi bấm tắt.
+- [x] Bỏ yêu cầu domain/hosted zone, state S3 và lưu image/backup trên AWS giữa các buổi khỏi kế hoạch lab; giữ code/state/config/build ở máy, ghi rõ dữ liệu thử bị xóa và Billing có độ trễ.
+- [x] Đánh dấu hướng dẫn/runbook/báo cáo pilot cũ để tránh chạy nhầm; giữ bảo vệ và code pilot hiện có, không đồng bộ Drive/ui-ux.
+- [ ] Triển khai root lab/backend local, HTTPS không mua domain, xử lý proxy/cache/CORS theo đường CloudFront mới; giữ guard pilot.
+- [ ] Triển khai các thao tác tạo/dọn/kiểm, retry khi deploy dở, danh sách ID/ARN thật, kiểm account và tài nguyên có phí còn sót.
+- [ ] Kiểm AWS thật hai vòng dựng/dọn, đối chiếu kỳ sử dụng trong Billing và cập nhật hướng dẫn lab trước khi bàn giao lệnh chạy cho chủ dự án.
+- Chưa có lệnh lab, chưa tạo/xóa tài nguyên AWS, chưa commit/push/CI mới. Dự toán pilot bên dưới không phải chi phí cố định của lab.
+
+## B00-12 / AWS-01 — Chuẩn bị hạ tầng cloud, 28/10/2026
+
+- [x] Theo ủy quyền chủ dự án: nghiên cứu nguồn chính thức, chọn cấu hình khoảng 10 người, dự trù giá và đường mở rộng. [Thiết kế](de-xuat/AWS-01-ha-tang-pilot.md).
+- [x] Terraform mạng/HTTPS/WAF/Fargate/RDS/S3/CloudFront, secret/IAM/backup/cảnh báo; bootstrap mặc định không khởi động API.
+- [x] S3/SES/SNS tùy chọn, email/phone allowlist, admin cloud, DB TLS và runtime role; giữ phone verification, ACL và MFA.
+- [x] Image production boot trong local TLS PostGIS, không root/read-only; Terraform mock, API unit/integration đạt phạm vi ghi trong [báo cáo](bao-cao/B00-12-ha-tang-aws.md).
+- [x] [Runbook](../../infra/aws/README.md) cho setup, migration trước rollout, publish web/native, rollback, restore và cấu hình cần chủ dự án.
+- [x] 29/10/2026: [hướng dẫn từng bước dành cho chủ dự án](../../infra/aws/HUONG-DAN-TUNG-BUOC.md), có màn hình/giá trị/cách kiểm, lưu ý Free plan/SSO, chi phí, chốt phiên bản code, đường dùng web và cài native. Đây là bàn giao hướng dẫn, chưa đánh dấu các bước AWS live đã làm.
+- [x] Hậu kiểm IP tra cứu địa chỉ: hai client sau cùng proxy có hạn mức riêng; giả phần đầu X-Forwarded-For hoặc giả header khi local không vượt được hạn mức. Đã kiểm HTTP local với provider giả; chưa ALB live.
+- Inventory/source/criterion cloud được bổ sung; kết quả SDD toàn repo phải đọc từ evidence/verify đúng dấu băm bộ file cuối, không suy ra từ kiểm API riêng.
+- [ ] Tạo tài nguyên AWS, provider/key/domain thật, quota và IAM live, restore AWS/load thực, native phân phối/thiết bị, UAT và remote CI mới: chưa thực hiện; theo yêu cầu chủ dự án sẽ cấu hình phần tài khoản thật sau.
+- Không đồng bộ Drive/ui-ux; không mở tiền thật, push/calls cloud hoặc PROMO-02. Chưa commit/push đợt infra.
 
 
 ## B00-11 — Áp dụng giao diện, 28/10/2026
@@ -565,3 +604,36 @@ Bằng chứng và giới hạn: [B05-03](bao-cao/B05-03-tach-tin-nhan-va-thong-
 - [ ] Chọn tin nhắn làm chứng cứ: chủ dự án chủ động để sau, không thuộc tiêu chí đóng code đợt này.
 
 Các mục P1-2 cũ bên trên là lịch sử theo lát; tra bốn báo cáo P1-06 cho bổ sung mới. P2 vẫn chưa mở.
+
+### AWS-02 — OTP email (05/11/2026)
+
+- [x] Code chính sách email riêng cho lab, Resend và cấu hình secret; kiểm API local luồng tạo dịch vụ/gửi/nhận việc.
+- [x] Typecheck và component test liên quan; xem [B00-21](bao-cao/B00-21-otp-email-lab.md) cho bằng chứng UI/SDD của đợt.
+- [ ] Xác minh DNS/domain Resend và gửi email thật sau deploy; AWS live, native và UAT chưa kiểm.
+
+### AWS-02 — realtime, cloud media và push (06/11/2026)
+
+- [x] Code singleton theo DB session, ngắt gateway/worker khi mất khóa; giữ ACL và HTTP lấy bù.
+- [x] Cloud adapter giữ explicit-room probe, namespace riêng, revoke hai identity và delete room; cấu hình key server.
+- [x] Mở Expo Push cho lab; TTL cuộc gọi, private key injection, profile build và project UUID.
+- [x] Lệnh kiểm media trước AWS; teardown dừng task trước dọn media và giữ lỗi để retry; kiểm local/mock theo [B00-22](bao-cao/B00-22-realtime-livekit-push-lab.md).
+- [ ] LiveKit project thật qua probe/revocation/audio; AWS handshake và hai chu kỳ dựng/dọn.
+- [ ] Push trên Android/iOS thật và từng trạng thái app; native incoming-call UI/CallKit/PushKit chưa hoàn tất.
+
+### AWS-02 — tài chính test và màn Ví (06/11/2026)
+
+- [x] Chế độ lab riêng, key bền trong runtime secret, giới hạn AWS-01/local cũ giữ nguyên; bootstrap quyền đọc/duyệt cho admin lab đầu tiên.
+- [x] Nạp/rút mô phỏng có quyền/MFA, audit nguồn giả và sổ tiền/hold/retry; kiểm API local và hành trình web.
+- [x] Màn Ví đọc số dư/lịch sử khi ngân hàng lỗi, khóa nút tiền và phục hồi; mất quyền xóa dữ liệu. Nhãn tiền test VI/EN/JA trên app/admin.
+- [x] Ảnh Expo web/admin desktop mới và hướng dẫn thử trong [B00-23](bao-cao/B00-23-tien-test-tren-lab.md).
+- [ ] Dựng AWS thật, kiểm key qua restart, thử nạp/rút trên thiết bị và UAT. Không mở ngân hàng/tiền thật.
+
+### ANDROID-CALLS — Gọi khi app chạy nền · 06/11/2026
+
+- [x] Code capability/migration, data-only qua Expo/FCM, hết hạn/dismiss và giữ luồng push bản cũ; kiểm API local.
+- [x] Nút native đọc lại quyền/trạng thái, chống sai người/giả launcher action; kiểm component và plugin.
+- [x] Debug APK và assertions instrumentation API 36 với payload/HTTP DEMO; ảnh native và Mermaid trong B00-24. Không chứng nhận FCM/media thật.
+- [ ] Thiết bị thật: âm thanh hai chiều khi Home/khóa máy, FCM/cold-start, token refresh, hãng tiết kiệm pin, release và UAT.
+- [ ] iOS CallKit/PushKit; ngoài phạm vi Android được giao.
+
+Bằng chứng APK/emulator, ảnh và hướng dẫn: [B00-24](bao-cao/B00-24-cuoc-goi-android.md). Không dùng kiểm mock thay provider live.

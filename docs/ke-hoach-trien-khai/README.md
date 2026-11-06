@@ -1,5 +1,13 @@
 # Kế hoạch triển khai và học code
 
+**06/11/2026 — Cuộc gọi Android:** native incoming UI, Telecom và dịch vụ duy trì cuộc gọi; [B00-24](bao-cao/B00-24-cuoc-goi-android.md). Cần build APK mới/đăng ký push lại. Kiểm local/mock/emulator tách riêng FCM, LiveKit nền, thiết bị thật và UAT.
+
+**06/11/2026 — Tiền test trên AWS-02:** mở bộ mô phỏng nạp/rút có MFA, key riêng và nhật ký; màn Ví chịu được lỗi ngân hàng. [B00-23](bao-cao/B00-23-tien-test-tren-lab.md). Chỉ tiền test, kiểm local/mock/web; chưa AWS live/native/UAT.
+
+**06/11/2026 — AWS-02 realtime/media/push:** đã triển khai code và cấu hình có guard; [B00-22](bao-cao/B00-22-realtime-livekit-push-lab.md). Chưa gọi provider/deploy thật; LiveKit phải qua policy probe, native incoming-call UI và nghiệm thu thiết bị vẫn mở.
+
+**05/11/2026 — AWS-02 với domain Cloudflare:** đã bổ sung root lab độc lập, lệnh dựng/dọn và kiểm proxy; [B00-20](bao-cao/B00-20-lab-aws02.md) · [hướng dẫn cấu hình](../../infra/aws/lab/README.md). Theo yêu cầu mới, [plan hiện hành](de-xuat/AWS-02-lab-khong-phi-khi-tat.md) bổ sung realtime/gọi thoại/push và dự toán 5–10 USD/tháng cho giả định 30 giờ tài nguyên; phần mở rộng chưa triển khai. Code/local/mock được tách khỏi AWS live; chưa tạo tài nguyên, chưa commit/push hoặc đo hóa đơn thật. Các ghi chú AWS-02 “plan-only” phía dưới là lịch sử trước đợt này.
+
 **05/11/2026 — Cập nhật báo cáo tổng theo UX-02:** [B00-14 HTML](bao-cao/B00-14-bao-cao-man-hinh.html) có 141 mục, đường vào/nút quản trị mới và 80 ảnh native chụp lại trên dvqb_local ngày 05/11 cho quản trị/Tài khoản. Đủ 282 vị trí native; không dùng ảnh trước thay đổi cho UX-02; 5 ảnh web riêng. [Phạm vi và kiểm chứng](bao-cao/B00-14-bao-cao-man-hinh.md).
 
 **05/11/2026 — UX-02 đã triển khai web và mobile:** [B00-19 — luồng, code, ảnh app và kiểm chứng](bao-cao/B00-19-trien-khai-quan-tri.md). Tổng quan/hỗ trợ/nhân sự, cấp quyền tài khoản có sẵn và lời mời email 7 ngày đã xác minh, MFA, gửi lại/hủy. Đã kiểm local và chụp iOS Simulator/Android Emulator; kết quả SDD theo evidence khớp nguồn, CI remote/UAT chưa kiểm. Không đổi infra, không push. Các mục bản mẫu bên dưới là lịch sử trước khi duyệt triển khai.
@@ -17,10 +25,13 @@
 
 **Mốc trước triển khai, 02/11/2026 — UX-01, thiết kế để duyệt:** đã dựng [bản HTML tương tác](de-xuat/UX-01-thiet-ke-giao-dien.html) với 30 màn mẫu, 7 vai, khung iPhone/Android và phần giải thích nút/thay đổi. [Cách xem và phạm vi](de-xuat/UX-01-thiet-ke-giao-dien.md) · [B00-16 — báo cáo thiết kế](bao-cao/B00-16-ban-thiet-ke-ux01.md). Chỉ thiết kế HTML; chưa áp dụng app/API, chưa ghi DB, chưa hoàn tất audit native hoặc duyệt D01–D04.
 
-**31/10–01/11/2026 — UX-01, đang rà native trước khi chốt sửa:** theo phản hồi của chủ dự án, kiểm lại Android/iOS trên `dvqb_local`; [bảng lọc bằng chứng từng mô tả nút](bao-cao/UX-01-kiem-nut-native.html) và [kết quả audit/giới hạn](de-xuat/UX-01-ket-qua-ra-soat-native.md) phân biệt thao tác đã thử với đề xuất. [Kế hoạch](de-xuat/UX-01-toi-uu-luong-va-nut.md) và [danh mục 30 nhóm / 135 mục](de-xuat/UX-01-danh-muc-man-va-nut.md) đã hạ mức chắc chắn, giữ gói 0 chưa hoàn tất. Chưa duyệt sửa sản phẩm; dữ liệu mô phỏng phục vụ kiểm nút được bổ sung vào DB hiện tại, không reset.
+**31/10–01/11/2026 — UX-01, đang rà native trước khi chốt sửa:** theo phản hồi của chủ dự án, kiểm lại Android/iOS trên `dvqb_local`; [bảng lọc bằng chứng từng mô tả nút](bao-cao/UX-01-kiem-nut-native.html) và [kết quả audit/giới hạn](de-xuat/UX-01-ket-qua-ra-soat-native.md) phân biệt thao tác đã thử với đề xuất. [Kế hoạch](de-xuat/UX-01-toi-uu-luong-va-nut.md) và [danh mục 30 nhóm / 135 mục](de-xuat/UX-01-danh-muc-man-va-nut.md) đã hạ mức chắc chắn, giữ gói 0 chưa hoàn tất. Chưa duyệt sửa sản phẩm; dữ liệu mô phỏng phục vụ kiểm nút được bổ sung vào DB hiện tại, không reset. Không thay trạng thái AWS-02 bên dưới.
 
+**29/10/2026 — AWS-02, ưu tiên hiện hành:** theo yêu cầu deploy để học và không giữ phí khi nghỉ, đã sửa hướng sang [lab tạo/xóa hoàn toàn](de-xuat/AWS-02-lab-khong-phi-khi-tat.md). Giữ cấu hình/state/build trên máy, dùng HTTPS AWS cấp, không mua domain/giữ bucket state, xóa cả DB/backup/ảnh/image/log khi kết thúc. Phân biệt dọn xong với Billing ghi nhận muộn. Đây là kế hoạch, chưa có code/lệnh lab; giữ các việc triển khai và AWS live ở trạng thái chưa làm. AWS-01 và hướng dẫn pilot phía dưới là lịch sử, chưa tiếp tục apply chúng.
 
+**29/10/2026 — Lịch sử hướng dẫn pilot:** đã thêm [file từng bước cho chủ dự án](../../infra/aws/HUONG-DAN-TUNG-BUOC.md): AWS/MFA/SSO → domain → CLI → chốt phiên bản code → Terraform → DB/provider → web/admin → kiểm live → APK/iPhone. File đã gắn thông báo AWS-02 thay hướng triển khai; chưa thực hiện cấu hình hoặc tạo tài nguyên AWS thật.
 
+**28/10/2026 — B00-12 / AWS-01:** đã chuẩn bị [hạ tầng AWS cho nhóm dùng thử](bao-cao/B00-12-ha-tang-aws.md), [thiết kế](de-xuat/AWS-01-ha-tang-pilot.md) và [runbook triển khai](../../infra/aws/README.md). Fargate/RDS/S3/CloudFront, cloud adapter ảnh/email/SMS, secret/backup/cảnh báo và đường mở rộng. Hậu kiểm đã sửa hạn mức tra cứu địa chỉ theo IP client qua proxy tin cậy, có kiểm HTTP chống giả header. Bằng chứng local/container/Terraform/SDD tách riêng AWS live, CI mới/native/UAT; chưa tạo tài nguyên hoặc phát sinh phí AWS, chưa commit/push. Chủ dự án tự cấu hình tài khoản/key/domain theo runbook.
 
 **28/10/2026 — B00-11:** chủ dự án đã duyệt áp dụng [thiết kế B00-10](bao-cao/B00-10-de-xuat-giao-dien.html) vào app. [Báo cáo triển khai và ảnh app](bao-cao/B00-11-trien-khai-giao-dien.md): 7 màn chính, khung điều hướng và bố cục quản trị web; kiểm local/native được ghi riêng. Không đồng bộ Drive/ui-ux, chưa commit/push/CI mới/UAT. Ghi chú “chưa áp dụng” tại mốc B00-10 bên dưới là lịch sử.
 
@@ -197,3 +208,5 @@ Mỗi phiên: đọc AGENTS → checklist → nhiệm vụ đang làm → spec l
 ## Phạm vi lưu trữ bộ tài liệu
 
 Theo yêu cầu chủ dự án ngày 01/10/2026, bộ kế hoạch/checklist/báo cáo chỉ lưu trong repo, quản lý bằng Git. Không đồng bộ Drive trừ khi có yêu cầu rõ. Markdown là nguồn hiện hành. Gói ZIP v1.0 là snapshot lịch sử lúc lập kế hoạch, không cập nhật theo tiến độ code và không dùng thay checklist hiện hành.
+
+- [B00-21 — OTP email cho lab AWS-02](bao-cao/B00-21-otp-email-lab.md): email mở điều kiện dịch vụ, Resend server-only, giữ phone/MFA thật; bằng chứng local và giới hạn live riêng.

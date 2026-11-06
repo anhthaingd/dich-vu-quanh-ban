@@ -1,0 +1,163 @@
+{
+  "checked_date": "2026-11-05",
+  "currency": "USD",
+  "region": "ap-southeast-1",
+  "status": "planning estimate, not a bill or authorization to create resources",
+  "sources": [
+    {
+      "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonECS/current/ap-southeast-1/index.json",
+      "publicationDate": "2026-10-19T22:43:17Z",
+      "rows": [
+        {
+          "usage": "APS1-Fargate-GB-Hours",
+          "description": "AWS Fargate - Memory - Asia Pacific (Singapore)",
+          "unit": "hours",
+          "usd": "0.0055300000"
+        },
+        {
+          "usage": "APS1-Fargate-vCPU-Hours:perCPU",
+          "description": "AWS Fargate - vCPU - Asia Pacific (Singapore)",
+          "unit": "hours",
+          "usd": "0.0505600000"
+        }
+      ]
+    },
+    {
+      "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSELB/current/ap-southeast-1/index.json",
+      "publicationDate": "2026-11-02T10:25:27Z",
+      "rows": [
+        {
+          "usage": "APS1-LoadBalancerUsage",
+          "description": "$0.0252 per Application LoadBalancer-hour (or partial hour)",
+          "unit": "Hrs",
+          "usd": "0.0252000000"
+        },
+        {
+          "usage": "APS1-LCUUsage",
+          "description": "$0.008 per used Application load balancer capacity unit-hour (or partial hour)",
+          "unit": "LCU-Hrs",
+          "usd": "0.0080000000"
+        }
+      ]
+    },
+    {
+      "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRDS/current/ap-southeast-1/index.json",
+      "publicationDate": "2026-10-29T07:06:35Z",
+      "rows": [
+        {
+          "usage": "APS1-RDS:GP3-Storage",
+          "description": "$0.138 per GB-month of provisioned GP3 storage running PostgreSQL",
+          "unit": "GB-Mo",
+          "usd": "0.1380000000"
+        },
+        {
+          "usage": "APS1-InstanceUsage:db.t4g.micro",
+          "description": "$ 0.025 per RDS db.t4g.micro Single-AZ instance hour (or partial hour) running PostgreSQL",
+          "unit": "Hrs",
+          "usd": "0.0250000000"
+        }
+      ]
+    }
+  ],
+  "supporting_sources": {
+    "ipv4": "https://aws.amazon.com/vpc/pricing/",
+    "waf": "https://aws.amazon.com/waf/pricing/",
+    "secrets": "https://aws.amazon.com/secrets-manager/pricing/",
+    "cloudwatch": "https://aws.amazon.com/cloudwatch/pricing/",
+    "livekit": "https://livekit.com/pricing",
+    "livekit_quota": "https://docs.livekit.io/deploy/admin/quotas-and-limits/",
+    "expo": "https://docs.expo.dev/push-notifications/faq/",
+    "apple": "https://developer.apple.com/programs/enroll/"
+  },
+  "assumptions": {
+    "month_hours_for_conversion": 730,
+    "api_vcpu": 0.25,
+    "api_gb": 1,
+    "rds_class": "db.t4g.micro",
+    "rds_storage_gb": 20,
+    "alb_lcu_range": [
+      0,
+      1
+    ],
+    "public_ipv4": 1,
+    "waf_acl": 1,
+    "waf_rule_or_group": 3,
+    "secrets": 2,
+    "standard_alarm_budget_count": 7,
+    "monthly_http_requests_max": 100000,
+    "monthly_web_asset_egress_gb_max": 1,
+    "assets_gb_max": 1,
+    "ecr_image_gb_approx": 1,
+    "logs_mb_max": 100,
+    "livekit_build_participant_minutes": 5000,
+    "livekit_build_downstream_gb": 50,
+    "example_call_minutes": 200,
+    "example_participants": 2,
+    "livekit_compatibility_security_gate": "pending; local explicit-room policy must be preserved or equivalently proven on Cloud"
+  },
+  "hourly_components_usd": {
+    "fargate_api": 0.01817,
+    "rds_instance": 0.025,
+    "rds_storage": 0.0037808219178082194,
+    "alb_base": 0.0252,
+    "ipv4_api": 0.005,
+    "waf_acl_rules": 0.010958904109589041,
+    "two_secrets": 0.0010958904109589042,
+    "seven_alarm_budget": 0.0009589041095890411
+  },
+  "hourly_core_range_usd": [
+    0.090165,
+    0.098165
+  ],
+  "scenarios": [
+    {
+      "resource_hours": 30,
+      "core_range_usd": [
+        2.7,
+        2.94
+      ],
+      "planning_budget_range_usd": [
+        5,
+        10
+      ]
+    },
+    {
+      "resource_hours": 80,
+      "core_range_usd": [
+        7.21,
+        7.85
+      ],
+      "planning_budget_range_usd": [
+        10,
+        15
+      ]
+    },
+    {
+      "resource_hours": 730,
+      "core_range_usd": [
+        65.82,
+        71.66
+      ],
+      "planning_budget_range_usd": [
+        75,
+        95
+      ]
+    }
+  ],
+  "excluded": [
+    "tax",
+    "domain renewal",
+    "Apple developer membership if needed",
+    "SMS/PSTN",
+    "implementation labor",
+    "load beyond assumptions",
+    "retained resources after failed cleanup"
+  ],
+  "notes": [
+    "AWS free tier and credits not deducted. LiveKit Build and Expo Push free provider allowances are conditional.",
+    "Planning budgets add small-usage contingency, not a fixed price or spending cap.",
+    "One hour provision/cleanup allowance per session is an assumption, not measured.",
+    "WebSocket carries invalidations; audio is sent directly via LiveKit, not the AWS API.",
+    "No production cloud configuration changed in this planning update."
+  ]
+}

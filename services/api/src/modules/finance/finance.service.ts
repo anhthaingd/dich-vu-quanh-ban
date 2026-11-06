@@ -11,7 +11,7 @@ import {hasPermission,memberAccess} from '../jobs/jobs.access.js';
 import {held} from '../invoices/ledger.js';
 import type {FinanceDomain,bankInput,moneyInput,cancelInput,decisionInput} from './finance.input.js';
 import {queueInput} from '../moderation/moderation.input.js';
-export type FinanceConfig={secret:string};
+export type FinanceConfig={secret:string;mode?:'lab-test'};
 const tables={'bank-accounts':'bank_change_requests',topups:'finance_topups',payouts:'finance_payouts'} as const;
 const pendingPayout="state IN ('pending','approved','transferring','unknown')";
 export class FinanceService {
@@ -59,7 +59,7 @@ export class FinanceService {
    if(BigInt(account.balance)-await held(db,account.id)<BigInt(input.amount))throw new UnprocessableEntityException({code:'PARTNER_FUNDING_REQUIRED'});
    id=(await db.query('INSERT INTO finance_payouts(partner_id,user_id,account_id,amount,bank_account_id,bank_snapshot) VALUES($1,$2,$3,$4,$5,$6) RETURNING id',[input.partner_id,a.user.id,account.id,input.amount,bank.id,JSON.stringify({bank_code:bank.bank_code,account_last4:bank.account_last4,holder_name:bank.holder_name})])).rows[0].id;
    await db.query("INSERT INTO holds(account_id,kind,reference_id,amount) VALUES($1,'payout',$2,$3)",[account.id,id,input.amount]);
-  }await this.history(db,d,id,a.user.id,'request','Local test money request',1);return this.detail(db,d,id);
+  }await this.history(db,d,id,a.user.id,'request','Test money request',1);return this.detail(db,d,id);
  },async(db,a)=>{await this.access(db,input.partner_id,a.user.id,d==='topups'?'wallet.topup':'wallet.withdraw');});}
  private async history(db:PoolClient,d:FinanceDomain,id:string,user:string,action:string,reason:string,version:number,reference?:string,evidence:string[]=[]){
   await db.query('INSERT INTO finance_history(domain,resource_id,actor_id,action,reason,version,bank_reference,evidence_ids) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',[d,id,user,action,reason,version,reference??null,evidence]);
@@ -121,5 +121,5 @@ export class FinanceService {
   await this.history(db,d,id,a.user.id,input.decision,input.reason,r.version+1,reference,input.evidence_ids);return this.detail(db,d,id);
  },async(db,a)=>{await this.admin.check(db,a,token,'finance.review',true);const r=await this.row(db,d,id);await db.query('SELECT id FROM partners WHERE id=$1 FOR UPDATE',[r.partner_id]);});}
  // Only a fresh finance reviewer can create test deposits; a request or image never credits money.
- deposit(header:string|undefined,token:string|undefined,input:{reference:string;partner_id:string;amount:string},key:string){this.configured();return this.tx.run(header,'finance.simulator.deposit',key,input,async(db,a)=>{await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',['finance-deposit:'+input.reference]);if((await db.query('SELECT 1 FROM local_bank_deposits WHERE reference=$1',[input.reference])).rowCount)throw new ConflictException({code:'STATE_CONFLICT'});await db.query('INSERT INTO local_bank_deposits(reference,partner_id,amount,created_by) VALUES($1,$2,$3,$4)',[input.reference,input.partner_id,input.amount,a.user.id]);return {...input,state:'recorded',environment:'local-test'};},async(db,a)=>{await this.admin.check(db,a,token,'finance.review',true);});}
+ deposit(header:string|undefined,token:string|undefined,input:{reference:string;partner_id:string;amount:string},key:string){this.configured();return this.tx.run(header,'finance.simulator.deposit',key,input,async(db,a)=>{await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',['finance-deposit:'+input.reference]);if((await db.query('SELECT 1 FROM local_bank_deposits WHERE reference=$1',[input.reference])).rowCount)throw new ConflictException({code:'STATE_CONFLICT'});await db.query('INSERT INTO local_bank_deposits(reference,partner_id,amount,created_by) VALUES($1,$2,$3,$4)',[input.reference,input.partner_id,input.amount,a.user.id]);const environment=this.config?.mode??'local-test';await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'finance.simulator.deposit',$2,'Test deposit recorded; no real bank transfer',$3)",[a.user.id,input.partner_id,JSON.stringify({environment,reference:input.reference,amount:input.amount})]);return {...input,state:'recorded',environment};},async(db,a)=>{await this.admin.check(db,a,token,'finance.review',true);});}
 }

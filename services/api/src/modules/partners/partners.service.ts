@@ -85,7 +85,7 @@ export class PartnersService {
         return readManagement(db, p.id);
       },
       async (db, actor) => {
-        if (!actor.user.phone_verified) throw new ForbiddenException();
+        if (!this.auth.hasServiceVerification(actor.user)) throw new ForbiddenException();
         const {
           rows: [previous]
         } = await db.query(
@@ -336,7 +336,7 @@ export class PartnersService {
           ? { phone: profile.phone ?? '', zalo: profile.zalo ?? '' }
           : null,
         can_hire:
-          !!actor?.user.phone_verified &&
+          this.auth.hasServiceVerification(actor?.user) &&
           !own &&
           accepting_jobs &&
           moderation_status === 'active' &&

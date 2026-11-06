@@ -5,13 +5,13 @@ import { credentials, refreshInput } from './auth.input.js';
 
 @Controller()
 export class AuthController {
-  // Local single-process limiter; never trust X-Forwarded-For from the client.
+  // Per-process backstop; the cloud ALB also has shared WAF rate limits.
   private readonly attempts = new Map<string, { count: number; reset: number }>();
   constructor(@Inject(AuthService) private readonly auth: AuthService) {}
   private limit(req: IncomingMessage, res: ServerResponse) {
     const now = Date.now();
     for (const [key, value] of this.attempts) if (value.reset <= now) this.attempts.delete(key);
-    const key = req.socket.remoteAddress ?? 'unknown';
+    const key = (req as IncomingMessage & {ip?:string}).ip ?? req.socket.remoteAddress ?? 'unknown';
     const entry = this.attempts.get(key) ?? { count: 0, reset: now + 60000 };
     if (entry.count >= 10 || (!this.attempts.has(key) && this.attempts.size >= 10000)) {
       res.setHeader('Retry-After', Math.max(1, Math.ceil((entry.reset - now) / 1000)));

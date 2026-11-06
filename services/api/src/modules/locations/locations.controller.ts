@@ -11,10 +11,11 @@ export class LocationsController {
   async lookup(@Param('action') action:string,@Body() body:unknown,@Headers('authorization') header:string|undefined,@Req() req:IncomingMessage,@Res({passthrough:true}) res:ServerResponse) {
     if(!['autocomplete','geocode','reverse'].includes(action))throw new BadRequestException();
     const input=locationInput(action as LocationAction,body);
-    // Do not trust arbitrary client IP headers or client-supplied account IDs.
+    // Express applies the server's trust-proxy policy; never parse client IP headers here.
     if (header && !this.auth) throw new UnauthorizedException();
     const user=header&&this.auth?(await this.auth.authenticate(header)).user.id:null;
-    const retry=this.limit.take(user?`user:${user}`:`ip:${req.socket.remoteAddress??'unknown'}`);
+    const ip=(req as IncomingMessage & {ip?:string}).ip??req.socket.remoteAddress??'unknown';
+    const retry=this.limit.take(user?`user:${user}`:`ip:${ip}`);
     if(retry){res.setHeader('Retry-After',retry);throw new HttpException('Rate limited',429);}
     try {return await this.provider.lookup(action as LocationAction,input);}
     catch(e){if(e instanceof HttpException&&e.getStatus()===429)res.setHeader('Retry-After',60);throw e;}

@@ -10,11 +10,13 @@ import type {AuthService} from '../auth/auth.service.js';
 import {AccountTransaction} from '../accounts/account-transaction.js';
 import {object} from '../accounts/accounts.input.js';
 import {hasPermission,memberAccess,jobAccess} from '../jobs/jobs.access.js';
-export type LocalAssets={directory:string;origin:string};
+export type LocalAssets={directory:string;origin:string;store?:import('../../integrations/cloud.js').AssetStore};
 const MAX_BYTES=10*1024*1024,TTL=10*60*1000;
 export class AssetsService {
  private readonly tx:AccountTransaction;
  constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly secret:string,private readonly config?:LocalAssets,private readonly admin?:AdminAuthService){this.tx=new AccountTransaction(pool,auth,true);}
+ private async put(key:string,data:Buffer){const c=this.configured();if(c.store)return c.store.put(key,data);await mkdir(c.directory,{recursive:true});const path=join(c.directory,key),temp=path+'.'+randomUUID();await writeFile(temp,data,{mode:0o600});await rename(temp,path);}
+ private async read(key:string){const c=this.configured();return c.store?c.store.get(key):readFile(join(c.directory,key));}
  private configured(){if(!this.config)throw new ServiceUnavailableException();return this.config;}
  private sign(id:string,user:string,session:string,kind:string){const payload=Buffer.from(JSON.stringify({id,user,session,kind,expires:Date.now()+TTL})).toString('base64url');return payload+'.'+createHmac('sha256',this.secret).update('asset:'+payload).digest('base64url');}
  private async verify(id:string,token:unknown,kind:string){
@@ -42,7 +44,7 @@ export class AssetsService {
    if(!a)throw new NotFoundException();if(a.status!=='pending')throw new ConflictException({code:'STATE_CONFLICT'});
    if(Number(a.bytes)!==size||req.headers['content-type']!==a.mime||(a.checksum&&a.checksum!==hash))throw new BadRequestException();
    if(a.uploaded_checksum&&a.uploaded_checksum!==hash)throw new ConflictException({code:'IDEMPOTENCY_MISMATCH'});
-   const dir=this.configured().directory;await mkdir(dir,{recursive:true});const path=join(dir,a.object_key+'.raw');const temp=path+'.'+randomUUID();await writeFile(temp,a.purpose==='verification'?this.admin!.secrets.encrypt(data.toString('base64')):data,{mode:0o600});await rename(temp,path);
+   await this.put(a.object_key+'.raw',a.purpose==='verification'?Buffer.from(this.admin!.secrets.encrypt(data.toString('base64'))):data);
    await db.query('UPDATE assets SET uploaded_checksum=$2 WHERE id=$1',[id,hash]);await db.query('COMMIT');return {uploaded:true};
   }catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
  }
@@ -53,11 +55,11 @@ export class AssetsService {
    if(a.status==='ready')return this.dto(a,actor.user.id,actor.sessionId);
    if(a.status!=='pending'||!a.uploaded_checksum)throw new BadRequestException();
    let bytes:Buffer;try{
-    const file=await readFile(join(this.configured().directory,a.object_key+'.raw'));const raw=a.purpose==='verification'?Buffer.from(this.admin!.secrets.decrypt(file.toString()),'base64'):file;if(raw.length!==Number(a.bytes)||createHash('sha256').update(raw).digest('hex')!==a.uploaded_checksum)throw new Error('bytes');
+    const file=await this.read(a.object_key+'.raw');const raw=a.purpose==='verification'?Buffer.from(this.admin!.secrets.decrypt(file.toString()),'base64'):file;if(raw.length!==Number(a.bytes)||createHash('sha256').update(raw).digest('hex')!==a.uploaded_checksum)throw new Error('bytes');
     const image=sharp(raw,{limitInputPixels:25000000,failOn:'warning'}),meta=await image.metadata();if(({jpeg:'image/jpeg',png:'image/png',webp:'image/webp'} as Record<string,string>)[meta.format??'']!==a.mime||(meta.pages??1)>1)throw new Error('mime');
     bytes=await image.rotate().png().toBuffer();
    }catch{throw new BadRequestException();}
-   const target=join(this.configured().directory,a.object_key+'.png');await writeFile(target,a.purpose==='verification'?this.admin!.secrets.encrypt(bytes.toString('base64')):bytes,{mode:0o600});await db.query("UPDATE assets SET status='ready' WHERE id=$1",[id]);return this.dto({...a,status:'ready'},actor.user.id,actor.sessionId);
+   await this.put(a.object_key+'.png',a.purpose==='verification'?Buffer.from(this.admin!.secrets.encrypt(bytes.toString('base64'))):bytes);await db.query("UPDATE assets SET status='ready' WHERE id=$1",[id]);return this.dto({...a,status:'ready'},actor.user.id,actor.sessionId);
   },async(db,actor)=>{if(!(await db.query("SELECT 1 FROM assets WHERE id=$1 AND uploader_id=$2 AND ($3::boolean=false OR purpose='evidence')",[id,actor.user.id,actor.user.status==='suspended'])).rows.length)throw new NotFoundException();});
  }
  private dto(a:{id:string;status:string},user:string,session:string){return {id:a.id,status:a.status,download_url:a.status==='ready'?this.url(a.id,user,session,'content'):null,expires_at:a.status==='ready'?new Date(Date.now()+TTL).toISOString():null};}
@@ -104,7 +106,7 @@ export class AssetsService {
  }
  private async withRead<T>(id:string,user:string,read:(a: {id:string;status:string;object_key:string;purpose:string})=>Promise<T>|T){const db=await this.pool.connect();try{await db.query('BEGIN');const a=user?await this.authorized(db,id,user):await this.publicAsset(db,id);const r=await read(a);await db.query('COMMIT');return r;}catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}}
  async content(id:string,grant:unknown){const actor=await this.verify(id,grant,'content');return this.withRead(id,actor.user,async a=>{if(a.status!=='ready')throw new NotFoundException();return this.bytes(a);});}
- private async bytes(a:{object_key:string;purpose:string}){const data=await readFile(join(this.configured().directory,a.object_key+'.png'));return a.purpose==='verification'?Buffer.from(this.admin!.secrets.decrypt(data.toString()),'base64'):data;}
+ private async bytes(a:{object_key:string;purpose:string}){const data=await this.read(a.object_key+'.png');return a.purpose==='verification'?Buffer.from(this.admin!.secrets.decrypt(data.toString()),'base64'):data;}
  async adminContent(header:string|undefined,token:string|undefined,id:string){if(!this.admin)throw new ServiceUnavailableException();return this.admin.read(header,token,undefined,async(db,actor)=>{
   const a=(await db.query("SELECT * FROM assets WHERE id=$1 AND status='ready'",[id])).rows[0];if(!a)throw new NotFoundException();
   if(a.purpose==='evidence'){

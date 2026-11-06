@@ -1006,6 +1006,11 @@
         },
         {
           "suite": "api",
+          "file": "services/api/test/integration/locations.test.ts",
+          "name": "location HTTP isolates trusted proxy clients and ignores spoofed forwarding when proxy trust is disabled"
+        },
+        {
+          "suite": "api",
           "file": "services/api/test/unit/locations.test.ts",
           "name": "normalized provider results match the canonical location OpenAPI schemas"
         }
@@ -5039,6 +5044,119 @@
       "gaps": "Approved local/test implementation. Native and actual DB restore evidence reported separately. Existing QA remains partial; OpenAPI sync not requested, new routes tracked as reviewed contract gaps. No real device, UAT, provider or production certification."
     },
     {
+      "id": "AWS-01-CONFIG",
+      "description": "Cloud pilot fails closed on unsafe config and invitation gate before hash/DB; no claim of live AWS authorization.",
+      "code": [
+        "services/api/src/config/environment.ts",
+        "services/api/src/modules/auth/auth.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "cloud config enables only reviewed adapters and fails closed on unsafe combinations"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "pilot registration rejects uninvited email before hashing or writing database"
+        }
+      ],
+      "requirement": "AWS-01",
+      "sources": [
+        "aws01",
+        "QA-109"
+      ]
+    },
+    {
+      "id": "AWS-01-TLS",
+      "description": "Verified DB CA and rejection of URL TLS overrides; real RDS requires separate deployment acceptance.",
+      "code": [
+        "services/api/src/database/connection.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "database TLS validates server identity and rejects URL overrides"
+        }
+      ],
+      "requirement": "AWS-01",
+      "sources": [
+        "aws01",
+        "QA-109"
+      ]
+    },
+    {
+      "id": "AWS-01-ASSETS",
+      "description": "Shared object storage retains bytes, ACL, image validation and revoked session denial; SDK mocked, no S3 live claim.",
+      "code": [
+        "services/api/src/integrations/cloud.ts",
+        "services/api/src/modules/assets/assets.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "S3 adapter keeps objects private, validates keys, propagates errors and survives a new client instance"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/cloud-assets.test.ts",
+          "name": "cloud object store preserves image validation, ACL and revocation without local files"
+        }
+      ],
+      "requirement": "AWS-01",
+      "sources": [
+        "aws01",
+        "QA-109"
+      ]
+    },
+    {
+      "id": "AWS-01-DELIVERY",
+      "description": "SES email and opt-in allowlisted SNS transactional SMS transport, rejects disabled recipients and exposes failures to durable retries; mocks only.",
+      "code": [
+        "services/api/src/integrations/cloud.ts",
+        "services/api/src/modules/auth/auth.module.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "SES sends email without demo labels and never sends SMS or swallows provider failures"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "cloud SMS is opt-in, allowlisted, short transactional text and propagates delivery failures"
+        }
+      ],
+      "requirement": "AWS-01",
+      "sources": [
+        "aws01",
+        "QA-109"
+      ]
+    },
+    {
+      "id": "AWS-01-SECRETS",
+      "description": "Bootstrap random independent secrets and rejects DB identity drift; local helper test does not prove Secrets Manager IAM or live ops task.",
+      "code": [
+        "scripts/aws/database.mjs"
+      ],
+      "tests": [
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-ops.test.mjs",
+          "name": "cloud bootstrap generates independent secrets and rejects database/SQL injection drift"
+        }
+      ],
+      "requirement": "AWS-01",
+      "sources": [
+        "aws01",
+        "QA-109"
+      ]
+    },
+    {
       "id": "UX-02-SUPPORT",
       "requirement": "UX-02",
       "description": "Full-period support summary, date/sort-bound pagination and done filter preserve support permission boundary.",
@@ -5139,6 +5257,555 @@
           "suite": "web",
           "file": "tests/e2e/web/admin-invitations.spec.mjs",
           "name": "UX-02 admin invites with reviewed permissions and exact retry; verified recipient accepts on mobile and enters MFA"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-GUARDS",
+      "requirement": "AWS-02",
+      "description": "Local config/account/state ownership and concurrency guards; no live IAM claim.",
+      "sources": [
+        "aws02-implementation",
+        "QA-111"
+      ],
+      "code": [
+        "scripts/aws/lab-core.mjs",
+        "scripts/aws/lab.mjs"
+      ],
+      "tests": [
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab.test.mjs",
+          "name": "lab guards reject wrong identity, unsafe config, implicit destruction and state loss"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab.test.mjs",
+          "name": "lab local journal is private and blocks concurrent operations without deleting state"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-DNS",
+      "requirement": "AWS-02",
+      "description": "Cloudflare records must belong to exact lab and remain DNS-only; mocked transport, not live DNS proof.",
+      "sources": [
+        "aws02-implementation",
+        "QA-111"
+      ],
+      "code": [
+        "scripts/aws/lab-core.mjs"
+      ],
+      "tests": [
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab.test.mjs",
+          "name": "lab DNS checks all names before mutations and never overwrites unrelated records"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-CLEANUP",
+      "requirement": "AWS-02",
+      "description": "Independent resource audit supplements state/tags, handles manual pagination and fails closed on denied scans; no live cleanup/billing certification.",
+      "sources": [
+        "aws02-implementation",
+        "QA-111"
+      ],
+      "code": [
+        "scripts/aws/lab-core.mjs",
+        "scripts/aws/lab.mjs"
+      ],
+      "tests": [
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab.test.mjs",
+          "name": "lab cleanup audit detects untagged backups, managed secrets and global remnants and fails on denied scans"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab.test.mjs",
+          "name": "lab audit follows VPC origin and WAF continuation markers and rejects incomplete pagination"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab-cli.test.mjs",
+          "name": "lab CLI does not report cleanup success when an independent resource scan fails"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-PROXY",
+      "requirement": "AWS-02",
+      "description": "Reviewed two-hop CloudFront/ALB contract retains viewer IP quotas and HTTPS, rejects spoofed prefixes; HTTP local and edge VM only.",
+      "sources": [
+        "aws02-implementation",
+        "QA-111"
+      ],
+      "code": [
+        "services/api/src/bootstrap.ts",
+        "services/api/src/config/environment.ts",
+        "infra/aws/lab/api-headers.js"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "cloud proxy mode only allows reviewed ALB and CloudFront paths in cloud mode"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/locations.test.ts",
+          "name": "CloudFront ALB HTTP preserves client quotas across edges and ignores forged forwarding prefixes"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/locations.test.ts",
+          "name": "CloudFront ALB HTTP uses the HTTPS viewer contract instead of internal or forged protocol headers"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab.test.mjs",
+          "name": "lab edge removes spoofed forwarding and origin credentials while preserving auth and application headers"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-ORCHESTRATION",
+      "requirement": "AWS-02",
+      "description": "Actual CLI tested with fake commands/fetch, private journal and partial-apply recovery. Real AWS create/delete, permissions, native and UAT remain unverified.",
+      "sources": [
+        "aws02-implementation",
+        "QA-111"
+      ],
+      "code": [
+        "scripts/aws/lab.mjs",
+        "scripts/aws/lab-core.mjs",
+        "infra/aws/lab/compute.tf",
+        "infra/aws/lab/api-edge.tf"
+      ],
+      "tests": [
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab-cli.test.mjs",
+          "name": "lab CLI checkpoints partial apply and retries cleanup against the same local state"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab-cli.test.mjs",
+          "name": "lab CLI completes mocked deploy before claiming ready and keeps credentials out of logs"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab-cli.test.mjs",
+          "name": "lab CLI never publishes DNS or web when ECS service rollout is unsuccessful"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-EMAIL-POLICY",
+      "requirement": "AWS-02-EMAIL",
+      "description": "Owner-approved lab email eligibility preserves actual phone flags and all non-OTP business guards; default pilot remains phone. Local API/UI evidence only.",
+      "sources": [
+        "lab-email-decision",
+        "QA-112"
+      ],
+      "code": [
+        "services/api/src/config/environment.ts",
+        "services/api/src/modules/auth/auth.service.ts",
+        "services/api/src/modules/partners/partners.service.ts",
+        "services/api/src/modules/jobs/jobs.service.ts",
+        "apps/mobile/src/features/auth/models/auth.types.ts",
+        "apps/mobile/src/features/organizations/screens/VerifyContactScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/lab-email.test.ts",
+          "name": "lab email OTP opens provider, hire and acceptance without verifying phone; revocation and ACLs still apply"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "email lab policy is explicit and isolated; Resend requires its sender and server key"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/partners/screens/Partners.test.tsx",
+          "name": "verified email enables lab provider creation even when phone remains unverified"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/lab-email.spec.mjs",
+          "name": "lab email verification unlocks provider creation on web and keeps phone unverified"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-EMAIL-DELIVERY",
+      "requirement": "AWS-02-EMAIL",
+      "description": "Resend adapter and private CLI wiring with provider mocked; live delivery/domain and inbox not certified.",
+      "sources": [
+        "lab-email-decision",
+        "QA-112"
+      ],
+      "code": [
+        "services/api/src/integrations/cloud.ts",
+        "services/api/src/modules/auth/auth.module.ts",
+        "scripts/aws/lab.mjs",
+        "scripts/aws/lab-core.mjs",
+        "infra/aws/lab/compute.tf"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "Resend sends stable idempotent payloads and rejects SMS, errors and malformed success"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab-cli.test.mjs",
+          "name": "lab Resend deploy injects private key via stdin, skips SES and strips key from web builds"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab-cli.test.mjs",
+          "name": "lab Resend deploy requires a key before creating cloud resources"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab.test.mjs",
+          "name": "lab supports explicit Resend configuration and backward compatible SES sender"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-RUNTIME",
+      "requirement": "AWS-02-COMMS",
+      "description": "Single-owner cloud lab runtime fails closed on database lease loss; local real WebSocket and HTTP evidence, no live AWS handshake.",
+      "sources": [
+        "aws02-communications",
+        "QA-113"
+      ],
+      "code": [
+        "services/api/src/database/runtime-lease.ts",
+        "services/api/src/bootstrap.ts",
+        "services/api/src/modules/realtime/realtime.gateway.ts",
+        "services/api/src/modules/realtime/realtime.worker.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/runtime-lease.test.ts",
+          "name": "singleton lease rejects a second owner, fences sockets and workers on database session loss, then allows replacement"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/runtime-lease.test.ts",
+          "name": "singleton heartbeat timeout fails closed without reacquiring or releasing twice"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/realtime.spec.mjs",
+          "name": "realtime two accounts: visible chat, offline catch-up and inbox read on another session"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-MEDIA",
+      "requirement": "AWS-02-COMMS",
+      "description": "Cloud adapter preserves explicit-room policy, scoped microphone access and durable identity revocation before delete; provider mocked, live compatibility remains blocked until verified.",
+      "sources": [
+        "aws02-communications",
+        "QA-113"
+      ],
+      "code": [
+        "services/api/src/integrations/livekit/livekit.adapter.ts",
+        "services/api/src/modules/calls/calls.service.ts",
+        "services/api/src/config/environment.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/livekit.adapter.test.ts",
+          "name": "cloud media scopes rooms, preserves explicit-room probe and revokes both durable identities before deletion"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/calls.test.ts",
+          "name": "current job targets, both directions, recipient-only acceptance, private history and token isolation"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/calls.test.ts",
+          "name": "replay checks current relationship, mismatch and stale actions fail; cleanup failure remains durable"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-PUSH",
+      "requirement": "AWS-02-COMMS",
+      "description": "Explicit lab cloud push credentials and project identity; existing ACL/receipt workflow with bounded call TTL. No real device delivery or native incoming-call UI certification.",
+      "sources": [
+        "aws02-communications",
+        "QA-113"
+      ],
+      "code": [
+        "services/api/src/config/environment.ts",
+        "services/api/src/modules/notifications/push.worker.ts",
+        "apps/mobile/app.config.js",
+        "apps/mobile/eas.json"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "cloud realtime calls and push require explicit lab singleton and private credentials"
+        },
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/calls.test.ts",
+          "name": "incoming call push obeys call switch and suppresses ended or expired ringing before delivery"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab.test.mjs",
+          "name": "lab Expo config overrides only public project identity and rejects malformed IDs"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-COMMS-LIFECYCLE",
+      "requirement": "AWS-02-COMMS",
+      "description": "Mocked lifecycle validates media policy before cloud creation, injects private credentials and cleans only owned media after task stop; failures retain retry state.",
+      "sources": [
+        "aws02-communications",
+        "QA-113"
+      ],
+      "code": [
+        "scripts/aws/lab.mjs",
+        "scripts/aws/lab-core.mjs",
+        "scripts/aws/lab-media.mjs",
+        "infra/aws/lab/compute.tf"
+      ],
+      "tests": [
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab.test.mjs",
+          "name": "lab communications config requires explicit singleton, owned provider URL and Expo project"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab-cli.test.mjs",
+          "name": "lab communications deploy guards provider policy, injects secrets and cleans media after API stop"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab-cli.test.mjs",
+          "name": "lab communications blocks unsafe media before cloud creation and retains failed cleanup for retry"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab-cli.test.mjs",
+          "name": "lab media-check validates provider policy before any AWS or DNS operation"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-FINANCE-CONFIG",
+      "requirement": "AWS-02-FINANCE",
+      "description": "Owner-approved test-money lab mode only, persistent private key and explicit bootstrap reviewer grants; mocked lifecycle, not live cloud.",
+      "sources": [
+        "aws02-finance",
+        "QA-114"
+      ],
+      "code": [
+        "services/api/src/config/environment.ts",
+        "scripts/aws/database.mjs",
+        "scripts/aws/lab-core.mjs",
+        "scripts/aws/lab.mjs",
+        "infra/aws/lab/compute.tf"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/unit/cloud.test.ts",
+          "name": "lab test finance requires explicit cloud lab mode and a separate persistent secret"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-ops.test.mjs",
+          "name": "lab finance bootstrap preserves its encryption key across retries and grants only explicit test reviewers"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab.test.mjs",
+          "name": "lab finance capability is explicitly boolean and reaches only the disposable root"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/aws-lab-cli.test.mjs",
+          "name": "lab finance deploy preserves the stored test key and strips unrelated finance keys from web builds"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-FINANCE-FLOW",
+      "requirement": "AWS-02-FINANCE",
+      "description": "Database-backed simulator in lab mode records audited fake deposits and preserves fresh MFA, holds, ledger and idempotency; real banking excluded.",
+      "sources": [
+        "aws02-finance",
+        "QA-114"
+      ],
+      "code": [
+        "services/api/src/modules/finance/finance.service.ts",
+        "apps/mobile/src/features/finance/messages.ts",
+        "apps/admin/src/finance-messages.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/finance.test.ts",
+          "name": "cloud lab test money records audited deposits and preserves MFA, holds and one-time settlement"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/finance.spec.mjs",
+          "name": "wallet bank topup payout and fresh admin reconcile survive response loss with durable local test money"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/finance/screens/FinanceScreen.test.tsx",
+          "name": "wallet and banking screens label balances as test money without real payment value"
+        }
+      ]
+    },
+    {
+      "id": "AWS-02-WALLET-FALLBACK",
+      "requirement": "AWS-02-FINANCE",
+      "description": "Wallet and ledger survive temporary banking outage with money controls locked; denied access clears private data and refresh restores banking only after success.",
+      "sources": [
+        "aws02-finance",
+        "QA-114"
+      ],
+      "code": [
+        "apps/mobile/src/features/finance/screens/FinanceScreen.tsx"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/finance/screens/FinanceScreen.test.tsx",
+          "name": "wallet keeps balance and ledger visible when banking is unavailable and recovers on refresh"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/finance/screens/FinanceScreen.test.tsx",
+          "name": "banking permission loss clears wallet data instead of being treated as a temporary outage"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/finance.spec.mjs",
+          "name": "wallet still renders balance and ledger when lab banking is unavailable"
+        }
+      ]
+    },
+    {
+      "id": "ANDROID-CALL-PUSH",
+      "requirement": "ANDROID-CALLS",
+      "description": "Android-only explicit device capability sends expiring data-only incoming and dismiss events; legacy transport remains. Local transport tests do not prove FCM delivery.",
+      "sources": [
+        "android-calls",
+        "QA-115"
+      ],
+      "code": [
+        "services/api/migrations/026_android_calls.sql",
+        "services/api/src/modules/notifications/notifications.service.ts",
+        "services/api/src/modules/notifications/push.worker.ts",
+        "services/api/src/modules/calls/calls.service.ts"
+      ],
+      "tests": [
+        {
+          "suite": "api",
+          "file": "services/api/test/integration/calls.test.ts",
+          "name": "Android call capability uses expiring data-only push and dismisses other devices after acceptance"
+        }
+      ]
+    },
+    {
+      "id": "ANDROID-CALL-ACTIONS",
+      "requirement": "ANDROID-CALLS",
+      "description": "Native UI actions refetch the current call, reject another owner/stale state, preserve version and start protected audio only after acceptance. Components only, physical lock-screen not certified.",
+      "sources": [
+        "android-calls",
+        "QA-115"
+      ],
+      "code": [
+        "apps/mobile/src/features/calls/CallsProvider.tsx",
+        "apps/mobile/src/features/calls/android-call-ui.native.ts",
+        "apps/mobile/plugins/android-calls/AndroidCallsModule.kt"
+      ],
+      "tests": [
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+          "name": "Android answer refetches current call and starts native foreground audio only after authenticated acceptance"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+          "name": "Android stale and other-account actions cannot accept a call or request microphone"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+          "name": "Android decline uses the freshly fetched version and never starts microphone"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+          "name": "Android service startup failure fails the accepted call instead of opening media without background protection"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+          "name": "second-device UI does not fail or end the call accepted on the first device"
+        },
+        {
+          "suite": "web",
+          "file": "tests/e2e/web/android-calls.spec.mjs",
+          "name": "a second signed-in device observes the accepted call without failing the first device"
+        }
+      ]
+    },
+    {
+      "id": "ANDROID-CALL-CONFIG",
+      "requirement": "ANDROID-CALLS",
+      "description": "Repeatable CNG plugin uses one FCM service, protected Telecom entry and private action/audio components; JS bridge keeps iOS out. Does not prove release/vendor background behavior.",
+      "sources": [
+        "android-calls",
+        "QA-115"
+      ],
+      "code": [
+        "apps/mobile/plugins/with-android-calls.cjs",
+        "apps/mobile/plugins/android-calls/CallRuntime.kt",
+        "apps/mobile/plugins/android-calls/CallActivity.kt",
+        "apps/mobile/plugins/android-calls/CallAudioService.kt"
+      ],
+      "tests": [
+        {
+          "suite": "tooling",
+          "file": "scripts/test/android-call-config.test.mjs",
+          "name": "Android call plugin is repeatable and keeps native call entry points private with one FCM receiver"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/android-call-ui.native.test.ts",
+          "name": "Android bridge passes credentials only to the foreground service and tolerates unavailable builds"
+        },
+        {
+          "suite": "mobile",
+          "file": "apps/mobile/src/features/calls/android-call-ui.native.test.ts",
+          "name": "iOS does not advertise or start the Android call service"
         }
       ]
     }

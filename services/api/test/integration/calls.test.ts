@@ -87,7 +87,7 @@ test('strict input and route contract do not expose media when local provider di
 
 test('incoming call push obeys call switch and suppresses ended or expired ringing before delivery',async()=>{
  const {j}=await ready();assert.equal((await http(owner,'/me/devices','POST',{token:'ExpoPushToken[callpushdemotoken]',platform:'android'})).status,201);
- const sent:{body:string;data:Record<string,unknown>}[]=[];
+ const sent:{body:string;priority:string;ttl:number;data:Record<string,unknown>}[]=[];
  const transport=(async(_url,init)=>{sent.push(...JSON.parse(String(init?.body)));return Response.json({data:[{status:'ok',id:'call-demo-ticket'}]});}) as typeof fetch;
  const push=new PushWorker(f.pool,f.logs.log,{},transport);
  let c=await start(customer,j.id,owner.id);await action(owner,c,'decline');await push.drain();assert.equal(sent.length,0);
@@ -96,5 +96,29 @@ test('incoming call push obeys call switch and suppresses ended or expired ringi
  c=await start(customer,j.id,owner.id);await push.drain();assert.equal(sent.length,0);assert.equal((await service.get(owner.header,c.id)).state,'ringing');await action(owner,c,'decline');
  await http(owner,'/me/notification-settings','PUT',{message_push:true,call_push:true,service_push:false,reminder_push:true});
  await f.pool.query("UPDATE users SET locale='en' WHERE id=$1",[owner.id]);c=await start(customer,j.id,owner.id);await push.drain();
- assert.equal(sent.length,1);assert.equal(sent[0].body,'Incoming call.');assert.equal(sent[0].data.event_key,`call:${c.id}:ringing`);assert.equal(sent[0].data.recipient_id,owner.id);assert.ok(!JSON.stringify(sent).includes('TEST_MEDIA_ONLY'));
+ assert.equal(sent.length,1);assert.equal(sent[0].body,'Incoming call.');assert.equal(sent[0].priority,'high');assert.ok(sent[0].ttl>0&&sent[0].ttl<=30);assert.equal(sent[0].data.event_key,`call:${c.id}:ringing`);assert.equal(sent[0].data.recipient_id,owner.id);assert.ok(!JSON.stringify(sent).includes('TEST_MEDIA_ONLY'));
+});
+
+test('Android call capability uses expiring data-only push and dismisses other devices after acceptance',async()=>{
+ const {j}=await ready();
+ const registration={token:'ExpoPushToken[nativecalltesttoken]',platform:'android',android_calls:true};
+ assert.equal((await http(owner,'/me/devices','POST',{...registration,platform:'ios'})).status,400);
+ assert.equal((await http(owner,'/me/devices','POST',{...registration,android_calls:'true'})).status,400);
+ assert.equal((await http(owner,'/me/devices','POST',registration)).status,201);
+ assert.equal((await http(owner,'/me/devices','POST',{token:'ExpoPushToken[oldandroidtesttoken]',platform:'android'})).status,201);
+ const sent:Record<string,unknown>[]=[];
+ const transport=(async(_url,init)=>{sent.push(...JSON.parse(String(init?.body)));return Response.json({data:[{status:'ok',id:'native-demo-ticket'}]});}) as typeof fetch;
+ const push=new PushWorker(f.pool,f.logs.log,{},transport);
+ const c=await start(customer,j.id,owner.id);await push.drain();
+ const native=sent.find(p=>p.to===registration.token)!;const legacy=sent.find(p=>p.to!==registration.token)!;
+ assert.equal(native.title,undefined);assert.equal(native.body,undefined);assert.equal(native.sound,undefined);assert.equal(native.priority,'high');
+ assert.ok(Number(native.ttl)>0&&Number(native.ttl)<=30);
+ assert.deepEqual(native.data,{recipient_id:owner.id,conversation_id:c.conversation_id,job_id:j.id,event_key:`call:${c.id}:ringing`,android_call_v:1,call_action:'incoming',call_id:c.id,ring_until:Date.parse(c.ring_until)});
+ assert.ok(legacy.body);assert.equal((legacy.data as Record<string,unknown>).android_call_v,undefined);
+ await action(owner,c,'accept');await push.drain();
+ const dismissed=sent.filter(p=>(p.data as Record<string,unknown>).call_action==='dismiss');assert.equal(dismissed.length,1);assert.equal(dismissed[0].to,registration.token);
+ assert.ok(!JSON.stringify(sent).includes('TEST_MEDIA_ONLY'));assert.ok(!JSON.stringify(sent).includes(owner.token));
+ // Downgrading/reinstalling an old build must explicitly remove the capability.
+ await http(owner,'/me/devices','POST',{token:registration.token,platform:'android'});
+ assert.equal((await f.pool.query('SELECT android_calls FROM push_devices WHERE token=$1',[registration.token])).rows[0].android_calls,false);
 });

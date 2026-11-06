@@ -17,7 +17,7 @@ async function decision(d:string,id:string,version:number,decision:string,extra:
 async function verifiedBank(){const b=await bankRequest();const r=await decision('bank-accounts',b.pending.id,b.pending.version,'approve');assert.equal(r.status,200,JSON.stringify(r));return (await call(owner,`/partners/${partner}/bank`)).body.current;}
 async function topup(amount='100000',reference=randomUUID()){const r=await call(owner,'/topups','POST',{partner_id:partner,amount});assert.equal(r.status,201,JSON.stringify(r));const d=await call(admin,'/admin/finance-simulator/deposits','POST',{partner_id:partner,amount,reference});assert.equal(d.status,201,JSON.stringify(d));const posted=await decision('topups',r.body.id,r.body.version,'approve',{bank_reference:reference});assert.equal(posted.status,200,JSON.stringify(posted));return posted.body;}
 async function payout(bank:string,amount='50000',key=randomUUID()){return call(owner,'/payouts','POST',{partner_id:partner,amount,bank_account_id:bank,reauth_grant:await grant('payout')},key);}
-beforeEach(async()=>{f=await databaseFixture('finance-test-auth-secret-'.repeat(3),true,undefined,false,{secret:'finance-test-admin-secret-'.repeat(3)},{finance:{secret:'finance-test-bank-secret-'.repeat(3)}});owner=await actor();other=await actor();admin=await enroll(await actor());partner=(await f.pool.query("INSERT INTO partners(kind,name) VALUES('solo','DEMO finance partner') RETURNING id")).rows[0].id;await f.pool.query('INSERT INTO memberships(partner_id,user_id,is_owner) VALUES($1,$2,true)',[partner,owner.id]);await f.pool.query("INSERT INTO ledger_accounts(owner_partner_id,unit) VALUES($1,'VND')",[partner]);});
+beforeEach(async(context)=>{f=await databaseFixture('finance-test-auth-secret-'.repeat(3),true,undefined,false,{secret:'finance-test-admin-secret-'.repeat(3)},{finance:{secret:'finance-test-bank-secret-'.repeat(3),...(context.name.startsWith('cloud lab test money')?{mode:'lab-test' as const}:{})}});owner=await actor();other=await actor();admin=await enroll(await actor());partner=(await f.pool.query("INSERT INTO partners(kind,name) VALUES('solo','DEMO finance partner') RETURNING id")).rows[0].id;await f.pool.query('INSERT INTO memberships(partner_id,user_id,is_owner) VALUES($1,$2,true)',[partner,owner.id]);await f.pool.query("INSERT INTO ledger_accounts(owner_partner_id,unit) VALUES($1,'VND')",[partner]);});
 afterEach(async()=>{await f?.close();});
 test('bank proposal keeps current, encrypts number, one-use reauth, cancellation/version/retry and payout blocker',async()=>{
  const bank=await verifiedBank();const b=await bankRequest('9876543210');assert.equal(b.current.id,bank.id);assert.equal(b.pending.account_last4,'3210');assert.ok(!JSON.stringify(b).includes('9876543210'));assert.equal((await call(owner,'/bank-accounts/'+b.pending.id)).body.state,'pending');assert.equal((await call(other,'/bank-accounts/'+b.pending.id)).status,404);
@@ -108,4 +108,26 @@ test('unverified reject/approve references cannot squat legitimate deposits or f
  const sent=await decision('payouts',second.id,second.version,'transferring');assert.equal(sent.status,200,JSON.stringify(sent));assert.equal(sent.body.bank_reference,future);
  await f.pool.query(repair);assert.equal((await call(owner,'/topups/'+b.id)).body.bank_reference,ref);assert.equal((await call(owner,'/payouts/'+second.id)).body.bank_reference,future);
  assert.equal((await f.pool.query('SELECT count(*) FROM local_bank_transfers')).rows[0].count,'1');
+});
+
+
+test('cloud lab test money records audited deposits and preserves MFA, holds and one-time settlement',async()=>{
+ const input={partner_id:partner,amount:'200000',reference:'LAB-DEMO-DEPOSIT'},key=randomUUID();
+ assert.equal((await call(owner,'/admin/finance-simulator/deposits','POST',input,key)).status,403);
+ assert.equal((await call({...admin,mfa:undefined},'/admin/finance-simulator/deposits','POST',input,key)).status,403);
+ const recorded=await call(admin,'/admin/finance-simulator/deposits','POST',input,key);assert.equal(recorded.status,201);assert.equal(recorded.body.environment,'lab-test');
+ assert.deepEqual(await call(admin,'/admin/finance-simulator/deposits','POST',input,key),recorded);
+ const audit=(await f.pool.query("SELECT actor_id,resource_id,details FROM audit_events WHERE action='finance.simulator.deposit'")).rows;assert.equal(audit.length,1);assert.equal(audit[0].actor_id,admin.id);assert.equal(audit[0].resource_id,partner);assert.equal(audit[0].details.environment,'lab-test');
+ assert.equal((await call(owner,`/partners/${partner}/wallet`)).body.balance,'0');
+ const request=(await call(owner,'/topups','POST',{partner_id:partner,amount:'200000'})).body;
+ assert.equal((await decision('topups',request.id,1,'approve',{bank_reference:input.reference})).body.state,'confirmed');
+ const bank=await verifiedBank();let p=(await payout(bank.id,'50000')).body;
+ assert.equal((await call(owner,`/partners/${partner}/wallet`)).body.withdrawal_holds,'50000');
+ p=(await decision('payouts',p.id,p.version,'approve')).body;
+ p=(await decision('payouts',p.id,p.version,'transferring',{simulator_scenario:'timeout_after_success'})).body;assert.equal(p.state,'unknown');
+ const settleKey=randomUUID(),result=await decision('payouts',p.id,p.version,'succeeded',{},admin,settleKey);assert.equal(result.status,200);assert.deepEqual(await decision('payouts',p.id,p.version,'succeeded',{},admin,settleKey),result);
+ const wallet=(await call(owner,`/partners/${partner}/wallet`)).body;assert.equal(wallet.balance,'150000');assert.equal(wallet.withdrawal_holds,'0');
+ assert.equal((await f.pool.query('SELECT unit,sum(delta) FROM ledger_entries GROUP BY unit HAVING sum(delta)<>0')).rowCount,0);
+ await f.pool.query("UPDATE admin_sessions SET verified_at=now()-interval '6 minutes' WHERE user_id=$1",[admin.id]);
+ assert.equal((await call(admin,'/admin/finance-simulator/deposits','POST',{...input,reference:'STALE-MFA'},randomUUID())).status,403);
 });

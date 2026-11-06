@@ -1,3 +1,4 @@
+import type {RuntimeLease} from '../../database/runtime-lease.js';
 import { NotFoundException, UnauthorizedException, type OnModuleDestroy } from '@nestjs/common';
 import type { Server as HttpServer } from 'node:http';
 import { Server, type Socket } from 'socket.io';
@@ -13,12 +14,15 @@ export class RealtimeGateway implements OnModuleDestroy {
   private io?:Server;
   private readonly connections=new Map<string,Connection>();
   private unsubscribe?:()=>void;
+  private unlease?:()=>void;
   readonly metrics={connected:0,denied:0,emitted:0,slow:0};
-  constructor(private readonly pool:Pool,private readonly auth:AuthService){}
+  constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly lease?:RuntimeLease){}
   attach(http:HttpServer,origins:string[]){
+    this.unlease=this.lease?.onLoss(()=>{for(const c of this.connections.values())this.close(c.socket);});
     const io=this.io=new Server(http,{path:'/v1/realtime/socket.io',transports:['websocket'],serveClient:false,connectTimeout:5000,maxHttpBufferSize:8192,pingInterval:20000,pingTimeout:10000,
       allowRequest:(req,done)=>done(null,(!req.headers.origin||origins.includes(req.headers.origin)) && this.connections.size<1000 && (!this.io||this.io.engine.clientsCount<1100))});
     io.use((socket,next)=>{void (async()=>{
+      await this.lease?.check();
       const token:unknown=socket.handshake.auth?.token;
       if(typeof token!=='string'||token.length>4096)throw new UnauthorizedException();
       const actor=await this.auth.authenticate('Bearer '+token);
@@ -26,6 +30,7 @@ export class RealtimeGateway implements OnModuleDestroy {
       socket.data.identity={user:actor.user.id,token,expiresAt:actor.expiresAt};
     })().then(()=>next(),()=>{this.metrics.denied++;next(new Error('UNAUTHENTICATED'));});});
     io.on('connection',socket=>{
+      if(this.lease&&!this.lease.ready){this.close(socket);return;}
       const a=socket.data.identity;delete socket.data.identity;
       if([...this.connections.values()].filter(c=>c.user===a.user).length>=10){this.close(socket);return;}
       const c:Connection={socket,user:a.user,token:a.token,resources:new Map(),expiry:setTimeout(()=>this.close(socket),Math.max(1,a.expiresAt-Date.now())),packets:0,window:Date.now(),busy:false,expiresAt:a.expiresAt};
@@ -57,6 +62,7 @@ export class RealtimeGateway implements OnModuleDestroy {
       if(resource)await resourceAccess(db,c.user,resource);
       // Enqueue synchronously while ACL locks still hold. Never wait for a network ACK in a transaction.
       if(Date.now()>=c.expiresAt)throw new UnauthorizedException();
+      await this.lease?.check();
       if(c.socket.connected)work();
       await db.query('COMMIT');
     }catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
@@ -89,5 +95,5 @@ export class RealtimeGateway implements OnModuleDestroy {
       }
     }
   }
-  async onModuleDestroy(){this.unsubscribe?.();for(const c of this.connections.values())this.close(c.socket);if(this.io)await new Promise<void>(resolve=>this.io!.close(()=>resolve()));}
+  async onModuleDestroy(){this.unsubscribe?.();this.unlease?.();for(const c of this.connections.values())this.close(c.socket);if(this.io)await new Promise<void>(resolve=>this.io!.close(()=>resolve()));}
 }

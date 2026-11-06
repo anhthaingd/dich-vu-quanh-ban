@@ -49,3 +49,35 @@ jobs:
           retention-days: 7
       - if: always()
         run: docker compose -f infra/compose.yaml --profile test stop db-test
+  aws-infrastructure:
+    name: AWS infrastructure
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .nvmrc
+      - name: Install Terraform with official release checksum
+        run: |
+          curl --fail --silent --show-error -O https://releases.hashicorp.com/terraform/1.13.3/terraform_1.13.3_linux_amd64.zip
+          curl --fail --silent --show-error -O https://releases.hashicorp.com/terraform/1.13.3/terraform_1.13.3_SHA256SUMS
+          grep ' terraform_1.13.3_linux_amd64.zip$' terraform_1.13.3_SHA256SUMS | sha256sum -c -
+          unzip terraform_1.13.3_linux_amd64.zip -d "$RUNNER_TEMP/terraform-bin"
+          echo "$RUNNER_TEMP/terraform-bin" >> "$GITHUB_PATH"
+          rm terraform_1.13.3_linux_amd64.zip terraform_1.13.3_SHA256SUMS
+      - name: Validate AWS configuration without credentials
+        run: |
+          terraform -chdir=infra/aws fmt -check -recursive
+          terraform -chdir=infra/aws init -backend=false -input=false -lockfile=readonly
+          terraform -chdir=infra/aws validate
+          terraform -chdir=infra/aws test
+          terraform -chdir=infra/aws/bootstrap init -backend=false -input=false -lockfile=readonly
+          terraform -chdir=infra/aws/bootstrap validate
+          terraform -chdir=infra/aws/lab init -backend=false -input=false -lockfile=readonly
+          terraform -chdir=infra/aws/lab validate
+          terraform -chdir=infra/aws/lab test
+      - name: Build and boot production image against isolated TLS PostGIS
+        run: |
+          docker build --platform linux/amd64 -f infra/aws/Dockerfile -t dvqb-api:infra-test .
+          node scripts/aws/container-smoke.mjs

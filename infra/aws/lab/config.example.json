@@ -1,0 +1,21 @@
+{
+  "lab_id": "learn",
+  "expected_account_id": "000000000000",
+  "region": "ap-southeast-1",
+  "domain": "iimissher.com",
+  "profile": "dvqb-lab",
+  "cloudflare_zone_id": "REPLACE_WITH_ZONE_ID",
+  "certificate_arn": "REPLACE_WITH_ISSUED_ACM_ARN_IN_US_EAST_1",
+  "alert_email": "owner@example.com",
+  "pilot_emails": [
+    "owner@example.com"
+  ],
+  "monthly_budget_usd": 20,
+  "email_provider": "resend",
+  "email_from": "no-reply@iimissher.com",
+  "realtime": true,
+  "livekit_url": "wss://replace-with-project.livekit.cloud",
+  "expo_push": true,
+  "expo_project_id": "REPLACE_WITH_EXPO_PROJECT_UUID",
+  "finance_test": true
+}

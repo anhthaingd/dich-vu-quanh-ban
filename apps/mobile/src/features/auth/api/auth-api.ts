@@ -6,6 +6,7 @@ export function isMe(value: unknown): value is Me {
   if (!value || typeof value !== 'object') return false;
   const m = value as Me;
   return Number.isSafeInteger(m.version) && m.version >= 1 && typeof m.id === 'string' && uuid.test(m.id) && typeof m.display_name === 'string'
+    && (m.verification_policy===undefined || ['phone','email_lab'].includes(m.verification_policy))
     && typeof m.email_verified === 'boolean' && typeof m.phone_verified === 'boolean' && ['vi','en','ja'].includes(m.locale) && ['active','suspended'].includes(m.status)
     && Array.isArray(m.partner_ids) && m.partner_ids.every(x => typeof x === 'string' && uuid.test(x))
     && Array.isArray(m.admin_permissions) && m.admin_permissions.every(x => typeof x === 'string');

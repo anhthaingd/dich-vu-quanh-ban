@@ -1,3 +1,4 @@
+import {hasServiceVerification} from '../../auth/models/auth.types';
 import {financeText} from '../../finance/messages';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
@@ -114,13 +115,13 @@ function Profiles({
         <AppText>{t('partners.empty')}</AppText>
       )}
       <Card>
-        {!state.user?.phone_verified && (
-          <AppText>{t('partners.verifyNeeded')}</AppText>
+        {!hasServiceVerification(state.user) && (
+          <AppText>{t(state.user?.verification_policy==='email_lab'?'verification.emailNeeded':'partners.verifyNeeded')}</AppText>
         )}
         <Button
           testID="partner-create-open"
           label={t('partners.create')}
-          disabled={busy || state.busy || !state.user?.phone_verified}
+          disabled={busy || state.busy || !hasServiceVerification(state.user)}
           onPress={() => open()}
         />
       </Card>

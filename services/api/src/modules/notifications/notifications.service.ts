@@ -21,10 +21,10 @@ export class NotificationsService {
   setSettings(header:string|undefined,input:ReturnType<typeof settingsInput>,key:string){return this.tx.run(header,'setSettings',key,input,async(db,a)=>{
     await db.query(`INSERT INTO notification_settings(user_id,message_push,call_push,service_push,reminder_push) VALUES($1,$2,$3,$4,$5) ON CONFLICT(user_id) DO UPDATE SET message_push=$2,call_push=$3,service_push=$4,reminder_push=$5`,[a.user.id,input.message_push,input.call_push,input.service_push,input.reminder_push]);return input;
   });}
-  registerDevice(header:string|undefined,input:{token:string;platform:string},key:string){return this.tx.run(header,'registerDevice',key,input,async(db,a)=>{
+  registerDevice(header:string|undefined,input:{token:string;platform:string;android_calls?:boolean},key:string){return this.tx.run(header,'registerDevice',key,input,async(db,a)=>{
     const family=(await db.query('SELECT family_id FROM sessions WHERE id=$1',[a.sessionId])).rows[0].family_id;
-    const r=(await db.query(`INSERT INTO push_devices(user_id,family_id,token,platform) VALUES($1,$2,$3,$4)
-      ON CONFLICT(token) DO UPDATE SET user_id=$1,family_id=$2,platform=$4,revoked_at=NULL,updated_at=now() RETURNING id`,[a.user.id,family,input.token,input.platform])).rows[0];return {id:r.id,version:1,state:'registered'};
+    const r=(await db.query(`INSERT INTO push_devices(user_id,family_id,token,platform,android_calls) VALUES($1,$2,$3,$4,$5)
+      ON CONFLICT(token) DO UPDATE SET user_id=$1,family_id=$2,platform=$4,android_calls=$5,revoked_at=NULL,updated_at=now() RETURNING id`,[a.user.id,family,input.token,input.platform,input.android_calls===true])).rows[0];return {id:r.id,version:1,state:'registered'};
   });}
   list(header:string|undefined,q:PageInput){return this.readTx(header,async(db,user)=>{
     const scope=`notifications:${user}`,start=this.cursor.decode(q.cursor,scope);
@@ -39,4 +39,4 @@ export class NotificationsService {
   },async(db,a)=>{if(!(await db.query("SELECT 1 FROM notifications WHERE id=$1 AND user_id=$2 AND kind NOT LIKE 'conversation.%'",[id,a.user.id])).rowCount)throw new NotFoundException();});}
 }
 
-export function deviceInput(value:unknown){const v=object(value,['token','platform']);if(typeof v.token!=='string'||! /^(ExponentPushToken|ExpoPushToken)\[[a-zA-Z0-9_-]{10,200}\]$/.test(v.token)||!['ios','android'].includes(String(v.platform)))throw new BadRequestException();return {token:v.token,platform:String(v.platform)};}
+export function deviceInput(value:unknown){const v=object(value,['token','platform','android_calls']);if(typeof v.token!=='string'||! /^(ExponentPushToken|ExpoPushToken)\[[a-zA-Z0-9_-]{10,200}\]$/.test(v.token)||!['ios','android'].includes(String(v.platform)))throw new BadRequestException();if(v.android_calls!==undefined&&(typeof v.android_calls!=='boolean'||v.platform!=='android'))throw new BadRequestException();return {token:v.token,platform:String(v.platform),...(v.android_calls!==undefined?{android_calls:v.android_calls as boolean}:{})};}

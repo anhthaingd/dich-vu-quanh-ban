@@ -17,8 +17,16 @@
   ],
   "files": [
     {
+      "path": ".dockerignore",
+      "kind": "tooling"
+    },
+    {
       "path": ".editorconfig",
       "kind": "tooling"
+    },
+    {
+      "path": ".github/workflows/aws-build.yml",
+      "kind": "infra"
     },
     {
       "path": ".github/workflows/quality.yml",
@@ -165,6 +173,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/app.config.js",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/app.json",
       "kind": "product"
     },
@@ -298,6 +310,30 @@
     },
     {
       "path": "apps/mobile/package.json",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/plugins/android-calls-tests/CallInstrumentation.kt",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/plugins/android-calls/AndroidCallsModule.kt",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/plugins/android-calls/CallActivity.kt",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/plugins/android-calls/CallAudioService.kt",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/plugins/android-calls/CallRuntime.kt",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/plugins/with-android-calls.cjs",
       "kind": "product"
     },
     {
@@ -670,6 +706,18 @@
     },
     {
       "path": "apps/mobile/src/features/calls/CallsProvider.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/android-call-ui.native.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/android-call-ui.native.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/calls/android-call-ui.ts",
       "kind": "product"
     },
     {
@@ -1517,6 +1565,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-12-ha-tang-aws.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B00-13-du-lieu-van-hanh-local.md",
       "kind": "documentation"
     },
@@ -1550,6 +1602,26 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B00-19-trien-khai-quan-tri.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-20-lab-aws02.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-21-otp-email-lab.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-22-realtime-livekit-push-lab.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-23-tien-test-tren-lab.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-24-cuoc-goi-android.md",
       "kind": "documentation"
     },
     {
@@ -3473,6 +3545,42 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-20/aws02-kien-truc.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-21/email-da-xac-minh.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-21/tao-dich-vu.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-23/admin-topup-test.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-23/payout-test.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-23/wallet-banking-unavailable.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-23/wallet-test.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-24/android-call-incoming.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-24/call-on-other-device.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B01-08/01-security-web.png",
       "kind": "documentation"
     },
@@ -4237,6 +4345,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-12-aws-gia.json",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-14-native.json",
       "kind": "documentation"
     },
@@ -4253,6 +4365,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-20-aws02-gia.json",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B03-01-geoapify-30-dia-chi.json",
       "kind": "documentation"
     },
@@ -4266,6 +4382,14 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/UX-01/native-events.json",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/AWS-01-ha-tang-pilot.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/de-xuat/AWS-02-lab-khong-phi-khi-tat.md",
       "kind": "documentation"
     },
     {
@@ -4573,6 +4697,134 @@
       "kind": "tooling"
     },
     {
+      "path": "infra/aws/.terraform.lock.hcl",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/Dockerfile",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/HUONG-DAN-TUNG-BUOC.md",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/README.md",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/backend.hcl.example",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/bootstrap/.terraform.lock.hcl",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/bootstrap/main.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/compute.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/edge.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/.terraform.lock.hcl",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/README.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "infra/aws/lab/api-edge.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/api-headers.js",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/compute.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/config.example.json",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/network.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/observability.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/outputs.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/storage.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/tests/lab.tftest.hcl",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/variables.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/versions.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/lab/waf.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/network.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/observability.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/outputs.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/pilot.tfvars.example",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/release-iam.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/storage.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/tests/pilot.tftest.hcl",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/variables.tf",
+      "kind": "infra"
+    },
+    {
+      "path": "infra/aws/versions.tf",
+      "kind": "infra"
+    },
+    {
       "path": "infra/ci/github-actions.yml",
       "kind": "infra"
     },
@@ -4611,6 +4863,34 @@
     {
       "path": "packages/domain/src/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "scripts/aws/container-smoke.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/aws/database.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/aws/lab-core.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/aws/lab-media.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/aws/lab.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/aws/load.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/aws/operate.mjs",
+      "kind": "tooling"
     },
     {
       "path": "scripts/build/api.mjs",
@@ -4718,6 +4998,26 @@
     },
     {
       "path": "scripts/test/admin-client.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/android-call-config.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/android-calls.mjs",
+      "kind": "tooling"
+    },
+    {
+      "path": "scripts/test/aws-lab-cli.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/aws-lab.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/aws-ops.test.mjs",
       "kind": "test"
     },
     {
@@ -4877,6 +5177,10 @@
       "kind": "product"
     },
     {
+      "path": "services/api/migrations/026_android_calls.sql",
+      "kind": "product"
+    },
+    {
       "path": "services/api/package.json",
       "kind": "product"
     },
@@ -4925,6 +5229,10 @@
       "kind": "product"
     },
     {
+      "path": "services/api/src/database/connection.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/database/database.module.ts",
       "kind": "product"
     },
@@ -4949,6 +5257,10 @@
       "kind": "product"
     },
     {
+      "path": "services/api/src/database/runtime-lease.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/database/seed.ts",
       "kind": "product"
     },
@@ -4963,6 +5275,10 @@
     {
       "path": "services/api/src/integrations/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "services/api/src/integrations/cloud.ts",
+      "kind": "product"
     },
     {
       "path": "services/api/src/integrations/livekit/livekit.adapter.ts",
@@ -5553,6 +5869,10 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/integration/cloud-assets.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/integration/finance.test.ts",
       "kind": "test"
     },
@@ -5562,6 +5882,10 @@
     },
     {
       "path": "services/api/test/integration/jobs-chat.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/integration/lab-email.test.ts",
       "kind": "test"
     },
     {
@@ -5613,6 +5937,10 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/integration/runtime-lease.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/integration/support.test.ts",
       "kind": "test"
     },
@@ -5626,6 +5954,10 @@
     },
     {
       "path": "services/api/test/unit/catalog-seed.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/cloud.test.ts",
       "kind": "test"
     },
     {
@@ -5659,6 +5991,10 @@
     {
       "path": "services/api/test/unit/totp.test.ts",
       "kind": "test"
+    },
+    {
+      "path": "services/api/tsconfig.build.json",
+      "kind": "product"
     },
     {
       "path": "services/api/tsconfig.json",
@@ -5757,6 +6093,10 @@
       "kind": "test"
     },
     {
+      "path": "tests/e2e/web/android-calls.spec.mjs",
+      "kind": "test"
+    },
+    {
       "path": "tests/e2e/web/auth.spec.mjs",
       "kind": "test"
     },
@@ -5794,6 +6134,10 @@
     },
     {
       "path": "tests/e2e/web/jobs-chat.spec.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "tests/e2e/web/lab-email.spec.mjs",
       "kind": "test"
     },
     {
@@ -6454,6 +6798,7 @@
       "apps/mobile/src/features/auth/state/token-storage.test.ts",
       "apps/mobile/src/features/backoffice/BackofficePanel.test.tsx",
       "apps/mobile/src/features/calls/CallsProvider.test.tsx",
+      "apps/mobile/src/features/calls/android-call-ui.native.test.ts",
       "apps/mobile/src/features/calls/api/calls-api.test.ts",
       "apps/mobile/src/features/calls/media.native.test.ts",
       "apps/mobile/src/features/catalog/api/catalog-api.test.ts",
@@ -6514,9 +6859,11 @@
       "services/api/test/integration/backoffice.test.ts",
       "services/api/test/integration/calls.test.ts",
       "services/api/test/integration/catalog.test.ts",
+      "services/api/test/integration/cloud-assets.test.ts",
       "services/api/test/integration/finance.test.ts",
       "services/api/test/integration/invoices.test.ts",
       "services/api/test/integration/jobs-chat.test.ts",
+      "services/api/test/integration/lab-email.test.ts",
       "services/api/test/integration/lifecycle.test.ts",
       "services/api/test/integration/local-gallery.test.ts",
       "services/api/test/integration/locations.test.ts",
@@ -6529,9 +6876,11 @@
       "services/api/test/integration/push.test.ts",
       "services/api/test/integration/realtime.test.ts",
       "services/api/test/integration/reviews.test.ts",
+      "services/api/test/integration/runtime-lease.test.ts",
       "services/api/test/integration/support.test.ts",
       "services/api/test/unit/catalog-config.test.ts",
       "services/api/test/unit/catalog-seed.test.ts",
+      "services/api/test/unit/cloud.test.ts",
       "services/api/test/unit/demo-options.test.ts",
       "services/api/test/unit/invoice-money.test.ts",
       "services/api/test/unit/livekit.adapter.test.ts",
@@ -6548,6 +6897,7 @@
       "tests/e2e/web/admin-invitations.spec.mjs",
       "tests/e2e/web/admin-moderation.spec.mjs",
       "tests/e2e/web/admin-operations.spec.mjs",
+      "tests/e2e/web/android-calls.spec.mjs",
       "tests/e2e/web/auth.spec.mjs",
       "tests/e2e/web/backoffice.spec.mjs",
       "tests/e2e/web/calendar.spec.mjs",
@@ -6556,6 +6906,7 @@
       "tests/e2e/web/i18n.spec.mjs",
       "tests/e2e/web/invoices.spec.mjs",
       "tests/e2e/web/jobs-chat.spec.mjs",
+      "tests/e2e/web/lab-email.spec.mjs",
       "tests/e2e/web/local-completion.spec.mjs",
       "tests/e2e/web/local-gallery-mfa.spec.mjs",
       "tests/e2e/web/locations.spec.mjs",
@@ -6574,6 +6925,10 @@
     "tooling": [
       "scripts/diagnostics/export.test.mjs",
       "scripts/test/admin-client.test.mjs",
+      "scripts/test/android-call-config.test.mjs",
+      "scripts/test/aws-lab-cli.test.mjs",
+      "scripts/test/aws-lab.test.mjs",
+      "scripts/test/aws-ops.test.mjs",
       "scripts/test/backup-files.test.mjs",
       "scripts/test/coverage-gate.test.mjs",
       "scripts/test/native-options.test.mjs",
@@ -6736,10 +7091,32 @@
     "LOCAL-01-GALLERY",
     "LOCAL-01-MFA",
     "LOCAL-01-BACKUP",
+    "AWS-01-CONFIG",
+    "AWS-01-TLS",
+    "AWS-01-ASSETS",
+    "AWS-01-DELIVERY",
+    "AWS-01-SECRETS",
     "UX-02-SUPPORT",
     "UX-02-INVITE",
     "UX-02-TEAM",
-    "UX-02-E2E"
+    "UX-02-E2E",
+    "AWS-02-GUARDS",
+    "AWS-02-DNS",
+    "AWS-02-CLEANUP",
+    "AWS-02-PROXY",
+    "AWS-02-ORCHESTRATION",
+    "AWS-02-EMAIL-POLICY",
+    "AWS-02-EMAIL-DELIVERY",
+    "AWS-02-RUNTIME",
+    "AWS-02-MEDIA",
+    "AWS-02-PUSH",
+    "AWS-02-COMMS-LIFECYCLE",
+    "AWS-02-FINANCE-CONFIG",
+    "AWS-02-FINANCE-FLOW",
+    "AWS-02-WALLET-FALLBACK",
+    "ANDROID-CALL-PUSH",
+    "ANDROID-CALL-ACTIONS",
+    "ANDROID-CALL-CONFIG"
   ],
   "qa": [
     {
@@ -7725,6 +8102,18 @@
       "reason": "P2 local/test branches mapped; remaining business/provider/native/retention requirements are not certified. See P2 reports and criterion gaps."
     },
     {
+      "id": "QA-109",
+      "status": "partial",
+      "criteria": [
+        "AWS-01-CONFIG",
+        "AWS-01-TLS",
+        "AWS-01-ASSETS",
+        "AWS-01-DELIVERY",
+        "AWS-01-SECRETS"
+      ],
+      "reason": "Only local/config/transport mocks. Terraform/container are separately evidenced; live AWS IAM, provider delivery, restore, load and UAT must be checked by owner."
+    },
+    {
       "id": "QA-110",
       "status": "partial",
       "criteria": [
@@ -7734,6 +8123,58 @@
         "UX-02-E2E"
       ],
       "reason": "Reviewed local/API/mobile component and browser branches only. Native evidence and Mailpit delivery recorded separately; no production, external provider or owner UAT certification."
+    },
+    {
+      "id": "QA-111",
+      "status": "partial",
+      "criteria": [
+        "AWS-02-GUARDS",
+        "AWS-02-DNS",
+        "AWS-02-CLEANUP",
+        "AWS-02-PROXY",
+        "AWS-02-ORCHESTRATION"
+      ],
+      "reason": "Local mocked CLI, edge VM and HTTP assertions only; live AWS create/delete, DNS/email behavior, costs, billing, native and UAT are unverified."
+    },
+    {
+      "id": "QA-112",
+      "status": "partial",
+      "criteria": [
+        "AWS-02-EMAIL-POLICY",
+        "AWS-02-EMAIL-DELIVERY"
+      ],
+      "reason": "Local email challenge/API/web/component and mock delivery/CLI only; actual Resend inbox, DNS, AWS, native and UAT unverified."
+    },
+    {
+      "id": "QA-113",
+      "status": "partial",
+      "criteria": [
+        "AWS-02-RUNTIME",
+        "AWS-02-MEDIA",
+        "AWS-02-PUSH",
+        "AWS-02-COMMS-LIFECYCLE"
+      ],
+      "reason": "Local actual DB/WebSocket/browser and mocked provider/CLI only; live LiveKit explicit-room compatibility, audio/revocation, AWS, native FCM/APNs, background calls and UAT unverified."
+    },
+    {
+      "id": "QA-114",
+      "status": "partial",
+      "criteria": [
+        "AWS-02-FINANCE-CONFIG",
+        "AWS-02-FINANCE-FLOW",
+        "AWS-02-WALLET-FALLBACK"
+      ],
+      "reason": "Local config/API, actual web browser and mocked infrastructure only. No AWS/native/UAT or real banking certification."
+    },
+    {
+      "id": "QA-115",
+      "status": "partial",
+      "criteria": [
+        "ANDROID-CALL-PUSH",
+        "ANDROID-CALL-ACTIONS",
+        "ANDROID-CALL-CONFIG"
+      ],
+      "reason": "Local API/components/plugin and separate emulator mock evidence only; no actual FCM, background media, physical device, release, AWS or UAT certification."
     }
   ],
   "operations": [
@@ -11066,6 +11507,8 @@
     "Source read observed jobs completed at settlement before customer payment mark; review_eligible waits both marks. Do not claim completed-state requires both marks without reconciling spec.",
     "QA-068 có số lượng catalog lịch sử khác seed hiện hành; SDD không tự sửa nguồn.",
     "Native và UAT chưa chạy trong CI này; Storybook build không chứng minh app khớp thiết kế.",
-    "Danh sách requirement độc lập ngoài qa-cases.json chưa được trích đầy đủ từ DOCX/Excel; QA/API là nguồn kiểm kê máy đọc hiện tại."
+    "Danh sách requirement độc lập ngoài qa-cases.json chưa được trích đầy đủ từ DOCX/Excel; QA/API là nguồn kiểm kê máy đọc hiện tại.",
+    "AWS-02 communications: Cloud LiveKit explicit-room setting must pass live policy probe. Refreshed/never-joined token revocation, audio, device push and native incoming-call UI are not certified by local tests.",
+    "ANDROID-CALLS: native UI/foreground service added; emulator payload/HTTP are mocked. Real FCM/cold-start, two-way LiveKit during lock and token rotation, phone manufacturers, release policy and UAT remain open. iOS CallKit/PushKit not implemented."
   ]
 }

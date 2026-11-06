@@ -1,0 +1,48 @@
+import {mkdir} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {test,expect} from './fixtures.mjs';
+import {LocalMessages,MessageSecrets} from '../../../services/api/dist/src/integrations/local-messages.js';
+test.use({teamLocal:true,emailLab:true});
+test('lab email verification unlocks provider creation on web and keeps phone unverified',async({page,environment},testInfo)=>{
+ await environment.app.get(LocalMessages).onModuleDestroy();
+ await page.goto(environment.webUrl);
+ await page.getByTestId('nav-account').click();
+ await page.getByRole('button',{name:'Chưa có tài khoản? Đăng ký'}).click();
+ await page.getByLabel('Tên hiển thị',{exact:true}).fill('DEMO Email Lab');
+ await page.getByLabel('Email',{exact:true}).fill('owner@example.test');
+ await page.getByLabel('Mật khẩu',{exact:true}).fill('web-email-lab-test-password');
+ await page.getByRole('button',{name:'Đăng ký',exact:true}).click();
+ await expect(page.getByText('Email chưa xác minh',{exact:true})).toBeVisible();
+ await page.getByTestId('partners-open').click();
+ await expect(page.getByTestId('partner-create-open')).toBeDisabled();
+ await page.getByRole('button',{name:'Quay lại',exact:true}).click();
+ await page.getByTestId('verify-open').click();
+ await expect(page.getByText('Môi trường lab dùng OTP gửi qua email.',{exact:false})).toBeVisible();
+ await page.getByTestId('verify-contact').fill('+84900000001');
+ await expect(page.getByTestId('verify-send')).toBeDisabled();
+ await page.getByTestId('verify-contact').fill('owner@example.test');
+ await page.getByTestId('verify-send').click();
+ await expect(page.getByTestId('verify-code')).toBeVisible();
+ const row=(await environment.pool.query('SELECT payload_cipher FROM local_deliveries ORDER BY created_at DESC LIMIT 1')).rows[0];
+ const code=JSON.parse(new MessageSecrets('web-local-messages-secret-'.repeat(3)).decrypt(row.payload_cipher)).text.match(/\d{6}/)[0];
+ await page.getByTestId('verify-code').fill(code);
+ await page.getByTestId('verify-confirm').click();
+ await expect(page.getByTestId('verify-done')).toBeVisible();
+ await expect(page.getByText('Email đã xác minh',{exact:true}).last()).toBeVisible();
+ await expect(page.getByText('Điện thoại chưa xác minh',{exact:true})).toBeVisible();
+ const capture=async name=>{
+  const image=await page.screenshot({fullPage:true});await testInfo.attach(name,{body:image,contentType:'image/png'});
+  if(process.env.SAVE_LAB_EMAIL_IMAGES==='1'){const dir=resolve('docs/ke-hoach-trien-khai/bao-cao/anh/B00-21');await mkdir(dir,{recursive:true});await page.screenshot({path:resolve(dir,name+'.png'),fullPage:true});}
+ };
+ await capture('email-da-xac-minh');
+ await page.getByRole('button',{name:'Quay lại',exact:true}).click();
+ await page.getByTestId('partners-open').click();
+ await expect(page.getByTestId('partner-create-open')).toBeEnabled();
+ await page.getByTestId('partner-create-open').click();
+ await page.getByTestId('partner-name').fill('DEMO Dịch vụ Email Lab');
+ await expect(page.getByTestId('partner-create')).toBeEnabled();
+ await capture('tao-dich-vu');
+ await page.getByTestId('partner-create').click();
+ await expect.poll(async()=>(await environment.pool.query('SELECT count(*) FROM partners')).rows[0].count).toBe('1');
+ expect((await environment.pool.query("SELECT count(*) FROM identities WHERE provider='phone'")).rows[0].count).toBe('0');
+});

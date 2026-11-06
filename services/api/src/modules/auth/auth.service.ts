@@ -13,8 +13,11 @@ export class AuthService {
   private readonly changes = new Set<()=>Promise<void>>();
   onAccessChange(fn:()=>Promise<void>){this.changes.add(fn);return ()=>{this.changes.delete(fn);};}
   async accessChanged(){await Promise.all([...this.changes].map(fn=>fn()));}
-  constructor(private readonly pool: Pool, secret: string) { this.key = new TextEncoder().encode(secret); }
+  constructor(private readonly pool: Pool, secret: string, private readonly pilotEmails?:string[], private readonly verificationPolicy: 'phone'|'email_lab' = 'phone') { this.key = new TextEncoder().encode(secret); }
 
+  hasServiceVerification(user: {phone_verified?:boolean;email_verified?:boolean} | undefined) {
+    return (this.verificationPolicy === 'email_lab' ? user?.email_verified : user?.phone_verified) === true;
+  }
   private async me(user: User, db: Pool | PoolClient) {
     const { rows: [flags] } = await db.query(`SELECT
       EXISTS(SELECT 1 FROM identities WHERE user_id=$1 AND provider='phone' AND verified_at IS NOT NULL) AS phone_verified,
@@ -22,7 +25,7 @@ export class AuthService {
       ARRAY(SELECT m.partner_id FROM memberships m JOIN partners p ON p.id=m.partner_id
         WHERE m.user_id=$1 AND m.active AND p.archived_at IS NULL ORDER BY m.partner_id) AS partner_ids`, [user.id]);
     const grants=await db.query('SELECT permission FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL ORDER BY permission',[user.id]);
-    return { ...user, ...flags, ...(user.status==='suspended'?{partner_ids:[],admin_permissions:[]}:{admin_permissions: grants.rows.map(r=>r.permission as string)}) };
+    return { ...user, ...flags, ...(this.verificationPolicy==='email_lab'?{verification_policy:'email_lab' as const}:{}), ...(user.status==='suspended'?{partner_ids:[],admin_permissions:[]}:{admin_permissions: grants.rows.map(r=>r.permission as string)}) };
   }
   async issue(db: PoolClient, user: User, family = randomUUID(), expiry = new Date(Date.now() + 30 * 86400000)) {
     const refresh = randomBytes(32).toString('hex');
@@ -39,6 +42,7 @@ export class AuthService {
     finally { db.release(); }
   }
   async register(email: string, password: string, name: string) {
+    if(this.pilotEmails&&!this.pilotEmails.includes(email))throw new BadRequestException();
     const hash = await hashPassword(password);
     try {
       return await this.transaction(async db => {

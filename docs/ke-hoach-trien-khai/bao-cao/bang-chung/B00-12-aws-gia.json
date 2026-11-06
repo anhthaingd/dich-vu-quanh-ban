@@ -1,0 +1,63 @@
+{
+  "checked_date": "2026-10-28",
+  "region": "ap-southeast-1",
+  "currency": "USD",
+  "hours_per_month": 730,
+  "note": "Public on-demand list prices; excludes tax, credits, SMS, domain, traffic-dependent charges. Not a live AWS bill.",
+  "sources": [
+    {
+      "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonECS/current/ap-southeast-1/index.json",
+      "publicationDate": "2026-10-19T22:43:17Z",
+      "rows": [
+        {
+          "usage": "APS1-Fargate-GB-Hours",
+          "description": "AWS Fargate - Memory - Asia Pacific (Singapore)",
+          "unit": "hours",
+          "usd": "0.0055300000"
+        },
+        {
+          "usage": "APS1-Fargate-vCPU-Hours:perCPU",
+          "description": "AWS Fargate - vCPU - Asia Pacific (Singapore)",
+          "unit": "hours",
+          "usd": "0.0505600000"
+        }
+      ]
+    },
+    {
+      "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSELB/current/ap-southeast-1/index.json",
+      "publicationDate": "2026-09-11T12:45:44Z",
+      "rows": [
+        {
+          "usage": "APS1-LoadBalancerUsage",
+          "description": "$0.0252 per Application LoadBalancer-hour (or partial hour)",
+          "unit": "Hrs",
+          "usd": "0.0252000000"
+        },
+        {
+          "usage": "APS1-LCUUsage",
+          "description": "$0.008 per used Application load balancer capacity unit-hour (or partial hour)",
+          "unit": "LCU-Hrs",
+          "usd": "0.0080000000"
+        }
+      ]
+    },
+    {
+      "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRDS/current/ap-southeast-1/index.json",
+      "publicationDate": "2026-10-26T21:47:16Z",
+      "rows": [
+        {
+          "usage": "APS1-RDS:GP3-Storage",
+          "description": "$0.138 per GB-month of provisioned GP3 storage running PostgreSQL",
+          "unit": "GB-Mo",
+          "usd": "0.1380000000"
+        },
+        {
+          "usage": "APS1-InstanceUsage:db.t4g.micro",
+          "description": "$ 0.025 per RDS db.t4g.micro Single-AZ instance hour (or partial hour) running PostgreSQL",
+          "unit": "Hrs",
+          "usd": "0.0250000000"
+        }
+      ]
+    }
+  ]
+}

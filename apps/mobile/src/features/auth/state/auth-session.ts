@@ -1,3 +1,4 @@
+import {androidCallUi} from '../../calls/android-call-ui';
 import {createGalleryApi} from '../../partners/api/gallery-api';
 import type {VerificationApi,VerificationInput} from '../../verification/api/verification-api';
 import type {SupportApi} from '../../support/api/support-api';
@@ -189,7 +190,7 @@ export class AuthSession {
   replyReview=(o:string,id:string,v:number,body:string,k:string)=>this.accountOperation(o,t=>this.reviewsApi().reply(t,id,v,body,k));
   uploadReview=(o:string,blob:Blob,k:string)=>this.accountOperation(o,t=>this.reviewsApi().upload(t,blob,k));
   customerReviews=(o:string,j:string,c?:string)=>this.accountOperation(o,t=>this.reviewsApi().customerHistory(t,j,c));
-  registerPushDevice=(o:string,device:{token:string;platform:string},key:string)=>this.accountOperation(o,t=>this.notificationApi().registerDevice(t,device,key));
+  registerPushDevice=(o:string,device:{token:string;platform:string;android_calls?:boolean},key:string)=>this.accountOperation(o,t=>this.notificationApi().registerDevice(t,{...device,...(device.platform==='android'&&androidCallUi.available?{android_calls:true}:{})},key));
   jobReviews=(o:string,j:string,c?:string)=>this.accountOperation(o,t=>this.reviewsApi().list(t,j,c));
   createReview=(o:string,j:string,b:ReviewInput,k:string)=>this.accountOperation(o,t=>this.reviewsApi().create(t,j,b,k));
   editReview=(o:string,id:string,b:ReviewInput,k:string)=>this.accountOperation(o,t=>this.reviewsApi().edit(t,id,b,k));

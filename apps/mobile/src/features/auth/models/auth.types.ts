@@ -1,4 +1,5 @@
 export interface Me {
+  verification_policy?: 'phone' | 'email_lab';
   id: string; version: number; display_name: string; phone_verified: boolean; email_verified: boolean;
   locale: 'vi' | 'en' | 'ja'; partner_ids: string[]; admin_permissions: string[]; status: string;
 }
@@ -13,3 +14,7 @@ export interface AuthApi {
   logout(token: string): Promise<void>;
 }
 export interface TokenStorage { read(): Promise<string | null>; write(token: string): Promise<void>; clear(): Promise<void> }
+
+export function hasServiceVerification(user:Me|null|undefined):boolean {
+  return (user?.verification_policy==='email_lab'?user.email_verified:user?.phone_verified)===true;
+}

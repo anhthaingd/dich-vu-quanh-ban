@@ -69,7 +69,7 @@ export class JobsService {
             await queueNotice(db,`job:${j.id}:requested`,'job.requested',{job_id:j.id},(await jobRecipients(db,j.id)).filter(r=>r.user_id!==actor.user.id));
             return this.read(db, await jobAccess(db, j.id, actor.user.id));
         }, async (db, actor) => {
-            if (!actor.user.phone_verified)
+            if (!this.auth.hasServiceVerification(actor.user))
                 throw new ForbiddenException();
             const { rows: [old] } = await db.query("SELECT response_snapshot->>'id' AS id FROM idempotency_keys WHERE actor_id=$1 AND operation='createJob' AND request_key=$2", [actor.user.id, key]);
             if (old)
@@ -182,7 +182,7 @@ export class JobsService {
                 await event(db, key, id, j.version + 1, 'job.schedule_changed.v1', { job_id: id, schedule_version: j.schedule_version + 1, scheduled_at: input.scheduled_at });
             return this.read(db, await jobAccess(db, id, actor.user.id));
         }, async (db, actor) => {
-            if (action === 'accept' && !actor.user.phone_verified)
+            if (action === 'accept' && !this.auth.hasServiceVerification(actor.user))
                 throw new ForbiddenException();
             const a = await jobAccess(db, id, actor.user.id);
             const permitted = action === 'withdraw' ? a.customer : ['accept', 'decline'].includes(action) ? a.accepts : action === 'assignments' ? a.assigns : a.customer || a.manages || a.assigned;
