@@ -41,6 +41,8 @@ node scripts/aws/container-smoke.mjs dvqb-api:check
 
 Terraform test dùng `mock_provider`, chỉ lập plan giả, không gọi AWS. Không dùng mock output làm account/subnet thật. `.terraform.lock.hcl` khóa provider đã kiểm. Docker context không nhận `.env`, node_modules máy host, Terraform state hoặc dữ liệu test.
 
+Khi cập nhật provider, tạo checksum cho cả máy Mac ARM và GitHub runner Linux bằng `terraform providers lock -platform=darwin_arm64 -platform=linux_amd64` tại từng thư mục `infra/aws`, `infra/aws/bootstrap`, `infra/aws/lab`, rồi review diff và commit lockfile. CI giữ `-lockfile=readonly`. Lượt CI [42161801575](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/42161801575) ngày 06/11/2026 phát hiện lockfile thiếu hash nội dung bản Linux: init xác minh archive nhưng validate từ chối provider đã giải nén. Bản sửa bổ sung checksum chính thức cho Linux, giữ nguyên phiên bản provider và kiểm tra checksum.
+
 ## 3. Tạo nền tảng, chưa khởi động app
 
 ```sh
