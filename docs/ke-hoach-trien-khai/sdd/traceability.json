@@ -3055,7 +3055,7 @@
       "sources": [
         "QA-019"
       ],
-      "description": "Màn lịch giữ ngày sau tải lại, mất quyền xóa dữ liệu; việc trên trang sau và đổi lịch khách/partner qua DB thật.",
+      "description": "Màn lịch giữ ngày sau tải lại, mất quyền xóa dữ liệu; việc trên trang sau và đổi lịch khách/partner qua DB thật. Giữ tọa độ ô ngày và thao tác chọn khi response tới giữa pointer-down/up.",
       "code": [
         "apps/mobile/src/features/jobs/screens/JobsScreen.tsx",
         "services/api/src/modules/jobs/jobs.service.ts"
@@ -5545,7 +5545,7 @@
     {
       "id": "AWS-02-PUSH",
       "requirement": "AWS-02-COMMS",
-      "description": "Explicit lab cloud push credentials and project identity; existing ACL/receipt workflow with bounded call TTL. No real device delivery or native incoming-call UI certification.",
+      "description": "Explicit lab cloud push credentials and project identity; existing ACL/receipt workflow with bounded call TTL. No real device delivery or native incoming-call UI certification. EAS Firebase file path is honored independently of the public project override; local fallback and unrelated config are preserved.",
       "sources": [
         "aws02-communications",
         "QA-113"
@@ -5780,7 +5780,7 @@
     {
       "id": "ANDROID-CALL-CONFIG",
       "requirement": "ANDROID-CALLS",
-      "description": "Repeatable CNG plugin uses one FCM service, protected Telecom entry and private action/audio components; JS bridge keeps iOS out. Does not prove release/vendor background behavior.",
+      "description": "Repeatable CNG plugin uses one FCM service, protected Telecom entry and private action/audio components; JS bridge keeps iOS out. Does not prove release/vendor background behavior. Startup backport installer validates the pinned screens dependency, is repeatable and skips API-only installs; crash/native evidence is recorded separately in B00-25.",
       "sources": [
         "android-calls",
         "QA-115"
@@ -5789,7 +5789,8 @@
         "apps/mobile/plugins/with-android-calls.cjs",
         "apps/mobile/plugins/android-calls/CallRuntime.kt",
         "apps/mobile/plugins/android-calls/CallActivity.kt",
-        "apps/mobile/plugins/android-calls/CallAudioService.kt"
+        "apps/mobile/plugins/android-calls/CallAudioService.kt",
+        "scripts/install/screens-patch.mjs"
       ],
       "tests": [
         {
@@ -5806,6 +5807,11 @@
           "suite": "mobile",
           "file": "apps/mobile/src/features/calls/android-call-ui.native.test.ts",
           "name": "iOS does not advertise or start the Android call service"
+        },
+        {
+          "suite": "tooling",
+          "file": "scripts/test/screens-patch.test.mjs",
+          "name": "screens backport is repeatable, rejects changed dependencies and permits API-only installs"
         }
       ]
     }

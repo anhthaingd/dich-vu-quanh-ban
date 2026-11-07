@@ -5,6 +5,8 @@ COPY package.json package-lock.json tsconfig.base.json ./
 COPY services/api/package.json services/api/package.json
 COPY apps/mobile/package.json apps/mobile/package.json
 COPY apps/admin/package.json apps/admin/package.json
+COPY scripts/install scripts/install
+COPY patches patches
 RUN npm ci --workspace services/api --include-workspace-root
 COPY services/api/tsconfig.json services/api/tsconfig.build.json services/api/
 COPY services/api/src services/api/src

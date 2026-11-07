@@ -1625,6 +1625,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-25-sua-loi-truoc-deploy.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
       "kind": "documentation"
     },
@@ -3581,6 +3585,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-25/lich-sau-tai.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B01-08/01-security-web.png",
       "kind": "documentation"
     },
@@ -4369,6 +4377,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B00-25-native.json",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/bang-chung/B03-01-geoapify-30-dia-chi.json",
       "kind": "documentation"
     },
@@ -4865,6 +4877,34 @@
       "kind": "placeholder"
     },
     {
+      "path": "patches/react-native-screens-4.26.0/LICENSE",
+      "kind": "documentation"
+    },
+    {
+      "path": "patches/react-native-screens-4.26.0/NativeProxy.cpp",
+      "kind": "tooling"
+    },
+    {
+      "path": "patches/react-native-screens-4.26.0/NativeProxy.h",
+      "kind": "tooling"
+    },
+    {
+      "path": "patches/react-native-screens-4.26.0/README.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "patches/react-native-screens-4.26.0/RNSScreenRemovalListener.cpp",
+      "kind": "tooling"
+    },
+    {
+      "path": "patches/react-native-screens-4.26.0/RNSScreenRemovalListener.h",
+      "kind": "tooling"
+    },
+    {
+      "path": "patches/react-native-screens-4.26.0/manifest.json",
+      "kind": "tooling"
+    },
+    {
       "path": "scripts/aws/container-smoke.mjs",
       "kind": "tooling"
     },
@@ -4923,6 +4963,10 @@
     {
       "path": "scripts/diagnostics/export.test.mjs",
       "kind": "test"
+    },
+    {
+      "path": "scripts/install/screens-patch.mjs",
+      "kind": "tooling"
     },
     {
       "path": "scripts/ops/backup-files.mjs",
@@ -5058,6 +5102,10 @@
     },
     {
       "path": "scripts/test/restore-safety.test.mjs",
+      "kind": "test"
+    },
+    {
+      "path": "scripts/test/screens-patch.test.mjs",
       "kind": "test"
     },
     {
@@ -6935,6 +6983,7 @@
       "scripts/test/operational-model.test.mjs",
       "scripts/test/operational-runtime.test.mjs",
       "scripts/test/restore-safety.test.mjs",
+      "scripts/test/screens-patch.test.mjs",
       "scripts/test/sdd-check.test.mjs",
       "scripts/test/sdd-project.test.mjs"
     ]

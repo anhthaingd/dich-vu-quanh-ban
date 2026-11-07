@@ -26,5 +26,38 @@ test('calendar shows appointments beyond page one and reloads reschedules in cus
  await expect(page.getByTestId('jobs-calendar')).toBeVisible();await expect(page.getByTestId('calendar-job-'+first.id)).toHaveCount(0);await expect(page.getByText('20 công việc trong ngày',{exact:true})).toBeVisible();
  if(later.slice(0,7)!==tomorrow.slice(0,7))await page.getByTestId('calendar-next').click();await page.getByTestId('calendar-day-'+later).click();await expect(page.getByTestId('calendar-job-'+first.id)).toBeVisible();
  const context=await browser.newContext({viewport:{width:390,height:844}});
- try{const partner=await context.newPage();await signIn(partner,'DEMO-calendar-provider@example.test');await partner.getByTestId('jobs-partner-'+p.id).click();await partner.getByTestId('jobs-view-calendar').click();await expect(partner.getByTestId('jobs-calendar')).toBeVisible();await select(partner,later);await expect(partner.getByTestId('calendar-job-'+first.id)).toBeVisible();await partner.getByTestId('calendar-month').scrollIntoViewIfNeeded();await partner.screenshot({path:'test-results/web/report-screenshots/B05-04/web-partner-calendar.png'});}finally{await context.close();}
+ let releaseJobs;
+ try {
+  const partner=await context.newPage();
+  await signIn(partner,'DEMO-calendar-provider@example.test');
+  await partner.getByTestId('jobs-partner-'+p.id).click();
+  await expect(partner.getByTestId('jobs-reload')).toBeEnabled();
+  // Complete the real API request between pointer-down and pointer-up. This
+  // deterministically reproduces the layout shift seen in main CI 42169205168.
+  let intercepted,held=false;
+  const arrived=new Promise(resolve=>{intercepted=resolve;});
+  const release=new Promise(resolve=>{releaseJobs=resolve;});
+  await partner.route('**/v1/jobs?**',async route=>{
+   if(held||route.request().method()!=='GET'){await route.continue();return;}
+   held=true;intercepted();await release;await route.continue();
+  });
+  await partner.getByTestId('jobs-view-calendar').click();
+  await arrived;
+  await expect(partner.getByTestId('jobs-calendar')).toBeVisible();
+  if(later.slice(0,7)!==day(new Date()).slice(0,7))await partner.getByTestId('calendar-next').click();
+  const target=partner.getByTestId('calendar-day-'+later);
+  await target.scrollIntoViewIfNeeded();
+  const before=await target.boundingBox();expect(before).not.toBeNull();
+  await partner.mouse.move(before.x+before.width/2,before.y+before.height/2);
+  await partner.mouse.down();
+  releaseJobs();
+  await expect(partner.getByTestId('jobs-reload')).toBeEnabled();
+  const after=await target.boundingBox();expect(after).not.toBeNull();
+  await partner.mouse.up();
+  await expect(partner.getByTestId('calendar-selected')).toHaveText(new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',weekday:'long',day:'numeric',month:'long'}).format(new Date(later+'T00:00:00+07:00')));
+  expect(after.y).toBeCloseTo(before.y,0);
+  await expect(partner.getByTestId('calendar-job-'+first.id)).toBeVisible();
+  await partner.getByTestId('calendar-month').scrollIntoViewIfNeeded();
+  await partner.screenshot({path:'test-results/web/report-screenshots/B05-04/web-partner-calendar.png'});
+ }finally{releaseJobs?.();await context.close();}
 });

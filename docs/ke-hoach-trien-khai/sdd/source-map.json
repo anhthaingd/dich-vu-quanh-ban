@@ -1490,7 +1490,8 @@
         ".gitignore",
         "tsconfig.base.json",
         "eslint.config.mjs",
-        ".dockerignore"
+        ".dockerignore",
+        "patches/"
       ]
     }
   ]

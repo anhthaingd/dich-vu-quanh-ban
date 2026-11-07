@@ -1,0 +1,268 @@
+{
+  "before": {
+    "checked_at": "2026-11-06T15:49:16.243655+09:00",
+    "kind": "Android API 36 emulator, current debug APK and Metro; offline API, no provider",
+    "iterations": [
+      {
+        "iteration": 1,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "13123"
+      },
+      {
+        "iteration": 2,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "13272"
+      },
+      {
+        "iteration": 3,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": ""
+      },
+      {
+        "iteration": 4,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "13495"
+      },
+      {
+        "iteration": 5,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": ""
+      },
+      {
+        "iteration": 6,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "13714"
+      },
+      {
+        "iteration": 7,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "13824"
+      },
+      {
+        "iteration": 8,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "13939"
+      },
+      {
+        "iteration": 9,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "14048"
+      },
+      {
+        "iteration": 10,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "14163"
+      }
+    ],
+    "crash_buffer_has_app": true
+  },
+  "after": {
+    "checked_at": "2026-11-06T15:58:25.193440+09:00",
+    "kind": "Android API 36 emulator, current debug APK and Metro; offline API, no provider",
+    "iterations": [
+      {
+        "iteration": 1,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "14454"
+      },
+      {
+        "iteration": 2,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "14606"
+      },
+      {
+        "iteration": 3,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "14717"
+      },
+      {
+        "iteration": 4,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "14829"
+      },
+      {
+        "iteration": 5,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "14937"
+      },
+      {
+        "iteration": 6,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "15046"
+      },
+      {
+        "iteration": 7,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "15158"
+      },
+      {
+        "iteration": 8,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "15266"
+      },
+      {
+        "iteration": 9,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "15378"
+      },
+      {
+        "iteration": 10,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "15491"
+      },
+      {
+        "iteration": 11,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "15597"
+      },
+      {
+        "iteration": 12,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "15704"
+      },
+      {
+        "iteration": 13,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "15811"
+      },
+      {
+        "iteration": 14,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "15922"
+      },
+      {
+        "iteration": 15,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "16032"
+      },
+      {
+        "iteration": 16,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "16142"
+      },
+      {
+        "iteration": 17,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "16249"
+      },
+      {
+        "iteration": 18,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "16359"
+      },
+      {
+        "iteration": 19,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "16465"
+      },
+      {
+        "iteration": 20,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "16580"
+      },
+      {
+        "iteration": 21,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "16713"
+      },
+      {
+        "iteration": 22,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "16824"
+      },
+      {
+        "iteration": 23,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "16935"
+      },
+      {
+        "iteration": 24,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "17051"
+      },
+      {
+        "iteration": 25,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "17157"
+      },
+      {
+        "iteration": 26,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "17267"
+      },
+      {
+        "iteration": 27,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "17376"
+      },
+      {
+        "iteration": 28,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "17485"
+      },
+      {
+        "iteration": 29,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "17594"
+      },
+      {
+        "iteration": 30,
+        "launch_ok": true,
+        "main_activity": true,
+        "pid_after_8s": "17703"
+      }
+    ],
+    "crash_buffer_has_app": false
+  },
+  "upstream": "https://github.com/software-mansion/react-native-screens/pull/4413",
+  "limits": "Android API 36 emulator, debug APK and Metro, offline API; not physical-device or release/UAT certification",
+  "call_regression": {
+    "checkedAt": "2026-11-06T06:59:44.425Z",
+    "platform": "Android emulator",
+    "serial": "emulator-5554",
+    "heartbeats": 4,
+    "ended": 1,
+    "denied": 4,
+    "result": "CAPTURE_INCOMING\nGO_HOME\nPASS: owner/expiry, incoming UI, dismiss/reorder, native heartbeat after Home, stop and expired-session fence. Mock HTTP only; no FCM/media proof.\n\n",
+    "limits": "Native UI/service with injected push payload and mock HTTP. No LiveKit audio, actual FCM, physical device, release, or AWS proof."
+  }
+}

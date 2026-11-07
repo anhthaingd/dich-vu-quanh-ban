@@ -57,7 +57,8 @@
     "lab:down": "node scripts/aws/lab.mjs down",
     "lab:status": "node scripts/aws/lab.mjs status",
     "lab:admin": "node scripts/aws/lab.mjs admin",
-    "lab:media-check": "node scripts/aws/lab.mjs media-check"
+    "lab:media-check": "node scripts/aws/lab.mjs media-check",
+    "postinstall": "node scripts/install/screens-patch.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

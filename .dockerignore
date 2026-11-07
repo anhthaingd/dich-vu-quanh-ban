@@ -17,6 +17,9 @@
 !apps/admin/package.json
 !scripts/
 !scripts/build/**
+!scripts/install/**
+!patches/
+!patches/react-native-screens-4.26.0/**
 !scripts/aws/database.mjs
 !infra/
 !infra/aws/

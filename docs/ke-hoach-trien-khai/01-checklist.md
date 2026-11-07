@@ -1,5 +1,16 @@
 # Checklist chức năng và bằng chứng
 
+## B00-25 — Sửa lỗi trước deploy, 06/11/2026
+
+- [x] Tái hiện mất chọn ngày khi tải xong giữa nhấn/thả; sửa nhãn tải trùng và giữ bài hồi quy đủ trang/đổi lịch/hai phạm vi.
+- [x] Sửa cấu hình nhận file Firebase từ EAS; cập nhật hướng dẫn môi trường preview và kiểm fallback local.
+- [x] Tái hiện NATIVE-05 (2/10 lượt debug), đối chiếu upstream #4413, áp dụng bản vá đúng 4.26.0 và build APK mới.
+- [x] Kiểm media local thật với âm DEMO hai chiều, mute/unmute, end/logout và token cũ; không thay LiveKit Cloud/máy thật.
+- [x] APK debug sau vá: 30/30 cold-start không crash; native call instrumentation đạt; Docker API build đạt. [B00-25](bao-cao/B00-25-sua-loi-truoc-deploy.md) giữ bằng chứng trước/sau.
+- [~] SDD local/CI: dùng evidence và `verify` khớp nguồn hiện tại; CI cho commit mới chưa có. Không dùng lượt SDD trước sửa thay bằng chứng.
+- [ ] EAS/FCM/LiveKit Cloud thực, hai điện thoại, CI commit mới và UAT.
+
+
 ## AWS-02 — Lab với iimissher.com, 05/11/2026
 
 - [x] Bổ sung [kế hoạch realtime/gọi thoại/push và dự toán](de-xuat/AWS-02-lab-khong-phi-khi-tat.md#8-bổ-sung-chat-realtime-gọi-thoại-và-thông-báo-nền): ưu tiên một API + LiveKit Build + Expo Push, 5–10 USD/tháng cho giả định 30 giờ tài nguyên; chưa phải hóa đơn hoặc code cloud đã bật.

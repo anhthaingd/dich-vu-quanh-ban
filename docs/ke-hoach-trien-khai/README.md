@@ -1,5 +1,7 @@
 # Kế hoạch triển khai và học code
 
+**06/11/2026 — Sửa lỗi trước deploy:** tái hiện/sửa mất thao tác chọn ngày, đường dẫn Firebase trên EAS và crash NATIVE-05 bằng bản vá upstream có kiểm phiên bản. [B00-25](bao-cao/B00-25-sua-loi-truoc-deploy.md) ghi bằng chứng trước/sau và giới hạn provider/native.
+
 **06/11/2026 — Cuộc gọi Android:** native incoming UI, Telecom và dịch vụ duy trì cuộc gọi; [B00-24](bao-cao/B00-24-cuoc-goi-android.md). Cần build APK mới/đăng ký push lại. Kiểm local/mock/emulator tách riêng FCM, LiveKit nền, thiết bị thật và UAT.
 
 **06/11/2026 — Tiền test trên AWS-02:** mở bộ mô phỏng nạp/rút có MFA, key riêng và nhật ký; màn Ví chịu được lỗi ngân hàng. [B00-23](bao-cao/B00-23-tien-test-tren-lab.md). Chỉ tiền test, kiểm local/mock/web; chưa AWS live/native/UAT.

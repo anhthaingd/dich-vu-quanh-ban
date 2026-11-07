@@ -81,17 +81,30 @@ npm run lab:media-check -- --lab learn
 
 Lệnh chỉ probe quyền vào phòng chưa tồn tại; không tạo phòng, không phát âm thanh. `LIVEKIT_EXPLICIT_ROOMS_REQUIRED` nghĩa chính sách chưa đáp ứng, không phải lỗi cần bỏ kiểm. Key thiếu/sai và policy sai đều phải xử lý trước `up`. Có thể dùng `livekit_url` rỗng và `expo_push: false` để chủ động dựng phần còn lại, nhưng đó không phải nghiệm thu đủ ba chức năng.
 
-App web chỉ có realtime và gọi foreground; push ở đây dành cho native. Để build Android/iOS, nạp cấu hình công khai rồi dùng profile `lab` và quy trình build hiện hành:
+App web có realtime và gọi foreground; push dành cho native. Android đã có thông báo cuộc gọi, nút nhận/từ chối và dịch vụ duy trì gọi theo [B00-24](../../../docs/ke-hoach-trien-khai/bao-cao/B00-24-cuoc-goi-android.md). Cần APK mới; nhận/từ chối mở app và có thể yêu cầu mở khóa. iOS CallKit/PushKit chưa triển khai.
+
+### Build Android trên EAS
+
+Profile `lab` trong `apps/mobile/eas.json` dùng môi trường **preview**, tạo APK nội bộ và đã bật realtime/push. Trước build, mở project Expo tương ứng → Environment variables → chọn **preview** và khai báo:
+
+| Tên | Loại/giá trị |
+|---|---|
+| `EXPO_PUBLIC_API_URL` | String, plaintext: `https://api.iimissher.com/v1` |
+| `EXPO_PUBLIC_EAS_PROJECT_ID` | String, plaintext: UUID đúng project Expo đã cấu hình push |
+| `EXPO_PUBLIC_GEOAPIFY_MAPS_KEY` | String, plaintext: key bản đồ công khai dành cho app, giới hạn sử dụng phù hợp |
+| `GOOGLE_SERVICES_JSON` | File, secret: tải `google-services.json` của Firebase Android app có package `vn.dichvuquanhban.app` |
+
+`app.config.js` đọc đường dẫn file do EAS đặt vào `GOOGLE_SERVICES_JSON`; khi không có biến này, giữ `./google-services.json` cho build local. Biến file không phải nội dung JSON dán vào string. File Firebase này không thay cho thông tin xác thực gửi FCM v1 cần cấu hình trong EAS Credentials của đúng project.
+
+Biến `export` trong Terminal hoặc `.env` bị Git ignore trên Mac không tự cấu hình môi trường build từ xa. Dùng [biến môi trường EAS](https://docs.expo.dev/eas/environment-variables/manage/) cho remote build; các biến `EXPO_PUBLIC_*` được đưa vào app, chỉ chứa cấu hình công khai.
+
+Sau khi cấu hình, chạy trong `apps/mobile`:
 
 ```sh
-export EXPO_PUBLIC_API_URL=https://api.iimissher.com/v1
-export EXPO_PUBLIC_REALTIME_ENABLED=1
-export EXPO_PUBLIC_PUSH_ENABLED=1
-# Thay bằng UUID của đúng project Expo đã cấu hình credentials.
-export EXPO_PUBLIC_EAS_PROJECT_ID=REPLACE_WITH_EXPO_PROJECT_UUID
+eas build --platform android --profile lab
 ```
 
-Profile `lab` tạo bản nội bộ, Android APK; không tự publish store hoặc build trả phí. File Google services, cấu hình ký iOS/APNs và thiết bị cần chuẩn bị riêng. Mở app → bật thông báo trên thiết bị, cấp quyền; thử hai máy khác mạng. Không coi token đăng ký thành công là push đã đến. Thông báo cuộc gọi chỉ dẫn người dùng mở app, chưa có CallKit/PushKit/native incoming-call UI đầy đủ.
+Lệnh trên khởi tạo một lượt build EAS theo hạn mức tài khoản; không tự publish store. Cài APK mới, đăng nhập, đăng ký push lại và cấp quyền thông báo/micro. Kiểm hai máy khác mạng, foreground/nền/khóa màn theo B00-24; token đăng ký thành công chưa chứng minh push đã đến. Với iOS cần cấu hình ký/APNs và kiểm riêng.
 
 ## 3.2. Ngân hàng mô phỏng và tiền test
 

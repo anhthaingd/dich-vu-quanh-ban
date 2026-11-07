@@ -168,12 +168,27 @@ test('lab communications config requires explicit singleton, owned provider URL 
 
 test('lab Expo config overrides only public project identity and rejects malformed IDs',async()=>{
  const {createRequire}=await import('node:module');const require=createRequire(import.meta.url);const configure=require('../../apps/mobile/app.config.js');
- const before=process.env.EXPO_PUBLIC_EAS_PROJECT_ID,base={name:'DEMO',extra:{eas:{projectId:'original'},existing:true}};
+ const before={EXPO_PUBLIC_EAS_PROJECT_ID:process.env.EXPO_PUBLIC_EAS_PROJECT_ID,GOOGLE_SERVICES_JSON:process.env.GOOGLE_SERVICES_JSON};
+ const base={name:'DEMO',android:{package:'vn.dichvuquanhban.app',googleServicesFile:'./google-services.json'},extra:{eas:{projectId:'original'},existing:true}};
  try{
-  delete process.env.EXPO_PUBLIC_EAS_PROJECT_ID;assert.equal(configure({config:base}),base);
-  process.env.EXPO_PUBLIC_EAS_PROJECT_ID='aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa';const output=configure({config:base});assert.equal(output.extra.eas.projectId,process.env.EXPO_PUBLIC_EAS_PROJECT_ID);assert.equal(output.extra.existing,true);assert.equal(base.extra.eas.projectId,'original');
+  delete process.env.EXPO_PUBLIC_EAS_PROJECT_ID;delete process.env.GOOGLE_SERVICES_JSON;
+  assert.equal(configure({config:base}),base);
+  // EAS file variables contain a runner-local path, not the JSON contents.
+  process.env.GOOGLE_SERVICES_JSON='/tmp/eas-build/google-services.json';
+  const firebaseOnly=configure({config:base});
+  assert.equal(firebaseOnly.android.googleServicesFile,process.env.GOOGLE_SERVICES_JSON);
+  assert.equal(firebaseOnly.android.package,base.android.package);
+  assert.equal(firebaseOnly.extra.eas.projectId,'original');
+  assert.equal(base.android.googleServicesFile,'./google-services.json');
+  process.env.EXPO_PUBLIC_EAS_PROJECT_ID='aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa';
+  const output=configure({config:base});
+  assert.equal(output.extra.eas.projectId,process.env.EXPO_PUBLIC_EAS_PROJECT_ID);
+  assert.equal(output.android.googleServicesFile,process.env.GOOGLE_SERVICES_JSON);
+  assert.equal(output.extra.existing,true);assert.equal(base.extra.eas.projectId,'original');
+  delete process.env.GOOGLE_SERVICES_JSON;
+  assert.equal(configure({config:base}).android.googleServicesFile,'./google-services.json');
   process.env.EXPO_PUBLIC_EAS_PROJECT_ID='not-a-project';assert.throws(()=>configure({config:base}));
- }finally{if(before===undefined)delete process.env.EXPO_PUBLIC_EAS_PROJECT_ID;else process.env.EXPO_PUBLIC_EAS_PROJECT_ID=before;}
+ }finally{for(const [key,value] of Object.entries(before)){if(value===undefined)delete process.env[key];else process.env[key]=value;}}
 });
 
 test('lab finance capability is explicitly boolean and reaches only the disposable root',()=>{
