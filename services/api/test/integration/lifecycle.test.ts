@@ -5,20 +5,26 @@ import { spawn } from 'node:child_process';
 import { createServer } from 'node:net';
 import { once } from 'node:events';
 async function port() { const server = createServer(); server.listen(0, '127.0.0.1'); await once(server, 'listening'); const value = (server.address() as {port:number}).port; await new Promise<void>(resolve => server.close(() => resolve())); return value; }
-function child(file: string, env: NodeJS.ProcessEnv, args: string[] = []) {
-  const process = spawn(globalThis.process.execPath, ['--import','tsx',file,...args], { env: { ...globalThis.process.env, NODE_ENV: 'test', ...env }, stdio: ['ignore','pipe','pipe'] });
+function child(file: string, env: NodeJS.ProcessEnv, args: string[] = [], parentEnv = globalThis.process.env) {
+  // Keep OS/runtime support and c8 collection, but require every app setting to
+  // come from the fixture. A terminal may have sourced the AWS deployment env.
+  const inherited: NodeJS.ProcessEnv = {};
+  for (const name of ['PATH','HOME','TMPDIR','TMP','TEMP','SystemRoot','WINDIR','COMSPEC','PATHEXT','NODE_V8_COVERAGE']) {
+    if (parentEnv[name] !== undefined) inherited[name] = parentEnv[name];
+  }
+  const process = spawn(globalThis.process.execPath, ['--import','tsx',file,...args], { env: { ...inherited, NODE_ENV: 'test', ...env }, stdio: ['ignore','pipe','pipe'] });
   let stdout = '', stderr = ''; process.stdout.on('data', x => { stdout += x; }); process.stderr.on('data', x => { stderr += x; });
   const closed = once(process, 'close');
   return { process, closed, output: () => stdout, error: () => stderr };
 }
-test('main starts, serves, stops and flushes structured lifecycle events', { timeout: 15000 }, async () => {
+async function checkLifecycle(parentEnv = globalThis.process.env) {
   const p = await port();
   const previous = new Set(await readdir('../../.local/logs').catch(() => [] as string[]));
-  const run = child('src/main.ts', { DATABASE_URL: 'postgresql://fixture:CANARY@127.0.0.1:1/dvqb_test', CURSOR_SECRET: 's'.repeat(32), PORT: String(p), LOG_LEVEL: 'debug', LOG_TO_FILE: '1' });
+  const run = child('src/main.ts', { DATABASE_URL: 'postgresql://fixture:CANARY@127.0.0.1:1/dvqb_test', CURSOR_SECRET: 's'.repeat(32), PORT: String(p), LOG_LEVEL: 'debug', LOG_TO_FILE: '1' }, [], parentEnv);
   try {
     const deadline = Date.now() + 10000;
     while (!run.output().includes('app.started') && run.process.exitCode === null && Date.now() < deadline) await new Promise(r => setTimeout(r, 30));
-    assert.ok(run.output().includes('app.started'), run.error());
+    assert.ok(run.output().includes('app.started'), `API did not start: exit=${run.process.exitCode}, signal=${run.process.signalCode}\nstdout:\n${run.output()}\nstderr:\n${run.error()}`);
     const response = await fetch(`http://127.0.0.1:${p}/v1/health`); assert.equal(response.status, 200);
     run.process.kill('SIGTERM'); const [code] = await run.closed; assert.equal(code, 0);
     assert.ok(run.output().includes('app.stopped')); assert.ok(!run.output().includes('CANARY'));
@@ -29,6 +35,15 @@ test('main starts, serves, stops and flushes structured lifecycle events', { tim
     assert.ok(saved.includes('app.started')); assert.ok(saved.includes('app.stopped')); assert.ok(!saved.includes('CANARY'));
     for (const name of files) { assert.equal((await stat(`../../.local/logs/${name}`)).mode & 0o777, 0o600); await rm(`../../.local/logs/${name}`); }
   } finally { if (run.process.exitCode === null) run.process.kill('SIGKILL'); }
+}
+test('main starts, serves, stops and flushes structured lifecycle events', { timeout: 15000 }, async () => {
+  await checkLifecycle();
+});
+test('lifecycle subprocess ignores exported deployment credentials and local app settings', { timeout: 15000 }, async () => {
+  // These exports alone used to activate LiveKit without a URL and abort startup.
+  await checkLifecycle({ ...globalThis.process.env, LIVEKIT_API_KEY: 'fixture-key', LIVEKIT_API_SECRET: 'fixture-secret' });
+  // Other shell settings must not change the isolated test configuration either.
+  await checkLifecycle({ ...globalThis.process.env, CLOUD_PILOT: '1', LOCAL_OPERATIONAL_DATA: '1', HOST: 'invalid.test', AUTH_SECRET: 'short' });
 });
 test('startup failure is fatal JSON with safe details and nonzero exit', { timeout: 10000 }, async () => {
   const run = child('src/main.ts', { DATABASE_URL: '', CURSOR_SECRET: 'CANARY' });

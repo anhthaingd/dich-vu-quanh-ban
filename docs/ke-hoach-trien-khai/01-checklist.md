@@ -1,5 +1,28 @@
 # Checklist chức năng và bằng chứng
 
+## B00-28 — Ổn định bộ chọn địa điểm Android, 10/11/2026
+
+- [x] Tái hiện chân màn hình nhảy 189 px khi thanh nhập nổi mở; sửa Android không tự co chiều cao lần hai.
+- [x] Hồi quy đỏ trước sửa, sau sửa 10/10 picker/draft đạt; đo 6 mẫu native ổn định; Android chọn/hủy và iOS chọn/xác nhận được.
+- [x] [Báo cáo và ảnh B00-28](bao-cao/B00-28-sua-nhap-nhay-chon-dia-diem.md); inventory thêm đúng báo cáo/ảnh, không đổi tiêu chí. SDD dùng evidence/verify của nguồn hiện hành.
+- [ ] Full SDD/verify: chủ dự án tự chạy theo yêu cầu; lượt của agent đã dừng ở tooling, chưa có evidence hoàn tất.
+- [ ] Điện thoại thật, các kiểu bàn phím còn lại, UAT và CI remote của bản sửa.
+
+## B00-27 — Cô lập môi trường test API, 10/11/2026
+
+- [x] Tái hiện lỗi khởi động khi terminal export khóa LiveKit giả; hồi quy đỏ trước sửa và đạt sau sửa.
+- [x] Giữ biến hệ thống/coverage, chỉ nhận cấu hình ứng dụng từ fixture; bổ sung output/mã thoát vào lỗi khởi động. Cả 5 bài lifecycle đạt dưới c8 với biến deploy giả.
+- [x] Ghi [báo cáo học code B00-27](bao-cao/B00-27-sua-moi-truong-test-api.md); kết quả toàn SDD đọc từ evidence và verify của nguồn hiện hành, không suy từ kiểm riêng.
+- [ ] CI remote, native, UAT và deploy không thuộc bằng chứng đợt sửa test này.
+
+## B00-26 — Tài liệu học deploy AWS-02, 09/11/2026
+
+- [x] Ghi lại hành trình và giải thích cấu hình trong [bộ học deploy](hoc-deploy-aws02/README.md), tách trạng thái thực tế khỏi hướng dẫn bước sau.
+- [x] Account/credit/advanced features có bằng chứng hội thoại; CLI đọc được VPC Singapore; ACM đúng account/us-east-1 đang Pending validation.
+- [ ] CNAME Cloudflare và ACM Issued; provider/config/plan/apply và nghiệm thu lab thật vẫn chưa xác nhận.
+- [ ] Dọn/audit chu kỳ lab và kiểm Billing sau dọn.
+- Kết quả kiểm bộ tài liệu ở [B00-26](bao-cao/B00-26-tai-lieu-hoc-deploy.md); không đổi trạng thái nghiệm thu code/native/UAT của các đợt trước.
+
 ## B00-25 — Sửa lỗi trước deploy, 06/11/2026
 
 - [x] Tái hiện mất chọn ngày khi tải xong giữa nhấn/thả; sửa nhãn tải trùng và giữ bài hồi quy đủ trang/đổi lịch/hai phạm vi.

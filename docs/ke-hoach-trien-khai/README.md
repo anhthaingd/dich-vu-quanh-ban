@@ -1,5 +1,11 @@
 # Kế hoạch triển khai và học code
 
+**10/11/2026 — Sửa nhấp nháy chọn địa điểm:** [B00-28](bao-cao/B00-28-sua-nhap-nhay-chon-dia-diem.md) ghi nguyên nhân co chiều cao hai lần trên Android, hồi quy bàn phím và ảnh emulator/simulator. Đã kiểm local; chưa thiết bị thật/UAT.
+
+**10/11/2026 — Sửa môi trường test API:** [B00-27](bao-cao/B00-27-sua-moi-truong-test-api.md) ghi lỗi tái hiện khi test kế thừa khóa LiveKit từ terminal, bản sửa cô lập cấu hình và hồi quy 5/5 có coverage. Kết quả SDD toàn dự án xem evidence/verify theo nguồn hiện hành; không phải deploy hoặc CI remote.
+
+**09/11/2026 — Học deploy AWS-02:** [Bộ hướng dẫn theo từng bước và lý do cấu hình](hoc-deploy-aws02/README.md) ghi lại account/credit/CLI/region/ACM và lộ trình deploy/dọn. Mốc hiện tại: ACM Pending validation, chờ thêm CNAME Cloudflare; chưa deploy ứng dụng. [B00-26](bao-cao/B00-26-tai-lieu-hoc-deploy.md) ghi phạm vi và kiểm tài liệu.
+
 **06/11/2026 — Sửa lỗi trước deploy:** tái hiện/sửa mất thao tác chọn ngày, đường dẫn Firebase trên EAS và crash NATIVE-05 bằng bản vá upstream có kiểm phiên bản. [B00-25](bao-cao/B00-25-sua-loi-truoc-deploy.md) ghi bằng chứng trước/sau và giới hạn provider/native.
 
 **06/11/2026 — Cuộc gọi Android:** native incoming UI, Telecom và dịch vụ duy trì cuộc gọi; [B00-24](bao-cao/B00-24-cuoc-goi-android.md). Cần build APK mới/đăng ký push lại. Kiểm local/mock/emulator tách riêng FCM, LiveKit nền, thiết bị thật và UAT.

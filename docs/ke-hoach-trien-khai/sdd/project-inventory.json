@@ -1629,6 +1629,18 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-26-tai-lieu-hoc-deploy.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-27-sua-moi-truong-test-api.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-28-sua-nhap-nhay-chon-dia-diem.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
       "kind": "documentation"
     },
@@ -3589,6 +3601,14 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-28/android-location.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-28/ios-location.png",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B01-08/01-security-web.png",
       "kind": "documentation"
     },
@@ -4498,6 +4518,34 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/de-xuat/UX-02-quan-tri/style.css",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/hoc-deploy-aws02/01-kien-truc.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/hoc-deploy-aws02/02-tai-khoan-credit.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/hoc-deploy-aws02/03-cli-region.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/hoc-deploy-aws02/04-domain-https.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/hoc-deploy-aws02/05-chuan-bi-deploy.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/hoc-deploy-aws02/06-van-hanh.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/hoc-deploy-aws02/README.md",
       "kind": "documentation"
     },
     {

@@ -79,7 +79,9 @@ function LocationPicker({ initial, radius, close, confirm }: { initial: Location
     finally { if (timeout) clearTimeout(timeout); }
   };
   return <Modal visible animationType="slide" onRequestClose={close}>
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: theme.colors.surface, paddingTop: 40 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    {/* Android's modal already resizes for the IME. A second height adjustment
+        makes the footer jump when a compact/floating keyboard reports frames. */}
+    <KeyboardAvoidingView testID="location-layout" style={{ flex: 1, backgroundColor: theme.colors.surface, paddingTop: 40 }} enabled={Platform.OS !== 'android'} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 24 }}>
         <AppText variant="title">{t('location.title')}</AppText>
         <AppText variant="caption" tone="muted">{t('location.privacy')}</AppText>

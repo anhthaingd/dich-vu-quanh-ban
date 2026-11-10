@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { Keyboard, Platform, StyleSheet, type KeyboardEvent } from 'react-native';
 import { AuthProvider } from '../../../app/providers/AuthProvider';
 import { LocaleProvider } from '../../../app/providers/LocaleProvider';
 import { LocaleState } from '../../../lib/i18n/locale-state';
@@ -19,7 +20,7 @@ async function mount(){
  return {change};
 }
 beforeEach(()=>{jest.useFakeTimers();jest.clearAllMocks();jest.mocked(locationsApi.search).mockResolvedValue([result]);jest.mocked(locationsApi.reverse).mockResolvedValue(result);});
-afterEach(()=>jest.useRealTimers());
+afterEach(()=>{jest.useRealTimers();jest.restoreAllMocks();});
 // Drive the autocomplete debounce explicitly; machine load must not decide whether the result exists.
 async function searchAddress(){fireEvent.changeText(screen.getByTestId('location-query'),'Hanoi');await act(async()=>{jest.advanceTimersByTime(400);});}
 test('confirm requires a selected point; changing query invalidates it; cancel never mutates caller',async()=>{
@@ -51,4 +52,49 @@ test('GPS arriving after another address choice cannot overwrite that choice',as
  fireEvent.press(screen.getByTestId('location-confirm'));
  expect(change).toHaveBeenCalledWith({text:result.text,point,source:'search'});
  expect(locationsApi.reverse).not.toHaveBeenCalled();
+});
+async function keyboardFixture(platform: 'android' | 'ios') {
+ jest.replaceProperty(Platform, 'OS', platform);
+ const listeners = new Map<string, (event: KeyboardEvent) => void>();
+ const addListener = Keyboard.addListener.bind(Keyboard);
+ jest.spyOn(Keyboard, 'addListener').mockImplementation((name, listener) => {
+  listeners.set(name, listener); return addListener(name, listener);
+ });
+ await mount();
+ const layout = async (height: number) => {
+  await act(async () => fireEvent(screen.getByTestId('location-layout'), 'layout', {
+   nativeEvent: { layout: { x: 0, y: 0, width: 400, height } }, persist: () => {},
+  }));
+ };
+ const keyboard = async (name: string, height: number) => {
+  await act(async () => listeners.get(name)?.({ duration: 0, easing: 'keyboard', endCoordinates: { screenX: 0, screenY: 900 - height, width: 400, height } }));
+ };
+ const style = () => StyleSheet.flatten(screen.getByTestId('location-layout').props.style);
+ return { layout, keyboard, style };
+}
+test('Android keyboard transitions leave modal height to the resized native window', async () => {
+ const { layout, keyboard, style } = await keyboardFixture('android');
+ await layout(900);
+ // Compact keyboard/handwriting panels can repeatedly report show/hide frames.
+ // The modal window already uses adjustResize; JS must not fix its height too.
+ for (const height of [72, 300, 72]) {
+  await keyboard('keyboardDidShow', height);
+  await layout(900 - height);
+  expect(style().height).toBeUndefined();
+  expect(style().flex).toBe(1);
+  await keyboard('keyboardDidHide', 0);
+  await layout(900);
+  expect(style().height).toBeUndefined();
+ }
+ expect(screen.getByTestId('location-query')).toBeOnTheScreen();
+ expect(screen.getByTestId('location-confirm')).toBeDisabled();
+});
+test('iOS keyboard transitions reserve and release space below location controls', async () => {
+ const { layout, keyboard, style } = await keyboardFixture('ios');
+ await layout(900);
+ await keyboard('keyboardWillShow', 300);
+ expect(style().paddingBottom).toBe(300);
+ await keyboard('keyboardWillHide', 0);
+ expect(style().paddingBottom).toBe(0);
+ expect(screen.getByTestId('location-query')).toBeOnTheScreen();
 });

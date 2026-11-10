@@ -1,5 +1,7 @@
 # AWS-02 — Hướng dẫn dựng và dọn lab với iimissher.com
 
+**Tài liệu cho người học:** [Hướng dẫn từng bước và lý do cấu hình AWS-02](../../../docs/ke-hoach-trien-khai/hoc-deploy-aws02/README.md), cập nhật 09/11/2026. Hành trình hiện dùng `aws login --profile dvqb-learn`; xem bộ này để phân biệt với ví dụ SSO phía dưới.
+
 05/11/2026 · Đây là môi trường học, dùng dữ liệu thử. Code nằm ở `infra/aws/lab`, độc lập với pilot `infra/aws`. [Báo cáo học code B00-20](../../../docs/ke-hoach-trien-khai/bao-cao/B00-20-lab-aws02.md).
 
 Bạn sẽ có `https://app.iimissher.com`, `https://admin.iimissher.com` và `https://api.iimissher.com`. Sau khi dọn, ba địa chỉ ngừng phục vụ; dữ liệu app/ảnh bị xóa. Buổi sau dựng lại dùng cùng tên miền, database mới. Domain, tài khoản AWS, đăng nhập quản trị AWS, domain gửi email đã xác minh và chứng chỉ ACM không export giữ riêng, ngoài state lab. Domain vẫn gia hạn tại Cloudflare.
