@@ -25,6 +25,8 @@
 
 ## B00-25 — Sửa lỗi trước deploy, 06/11/2026
 
+- [x] Bổ sung 10/11: đọc trace CI `42764634309`, sửa bước chuẩn bị nhấn/thả để tránh bấm vào thanh điều hướng; giữ nguyên assertions và retries=0. Kết quả toàn bộ phải theo CI commit cuối.
+
 - [x] Tái hiện mất chọn ngày khi tải xong giữa nhấn/thả; sửa nhãn tải trùng và giữ bài hồi quy đủ trang/đổi lịch/hai phạm vi.
 - [x] Sửa cấu hình nhận file Firebase từ EAS; cập nhật hướng dẫn môi trường preview và kiểm fallback local.
 - [x] Tái hiện NATIVE-05 (2/10 lượt debug), đối chiếu upstream #4413, áp dụng bản vá đúng 4.26.0 và build APK mới.

@@ -46,7 +46,12 @@ test('calendar shows appointments beyond page one and reloads reschedules in cus
   await expect(partner.getByTestId('jobs-calendar')).toBeVisible();
   if(later.slice(0,7)!==day(new Date()).slice(0,7))await partner.getByTestId('calendar-next').click();
   const target=partner.getByTestId('calendar-day-'+later);
-  await target.scrollIntoViewIfNeeded();
+  const selectedBeforePress=await partner.getByTestId('calendar-selected').textContent();
+  // Raw mouse events bypass Playwright's hit-target checks. An element can be
+  // inside the viewport but covered by the fixed bottom navigation (CI 42764634309).
+  // Trial-click scrolls to an actionable target without selecting the day yet.
+  await target.click({trial:true});
+  await expect(partner.getByTestId('calendar-selected')).toHaveText(selectedBeforePress);
   const before=await target.boundingBox();expect(before).not.toBeNull();
   await partner.mouse.move(before.x+before.width/2,before.y+before.height/2);
   await partner.mouse.down();

@@ -1,5 +1,7 @@
 # Kế hoạch triển khai và học code
 
+**10/11/2026 — Hồi quy lịch khi merge main:** [B00-25, bổ sung mục 7](bao-cao/B00-25-sua-loi-truoc-deploy.md#7-bổ-sung-khi-đưa-code-vào-main--10112026) ghi trace CI: chuột bấm vào ô ngày bị thanh điều hướng che; sửa bước chuẩn bị thao tác trong test, giữ toàn bộ tiêu chí.
+
 **10/11/2026 — Sửa nhấp nháy chọn địa điểm:** [B00-28](bao-cao/B00-28-sua-nhap-nhay-chon-dia-diem.md) ghi nguyên nhân co chiều cao hai lần trên Android, hồi quy bàn phím và ảnh emulator/simulator. Đã kiểm local; chưa thiết bị thật/UAT.
 
 **10/11/2026 — Sửa môi trường test API:** [B00-27](bao-cao/B00-27-sua-moi-truong-test-api.md) ghi lỗi tái hiện khi test kế thừa khóa LiveKit từ terminal, bản sửa cô lập cấu hình và hồi quy 5/5 có coverage. Kết quả SDD toàn dự án xem evidence/verify theo nguồn hiện hành; không phải deploy hoặc CI remote.

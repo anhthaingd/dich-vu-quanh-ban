@@ -108,3 +108,14 @@ npm run sdd:check -- --change SDD-PROJECT --phase verify
 Phép thử media tùy chọn chạy từ `services/api`, LiveKit local riêng dùng `auto_create:false`, key DEMO trong fixture: `LIVEKIT_TEST_URL=ws://127.0.0.1:7895 node --import tsx --test test/manual/calls-media.manual.ts`. Không trỏ bài này vào project cloud.
 
 </details>
+
+
+## 7. Bổ sung khi đưa code vào main — 10/11/2026
+
+CI [42764634309](https://github.com/anhthaingd/dich-vu-quanh-ban/actions/runs/42764634309) tại `933036b` đạt 34/35 hành trình web; bài lịch thất bại khi mong ngày 12/11 nhưng vẫn chọn 10/11. Trace ghi chuột nhấn/thả tại `(195, 741)` trong viewport `390 × 844`; ảnh cùng thời điểm cho thấy vị trí đó bị thanh điều hướng cố định phía dưới che. File test và code lịch không đổi so với `d0116ca`. Chạy nguyên bài trên macOS đạt, nên không coi đây là lỗi luôn tái hiện ở mọi môi trường.
+
+Nguyên nhân trong cách điều khiển test: `scrollIntoViewIfNeeded()` chỉ đưa phần tử vào vùng nhìn, không bảo đảm nó nhận được cú bấm khi có lớp khác đè lên. Chuỗi `mouse.down()`/`mouse.up()` dùng tọa độ thô nên không tự kiểm tra điều này. Bài kiểm nay dùng `target.click({trial: true})` để Playwright kiểm phần tử nhận được thao tác và cuộn khi cần, nhưng chưa bấm chọn ngày. Có thêm assertion ngày chọn không đổi trong bước trial, kể cả khi bài chạy qua đầu tháng. Sau đó vẫn giữ request API giữa nhấn/thả và giữ nguyên kiểm ngày, tọa độ không dịch, đủ trang, đổi lịch và hai phạm vi người dùng. Không dùng force, retry bài kiểm, tăng timeout hoặc bỏ assertion.
+
+Đây chỉ là sửa test; không đổi code sản phẩm, quyền hoặc spec. [Tài liệu Playwright về trial click](https://playwright.dev/docs/api/class-locator#locator-click) mô tả việc kiểm khả năng thao tác mà không thực hiện cú bấm. Câu hỏi tự kiểm: vì sao một ô nhìn thấy trong viewport vẫn chưa chắc bấm được?
+
+Kiểm riêng sau sửa đạt 3/3 lượt liên tiếp trên macOS; sau khi chỉnh assertion giữ nguyên ngày để hỗ trợ ranh giới tháng, kiểm lại bài lịch. Lint và SDD prepare đạt. CI toàn bộ phải được đối chiếu theo commit cuối; kết quả remote ở trang Actions, không suy từ kiểm riêng local.
