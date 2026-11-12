@@ -27,6 +27,9 @@ export function config(env = process.env): Config {
     !(['development','test'].includes(env.NODE_ENV ?? '') && localDatabase && !url.search && ['localhost','127.0.0.1','[::1]'].includes(url.hostname))) throw new Error('Email eligibility requires the reviewed lab or isolated local/test database');
   if(env.EMAIL_PROVIDER !== undefined && !['ses','resend'].includes(env.EMAIL_PROVIDER)) throw new Error('Invalid email provider');
   if(env.EMAIL_PROVIDER === 'resend' && env.CLOUD_PILOT !== '1') throw new Error('Resend requires reviewed cloud configuration');
+  if(env.PUBLIC_EMAIL_REGISTRATION !== undefined && !['0','1'].includes(env.PUBLIC_EMAIL_REGISTRATION)) throw new Error('Invalid public email registration setting');
+  const publicEmailRegistration = env.PUBLIC_EMAIL_REGISTRATION === '1';
+  if(publicEmailRegistration && !(env.CLOUD_PILOT === '1' && proxyMode === 'cloudfront-alb' && labEmail && env.EMAIL_PROVIDER === 'resend')) throw new Error('Public email registration requires the Resend email lab');
   let resend:Config['resend'];
   const port = Number(env.PORT ?? 3100);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid PORT');
@@ -100,8 +103,8 @@ export function config(env = process.env): Config {
     localAssets={directory:'',origin,store:new S3Assets(env.ASSET_BUCKET)};
     pilotPhones=env.PILOT_PHONES?env.PILOT_PHONES.split(',').map(x=>x.trim()):[];
     if(pilotPhones.some(x=>!/^\+[1-9][0-9]{7,14}$/.test(x))||(env.SMS_ENABLED==='1'&&!pilotPhones.length))throw new Error('SMS requires explicit E164 phone allowlist');
-    localMessages={secret:env.MESSAGE_SECRET!,mailpit:'',smsDirectory:'',contacts:[...pilotEmails,...(env.SMS_ENABLED==='1'?pilotPhones:[])]};
+    localMessages={secret:env.MESSAGE_SECRET!,mailpit:'',smsDirectory:'',contacts:[...pilotEmails,...(env.SMS_ENABLED==='1'?pilotPhones:[])],allowAnyEmail:publicEmailRegistration};
     admin={secret:env.ADMIN_SECRET!};
   } else if(env.NODE_ENV==='production')throw new Error('Production requires reviewed CLOUD_PILOT configuration');
-  return {labRealtime,verificationPolicy:labEmail?'email_lab':'phone',resend,proxyMode,pilotPhones,smsEnabled:env.CLOUD_PILOT==='1'&&env.SMS_ENABLED==='1', databaseCaFile:env.DATABASE_CA_FILE,trustProxy:env.CLOUD_PILOT==='1',pilotEmails,sesFrom:env.CLOUD_PILOT==='1'?env.SES_FROM:undefined,finance,calls,push:env.EXPO_PUSH_ENABLED==='1'?{accessToken:env.EXPO_ACCESS_TOKEN}:undefined,admin, realtimeEnabled:env.REALTIME_ENABLED==='1', localMessages, localAssets, databaseUrl: env.DATABASE_URL, cursorSecret: env.CURSOR_SECRET, authSecret: env.AUTH_SECRET || undefined, port, host: env.HOST ?? '127.0.0.1', geoapifyKey: env.GEOAPIFY_API_KEY?.trim() || undefined, corsOrigin: env.CORS_ORIGIN };
+  return {labRealtime,verificationPolicy:labEmail?'email_lab':'phone',resend,proxyMode,pilotPhones,smsEnabled:env.CLOUD_PILOT==='1'&&env.SMS_ENABLED==='1', databaseCaFile:env.DATABASE_CA_FILE,trustProxy:env.CLOUD_PILOT==='1',pilotEmails:publicEmailRegistration?undefined:pilotEmails,sesFrom:env.CLOUD_PILOT==='1'?env.SES_FROM:undefined,finance,calls,push:env.EXPO_PUSH_ENABLED==='1'?{accessToken:env.EXPO_ACCESS_TOKEN}:undefined,admin, realtimeEnabled:env.REALTIME_ENABLED==='1', localMessages, localAssets, databaseUrl: env.DATABASE_URL, cursorSecret: env.CURSOR_SECRET, authSecret: env.AUTH_SECRET || undefined, port, host: env.HOST ?? '127.0.0.1', geoapifyKey: env.GEOAPIFY_API_KEY?.trim() || undefined, corsOrigin: env.CORS_ORIGIN };
 }

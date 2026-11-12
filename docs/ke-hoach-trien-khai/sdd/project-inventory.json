@@ -1641,6 +1641,14 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-29-mo-dang-ky-email-lab.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-30-tong-ket-deploy-aws02.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
       "kind": "documentation"
     },
@@ -3606,6 +3614,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-28/ios-location.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-30/web-live-danh-muc.png",
       "kind": "documentation"
     },
     {

@@ -19,13 +19,14 @@ locals {
   runtime_keys = concat(["DATABASE_URL", "AUTH_SECRET", "CURSOR_SECRET", "MESSAGE_SECRET", "ADMIN_SECRET", "GEOAPIFY_API_KEY"], var.email_provider == "resend" ? ["RESEND_API_KEY"] : [], var.livekit_url != "" ? ["LIVEKIT_API_KEY", "LIVEKIT_API_SECRET"] : [], var.expo_push_enabled ? ["EXPO_ACCESS_TOKEN"] : [], var.finance_test_enabled ? ["FINANCE_TEST_SECRET"] : [])
   api_environment = merge({
 
-    NODE_ENV         = "production", CLOUD_PILOT = "1", HOST = "0.0.0.0", PORT = "3100",
-    DATABASE_CA_FILE = "/app/rds-ca.pem", PUBLIC_API_ORIGIN = "https://${local.api_domain}",
-    CORS_ORIGIN      = join(",", [for d in local.web_domains : "https://${d}"]),
-    PILOT_EMAILS     = join(",", var.pilot_emails), ASSET_BUCKET = aws_s3_bucket.data["assets"].id,
-    SMS_ENABLED      = "0", PILOT_PHONES = "", CLOUD_PROXY_MODE = "cloudfront-alb",
-    LAB_FINANCE_TEST = var.finance_test_enabled ? "1" : "0", LAB_EMAIL_VERIFICATION = "1", EMAIL_PROVIDER = var.email_provider, EMAIL_FROM = var.email_from
-    SES_FROM         = var.email_from, AWS_REGION = var.region, REALTIME_ENABLED = var.realtime_enabled ? "1" : "0", LAB_REALTIME_SINGLETON = var.realtime_enabled ? "1" : "0", EXPO_PUSH_ENABLED = var.expo_push_enabled ? "1" : "0"
+    NODE_ENV                  = "production", CLOUD_PILOT = "1", HOST = "0.0.0.0", PORT = "3100",
+    DATABASE_CA_FILE          = "/app/rds-ca.pem", PUBLIC_API_ORIGIN = "https://${local.api_domain}",
+    CORS_ORIGIN               = join(",", [for d in local.web_domains : "https://${d}"]),
+    PILOT_EMAILS              = join(",", var.pilot_emails), ASSET_BUCKET = aws_s3_bucket.data["assets"].id,
+    PUBLIC_EMAIL_REGISTRATION = var.public_email_registration ? "1" : "0"
+    SMS_ENABLED               = "0", PILOT_PHONES = "", CLOUD_PROXY_MODE = "cloudfront-alb",
+    LAB_FINANCE_TEST          = var.finance_test_enabled ? "1" : "0", LAB_EMAIL_VERIFICATION = "1", EMAIL_PROVIDER = var.email_provider, EMAIL_FROM = var.email_from
+    SES_FROM                  = var.email_from, AWS_REGION = var.region, REALTIME_ENABLED = var.realtime_enabled ? "1" : "0", LAB_REALTIME_SINGLETON = var.realtime_enabled ? "1" : "0", EXPO_PUSH_ENABLED = var.expo_push_enabled ? "1" : "0"
 
   }, var.livekit_url != "" ? { LIVEKIT_MODE = "cloud", LIVEKIT_URL = var.livekit_url, LIVEKIT_ROOM_PREFIX = "dvqb-lab-${var.expected_account_id}-${var.lab_id}-call-" } : {})
   ops_image = var.migration_image_digest == "" ? local.image : "${aws_ecr_repository.api.repository_url}@${var.migration_image_digest}"

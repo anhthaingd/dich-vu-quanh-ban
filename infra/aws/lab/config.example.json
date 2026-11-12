@@ -17,5 +17,6 @@
   "livekit_url": "wss://replace-with-project.livekit.cloud",
   "expo_push": true,
   "expo_project_id": "REPLACE_WITH_EXPO_PROJECT_UUID",
-  "finance_test": true
+  "finance_test": true,
+  "public_email_registration": false
 }

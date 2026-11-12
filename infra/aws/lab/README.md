@@ -42,7 +42,7 @@ Nguồn: [chứng chỉ CloudFront phải ở us-east-1](https://docs.aws.amazon
 Lab hiện dùng OTP email để mở luồng dịch vụ; số điện thoại vẫn chưa xác minh. Chi tiết [B00-21](../../../docs/ke-hoach-trien-khai/bao-cao/B00-21-otp-email-lab.md).
 
 1. Resend → Domains → thêm `iimissher.com` (hoặc subdomain gửi thư riêng). Thêm chính xác các DNS record Resend cung cấp vào Cloudflare; đợi **Verified**. Tạo API key chỉ quyền gửi cho domain đó; không cần mua hộp thư để gửi từ `no-reply@iimissher.com`. [Xác minh domain](https://resend.com/docs/dashboard/domains/introduction).
-2. Điền `email_provider: "resend"`, `email_from` khớp domain đã xác minh, `pilot_emails` gồm email người thử. Resend không cần xác minh từng người nhận; allowlist app vẫn được giữ để giới hạn lab. Cấu hình cũ không có `email_provider` tiếp tục dùng SES với `ses_from`; SES cần xác minh sender và mọi email tester tại Singapore như trước. Không dùng đồng thời hai sender khác nhau.
+2. Điền `email_provider: "resend"`, `email_from` khớp domain đã xác minh, `pilot_emails` gồm email người thử. Resend không cần xác minh từng người nhận. Mặc định app vẫn giới hạn theo `pilot_emails`. Khi chủ dự án cho phép mở đăng ký email, đặt `public_email_registration: true`: mọi email hợp lệ được đăng ký/nhận thư giao dịch, vẫn phải xác minh OTP. `pilot_emails` tiếp tục giới hạn lệnh cấp admin; SMS và MFA không thay đổi. Cấu hình cũ không có `email_provider` tiếp tục dùng SES với `ses_from`; SES cần xác minh sender và mọi email tester tại Singapore như trước. Không dùng đồng thời hai sender khác nhau.
 3. Chuẩn bị Geoapify key phía server và public maps key riêng. Thêm origin `https://app.iimissher.com` vào hạn chế phù hợp của public key, kiểm quota Free; không bật billing. Giữ private key ngoài cấu hình build/public key.
 4. Nạp bốn biến qua kho mật khẩu hoặc nhập ẩn trong Terminal zsh, không viết giá trị thật vào lịch sử lệnh:
 
@@ -144,7 +144,8 @@ Mở file vừa sao chép, thay:
 | `certificate_arn` | ARN ACM đã Issued ở us-east-1, đúng account |
 | `email_provider` | `resend` theo config mẫu mới; `ses` nếu chủ động dùng SES |
 | `email_from` | `no-reply@iimissher.com`, khớp domain đã Verified trong Resend |
-| `pilot_emails` | Danh sách email người thử được phép đăng ký/nhận thư, gồm bạn; dùng chữ thường |
+| `pilot_emails` | Danh sách người thử khi đóng đăng ký và danh sách được phép bootstrap admin; dùng chữ thường |
+| `public_email_registration` | Mặc định `false`; `true` chỉ với Resend/email lab, mở đăng ký và thư giao dịch cho mọi email hợp lệ, không tự cấp admin |
 | `realtime` | `true` để bật gateway singleton |
 | `livekit_url` | URL project riêng; phải qua `lab:media-check` |
 | `expo_push` | `true` để bật worker gửi push với key server |

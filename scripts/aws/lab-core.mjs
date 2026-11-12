@@ -15,10 +15,11 @@ export function validateConfig(c) {
   if (!Number.isFinite(c.monthly_budget_usd) || c.monthly_budget_usd <= 0 || c.monthly_budget_usd > 1000) throw Error('Set a positive monthly alert budget up to 1000; it does not cap spending.');
   if(c.email_provider !== undefined && !['ses','resend'].includes(c.email_provider)) throw Error('Invalid email provider.');
   if(c.email_from && c.ses_from && c.email_from !== c.ses_from) throw Error('Conflicting email senders.');
-  for(const key of ['realtime','expo_push','finance_test'])if(c[key]!==undefined&&typeof c[key]!=='boolean')throw Error('Capability flags must be boolean.');
+  for(const key of ['realtime','expo_push','finance_test','public_email_registration'])if(c[key]!==undefined&&typeof c[key]!=='boolean')throw Error('Capability flags must be boolean.');
+  if(c.public_email_registration && c.email_provider !== 'resend') throw Error('Public email registration requires Resend.');
   if(c.livekit_url){const u=new URL(c.livekit_url);if(!c.realtime||u.protocol!=='wss:'||!/^([a-z0-9-]+)\.livekit\.cloud$/.test(u.hostname)||u.port||u.pathname!=='/'||u.search||u.hash||u.username||u.password)throw Error('Use a dedicated LiveKit Cloud URL with singleton realtime.');}
   if(c.expo_push&&(!c.realtime||!/^([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/i.test(c.expo_project_id??'')))throw Error('Push requires realtime and an Expo project UUID.');
-  const keys = ['lab_id','expected_account_id','region','domain','profile','cloudflare_zone_id','certificate_arn','email_provider','email_from','finance_test','realtime','livekit_url','expo_push','expo_project_id','ses_from','alert_email','pilot_emails','monthly_budget_usd'];
+  const keys = ['lab_id','expected_account_id','region','domain','profile','cloudflare_zone_id','certificate_arn','email_provider','email_from','finance_test','realtime','livekit_url','expo_push','expo_project_id','ses_from','alert_email','pilot_emails','monthly_budget_usd','public_email_registration'];
   if (Object.keys(c).some(k => !keys.includes(k))) throw Error('Unexpected config key; secrets do not belong in config.json.');
   return c;
 }
@@ -65,7 +66,7 @@ export function awsClient(run, region) {
 }
 export function terraformVariables(c, j) {
   const { expected_account_id, region, lab_id, domain, certificate_arn, alert_email, pilot_emails, monthly_budget_usd } = c;
-  return { finance_test_enabled:c.finance_test===true,realtime_enabled:c.realtime===true,livekit_url:c.livekit_url??'',expo_push_enabled:c.expo_push===true,email_provider:c.email_provider ?? 'ses',email_from:c.email_from ?? c.ses_from,expected_account_id, region, lab_id, domain, certificate_arn, alert_email, pilot_emails, monthly_budget_usd, image_digest: j.image_digest ?? '', migration_image_digest: j.migration_image_digest ?? '', service_enabled: j.service_enabled === true };
+  return { public_email_registration:c.public_email_registration===true,finance_test_enabled:c.finance_test===true,realtime_enabled:c.realtime===true,livekit_url:c.livekit_url??'',expo_push_enabled:c.expo_push===true,email_provider:c.email_provider ?? 'ses',email_from:c.email_from ?? c.ses_from,expected_account_id, region, lab_id, domain, certificate_arn, alert_email, pilot_emails, monthly_budget_usd, image_digest: j.image_digest ?? '', migration_image_digest: j.migration_image_digest ?? '', service_enabled: j.service_enabled === true };
 }
 export function rememberState(state, journal) {
   const strings = [];

@@ -7,7 +7,7 @@ import {stableId} from '../../src/database/seed.js';
 
 test('lab email OTP opens provider, hire and acceptance without verifying phone; revocation and ACLs still apply',async()=>{
  const secret='lab-email-test-only-'.repeat(3),emails=['owner@example.test','customer@example.test'];
- const f=await databaseFixture('auth-lab-test-only-'.repeat(3),false,{secret,contacts:emails,mailpit:'http://127.0.0.1:1',smsDirectory:''},false,undefined,{verificationPolicy:'email_lab'});
+ const f=await databaseFixture('auth-lab-test-only-'.repeat(3),false,{secret,contacts:[],allowAnyEmail:true,mailpit:'http://127.0.0.1:1',smsDirectory:''},false,undefined,{verificationPolicy:'email_lab'});
  await f.app.get(LocalMessages).onModuleDestroy();
  type Actor={token:string;id:string;email:string};
  const call=async(a:Actor|null,path:string,method='GET',body?:unknown)=>{
@@ -26,8 +26,9 @@ test('lab email OTP opens provider, hire and acceptance without verifying phone;
  };
  try{
   const actors:Actor[]=[];
-  for(const email of emails){const r=await call(null,'/auth/register','POST',{email,password:'lab test password 2026',display_name:'DEMO'});assert.equal(r.status,201);actors.push({email,id:r.body.user.id,token:r.body.access_token});}
+  for(const email of emails){const r=await call(null,'/auth/register','POST',{email,password:'lab test password 2026',display_name:'DEMO'});assert.equal(r.status,201);assert.equal(r.body.user.email_verified,false);actors.push({email,id:r.body.user.id,token:r.body.access_token});}
   const [owner,customer]=actors;
+  assert.equal((await f.pool.query('SELECT count(*) FROM admin_grants')).rows[0].count,'0');
   assert.equal((await call(owner,'/partners','POST',{kind:'solo',name:'DEMO lab'})).status,403);
   assert.equal((await call(owner,'/auth/challenges','POST',{contact:'+84900000001',purpose:'verify'})).status,503);
   await verify(owner);

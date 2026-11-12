@@ -14,13 +14,16 @@ test('singleton lease rejects a second owner, fences sockets and workers on data
   const r=await fetch(f.base+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'lease@example.test',password:'DEMO singleton test password',display_name:'DEMO'})});const session=await r.json();
   socket=io(f.base.replace(/\/v1$/,''),{path:'/v1/realtime/socket.io',transports:['websocket'],auth:{token:session.access_token},reconnection:false,autoConnect:false});
   await new Promise<void>((resolve,reject)=>{socket!.once('connect',resolve);socket!.once('connect_error',reject);socket!.connect();});
+  // Join any drain that checked the lease before the fault. The assertion below
+  // must exercise a fresh drain after lease loss, not reuse an in-flight promise.
+  const realtime=f.app.get(RealtimeWorker);await realtime.onModuleDestroy();
   const key=(await f.pool.query("SELECT hashtextextended(current_schema()||':dvqb-realtime',0)::text AS key")).rows[0].key;
   const pid=(await f.pool.query("SELECT pid FROM pg_locks WHERE locktype='advisory' AND classid=(($1::bigint >> 32) & 4294967295)::oid AND objid=($1::bigint & 4294967295)::oid AND granted",[key])).rows[0].pid;
   await f.pool.query('SELECT pg_terminate_backend($1)',[pid]);
   for(let i=0;i<40&&lease.ready;i++)await new Promise(r=>setTimeout(r,25));assert.equal(lease.ready,false);
   for(let i=0;i<40&&socket.connected;i++)await new Promise(r=>setTimeout(r,25));assert.equal(socket.connected,false);
   assert.equal((await fetch(f.base+'/ready')).status,503);assert.equal((await fetch(f.base+'/health')).status,200);
-  await assert.rejects(lease.check());await assert.rejects(f.app.get(RealtimeWorker).drain());
+  await assert.rejects(lease.check());await assert.rejects(realtime.drain());
   let sent=false;const push=new PushWorker(f.pool,f.logs.log,{accessToken:'test'},async()=>{sent=true;return Response.json({});},lease);await assert.rejects(push.drain());assert.equal(sent,false);
   const replacement=new RuntimeLease(f.pool,true);await replacement.acquire();assert.equal(replacement.ready,true);await replacement.onModuleDestroy();assert.equal(lease.ready,false);
  }finally{socket?.disconnect();await competitor.onModuleDestroy();await f.close();}
