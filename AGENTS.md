@@ -32,6 +32,8 @@ Theo yêu cầu trực tiếp ngày 01/10/2026 (DELIVERY-01):
 
 ## Kiểm SDD toàn dự án
 
+**Tạm dừng theo yêu cầu trực tiếp của chủ dự án ngày 12/11/2026 (B00-32), ưu tiên hơn các đoạn dưới đây cho tới khi chủ dự án bảo bật lại:** không chạy `sdd:run`/`sdd:check` trước khi commit/push hoặc deploy, trừ khi chủ dự án yêu cầu kiểm SDD. Thay vào đó chạy test/typecheck/lint của phần vừa sửa. CI chỉ chạy job `SDD project` khi bấm chạy tay workflow Quality; `lab:up` cần cờ `--skip-sdd` (được ghi vào journal). Được đẩy thẳng lên `main`, không cần PR. Vẫn cập nhật inventory SDD khi thêm/xóa file để lúc bật lại không vỡ, và ghi rõ trong báo cáo rằng đợt đó chưa có bằng chứng SDD.
+
 Theo yêu cầu mở rộng ngày 13/10/2026, dùng [hướng dẫn SDD](docs/ke-hoach-trien-khai/sdd/README.md) và gói `SDD-PROJECT` cho mọi đợt thay đổi repo. Đọc nguồn/tiêu chí liên quan, chạy `npm run sdd:check -- --change SDD-PROJECT --phase prepare`; sau triển khai dùng `sdd:run` và `--phase verify`. CI phải tạo bằng chứng mới trên commit đang kiểm, với check `SDD project`. Gói MAP-02 chỉ dùng kiểm nhanh phạm vi riêng.
 
 File, QA, operation hoặc criterion mới/bị xóa cần review và cập nhật inventory; không tự làm mới hash, thu hẹp scope hay bỏ tiêu chí để lấy kết quả xanh. Giữ `partial`/`unmapped` và giới hạn đúng bằng chứng. Spec thay đổi chưa được chốt phải hỏi chủ dự án; implementation theo spec không kéo theo đồng bộ Excel/Drive. Danh mục toàn repo không có nghĩa toàn bộ nghiệp vụ đã kiểm; bộ kiểm không thay review, native hoặc UAT. Không mở Pending, PROMO-02, provider/chi phí/production từ việc thêm SDD. Commit/push theo phạm vi được chủ dự án cho phép.

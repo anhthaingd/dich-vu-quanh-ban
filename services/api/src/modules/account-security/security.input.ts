@@ -1,8 +1,9 @@
 import {BadRequestException} from '@nestjs/common';
 import {object,identifier,pageInput} from '../accounts/accounts.input.js';
 import {contactInput,verifyInput} from '../auth/challenge.input.js';
+import {PASSWORD_MIN} from '../auth/auth.input.js';
 export function text(v:unknown,max=4000){if(typeof v!=='string'||!v.trim()||v.length>max||Array.from(v).some(c=>c.charCodeAt(0)<32&&![9,10,13].includes(c.charCodeAt(0))))throw new BadRequestException();return v.trim();}
-export function password(v:unknown){if(typeof v!=='string')throw new BadRequestException();const p=v.normalize('NFC');if(Array.from(p).length<15||Array.from(p).length>128)throw new BadRequestException();return p;}
+export function password(v:unknown){if(typeof v!=='string')throw new BadRequestException();const p=v.normalize('NFC');if(Array.from(p).length<PASSWORD_MIN||Array.from(p).length>128)throw new BadRequestException();return p;}
 function currentPassword(v:unknown){if(typeof v!=='string'||!v||Array.from(v).length>128)throw new BadRequestException();return v.normalize('NFC');}
 export function challenge(v:unknown){const b=object(v,['purpose','contact','password']);if(!['login','reset','identity'].includes(String(b.purpose)))throw new BadRequestException();return {...contactInput(b.contact),purpose:b.purpose as 'login'|'reset'|'identity',password:b.password===undefined?undefined:currentPassword(b.password)};}
 export function confirm(v:unknown){const b=object(v,['purpose','challenge_id','code','new_password']);if(!['login','reset','identity','recovery'].includes(String(b.purpose)))throw new BadRequestException();return {...verifyInput({challenge_id:b.challenge_id,code:b.code}),purpose:b.purpose as 'login'|'reset'|'identity'|'recovery',new_password:['reset','recovery'].includes(String(b.purpose))?password(b.new_password):undefined};}

@@ -77,7 +77,7 @@ test('membership revocation rechecks even old retry; admin fresh MFA/cursor scop
  const support=await enroll(await actor(),['support.read']);assert.equal((await fetch(f.base+'/assets/'+g.asset_id+'/admin-content',{headers:{Authorization:'Bearer '+support.token,'X-Admin-Session':support.mfa!}})).status,403);
  const report=await call(owner,'/reports','POST',{kind:'service',subject:'DEMO shared evidence',body:'DEMO support review',evidence_ids:[g.asset_id]});assert.equal(report.status,201);assert.equal((await fetch(f.base+'/assets/'+g.asset_id+'/admin-content',{headers:{Authorization:'Bearer '+support.token,'X-Admin-Session':support.mfa!}})).status,200);
  const page=(await call(admin,'/admin/topups?limit=1')).body;assert.ok(page.next_cursor);assert.equal((await call(admin,'/admin/topups?state=pending&cursor='+encodeURIComponent(page.next_cursor))).status,400);
- await f.pool.query("UPDATE admin_sessions SET verified_at=now()-interval '6 minutes' WHERE user_id=$1",[admin.id]);assert.equal((await decision('topups',top.id,1,'reject')).status,403);assert.equal((await fetch(f.base+'/assets/'+g.asset_id+'/admin-content',{headers:{Authorization:'Bearer '+admin.token,'X-Admin-Session':admin.mfa!}})).status,403);
+ await f.pool.query("UPDATE admin_sessions SET expires_at=now()-interval '1 second' WHERE user_id=$1",[admin.id]);assert.equal((await decision('topups',top.id,1,'reject')).status,403);assert.equal((await fetch(f.base+'/assets/'+g.asset_id+'/admin-content',{headers:{Authorization:'Bearer '+admin.token,'X-Admin-Session':admin.mfa!}})).status,403);
  await assert.rejects(f.pool.query('DELETE FROM finance_history'));
 });
 test('pending bank approval is blocked by a newly created payout; cancellation frees hold and reauth is scope-bound',async()=>{
@@ -128,6 +128,6 @@ test('cloud lab test money records audited deposits and preserves MFA, holds and
  const settleKey=randomUUID(),result=await decision('payouts',p.id,p.version,'succeeded',{},admin,settleKey);assert.equal(result.status,200);assert.deepEqual(await decision('payouts',p.id,p.version,'succeeded',{},admin,settleKey),result);
  const wallet=(await call(owner,`/partners/${partner}/wallet`)).body;assert.equal(wallet.balance,'150000');assert.equal(wallet.withdrawal_holds,'0');
  assert.equal((await f.pool.query('SELECT unit,sum(delta) FROM ledger_entries GROUP BY unit HAVING sum(delta)<>0')).rowCount,0);
- await f.pool.query("UPDATE admin_sessions SET verified_at=now()-interval '6 minutes' WHERE user_id=$1",[admin.id]);
+ await f.pool.query("UPDATE admin_sessions SET expires_at=now()-interval '1 second' WHERE user_id=$1",[admin.id]);
  assert.equal((await call(admin,'/admin/finance-simulator/deposits','POST',{...input,reference:'STALE-MFA'},randomUUID())).status,403);
 });

@@ -20,7 +20,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api "repos/$GITHUB_REPOSITORY/actions/workflows/quality.yml/runs?head_sha=$GITHUB_SHA&status=success&event=push" --jq ' .workflow_runs | length > 0' | grep -qx true
+          # SDD runs only on manual dispatch since B00-32; require the SDD job itself, not a run where it was skipped.
+          for RUN in $(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/quality.yml/runs?head_sha=$GITHUB_SHA&status=success&event=workflow_dispatch" --jq '.workflow_runs[].id'); do
+            if gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN/jobs" --jq '.jobs[] | select(.name == "SDD project" and .conclusion == "success") | .id' | grep -q .; then exit 0; fi
+          done
+          echo "No successful SDD project job for $GITHUB_SHA. Run the Quality workflow manually first." >&2
+          exit 1
       - name: Obtain short-lived AWS credentials using OIDC
         env:
           ROLE_ARN: ${{ vars.AWS_BUILD_ROLE_ARN }}

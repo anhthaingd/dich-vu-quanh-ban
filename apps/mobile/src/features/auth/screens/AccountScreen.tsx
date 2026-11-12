@@ -98,7 +98,7 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
         // build. Keep secure manual entry for signup; login autofill stays on.
         textContentType={register && Platform.OS === 'ios' ? 'none' : undefined}
         returnKeyType="done" onSubmitEditing={() => void submit()}
-        hint={register ? t('auth.passwordHint', { min: 15, max: 128 }) : undefined} />
+        hint={register ? t('auth.passwordHint', { min: 8, max: 128 }) : undefined} />
       <Button testID="auth-submit" label={t(register ? 'auth.register' : 'auth.login')} loading={state.busy} disabled={!canSubmit} onPress={() => void submit()} />
       <Button testID="otp-open" variant="secondary" label={security.login+' / '+security.reset} disabled={state.busy} onPress={()=>navigation.navigate('AccountSecurity')} />
       <Button testID="recovery-open" variant="link" label={security.recovery} disabled={state.busy} onPress={()=>navigation.navigate('AccountRecovery')} />

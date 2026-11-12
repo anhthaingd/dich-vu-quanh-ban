@@ -1,5 +1,7 @@
 # Kế hoạch triển khai và học code
 
+**12/11/2026 — Nới phiên admin, mật khẩu, CPU và CI:** [B00-32](bao-cao/B00-32-noi-phien-admin-mat-khau-cpu-ci.md) giải thích vì sao admin giờ chỉ cần đăng nhập một lần, mật khẩu từ 8 ký tự, API lab 0,5 vCPU, cách cập nhật lab đang chạy bằng `--upgrade` và việc tạm dừng SDD khi push.
+
 **12/11/2026 — Sửa sự cố lab và CI:** [B00-31](bao-cao/B00-31-sua-api-treo-lich-va-ci.md) giải thích vì sao API lab treo khi gửi ảnh xác minh, lịch mất thao tác chọn ngày trên CI và CI chạy trùng; ghi bản sửa, test hồi quy và phần chưa deploy.
 
 **11/11/2026 — Tổng kết trạng thái AWS-02:** [B00-30](bao-cao/B00-30-tong-ket-deploy-aws02.md) ghi lại account/credits, DNS/ACM, dịch vụ ngoài, apply, endpoint live và phần UAT email còn chờ. B00-26 bên dưới là ảnh chụp tình trạng ngày 09/11, đã được mốc mới này thay thế.

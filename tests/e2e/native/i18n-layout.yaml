@@ -30,7 +30,7 @@ appId: vn.dichvuquanhban.app
 - tapOn:
     id: auth-toggle
 - scrollUntilVisible:
-    element: "Use 15–128 characters.*"
+    element: "Use 8–128 characters.*"
     direction: DOWN
     centerElement: true
     visibilityPercentage: 100
@@ -45,7 +45,7 @@ appId: vn.dichvuquanhban.app
     id: locale-ja
 - takeScreenshot: japanese-large-heading
 - scrollUntilVisible:
-    element: "15〜128文字.*"
+    element: "8〜128文字.*"
     direction: DOWN
     centerElement: true
     visibilityPercentage: 100

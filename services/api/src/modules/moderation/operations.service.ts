@@ -94,7 +94,7 @@ export class OperationsService {
    const version=(await db.query(`SELECT version FROM ${d} WHERE id=$1`,[target])).rows[0].version;
    await recordDecision(db,d,target!,a.user.id,input.action,input.reason,version);
    return this.detail(db,d,target!);
-  },async(db,a)=>{await this.admin.check(db,a,token,this.permission(d),true);});
+  },async(db,a)=>{await this.admin.check(db,a,token,this.permission(d));});
   }catch(e){if((e as {code?:string}).code==='23505')throw new ConflictException({code:'STATE_CONFLICT'});throw e;}
   finally{if(d==='users')await this.auth.accessChanged();}
  }

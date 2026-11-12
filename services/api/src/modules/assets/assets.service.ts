@@ -130,7 +130,7 @@ export class AssetsService {
    const finance=(await db.query('SELECT 1 FROM finance_topups WHERE evidence_id=$1 UNION ALL SELECT 1 FROM finance_history WHERE $1=ANY(evidence_ids) LIMIT 1',[id])).rowCount;
    const support=(await db.query("SELECT 1 FROM report_evidence e WHERE e.asset_id=$1 AND EXISTS(SELECT 1 FROM admin_grants g WHERE g.user_id=$2 AND g.permission='support.read' AND g.revoked_at IS NULL)",[id,actor.user.id])).rowCount;
    if(support){await this.admin!.grants(db,actor,'support.read');}
-   else if(finance){await this.admin!.check(db,actor,token,'finance.read',true);}
+   else if(finance){await this.admin!.check(db,actor,token,'finance.read');}
    else{await this.admin!.grants(db,actor,'support.read');if(!(await db.query('SELECT 1 FROM report_evidence WHERE asset_id=$1',[id])).rowCount)throw new NotFoundException();}
   }
   else if(a.purpose==='verification'){await this.admin!.grants(db,actor,'moderation.manage');if(!(await db.query('SELECT 1 FROM verification_assets WHERE asset_id=$1',[id])).rowCount)throw new NotFoundException();}

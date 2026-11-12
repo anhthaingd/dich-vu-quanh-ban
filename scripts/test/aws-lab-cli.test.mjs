@@ -307,3 +307,24 @@ test('lab finance deploy preserves the stored test key and strips unrelated fina
  const builds=f.commands().filter(x=>x.cmd==='npx'||x.cmd==='npm'&&x.args.includes('build'));assert.ok(builds.length>=2);for(const b of builds)assert.equal(b.hasFinanceSecret,false);
  assert.ok(!JSON.stringify(f.commands()).includes('TEST_PRIVATE_ENV_CANARY'));
 });
+
+test('lab CLI updates a running lab in place only with --upgrade, migrating without re-seeding (B00-32)',t=>{
+ const f=setup(t);
+ const first=f.invoke('up',f.confirm);assert.equal(first.status,0,first.stderr);
+ const ops=()=>f.commands().filter(x=>x.cmd==='aws'&&x.args[0]==='ecs'&&x.args[1]==='run-task').map(x=>JSON.parse(x.args[x.args.indexOf('--overrides')+1]).containerOverrides[0].command[2]);
+ assert.deepEqual(ops(),['bootstrap']);
+ const j=f.journal();j.source='c'.repeat(40);writeFileSync(join(f.labDir,'journal.json'),JSON.stringify(j));
+ const refused=f.invoke('up',f.confirm);assert.notEqual(refused.status,0);assert.match(refused.stderr,/--upgrade/);assert.deepEqual(ops(),['bootstrap']);
+ const upgraded=f.invoke('up',[...f.confirm,'--upgrade']);assert.equal(upgraded.status,0,upgraded.stderr);
+ assert.deepEqual(ops(),['bootstrap','migrate']);
+ assert.equal(f.journal().source,'a'.repeat(40));assert.equal(f.journal().upgraded_from,'c'.repeat(40));assert.equal(f.journal().phase,'ready');
+});
+
+test('lab CLI skips the local SDD gate only when asked and records it (B00-32)',t=>{
+ const f=setup(t);
+ const sdd=()=>f.commands().filter(x=>x.cmd==='npm'&&x.args.includes('sdd:check')).length;
+ const skipped=f.invoke('up',[...f.confirm,'--skip-sdd']);assert.equal(skipped.status,0,skipped.stderr);
+ assert.equal(sdd(),0);assert.match(skipped.stdout,/SDD verify skipped/);assert.equal(f.journal().sdd_skipped,'a'.repeat(40));
+ const checked=f.invoke('up',f.confirm);assert.equal(checked.status,0,checked.stderr);
+ assert.equal(sdd(),1);assert.equal(f.journal().sdd_skipped,undefined);
+});

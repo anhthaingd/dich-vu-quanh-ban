@@ -11,7 +11,7 @@ import type {completionInput} from './completion.input.js';
 export class CompletionService {
  private readonly tx:AccountTransaction;
  constructor(pool:Pool,auth:AuthService,private readonly admin:AdminAuthService,private readonly previewTtlMs=300000){this.tx=new AccountTransaction(pool,auth);}
- private async authorize(db:PoolClient,a:Actor,token:string|undefined){await this.admin.grants(db,a,'support.read');return this.admin.check(db,a,token,'finance.review',true);}
+ private async authorize(db:PoolClient,a:Actor,token:string|undefined){await this.admin.grants(db,a,'support.read');return this.admin.check(db,a,token,'finance.review');}
  private async context(db:PoolClient,id:string){
   const ref=(await db.query('SELECT j.id,j.partner_id FROM reports r JOIN invoices i ON i.id=r.invoice_id JOIN jobs j ON j.id=i.job_id WHERE r.id=$1',[id])).rows[0];
   if(!ref)throw new NotFoundException();

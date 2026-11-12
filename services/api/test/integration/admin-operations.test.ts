@@ -70,7 +70,7 @@ test('admin directories enforce permission MFA cursor scope CAS retry and immuta
  assert.deepEqual(results.map(x=>x.status).sort(),[201,409]);
  assert.equal((await call(a,'/admin/users/'+a.id+'/decision','POST',{expected_version:1,action:'suspend_all',reason:'self'})).status,403);
  assert.equal((await call(a,'/admin/users/'+b.id+'/decision','POST',{expected_version:1,action:'suspend_all',reason:'admin'})).status,403);
- await f.pool.query("UPDATE admin_sessions SET verified_at=now()-interval '6 minutes' WHERE user_id=$1",[a.id]);
+ await f.pool.query("UPDATE admin_sessions SET expires_at=now()-interval '1 second' WHERE user_id=$1",[a.id]);
  assert.equal((await call(a,'/admin/users/'+u.id+'/decision','POST',{expected_version:2,action:'restore',reason:'expired'})).status,403);
  await assert.rejects(f.pool.query("DELETE FROM moderation_history WHERE domain='users'"));
  await f.pool.query("UPDATE admin_grants SET revoked_at=now() WHERE user_id=$1",[a.id]);

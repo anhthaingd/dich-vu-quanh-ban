@@ -14,7 +14,7 @@ export function parseArgs(args) {
   for (let i = 0; i < args.length; i++) {
     const k = args[i].replace(/^--/, '');
     if (!args[i].startsWith('--') || Object.hasOwn(options, k)) throw Error('Invalid or duplicate option.');
-    if (['apply','accept-data-loss','live'].includes(k)) options[k] = true;
+    if (['apply','accept-data-loss','live','upgrade','skip-sdd'].includes(k)) options[k] = true;
     else if (['config','lab','confirm','email'].includes(k) && args[i + 1] && !args[i + 1].startsWith('--')) options[k] = args[++i];
     else throw Error(`Unknown or incomplete option: ${args[i]}`);
   }
@@ -38,7 +38,7 @@ async function main() {
   process.umask(0o077);
   const { action, options } = parseArgs(process.argv.slice(2));
   if (action === 'help') {
-    console.log('AWS-02: init --config FILE; up/down --lab ID (plan only); add --apply --confirm ACCOUNT/ID to execute. down also requires --accept-data-loss. status --lab ID is local; add --live for AWS audit. admin --lab ID --email VERIFIED_EMAIL --apply --confirm ACCOUNT/ID. media-check --lab ID probes LiveKit policy without AWS/DNS changes. Read infra/aws/lab/README.md first.'); return;
+    console.log('AWS-02: init --config FILE; up/down --lab ID (plan only); add --apply --confirm ACCOUNT/ID to execute. up --upgrade updates a running lab in place; --skip-sdd skips the local SDD gate (recorded). down also requires --accept-data-loss. status --lab ID is local; add --live for AWS audit. admin --lab ID --email VERIFIED_EMAIL --apply --confirm ACCOUNT/ID. media-check --lab ID probes LiveKit policy without AWS/DNS changes. Read infra/aws/lab/README.md first.'); return;
   }
   let c;
   if (action === 'init') c = validateConfig(readJson(resolve(options.config ?? 'infra/aws/lab/config.example.json')));
@@ -168,9 +168,12 @@ async function main() {
     if(c.expo_push&&!process.env.EXPO_ACCESS_TOKEN?.trim())throw Error('Load EXPO_ACCESS_TOKEN and enable enhanced push security in the Expo project.');
     if (!process.env.GEOAPIFY_API_KEY || !process.env.EXPO_PUBLIC_GEOAPIFY_MAPS_KEY) throw Error('Load private GEOAPIFY_API_KEY and public EXPO_PUBLIC_GEOAPIFY_MAPS_KEY into this terminal (not Git/config).');
     if (run('git',['status','--porcelain'],{ cwd: root }).trim()) throw Error('Deployment requires a reviewed clean commit; do not build uncommitted source into a release image.');
-    run('npm',['run','sdd:check','--','--change','SDD-PROJECT','--phase','verify'],{ cwd: root, stdio: 'inherit' });
     const sha = run('git',['rev-parse','HEAD'],{ cwd: root }).trim();
-    if (j.service_enabled && j.source && j.source !== sha) throw Error('This tool recreates learning labs, not in-place upgrades. Finish cleanup before deploying another commit.');
+    // SDD is paused on push by owner decision 12/11/2026 (B00-32); skipping it here must be explicit and is recorded.
+    if (options['skip-sdd']) { console.log('WARNING: SDD verify skipped by --skip-sdd; this release has no SDD evidence for '+sha+'.'); j.sdd_skipped = sha; }
+    else { run('npm',['run','sdd:check','--','--change','SDD-PROJECT','--phase','verify'],{ cwd: root, stdio: 'inherit' }); delete j.sdd_skipped; }
+    if (j.service_enabled && j.source && j.source !== sha && !options.upgrade) throw Error('The lab runs another commit. Pass --upgrade to update it in place (database kept, migrations only), or clean it up first.');
+    if (j.service_enabled && j.source !== sha) j.upgraded_from = j.source;
     j.source = sha; j.media_url=c.livekit_url??''; j.intent = 'up'; checkpoint();
     const localImage = `dvqb-lab-${c.lab_id}:${sha}`;
     run('docker',['build','--platform','linux/amd64','-f','infra/aws/Dockerfile','-t',localImage,'.'],{ cwd: root, stdio: 'inherit' });
@@ -190,7 +193,8 @@ async function main() {
     if (!/^sha256:[a-f0-9]{64}$/.test(digest ?? '')) throw Error('Missing immutable image digest.');
     j.migration_image_digest = digest; checkpoint();
     applyPlan(plan(), 'staging-database'); d = output();
-    ops(d, 'bootstrap');
+    // A running lab keeps its data and admin-edited catalog: apply migrations only, never re-seed.
+    ops(d, j.service_enabled ? 'migrate' : 'bootstrap');
     const runtime = withLabFinanceSecret(JSON.parse(aws(['secretsmanager','get-secret-value','--secret-id',d.runtime_secret_arn]).SecretString),c.finance_test===true);
     if(c.email_provider === 'resend') runtime.RESEND_API_KEY = process.env.RESEND_API_KEY;
     else delete runtime.RESEND_API_KEY;

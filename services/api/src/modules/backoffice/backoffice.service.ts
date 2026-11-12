@@ -31,7 +31,7 @@ export class BackofficeService {
    // Serialize the grant authority graph BEFORE locking either user: A->B and B->A cannot deadlock.
    await db.query('SELECT pg_advisory_xact_lock(2110202602)');
    await db.query('SELECT id FROM users WHERE id=ANY($1::uuid[]) ORDER BY id FOR NO KEY UPDATE',[[initial.user.id,id]]);
-   const a=await this.auth.authenticate(header,db);await this.admin.check(db,a,token,'grant.manage',true);
+   const a=await this.auth.authenticate(header,db);await this.admin.check(db,a,token,'grant.manage');
    const own=new Set((await db.query('SELECT permission FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL',[a.user.id])).rows.map(r=>r.permission));
    if(input.permissions.some(p=>!own.has(p)))throw new ForbiddenException();
    const prior=(await db.query('SELECT request_hash,response_snapshot FROM idempotency_keys WHERE actor_id=$1 AND operation=$2 AND request_key=$3',[a.user.id,operation,key])).rows[0];

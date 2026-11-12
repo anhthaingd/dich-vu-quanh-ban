@@ -14,7 +14,7 @@ function mount(recovery=false){const locale=new LocaleState({read:async()=>null,
 beforeEach(()=>{jest.clearAllMocks();mockOwner='owner-A';});
 test('password form waits for server before logging out and clears secrets',async()=>{
  mockApi.password.mockResolvedValue({id:'A',version:1,state:'completed'});mount();
- fireEvent.changeText(screen.getByLabelText('Mật khẩu hiện tại'),'current-password');fireEvent.changeText(screen.getByLabelText('Mật khẩu mới (15–128 ký tự)'),'new-password-long-enough');
+ fireEvent.changeText(screen.getByLabelText('Mật khẩu hiện tại'),'current-password');fireEvent.changeText(screen.getByLabelText('Mật khẩu mới (8–128 ký tự)'),'new-password-long-enough');
  fireEvent.press(screen.getByRole('button',{name:'Xác nhận'}));await waitFor(()=>expect(mockManager.logout).toHaveBeenCalled());expect(mockApi.password).toHaveBeenCalledWith('TOKEN','current-password','new-password-long-enough');expect(screen.getByLabelText('Mật khẩu hiện tại').props.value).toBe('');
 });
 test('identity sends fresh password proof then confirms code with the active owner',async()=>{

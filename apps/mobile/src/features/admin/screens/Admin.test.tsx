@@ -70,6 +70,11 @@ test('admin setup requires confirmation and backgrounding clears the MFA secret 
  act(()=>onChange.forEach(f=>f('background')));await waitFor(()=>expect(screen.queryByText('DEMO-SECRET')).toBeNull());expect(screen.getByTestId('admin-password')).toHaveProp('value','');
  fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.changeText(screen.getByTestId('admin-code'),'123456');fireEvent.press(screen.getByTestId('admin-verify'));await screen.findByTestId('admin-queue');expect(f.enroll).toHaveBeenCalledTimes(1);expect(f.verify).toHaveBeenCalledWith('DEMO password','123456',true,false);
 });
+test('an open admin console stays signed in when the app goes to the background (B00-32)',async()=>{
+ const f=fixture(['support.read']);const onChange=new Set<(s:AppStateStatus)=>void>();jest.spyOn(AppState,'addEventListener').mockImplementation((type,listener)=>{if(type==='change')onChange.add(listener);return {remove:()=>onChange.delete(listener)};});mount(f);await enter();
+ act(()=>onChange.forEach(f=>f('background')));act(()=>onChange.forEach(f=>f('active')));
+ expect(screen.getByTestId('admin-queue')).toBeTruthy();expect(screen.queryByTestId('admin-password')).toBeNull();expect(f.verify).toHaveBeenCalledTimes(1);
+});
 test('support read-only grants cannot decide and revoked MFA clears the loaded record',async()=>{
  const f=fixture(['support.read']);mount(f);await enter();expect(screen.queryByTestId('admin-tab-reviews')).toBeNull();fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByText('Không có quyền đổi trạng thái báo cáo.');expect(screen.queryByTestId('admin-save')).toBeNull();fireEvent.press(screen.getByTestId('admin-close-detail'));f.item.mockRejectedValueOnce(new ApiError('FORBIDDEN'));fireEvent.press(screen.getByTestId('admin-item-report'));await screen.findByTestId('admin-password');expect(screen.queryByTestId('admin-detail')).toBeNull();
 });

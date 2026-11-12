@@ -167,7 +167,7 @@ export class SecurityService {
  async decide(header:string|undefined,mfa:string|undefined,domain:'recoveries'|'deletions',id:string,b:ReturnType<typeof Input.decision>,key?:string){
   this.messages.requireConfigured();
   const result=await this.admin.transaction(header,async(db,a)=>{
-   await this.admin.check(db,a,mfa,'accounts.manage',true);
+   await this.admin.check(db,a,mfa,'accounts.manage');
    const requestHash=this.messages.secrets.hash(JSON.stringify({id,...b})),operation='account.'+domain+'.decision';
    if(key){const old=(await db.query('SELECT request_hash,response_snapshot FROM idempotency_keys WHERE actor_id=$1 AND operation=$2 AND request_key=$3',[a.user.id,operation,key])).rows[0];if(old){if(old.request_hash!==requestHash)throw new ConflictException({code:'IDEMPOTENCY_MISMATCH'});return old.response_snapshot;}}
    const target=(await db.query(`SELECT user_id FROM account_${domain} WHERE id=$1`,[id])).rows[0];if(!target)throw new NotFoundException();

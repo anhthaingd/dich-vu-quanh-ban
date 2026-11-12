@@ -66,7 +66,7 @@ export class ModerationService {
    }
    const resource=d==='reports'?'report':d==='verifications'?'verification':'review';await event(db,`${resource}:${id}:${input.expected_version+1}`,id,input.expected_version+1,`${resource}.updated.v1`,{[`${resource}_id`]:id,resource_version:input.expected_version+1});
    await recordDecision(db,d,id,a.user.id,input.action,input.reason,input.expected_version+1);return {cipher:this.admin.secrets.encrypt(JSON.stringify(await this.detail(db,d,id)))};
-  },async(db,a)=>{await this.admin.check(db,a,token,this.permission(d,true),true);if(d==='reports')await this.admin.grants(db,a,'support.read');}).then(r=>JSON.parse(this.admin.secrets.decrypt(r.cipher)));
+  },async(db,a)=>{await this.admin.check(db,a,token,this.permission(d,true));if(d==='reports')await this.admin.grants(db,a,'support.read');}).then(r=>JSON.parse(this.admin.secrets.decrypt(r.cipher)));
  }
  note(header:string|undefined,token:string|undefined,id:string,input:ReturnType<typeof noteInput>,key:string){
   return this.tx.run(header,`admin.reports.note:${id}`,key,input,async(db,a)=>{
@@ -77,7 +77,7 @@ export class ModerationService {
    // Audit-only administrators must never receive private note content.
    await recordDecision(db,'reports',id,a.user.id,'internal_note','Internal support note',r.version+1);
    return {cipher:this.admin.secrets.encrypt(JSON.stringify(await this.detail(db,'reports',id)))};
-  },async(db,a)=>{await this.admin.check(db,a,token,'support.manage',true);await this.admin.grants(db,a,'support.read');}).then(r=>JSON.parse(this.admin.secrets.decrypt(r.cipher)));
+  },async(db,a)=>{await this.admin.check(db,a,token,'support.manage');await this.admin.grants(db,a,'support.read');}).then(r=>JSON.parse(this.admin.secrets.decrypt(r.cipher)));
  }
  audit(header:string|undefined,token:string|undefined,q:PageInput){return this.admin.read(header,token,'audit.read',async(db,a)=>{
   const scope=`admin:audit:${a.user.id}`,after=this.cursor.decode(q.cursor,scope);

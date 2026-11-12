@@ -1,6 +1,7 @@
 name: Quality
-# main is protected: changes arrive through pull requests. Running on both push and
-# pull_request doubled every PR run (~25 min each) in separate concurrency groups.
+# Owner decision 12/11/2026 (B00-32): SDD is paused on push/PR to save time. It runs only when started
+# manually (Actions > Quality > Run workflow, or `gh workflow run quality.yml --ref main`).
+# The quick AWS infrastructure check still runs on every push to main and every PR.
 on:
   push:
     branches: [main]
@@ -10,7 +11,7 @@ permissions:
   contents: read
 concurrency:
   group: quality-${{ github.event.pull_request.number || github.ref }}
-  # Superseded PR runs are cancelled; a run on main always finishes and records evidence.
+  # Superseded PR runs are cancelled; push and manual runs always finish.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 env:
   CI: '1'
@@ -20,6 +21,7 @@ env:
 jobs:
   sdd-project:
     name: SDD project
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:

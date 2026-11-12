@@ -16,13 +16,16 @@ export class AdminAuthService {
   this.requireConfigured();const rows=(await db.query('SELECT permission FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL ORDER BY permission FOR SHARE',[a.user.id])).rows;
   if(!rows.length||(permission&&!rows.some(r=>r.permission===permission)))throw new ForbiddenException();
  }
- async check(db:PoolClient,a:Actor,token:string|undefined,permission?:string,fresh=false){
+ async check(db:PoolClient,a:Actor,token:string|undefined,permission?:string){
   await this.grants(db,a,permission);
   if(!token||!/^[a-f0-9]{64}$/.test(token))throw new ForbiddenException({code:'REAUTH_REQUIRED'});
   const row=(await db.query(`SELECT x.* FROM admin_sessions x JOIN sessions s ON s.family_id=x.family_id
     WHERE x.token_hash=$1 AND x.user_id=$2 AND s.id=$3 AND x.revoked_at IS NULL AND x.expires_at>clock_timestamp()
     AND EXISTS(SELECT 1 FROM admin_factors f WHERE f.user_id=x.user_id AND f.enabled_at IS NOT NULL) FOR SHARE OF x`,[tokenHash(token),a.user.id,a.sessionId])).rows[0];
-  if(!row||(fresh&&row.verified_at.getTime()<Date.now()-300000))throw new ForbiddenException({code:'REAUTH_REQUIRED'});return row;
+  // B00-32 (owner decision 12/11/2026): one password+MFA verification lasts for the whole login. Sensitive
+  // actions no longer require a re-verification within 5 minutes; logout, lock, refresh-family revocation,
+  // grant revocation or MFA replacement still end the admin session immediately.
+  if(!row)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return row;
  }
  async read<T>(header:string|undefined,token:string|undefined,permission:string|undefined,work:(db:PoolClient,a:Actor)=>Promise<T>){return this.transaction(header,async(db,a)=>{await this.check(db,a,token,permission);return work(db,a);});}
  async transaction<T>(header:string|undefined,work:(db:PoolClient,a:Actor)=>Promise<T>){
@@ -38,12 +41,13 @@ export class AdminAuthService {
  }
  private async issue(db:PoolClient,a:Actor){
   const token=randomBytes(32).toString('hex');const r=(await db.query(`INSERT INTO admin_sessions(user_id,family_id,token_hash,expires_at)
-   SELECT $1,family_id,$2,clock_timestamp()+interval '15 minutes' FROM sessions WHERE id=$3 RETURNING expires_at,verified_at`,[a.user.id,tokenHash(token),a.sessionId])).rows[0];
-  return {token,expires_at:r.expires_at.toISOString(),fresh_until:new Date(r.verified_at.getTime()+300000).toISOString()};
+   SELECT $1,family_id,$2,expires_at FROM sessions WHERE id=$3 RETURNING expires_at`,[a.user.id,tokenHash(token),a.sessionId])).rows[0];
+  // Lives as long as the login (refresh family), previously a fixed 15 minutes.
+  return {token,expires_at:r.expires_at.toISOString(),fresh_until:r.expires_at.toISOString()};
  }
  async enroll(header:string|undefined,password:string,replace=false,token?:string){
   const result=await this.transaction(header,async(db,a)=>{
-   await this.grants(db,a);if(replace)await this.check(db,a,token,undefined,true);if(!await this.password(db,a,password))return null;
+   await this.grants(db,a);if(replace)await this.check(db,a,token);if(!await this.password(db,a,password))return null;
    const f=(await db.query('SELECT enabled_at FROM admin_factors WHERE user_id=$1',[a.user.id])).rows[0];if(f?.enabled_at&&!replace)throw new ConflictException({code:'STATE_CONFLICT'});
    if(replace){await db.query('DELETE FROM admin_backup_codes WHERE user_id=$1',[a.user.id]);await db.query('UPDATE admin_sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1',[a.user.id]);await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.mfa.replace',$1,'Fresh MFA and password verified','{}')",[a.user.id]);}
    const secret=base32(randomBytes(20));
@@ -66,7 +70,7 @@ export class AdminAuthService {
  }
  async backupCodes(header:string|undefined,token:string|undefined){
   return this.transaction(header,async(db,a)=>{
-   await this.check(db,a,token,undefined,true);
+   await this.check(db,a,token);
    const codes=Array.from({length:10},()=>randomBytes(16).toString('hex'));
    await db.query('DELETE FROM admin_backup_codes WHERE user_id=$1',[a.user.id]);
    for(const code of codes)await db.query('INSERT INTO admin_backup_codes(user_id,code_hash) VALUES($1,$2)',[a.user.id,tokenHash(code)]);
@@ -94,7 +98,7 @@ export class AdminAuthService {
    await db.query('BEGIN');
    await db.query('SELECT pg_advisory_xact_lock(2110202602)');
    await db.query('SELECT id FROM users WHERE id=ANY($1::uuid[]) ORDER BY id FOR NO KEY UPDATE',[[initial.user.id,id]]);
-   const a=await this.auth.authenticate(header,db);await this.check(db,a,token,'grant.manage',true);
+   const a=await this.auth.authenticate(header,db);await this.check(db,a,token,'grant.manage');
    const target=(await db.query("SELECT u.version FROM users u WHERE u.id=$1 AND u.status='active' AND EXISTS(SELECT 1 FROM admin_grants g WHERE g.user_id=u.id AND g.revoked_at IS NULL)",[id])).rows[0];
    if(!target)throw new NotFoundException();
    const previous=(await db.query('SELECT request_hash,response_snapshot FROM idempotency_keys WHERE actor_id=$1 AND operation=$2 AND request_key=$3',[a.user.id,operation,key])).rows[0];

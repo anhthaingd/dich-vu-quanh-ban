@@ -1,13 +1,25 @@
 # Checklist chức năng và bằng chứng
 
+## B00-32 — Admin đăng nhập một lần, mật khẩu từ 8 ký tự, API 0,5 vCPU, tạm dừng SDD, 12/11/2026
+
+- [x] Phiên admin sống bằng phiên đăng nhập (30 ngày), bỏ yêu cầu nhập lại MFA sau 5 phút; màn admin trong app không khoá khi xuống nền; hẹn giờ không vượt giới hạn trình duyệt.
+- [x] Mật khẩu mới 8–128 ký tự ở API (đăng ký, đặt lại, đổi) và câu gợi ý app.
+- [x] Task API lab `cpu = 512`; `lab:up --upgrade` (chỉ migrate) và `--skip-sdd` (ghi journal).
+- [x] CI chỉ chạy `SDD project` khi chạy tay; cổng image pilot đòi đúng job SDD thành công. `AGENTS.md` ghi quyết định tạm dừng SDD và đẩy thẳng `main`.
+- [x] Kiểm local: API unit 41/41 + integration 171/171, mobile 84/84, công cụ lab 32/32, Terraform 8/8, typecheck, ESLint. Không có bằng chứng SDD, chưa chạy web E2E/native. [Báo cáo B00-32](bao-cao/B00-32-noi-phien-admin-mat-khau-cpu-ci.md).
+- [ ] Chủ dự án gỡ bắt buộc status check/enforce admins của nhánh `main` trên GitHub (công cụ không được phép tự làm).
+- [ ] Deploy lab bằng `lab:up --upgrade --skip-sdd`, UAT: admin không bị đẩy ra sau 15 phút/khi chuyển tab, mật khẩu 8 ký tự, gửi ảnh xác minh.
+- [ ] Quyết định: có giữ đăng nhập web qua F5 (lưu token trong trình duyệt) hay không.
+
 ## B00-31 — Sửa API treo khi tải ảnh, lịch mất thao tác chọn ngày và CI chạy trùng, 12/11/2026
 
 - [x] Tìm nguyên nhân sự cố lab 16:01–16:05: xử lý ảnh trong giao dịch giữ khoá phiên, đọc bị huỷ sau 5 giây, nhịp kiểm khoá 1 giây trên 0,25 vCPU làm ECS thay task.
 - [x] Xử lý ảnh ngoài giao dịch; xác thực trong giao dịch dùng khoá chia sẻ, `last_seen_at` tối đa mỗi phút; nhịp kiểm khoá 10 giây; pool 10; log ghi mẫu route.
 - [x] Lịch: nút hồ sơ hiện trước khi tải việc, không đẩy lịch khi đang nhấn. CI: một lượt cho mỗi commit PR, `main` không bị huỷ.
 - [x] Test hồi quy mới thất bại trên code cũ, đạt trên code mới; SDD local 12/12, API 211/211, web E2E 35/35. [Báo cáo B00-31](bao-cao/B00-31-sua-api-treo-lich-va-ci.md).
-- [ ] CI `SDD project` trên commit mới, merge PR #1, deploy lab từ commit và thử lại gửi ảnh xác minh trên lab.
-- [ ] Quyết định chi phí nếu muốn tăng CPU task API; quyết định có nới khoá phiên admin hay không.
+- [x] CI `SDD project` đạt trên `e24d5f6`; PR #1 đã merge vào `main` (`41463c2`).
+- [ ] Deploy lab từ commit mới và thử lại gửi ảnh xác minh trên lab (gộp với lần deploy B00-32 bằng `--upgrade`).
+- [x] Chủ dự án chốt tăng CPU và nới khoá phiên admin ngày 12/11/2026, làm trong B00-32.
 
 ## B00-30 — Tổng kết deploy AWS-02, 11/11/2026
 

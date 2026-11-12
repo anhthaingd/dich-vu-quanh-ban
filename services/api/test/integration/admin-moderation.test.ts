@@ -23,6 +23,8 @@ test('admin MFA requires grants, password, confirmed TOTP and rejects replay, ex
  const outsider=await user();assert.equal((await call(outsider,'/admin/auth/status')).status,403);assert.equal((await call(outsider,'/admin/reports')).status,403);
  const a=await user(['support.read']);assert.equal((await call(a,'/admin/auth/enrollment','POST',{password:'wrong'})).status,403);assert.equal((await call(a,'/admin/reports')).status,403);
  await enroll(a);assert.equal((await call(a,'/admin/auth/status')).body.enrolled,true);assert.equal((await call(a,'/admin/reports')).status,200);assert.equal((await call(a,'/admin/reviews')).status,403);
+ // B00-32: the admin session ends with the login (refresh family), not after a fixed 15 minutes.
+ const lifetime=(await f.pool.query("SELECT bool_and(x.expires_at=s.expires_at) AS same,min(x.expires_at) AS until FROM admin_sessions x JOIN sessions s ON s.family_id=x.family_id AND s.revoked_at IS NULL WHERE x.user_id=$1",[a.id])).rows[0];assert.equal(lifetime.same,true);assert.ok(lifetime.until.getTime()>Date.now()+29*86400000);
  assert.equal((await call(a,'/admin/auth/verify','POST',{password,code:totp(decode32(a.secret!),Math.floor(Date.now()/30000))})).status,403);
  assert.equal((await call(a,'/admin/auth/enrollment','POST',{password})).status,409);
  const stolen={...outsider,mfa:a.mfa};assert.equal((await call(stolen,'/admin/reports')).status,403);
@@ -50,7 +52,9 @@ test('admin support decisions preserve money and privacy with stale versions, re
  assert.equal((await call(a,'/admin/moderation-audit')).body.items.length,2);
  await assert.rejects(f.pool.query('DELETE FROM moderation_history'));
  assert.equal((await f.pool.query('SELECT count(*) FROM ledger_transactions')).rows[0].count,'0');
- await f.pool.query("UPDATE admin_sessions SET verified_at=now()-interval '6 minutes' WHERE user_id=$1",[a.id]);assert.equal((await call(a,`/admin/reports/${r.id}/decision`,'POST',input,key)).status,403);assert.equal((await call(a,'/admin/reports')).status,200);
+ // B00-32: one MFA verification lasts for the login; hours later decisions and reads still work.
+ await f.pool.query("UPDATE admin_sessions SET verified_at=now()-interval '2 hours' WHERE user_id=$1",[a.id]);assert.equal((await call(a,`/admin/reports/${r.id}/decision`,'POST',input,key)).status,201);assert.equal((await call(a,'/admin/reports')).status,200);
+ await f.pool.query("UPDATE admin_sessions SET expires_at=now()-interval '1 second' WHERE user_id=$1",[a.id]);assert.equal((await call(a,`/admin/reports/${r.id}/decision`,'POST',input,key)).status,403);assert.equal((await call(a,'/admin/reports')).status,403);
  await f.pool.query("UPDATE admin_grants SET revoked_at=now() WHERE user_id=$1 AND permission='support.read'",[a.id]);assert.equal((await call(a,`/admin/reports/${r.id}`)).status,403);
 });
 test('verification encrypts declarations and files, requires ownership and reviewed evidence, preserves resubmission history and public badge',async()=>{

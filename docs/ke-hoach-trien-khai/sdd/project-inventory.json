@@ -1653,6 +1653,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-32-noi-phien-admin-mat-khau-cpu-ci.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
       "kind": "documentation"
     },
@@ -6105,6 +6109,10 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/unit/password-policy.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/unit/totp.test.ts",
       "kind": "test"
     },
@@ -7005,6 +7013,7 @@
       "services/api/test/unit/logging.test.ts",
       "services/api/test/unit/organizations.test.ts",
       "services/api/test/unit/output.test.ts",
+      "services/api/test/unit/password-policy.test.ts",
       "services/api/test/unit/totp.test.ts"
     ],
     "web": [

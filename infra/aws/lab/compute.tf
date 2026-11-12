@@ -110,12 +110,14 @@ resource "aws_cloudwatch_log_group" "api" {
 resource "aws_ecs_cluster" "main" {
   name = local.name
 }
+# B00-32: API task uses 0.5 vCPU (owner approved 12/11/2026, about +9 USD/month). 0.25 vCPU starved
+# image processing and the lease heartbeat during the 12/11 outage (B00-31).
 resource "aws_ecs_task_definition" "api" {
 
   family                   = "${local.name}-api"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 256
+  cpu                      = 512
   memory                   = 1024
   execution_role_arn       = aws_iam_role.execution["api"].arn
   task_role_arn            = aws_iam_role.task["api"].arn

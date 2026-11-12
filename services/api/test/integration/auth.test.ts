@@ -101,7 +101,7 @@ test('auth rejects extra privilege fields, limits attempts and permits configure
   const f = await databaseFixture(secret);
   try {
     assert.equal((await post(f.base, '/auth/register', { ...account, admin_permissions: ['*'] })).status, 400);
-    assert.equal((await post(f.base, '/auth/register', { ...account, password: 'too-short' })).status, 400);
+    assert.equal((await post(f.base, '/auth/register', { ...account, password: 'short12' })).status, 400);
     assert.equal((await post(f.base, '/auth/refresh', { refresh_token: 'invalid' })).status, 400);
     const options = await fetch(f.base + '/auth/login', { method: 'OPTIONS', headers: { Origin: 'http://localhost', 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'content-type,authorization' } });
     assert.equal(options.status, 204); assert.match(options.headers.get('access-control-allow-headers')!, /Authorization/);

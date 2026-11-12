@@ -23,9 +23,9 @@ test('backup codes are one use, hashed, password protected and reset requires an
  const confirm=await call(b,'/admin/auth/enrollment/confirm',{password,code:totp(decode32(replacement.body.secret),Math.floor(Date.now()/30000))});assert.equal(confirm.status,201);b.mfa=confirm.body.token;
  assert.equal((await call(b,`/admin/auth/users/${a.id}/reset`,{expected_version:1,reason:'DEMO identity checked'})).status,403);
  assert.equal((await call(a,`/admin/auth/users/${a.id}/reset`,{expected_version:1,reason:'self'})).status,403);
- await f.pool.query("UPDATE admin_sessions SET verified_at=now()-interval '6 minutes' WHERE user_id=$1",[a.id]);
+ await f.pool.query("UPDATE admin_sessions SET expires_at=now()-interval '1 second' WHERE user_id=$1",[a.id]);
  assert.equal((await call(a,`/admin/auth/users/${b.id}/reset`,{expected_version:1,reason:'DEMO identity checked'})).status,403);
- await f.pool.query('UPDATE admin_sessions SET verified_at=now() WHERE user_id=$1',[a.id]);
+ await f.pool.query("UPDATE admin_sessions SET expires_at=now()+interval '1 hour' WHERE user_id=$1",[a.id]);
  const resetKey=randomUUID(),resetInput={expected_version:1,reason:'DEMO identity checked'},resetPath=`/admin/auth/users/${b.id}/reset`;
  const reset=await call(a,resetPath,resetInput,resetKey);assert.equal(reset.status,201,JSON.stringify(reset));
  assert.deepEqual(await call(a,resetPath,resetInput,resetKey),reset);assert.equal((await call(a,resetPath,{...resetInput,reason:'Different'},resetKey)).status,409);assert.equal((await call(a,resetPath,resetInput)).status,409);
