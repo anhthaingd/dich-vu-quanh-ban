@@ -1,12 +1,18 @@
 # Kế hoạch triển khai và học code
 
+**12/11/2026 — Sửa sự cố lab và CI:** [B00-31](bao-cao/B00-31-sua-api-treo-lich-va-ci.md) giải thích vì sao API lab treo khi gửi ảnh xác minh, lịch mất thao tác chọn ngày trên CI và CI chạy trùng; ghi bản sửa, test hồi quy và phần chưa deploy.
+
+**11/11/2026 — Tổng kết trạng thái AWS-02:** [B00-30](bao-cao/B00-30-tong-ket-deploy-aws02.md) ghi lại account/credits, DNS/ACM, dịch vụ ngoài, apply, endpoint live và phần UAT email còn chờ. B00-26 bên dưới là ảnh chụp tình trạng ngày 09/11, đã được mốc mới này thay thế.
+
+**11/11/2026 — Mở đăng ký email lab:** [B00-29](bao-cao/B00-29-mo-dang-ky-email-lab.md) giải thích cờ mở đăng ký/OTP cho email ngoài pilot, giữ quota, quyền admin và SMS riêng. Kết quả local và bằng chứng phát hành được phân biệt trong báo cáo.
+
 **10/11/2026 — Hồi quy lịch khi merge main:** [B00-25, bổ sung mục 7](bao-cao/B00-25-sua-loi-truoc-deploy.md#7-bổ-sung-khi-đưa-code-vào-main--10112026) ghi trace CI: chuột bấm vào ô ngày bị thanh điều hướng che; sửa bước chuẩn bị thao tác trong test, giữ toàn bộ tiêu chí.
 
 **10/11/2026 — Sửa nhấp nháy chọn địa điểm:** [B00-28](bao-cao/B00-28-sua-nhap-nhay-chon-dia-diem.md) ghi nguyên nhân co chiều cao hai lần trên Android, hồi quy bàn phím và ảnh emulator/simulator. Đã kiểm local; chưa thiết bị thật/UAT.
 
 **10/11/2026 — Sửa môi trường test API:** [B00-27](bao-cao/B00-27-sua-moi-truong-test-api.md) ghi lỗi tái hiện khi test kế thừa khóa LiveKit từ terminal, bản sửa cô lập cấu hình và hồi quy 5/5 có coverage. Kết quả SDD toàn dự án xem evidence/verify theo nguồn hiện hành; không phải deploy hoặc CI remote.
 
-**09/11/2026 — Học deploy AWS-02:** [Bộ hướng dẫn theo từng bước và lý do cấu hình](hoc-deploy-aws02/README.md) ghi lại account/credit/CLI/region/ACM và lộ trình deploy/dọn. Mốc hiện tại: ACM Pending validation, chờ thêm CNAME Cloudflare; chưa deploy ứng dụng. [B00-26](bao-cao/B00-26-tai-lieu-hoc-deploy.md) ghi phạm vi và kiểm tài liệu.
+**09/11/2026 — Học deploy AWS-02 (mốc lịch sử):** [Bộ hướng dẫn theo từng bước và lý do cấu hình](hoc-deploy-aws02/README.md) ghi lại account/credit/CLI/region/ACM và lộ trình deploy/dọn. Tại thời điểm ghi, ACM còn Pending validation và app chưa deploy; xem [B00-30](bao-cao/B00-30-tong-ket-deploy-aws02.md) để biết trạng thái mới hơn. [B00-26](bao-cao/B00-26-tai-lieu-hoc-deploy.md) ghi phạm vi và kiểm tài liệu.
 
 **06/11/2026 — Sửa lỗi trước deploy:** tái hiện/sửa mất thao tác chọn ngày, đường dẫn Firebase trên EAS và crash NATIVE-05 bằng bản vá upstream có kiểm phiên bản. [B00-25](bao-cao/B00-25-sua-loi-truoc-deploy.md) ghi bằng chứng trước/sau và giới hạn provider/native.
 

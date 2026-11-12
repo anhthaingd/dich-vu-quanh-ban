@@ -1,5 +1,36 @@
 # Checklist chức năng và bằng chứng
 
+## B00-31 — Sửa API treo khi tải ảnh, lịch mất thao tác chọn ngày và CI chạy trùng, 12/11/2026
+
+- [x] Tìm nguyên nhân sự cố lab 16:01–16:05: xử lý ảnh trong giao dịch giữ khoá phiên, đọc bị huỷ sau 5 giây, nhịp kiểm khoá 1 giây trên 0,25 vCPU làm ECS thay task.
+- [x] Xử lý ảnh ngoài giao dịch; xác thực trong giao dịch dùng khoá chia sẻ, `last_seen_at` tối đa mỗi phút; nhịp kiểm khoá 10 giây; pool 10; log ghi mẫu route.
+- [x] Lịch: nút hồ sơ hiện trước khi tải việc, không đẩy lịch khi đang nhấn. CI: một lượt cho mỗi commit PR, `main` không bị huỷ.
+- [x] Test hồi quy mới thất bại trên code cũ, đạt trên code mới; SDD local 12/12, API 211/211, web E2E 35/35. [Báo cáo B00-31](bao-cao/B00-31-sua-api-treo-lich-va-ci.md).
+- [ ] CI `SDD project` trên commit mới, merge PR #1, deploy lab từ commit và thử lại gửi ảnh xác minh trên lab.
+- [ ] Quyết định chi phí nếu muốn tăng CPU task API; quyết định có nới khoá phiên admin hay không.
+
+## B00-30 — Tổng kết deploy AWS-02, 11/11/2026
+
+- [x] Ghi việc đã làm: AWS account/credits, DNS/ACM, Resend/LiveKit/Expo, Terraform lab và các endpoint đã phát hành.
+- [x] Đối chiếu task API revision 7, image digest, HTTPS checks và trạng thái UAT từ receipt phát hành cục bộ.
+- [x] Nêu rõ đăng ký ngoài pilot đã bật nhưng inbox UAT, thiết bị thật, full UAT và đối chiếu Billing sau vận hành còn chờ.
+- [x] [Tài liệu tổng kết](bao-cao/B00-30-tong-ket-deploy-aws02.md); cập nhật mục lục và inventory. Không đưa secrets/state vào tài liệu.
+- [x] Kiểm lại tối 11/11, chỉ đọc: web live tải đủ danh mục (11 request 200, CORS đạt, có ảnh); ECS rev 7 COMPLETED; không NAT/EC2 đang chạy; Budgets $0.446 và $0.00 trên $20 (Billing có thể trễ ~24 giờ).
+- [x] SDD toàn dự án chạy lại đạt 12/12 bước, web E2E 35/35; `verify` ĐẠT trước khi sửa tài liệu. Sau khi sửa docs, bằng chứng local không còn khớp hash; cần CI `SDD project` trên commit mới.
+- [x] 12/11: credits trả toàn bộ chi phí tháng ($1.72), ước còn $198.28/$200; chưa thấy năm hết hạn credits.
+- [x] 12/11: sửa lỗi `lab:status --live` (254) bằng 2 quyền chỉ-đọc trong SCP region ở tài khoản quản lý; audit live chạy đạt. Không sửa script.
+- [ ] Chu kỳ `lab:down` và kiểm tài nguyên còn sót/Billing sau dọn; phát hành chính thức từ commit qua `lab:up`.
+
+## B00-29 — Mở đăng ký email lab, 11/11/2026
+
+- [x] Chủ dự án cho phép mọi email hợp lệ đăng ký và nhận thư giao dịch trong lab; giữ OTP/quota, SMS và admin riêng.
+- [x] Cờ cấu hình mặc định đóng; unit 12/12, tooling 30/30, luồng email với DB test đạt trước phát hành.
+- [x] [Báo cáo học code B00-29](bao-cao/B00-29-mo-dang-ky-email-lab.md); không tự đồng bộ Drive/ui-ux hoặc sửa spec gốc.
+- [x] 12/11: chủ dự án tự test đăng ký email ngoài pilot trên live (rev 7, cờ bật) và báo đạt.
+- [ ] Bổ sung chi tiết UAT: hai hộp thư khác nhà cung cấp, Inbox/Spam, trạng thái Resend, tài khoản mới không vào được admin.
+- SDD toàn dự án: đọc evidence/verify của nguồn hiện hành. Phát hành AWS đọc receipt riêng; không coi thay code là đã deploy.
+
+
 ## B00-28 — Ổn định bộ chọn địa điểm Android, 10/11/2026
 
 - [x] Tái hiện chân màn hình nhảy 189 px khi thanh nhập nổi mở; sửa Android không tự co chiều cao lần hai.
@@ -18,8 +49,9 @@
 ## B00-26 — Tài liệu học deploy AWS-02, 09/11/2026
 
 - [x] Ghi lại hành trình và giải thích cấu hình trong [bộ học deploy](hoc-deploy-aws02/README.md), tách trạng thái thực tế khỏi hướng dẫn bước sau.
-- [x] Account/credit/advanced features có bằng chứng hội thoại; CLI đọc được VPC Singapore; ACM đúng account/us-east-1 đang Pending validation.
-- [ ] CNAME Cloudflare và ACM Issued; provider/config/plan/apply và nghiệm thu lab thật vẫn chưa xác nhận.
+- [x] Tại thời điểm 09/11, account/credit/advanced features có bằng chứng hội thoại; CLI đọc được VPC Singapore; ACM đúng account/us-east-1 đang Pending validation.
+- [x] Ghi lại lịch sử cấu hình trong [B00-26](bao-cao/B00-26-tai-lieu-hoc-deploy.md); trạng thái deploy mới hơn đã được cập nhật trong [B00-30](bao-cao/B00-30-tong-ket-deploy-aws02.md).
+- [ ] Mốc checklist ngày 09/11: CNAME Cloudflare/ACM Issued, provider/config/plan/apply và nghiệm thu lab thật chưa được xác nhận khi báo cáo được tạo; trạng thái sau đó xem B00-30.
 - [ ] Dọn/audit chu kỳ lab và kiểm Billing sau dọn.
 - Kết quả kiểm bộ tài liệu ở [B00-26](bao-cao/B00-26-tai-lieu-hoc-deploy.md); không đổi trạng thái nghiệm thu code/native/UAT của các đợt trước.
 

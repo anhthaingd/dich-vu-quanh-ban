@@ -120,3 +120,13 @@ variable "finance_test_enabled" {
   default     = false
   description = "Enable the database-backed test-money simulator in this disposable lab only; never sends real transfers."
 }
+
+variable "public_email_registration" {
+  description = "Allow any email to register and receive transactional mail. pilot_emails still limits admin bootstrap."
+  type        = bool
+  default     = false
+  validation {
+    condition     = !var.public_email_registration || var.email_provider == "resend"
+    error_message = "Public email registration requires the verified Resend sender."
+  }
+}

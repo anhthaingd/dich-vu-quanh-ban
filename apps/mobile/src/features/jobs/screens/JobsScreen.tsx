@@ -53,11 +53,13 @@ function List({ owner, open,initialPartner }: {
                 choices.push({ id, name: role.membership?.partner_id===id?role.membership.partner_name:id.slice(0, 8) });
             }
         } if (!active) return;
+        // Show profile choices before the slower job pages: they sit above the calendar, and adding them
+        // after the jobs arrived moved the day grid under a press in progress (CI 43185940403, B00-31).
+        setPartners(choices);
         const page = calendar
           ? {items: await loadCalendarJobs(c => sessionOperation(manager,owner,()=>manager.listJobs(owner,partner,c),()=>active), () => active && generation.current === epoch), next_cursor: null}
           : await sessionOperation(manager,owner,()=>manager.listJobs(owner,partner),()=>active);
         if (active && page.items) {
-            setPartners(choices);
             setItems(page.items);
             setNext(page.next_cursor);
         } })().catch(e => { if (active) {

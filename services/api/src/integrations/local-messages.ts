@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { ServiceUnavailableException, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
 import type { Pool, PoolClient } from 'pg';
 
-export type LocalMessagesConfig = { secret: string; mailpit: string; smsDirectory: string; contacts: string[] };
+export type LocalMessagesConfig = { secret: string; mailpit: string; smsDirectory: string; contacts: string[]; allowAnyEmail?: boolean };
 export type LocalMessage = { contact: string; subject: string; text: string };
 export class MessageSecrets {
  private readonly key: Buffer;
@@ -31,7 +31,8 @@ export class LocalMessages implements OnModuleInit, OnModuleDestroy {
  }
  requireConfigured() { if (!this.settings) throw new ServiceUnavailableException(); }
  requireContact(contact: string) {
-  if (!this.settings || !this.settings.contacts.includes(contact)) throw new ServiceUnavailableException();
+  const publicEmail = this.settings?.allowAnyEmail === true && /^[^\s,@]+@[^\s,@]+\.[^\s,@]+$/.test(contact);
+  if (!this.settings || (!publicEmail && !this.settings.contacts.includes(contact))) throw new ServiceUnavailableException();
  }
  async queue(db: PoolClient, kind: 'challenge'|'invitation'|'admin_invitation', id: string, message: LocalMessage, expiry: Date) {
   this.requireContact(message.contact);

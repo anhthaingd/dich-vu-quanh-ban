@@ -11,6 +11,14 @@ export function safeRoute(path: string): string {
   const route = `/v1/me/${match[1]}/:id${match[3] ?? ''}`;
   return routes.includes(route) ? route : 'unmatched';
 }
+// Prefer the template the router matched (e.g. /v1/partners/:id/verification): it holds parameter names,
+// never values. The hand-kept list above missed most routes, so incident logs read 'unmatched' (B00-31).
+// Static segments are lowercase words (letters first, at most 32 chars); a UUID or number is a value, not a template.
+const template = /^\/v1(?:\/(?:[a-z][a-z0-9-]{0,31}|:[A-Za-z_][A-Za-z0-9_]{0,31}))*$/;
+const isTemplate = (value: unknown): value is string => typeof value === 'string' && value.length <= 120 && template.test(value) && !value.split('/').some(part => uuid.test(part));
+export function loggedRoute(matched: unknown, path: string): string {
+  return isTemplate(matched) ? matched : safeRoute(path);
+}
 const codes = new Set(['ECONNREFUSED','ECONNRESET','ETIMEDOUT','ENOTFOUND','EPIPE','53300','53400','57P01','57P02','57P03','57014','08000','08003','08006','VALIDATION','NOT_FOUND','INTERNAL','SERVICE_UNAVAILABLE']);
 export function errorCode(value: unknown): string | undefined {
   return typeof value === 'string' && codes.has(value) ? value : undefined;
@@ -33,7 +41,7 @@ export function sanitize(input: Metadata): Metadata {
   const out: Metadata = {};
   for (const key of ['request_id','client_request_id'] as const) if (typeof input[key] === 'string' && uuid.test(input[key])) out[key] = input[key];
   if (['GET','POST','PUT','PATCH','DELETE','OPTIONS','HEAD'].includes(input.method ?? '')) out.method = input.method;
-  if (routes.includes(input.route ?? '')) out.route = input.route;
+  if (routes.includes(input.route ?? '') || isTemplate(input.route)) out.route = input.route;
   if (Number.isInteger(input.status_code) && input.status_code! >= 100 && input.status_code! <= 599) out.status_code = input.status_code;
   if (typeof input.duration_ms === 'number' && Number.isFinite(input.duration_ms) && input.duration_ms >= 0) out.duration_ms = Math.round(Math.min(input.duration_ms, 86400000) * 100) / 100;
   if (['partners.search','catalog.categories','catalog.skills','health.ready','migration','seed','pool'].includes(input.operation ?? '')) out.operation = input.operation;

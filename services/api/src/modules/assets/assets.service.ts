@@ -4,6 +4,8 @@ import {createHmac,createHash,randomUUID,timingSafeEqual} from 'node:crypto';
 import {mkdir,readFile,writeFile,rename} from 'node:fs/promises';
 import {join} from 'node:path';
 import sharp from 'sharp';
+// One image at a time: libvips threads otherwise starve the event loop on the 0.25 vCPU lab task (B00-31).
+sharp.concurrency(1);
 import type {Pool,PoolClient} from 'pg';
 import type {IncomingMessage} from 'node:http';
 import type {AuthService} from '../auth/auth.service.js';
@@ -48,19 +50,34 @@ export class AssetsService {
    await db.query('UPDATE assets SET uploaded_checksum=$2 WHERE id=$1',[id,hash]);await db.query('COMMIT');return {uploaded:true};
   }catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
  }
+ // Decode, re-encode and storage I/O take seconds for phone photos on the lab's 0.25 vCPU task.
+ // Do that before the account transaction: inside it, the actor/session locks stalled every other
+ // request of the user until statement_timeout cancelled them and the API was replaced (B00-31).
+ private async derive(a:{object_key:string;purpose:string;mime:string;bytes:string|number;uploaded_checksum:string}){
+  let bytes:Buffer;try{
+   const file=await this.read(a.object_key+'.raw');const raw=a.purpose==='verification'?Buffer.from(this.admin!.secrets.decrypt(file.toString()),'base64'):file;if(raw.length!==Number(a.bytes)||createHash('sha256').update(raw).digest('hex')!==a.uploaded_checksum)throw new Error('bytes');
+   const image=sharp(raw,{limitInputPixels:25000000,failOn:'warning'}),meta=await image.metadata();if(({jpeg:'image/jpeg',png:'image/png',webp:'image/webp'} as Record<string,string>)[meta.format??'']!==a.mime||(meta.pages??1)>1)throw new Error('mime');
+   bytes=await image.rotate().png().toBuffer();
+  }catch{throw new BadRequestException();}
+  // Same deterministic key and content on retry; the row only becomes ready inside the transaction.
+  await this.put(a.object_key+'.png',a.purpose==='verification'?Buffer.from(this.admin!.secrets.encrypt(bytes.toString('base64'))):bytes);
+ }
  complete(header:string|undefined,id:string,key:string,body:unknown){
   this.configured();const input=object(body,['expected_version']);if(input.expected_version!==1)throw new BadRequestException();
+  return (async()=>{
+  // Unlocked pre-read: only the uploader's pending upload is processed; every rule is re-checked under lock below.
+  const actor=await this.auth.authenticate(header,undefined,true);
+  const pending=(await this.pool.query("SELECT * FROM assets WHERE id=$1 AND uploader_id=$2 AND status='pending' AND uploaded_checksum IS NOT NULL AND ($3::boolean=false OR purpose='evidence')",[id,actor.user.id,actor.user.status==='suspended'])).rows[0];
+  let derived:string|undefined;if(pending){await this.derive(pending);derived=pending.uploaded_checksum;}
   return this.tx.run(header,'assets.complete.'+id,key,input,async(db,actor)=>{
    const a=(await db.query('SELECT * FROM assets WHERE id=$1 AND uploader_id=$2 FOR UPDATE',[id,actor.user.id])).rows[0];if(!a)throw new NotFoundException();
    if(a.status==='ready')return this.dto(a,actor.user.id,actor.sessionId);
    if(a.status!=='pending'||!a.uploaded_checksum)throw new BadRequestException();
-   let bytes:Buffer;try{
-    const file=await this.read(a.object_key+'.raw');const raw=a.purpose==='verification'?Buffer.from(this.admin!.secrets.decrypt(file.toString()),'base64'):file;if(raw.length!==Number(a.bytes)||createHash('sha256').update(raw).digest('hex')!==a.uploaded_checksum)throw new Error('bytes');
-    const image=sharp(raw,{limitInputPixels:25000000,failOn:'warning'}),meta=await image.metadata();if(({jpeg:'image/jpeg',png:'image/png',webp:'image/webp'} as Record<string,string>)[meta.format??'']!==a.mime||(meta.pages??1)>1)throw new Error('mime');
-    bytes=await image.rotate().png().toBuffer();
-   }catch{throw new BadRequestException();}
-   await this.put(a.object_key+'.png',a.purpose==='verification'?Buffer.from(this.admin!.secrets.encrypt(bytes.toString('base64'))):bytes);await db.query("UPDATE assets SET status='ready' WHERE id=$1",[id]);return this.dto({...a,status:'ready'},actor.user.id,actor.sessionId);
+   // Fallback keeps behaviour if the row changed between the pre-read and this lock (e.g. a new checksum).
+   if(derived!==a.uploaded_checksum)await this.derive(a);
+   await db.query("UPDATE assets SET status='ready' WHERE id=$1",[id]);return this.dto({...a,status:'ready'},actor.user.id,actor.sessionId);
   },async(db,actor)=>{if(!(await db.query("SELECT 1 FROM assets WHERE id=$1 AND uploader_id=$2 AND ($3::boolean=false OR purpose='evidence')",[id,actor.user.id,actor.user.status==='suspended'])).rows.length)throw new NotFoundException();});
+  })();
  }
  private dto(a:{id:string;status:string},user:string,session:string){return {id:a.id,status:a.status,download_url:a.status==='ready'?this.url(a.id,user,session,'content'):null,expires_at:a.status==='ready'?new Date(Date.now()+TTL).toISOString():null};}
  private async authorized(db:PoolClient,id:string,user:string){

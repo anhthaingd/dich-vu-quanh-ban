@@ -197,3 +197,13 @@ test('lab finance capability is explicitly boolean and reaches only the disposab
  for(const value of ['1',1,null])assert.throws(()=>validateConfig({...config,finance_test:value}));
  assert.throws(()=>validateConfig({...config,FINANCE_TEST_SECRET:'never-store'}));
 });
+
+
+test('public email registration is explicit, Resend-only and does not remove bootstrap owners',()=>{
+ assert.equal(terraformVariables(config,journal()).public_email_registration,false);
+ const opened={...config,email_provider:'resend',public_email_registration:true};
+ assert.equal(validateConfig(opened),opened);
+ assert.equal(terraformVariables(opened,journal()).public_email_registration,true);
+ assert.deepEqual(terraformVariables(opened,journal()).pilot_emails,config.pilot_emails);
+ for(const patch of [{public_email_registration:'true'},{email_provider:'ses'},{pilot_emails:[]}])assert.throws(()=>validateConfig({...opened,...patch}));
+});

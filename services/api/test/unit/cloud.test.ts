@@ -9,6 +9,7 @@ import { SESv2Client } from '@aws-sdk/client-sesv2';
 import { config } from '../../src/config/environment.js';
 import { S3Assets, sesTransport, cloudTransport } from '../../src/integrations/cloud.js';
 import { connectionOptions } from '../../src/database/connection.js';
+import { LocalMessages } from '../../src/integrations/local-messages.js';
 import { AuthService } from '../../src/modules/auth/auth.service.js';
 import type { Pool } from 'pg';
 const cloud={NODE_ENV:'production',CLOUD_PILOT:'1',DATABASE_URL:'postgresql://dvqb_app:secret@db.example/dvqb',DATABASE_CA_FILE:'/app/rds-ca.pem',CURSOR_SECRET:'c'.repeat(48),AUTH_SECRET:'a'.repeat(48),MESSAGE_SECRET:'m'.repeat(48),ADMIN_SECRET:'s'.repeat(48),PUBLIC_API_ORIGIN:'https://api.example.com',CORS_ORIGIN:'https://app.example.com,https://admin.example.com',PILOT_EMAILS:'owner@example.com',ASSET_BUCKET:'private-assets',SES_FROM:'noreply@example.com'};
@@ -106,4 +107,22 @@ test('lab test finance requires explicit cloud lab mode and a separate persisten
  assert.equal(config({...cloud,CLOUD_PROXY_MODE:'cloudfront-alb'}).finance,undefined);
  assert.throws(()=>config({...cloud,FINANCE_TEST_SECRET:'f'.repeat(48)}));
  assert.throws(()=>config({NODE_ENV:'test',DATABASE_URL:'postgresql://localhost/dvqb_test',CURSOR_SECRET:'c'.repeat(48),LAB_FINANCE_TEST:'1',FINANCE_TEST_SECRET:'f'.repeat(48)}));
+});
+
+
+test('public lab email registration opens email only and preserves closed defaults',()=>{
+ const lab={...cloud,CLOUD_PROXY_MODE:'cloudfront-alb',LAB_EMAIL_VERIFICATION:'1',EMAIL_PROVIDER:'resend',EMAIL_FROM:'no-reply@example.com',RESEND_API_KEY:'re_test_only'};
+ const closed=config(lab);
+ assert.deepEqual(closed.pilotEmails,['owner@example.com']);
+ assert.throws(()=>new LocalMessages({} as Pool,closed.localMessages).requireContact('new@example.com'));
+ const opened=config({...lab,PUBLIC_EMAIL_REGISTRATION:'1'});
+ assert.equal(opened.pilotEmails,undefined);
+ const messages=new LocalMessages({} as Pool,opened.localMessages);
+ assert.doesNotThrow(()=>messages.requireContact('new@example.com'));
+ for(const contact of ['+84900000001','invalid','a@example.com,b@example.com','a@example.com\nBcc: x@example.com'])assert.throws(()=>messages.requireContact(contact));
+ assert.deepEqual(config({...lab,PUBLIC_EMAIL_REGISTRATION:'0'}).pilotEmails,closed.pilotEmails);
+ for(const patch of [{PUBLIC_EMAIL_REGISTRATION:'true'},{PUBLIC_EMAIL_REGISTRATION:'1',EMAIL_PROVIDER:'ses'},{PUBLIC_EMAIL_REGISTRATION:'1',LAB_EMAIL_VERIFICATION:'0'},{PUBLIC_EMAIL_REGISTRATION:'1',CLOUD_PROXY_MODE:'alb'}])assert.throws(()=>config({...lab,...patch}));
+ assert.throws(()=>config({NODE_ENV:'test',DATABASE_URL:'postgresql://localhost/dvqb_test',CURSOR_SECRET:'c'.repeat(48),PUBLIC_EMAIL_REGISTRATION:'1'}));
+ // Local test delivery remains explicitly allowlisted unless configured otherwise.
+ assert.throws(()=>new LocalMessages({} as Pool,{secret:'m'.repeat(48),mailpit:'',smsDirectory:'',contacts:[]}).requireContact('new@example.com'));
 });

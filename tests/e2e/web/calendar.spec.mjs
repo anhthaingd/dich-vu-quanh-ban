@@ -44,6 +44,9 @@ test('calendar shows appointments beyond page one and reloads reschedules in cus
   await partner.getByTestId('jobs-view-calendar').click();
   await arrived;
   await expect(partner.getByTestId('jobs-calendar')).toBeVisible();
+  // Profile choices sit above the grid. They must already be shown while job pages are still pending;
+  // appearing with the jobs moved the grid under the press below (CI 43185940403, B00-31).
+  await expect(partner.getByTestId('jobs-partner-'+p.id)).toBeVisible();
   if(later.slice(0,7)!==day(new Date()).slice(0,7))await partner.getByTestId('calendar-next').click();
   const target=partner.getByTestId('calendar-day-'+later);
   const selectedBeforePress=await partner.getByTestId('calendar-selected').textContent();
