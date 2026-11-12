@@ -8,14 +8,17 @@
 - [x] [Tài liệu tổng kết](bao-cao/B00-30-tong-ket-deploy-aws02.md); cập nhật mục lục và inventory. Không đưa secrets/state vào tài liệu.
 - [x] Kiểm lại tối 11/11, chỉ đọc: web live tải đủ danh mục (11 request 200, CORS đạt, có ảnh); ECS rev 7 COMPLETED; không NAT/EC2 đang chạy; Budgets $0.446 và $0.00 trên $20 (Billing có thể trễ ~24 giờ).
 - [x] SDD toàn dự án chạy lại đạt 12/12 bước, web E2E 35/35; `verify` ĐẠT trước khi sửa tài liệu. Sau khi sửa docs, bằng chứng local không còn khớp hash; cần CI `SDD project` trên commit mới.
-- [ ] Đối chiếu Billing/credits sau khi AWS cập nhật; chu kỳ `lab:down` và kiểm tài nguyên còn sót.
+- [x] 12/11: credits trả toàn bộ chi phí tháng ($1.72), ước còn $198.28/$200; chưa thấy năm hết hạn credits.
+- [x] 12/11: sửa lỗi `lab:status --live` (254) bằng 2 quyền chỉ-đọc trong SCP region ở tài khoản quản lý; audit live chạy đạt. Không sửa script.
+- [ ] Chu kỳ `lab:down` và kiểm tài nguyên còn sót/Billing sau dọn; phát hành chính thức từ commit qua `lab:up`.
 
 ## B00-29 — Mở đăng ký email lab, 11/11/2026
 
 - [x] Chủ dự án cho phép mọi email hợp lệ đăng ký và nhận thư giao dịch trong lab; giữ OTP/quota, SMS và admin riêng.
 - [x] Cờ cấu hình mặc định đóng; unit 12/12, tooling 30/30, luồng email với DB test đạt trước phát hành.
 - [x] [Báo cáo học code B00-29](bao-cao/B00-29-mo-dang-ky-email-lab.md); không tự đồng bộ Drive/ui-ux hoặc sửa spec gốc.
-- [ ] UAT hai hộp thư thật và kiểm delivery trên Resend; không suy ra inbox delivery từ test local.
+- [x] 12/11: chủ dự án tự test đăng ký email ngoài pilot trên live (rev 7, cờ bật) và báo đạt.
+- [ ] Bổ sung chi tiết UAT: hai hộp thư khác nhà cung cấp, Inbox/Spam, trạng thái Resend, tài khoản mới không vào được admin.
 - SDD toàn dự án: đọc evidence/verify của nguồn hiện hành. Phát hành AWS đọc receipt riêng; không coi thay code là đã deploy.
 
 

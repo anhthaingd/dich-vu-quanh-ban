@@ -1,12 +1,12 @@
 # B00-30 — Tổng kết hành trình deploy AWS-02
 
-11/11/2026 · AWS-02 · [Checklist](../01-checklist.md) · [Mục lục](../README.md) · [Bộ hướng dẫn học deploy](../hoc-deploy-aws02/README.md) · [B00-29: mở đăng ký email lab](B00-29-mo-dang-ky-email-lab.md).
+11/11/2026, cập nhật 12/11/2026 · AWS-02 · [Checklist](../01-checklist.md) · [Mục lục](../README.md) · [Bộ hướng dẫn học deploy](../hoc-deploy-aws02/README.md) · [B00-29: mở đăng ký email lab](B00-29-mo-dang-ky-email-lab.md).
 
 ## Trạng thái hiện tại
 
 Project cá nhân đã được dựng trên AWS và mở được qua tên miền riêng. API đang chạy task revision **7** với image digest `sha256:ca9fba5aaf43791d8def0c902a2dda45b94937e58721360f23f25e25c71629ff`. Bằng chứng phát hành nằm trong receipt cục bộ `.local/aws-lab/learn/public-email-release.json`; file đó và thông tin xác thực không đưa vào Git.
 
-Bạn đã kiểm tra `https://api.iimissher.com/v1/ready` và nhận HTTP 200 cùng `{"status":"ready"}`. Runner cũng ghi nhận HTTPS cho admin, API readiness và categories; web/admin đã được tải lên S3/CloudFront. API lab hiện bật đăng ký email ngoài pilot, nhưng **chưa có nghiệm thu bằng hộp thư thật**. Trước đây màn app từng báo không tải được danh mục và lỗi đăng ký chung. Lần kiểm lại tối 11/11 trên revision 7 (mục 5 bên dưới) thấy trang chủ web tải đủ danh mục; lỗi đăng ký chưa được thử lại vì cần hộp thư thật của bạn. Không coi mã đã deploy là bằng chứng mọi hành trình người dùng đã đạt.
+Bạn đã kiểm tra `https://api.iimissher.com/v1/ready` và nhận HTTP 200 cùng `{"status":"ready"}`. Runner cũng ghi nhận HTTPS cho admin, API readiness và categories; web/admin đã được tải lên S3/CloudFront. API lab hiện bật đăng ký email ngoài pilot. Ngày 12/11, **bạn đã tự test đăng ký bằng email ngoài pilot trên bản live và báo đạt** (mục 6). Trước đây màn app từng báo không tải được danh mục và lỗi đăng ký chung. Lần kiểm lại tối 11/11 trên revision 7 (mục 5) thấy trang chủ web tải đủ danh mục. Không coi mã đã deploy là bằng chứng mọi hành trình người dùng đã đạt.
 
 ## Những việc đã làm
 
@@ -52,6 +52,21 @@ Phần này do Claude kiểm từ máy phát triển, chỉ **đọc** trạng t
 
 *Ảnh: web live `app.iimissher.com`, Chromium headless trên macOS, khổ 390×844, 11/11/2026. Trang công khai, chưa đăng nhập, không có dữ liệu cá nhân. Không phải thiết bị thật.*
 
+### 6. Test email, sửa giới hạn region và credits, 12/11/2026
+
+**Test đăng ký email ngoài pilot.** Trước khi bạn test, đã kiểm trên AWS: service API chạy task revision 7, 1/1 task, cờ `PUBLIC_EMAIL_REGISTRATION=1`. Không cần deploy lại, vì bản này đã được phát hành ngày 11/11 trước khi code được commit; commit/push chỉ đưa code vào Git. Sau đó bạn tự test trên `app.iimissher.com` và báo **đạt**. Báo cáo không ghi lại email nào, nhà cung cấp hộp thư, thư vào Inbox hay Spam, hay đã kiểm tài khoản mới không vào được admin; các chi tiết đó cần bạn bổ sung nếu muốn đóng hẳn mục "hai hộp thư thật" trong checklist.
+
+**Lệnh `lab:status --live` từng lỗi `aws secretsmanager failed (254)`.**
+
+- *Nguyên nhân:* tài khoản lab (đuôi `…5969`) là tài khoản con trong tổ chức AWS `o-nz7s3ou1js`; tài khoản quản lý là `…0804`. Tổ chức có SCP (Service Control Policy, luật cấp tổ chức đặt trần quyền cho mọi role) tên `AdvancedModeRegionRestrictionSecurityControlPolicy`, ID `p-ggx4gxho`. Luật này chỉ cho dùng đầy đủ Singapore và Sydney. Ở `us-east-1` nó chỉ cho các dịch vụ toàn cầu như ACM, CloudFront, WAF, IAM, logs, budgets, nên chặn cả *đọc* Secrets Manager và SNS. Bước quét kiểm tra của lab cố tình dừng khi có một lần quét bị từ chối, vì quét thiếu không được báo là sạch.
+- *Cách sửa:* bạn đăng nhập tài khoản quản lý và thêm đúng hai quyền chỉ-đọc `secretsmanager:ListSecrets` và `sns:ListTopics` vào khối `UsEast1Partitional`. Không gỡ policy, không đụng các policy giới hạn chi tiêu `BudgetsSpendLimit…`, không sửa script.
+- *Kết quả:* hai lệnh đọc ở `us-east-1` trả về rỗng (không có secret hay SNS topic của lab ở đó). `lab:status --live` chạy hết: Singapore có đủ tài nguyên của một lab đang chạy (1 RDS, 1 ALB, 3 S3, 1 ECR, 1 VPC, 1 ECS task, 3 CloudFront, 2 secret, 7 alarm, 1 SNS, 1 budget); `us-east-1` chỉ có WAF của lab.
+- *Lưu ý:* policy do AWS sinh khi bật chế độ nâng cao. Nếu đổi cài đặt đó trong console, AWS có thể ghi đè và lỗi 254 quay lại; khi đó thêm lại hai quyền trên.
+
+**Credits.** Trang Billing → Credits ngày 12/11 cho thấy 6 credit, tổng $200, thuộc tài khoản quản lý `…0804`. *Total estimated amount used* là **$1.72**, đúng bằng chi phí tháng 11 trên trang Cost and usage (RDS $0.94, ELB $0.33, ECS $0.23, WAF $0.14, VPC $0.06, khác $0.02). Vậy toàn bộ phí lab, kể cả phần ở tài khoản con, đang được credits trả. Số ước tính còn lại là **$198.28**; số chốt chỉ cập nhật khi hoá đơn tháng được chốt.
+
+Tốc độ tiêu ước thô khoảng $1.3/ngày, tức khoảng $40–55/tháng nếu chạy 24/7, nên credits đủ khoảng 4–5 tháng nếu chưa hết hạn trước. Ảnh chụp không thấy năm của ngày hết hạn credits nên chưa kết luận. Giới hạn chi tiêu $20 của project có thể bị chạm trong tháng; chưa xác định giới hạn tính theo phí trước hay sau credits. Nếu tính trước credits, các policy `BudgetsSpendLimit…` có thể chặn tạo tài nguyên mới khi deploy lại.
+
 ## Luồng deploy nhìn từ trên xuống
 
 ```mermaid
@@ -75,10 +90,10 @@ Sơ đồ cho biết vai trò chính, không vẽ mọi dịch vụ/phụ thuộ
 
 ## Việc còn dang dở và thứ tự tiếp theo
 
-1. **Kiểm đăng ký bằng một email khác ngoài pilot mà bạn kiểm soát.** Mở app, đăng ký, yêu cầu OTP, xác minh từ hộp thư. Kiểm cả Spam và trạng thái gửi trong Resend. Không gửi mã OTP hoặc API key cho tôi.
-2. **Thử đăng nhập lại và luồng người dùng thường.** Xác nhận email đã được đánh dấu verified và tài khoản mới không có quyền admin. Danh mục trên web đã kiểm lại ở mục 5 khi chưa đăng nhập; vẫn nên nhìn lại sau khi đăng nhập. Thử vào admin bằng tài khoản quản trị đã bật MFA riêng.
+1. **Đã xong 12/11:** bạn test đăng ký bằng email ngoài pilot và báo đạt (mục 6). Nếu muốn đóng hẳn mục UAT, bổ sung: đã thử mấy hộp thư, nhà cung cấp nào, thư vào Inbox hay Spam, tài khoản mới có bị chặn vào admin không.
+2. **Phát hành chính thức từ commit.** Bản đang chạy được build từ code chưa commit (receipt ghi `reviewed-uncommitted-working-tree`). Sau khi PR #1 vào `main`, lần deploy kế tiếp nên đi qua `lab:up` từ commit đó để bản trên AWS truy ngược được đúng commit. Không gấp, không ảnh hưởng việc dùng lab hiện tại.
 3. **Nếu vẫn lỗi, lấy bằng chứng cụ thể.** Trong trình duyệt mở Developer Tools → Network, ghi endpoint, HTTP status, response message và `X-Request-Id`; tra cùng thời điểm trong CloudWatch log group `/ecs/dvqb-lab-learn`. Che email cá nhân/token trước khi chia sẻ. Nếu không nhận OTP, kiểm Resend Events/Suppressions/Quota và Spam trước khi sửa DNS.
-4. **Đối chiếu chi phí và tài nguyên đang chạy.** Đã đọc ECS, RDS, NAT, ALB, EC2 và Budgets tối 11/11 (mục 5). Còn lại: xem lại Billing/credits sau khoảng 24 giờ để có số đã cập nhật, và kiểm credits đã trừ đúng vào phí. Credits làm giảm số dư phải trả theo điều khoản của chúng, nhưng không phải ngân sách được cấp lại mỗi tháng. Khi nghỉ học lâu, dùng quy trình `lab:down` đã ghi trong runbook và kiểm tài nguyên còn sót/Billing sau đó.
+4. **Theo dõi chi phí.** Đã đối chiếu tài nguyên (mục 5) và credits (mục 6): credits đang trả toàn bộ phí. Còn lại: mỗi tháng xem số credits còn lại và ngày hết hạn; để ý giới hạn $20 của project. Credits làm giảm số dư phải trả theo điều khoản của chúng, nhưng không phải ngân sách được cấp lại mỗi tháng. Khi nghỉ học lâu, dùng quy trình `lab:down` đã ghi trong runbook và kiểm tài nguyên còn sót/Billing sau đó.
 5. **Chưa làm trong đợt này:** nghiệm thu thật trên Android/iOS; gọi thoại/realtime/push; full UAT nghiệp vụ; kiểm chu kỳ dựng/dọn và phí sau khi AWS cập nhật Billing. Không coi bài test local hoặc API health là đã đạt các mục này.
 
 ## Bằng chứng và giới hạn
@@ -88,13 +103,14 @@ Sơ đồ cho biết vai trò chính, không vẽ mọi dịch vụ/phụ thuộ
 | Terraform/apply và tài nguyên AWS | Đã chạy; API task revision 7; state đã đối chiếu theo receipt local |
 | HTTPS API readiness | Người dùng chạy `curl`, HTTP 200 |
 | HTTPS app/admin và API categories | Runner ghi nhận OK trong lần publish gần nhất. Tối 11/11: web live gọi 11 request categories đều 200, CORS từ `app` đạt, có ảnh ở mục 5 |
-| Mở đăng ký email ngoài pilot | Đã cấu hình và phát hành; inbox thật/UAT đang chờ |
+| Mở đăng ký email ngoài pilot | Đã phát hành (rev 7, cờ bật, kiểm lại 12/11). Chủ dự án tự test trên live 12/11 và báo đạt; chưa ghi chi tiết số hộp thư, Inbox/Spam, chặn admin |
+| `lab:status --live` | Từng lỗi 254 do SCP `p-ggx4gxho` chặn đọc Secrets Manager/SNS ở `us-east-1`. Sau khi thêm 2 quyền chỉ-đọc ở tài khoản quản lý, chạy đạt ngày 12/11 |
 | Test riêng cho thay đổi B00-29 | Đạt theo báo cáo B00-29; không đồng nghĩa toàn bộ web/app đã UAT |
 | SDD toàn repo, lần 1 (phiên lập tài liệu) | Web E2E dừng với 35 test lỗi khởi động Chromium do macOS từ chối `bootstrap_check_in` (`Permission denied (1100)`). Đây là lỗi môi trường chạy trình duyệt của phiên đó, không phải lỗi app. |
 | SDD toàn repo, lần 2 (tối 11/11) | **Đạt cả 12 bước**, Chromium khởi động bình thường: lint, typecheck, tooling 92/92, mobile 411/411, coverage mobile (core 100% dòng, app 89,8% dòng), API 207/207 có PostGIS, coverage API (core 100% dòng, app 95,9% dòng), build, **web E2E 35/35** (9,2 phút), kiểm tải danh mục (p95 khoảng 36 ms), prototype, Storybook. |
 | SDD verify | `sdd:check --phase verify` **ĐẠT** trên HEAD `63c65b9` cộng thay đổi chưa commit, dấu băm `b0bd309a…`. Sau đó báo cáo này, checklist, inventory và ảnh mục 5 được sửa. Vì SDD băm cả `docs/`, bằng chứng local **không còn khớp** cây hiện tại; không tự làm mới hash. Bằng chứng hợp lệ cho bản cuối phải là check `SDD project` trên CI của commit mới. |
 | CI remote, commit/push của thay đổi B00-29 | Chưa có bằng chứng commit/CI mới; thay đổi hiện tại chưa commit/push |
-| Credits/Billing sau vận hành và dọn | Đọc Budgets tối 11/11: $0.446 và $0.00 trên giới hạn $20 mỗi budget. Billing có thể trễ khoảng 24 giờ; chưa đối chiếu credits và chưa chạy chu kỳ dọn |
+| Credits/Billing | 12/11: chi phí tháng $1.72, credits trả toàn bộ, ước còn $198.28/$200. Chưa thấy năm hết hạn credits; chưa chạy chu kỳ dọn `lab:down` |
 | Thiết bị thật, email/push/cuộc gọi | Chưa nghiệm thu đầy đủ |
 
 SDD chỉ kiểm code trên máy phát triển, không thay đổi hay xác nhận trạng thái AWS. Lần 1 lỗi Chromium được giải quyết bằng cách chạy lại trong môi trường cho phép trình duyệt khởi động; không sửa app hay bài test nào để có kết quả xanh.
