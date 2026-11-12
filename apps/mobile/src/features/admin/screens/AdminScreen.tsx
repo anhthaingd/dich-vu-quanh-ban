@@ -20,7 +20,7 @@ export function AdminScreen(){
  const {manager,state}=useAuth(),{locale}=useLocale();
  const client=useMemo(()=>new AdminApi(manager,state.user!.id,process.env.EXPO_PUBLIC_API_URL),[manager,state.user?.id]);
  const t=useMemo(()=>translator(locale),[locale]);
- const [ready,setReady]=useState(false),[enrolled,setEnrolled]=useState<boolean|null>(null),[setup,setSetup]=useState(''),[enrollmentPending,setEnrollmentPending]=useState(false),[password,setPassword]=useState(''),[code,setCode]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[epoch,setEpoch]=useState(0);
+ const [ready,setReady]=useState(()=>client.expiresAt>Date.now()),[enrolled,setEnrolled]=useState<boolean|null>(null),[setup,setSetup]=useState(''),[enrollmentPending,setEnrollmentPending]=useState(false),[password,setPassword]=useState(''),[code,setCode]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[epoch,setEpoch]=useState(0);
  const [recovery,setRecovery]=useState(false),mt=mfaText(locale);
  const generation=useRef(0),readyRef=useRef(false);readyRef.current=ready;
  const clear=()=>{generation.current++;client.clear();setReady(false);setSetup('');setPassword('');setCode('');setRecovery(false);setBusy(false);setEpoch(n=>n+1);};
@@ -28,7 +28,7 @@ export function AdminScreen(){
   // B00-32: an open console stays signed in while the app/tab is in the background (owner decision
   // 12/11/2026). Only an unfinished setup/verification form, which may show the MFA secret, is cleared.
   const sub=AppState.addEventListener('change',s=>{if(s==='background'&&!readyRef.current)clear();});
-  return()=>{generation.current++;client.clear();sub.remove();};
+  return()=>{generation.current++;client.detach();sub.remove();};
  },[client]);
  useEffect(()=>{if(!ready)return;const timer=setTimeout(clear,Math.min(2**31-1,Math.max(0,client.expiresAt-Date.now())));return()=>clearTimeout(timer);},[ready,client,epoch]);
  useEffect(()=>{let live=true;void client.status().then(v=>{if(live)setEnrolled(v);}).catch(e=>{if(live&&codeOf(e)!=='CANCELLED')setError(codeOf(e));});return()=>{live=false;};},[client,epoch]);

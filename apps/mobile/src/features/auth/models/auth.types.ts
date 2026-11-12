@@ -13,7 +13,13 @@ export interface AuthApi {
   me(token: string): Promise<Me>;
   logout(token: string): Promise<void>;
 }
-export interface TokenStorage { read(): Promise<string | null>; write(token: string): Promise<void>; clear(): Promise<void> }
+export interface TokenStorage {
+  read(): Promise<string | null>; write(token: string): Promise<void>; clear(): Promise<void>;
+  // Web: several tabs share one stored refresh token. Refresh tokens are single use and a replay revokes the
+  // whole login, so a rotation reads the newest stored token inside a cross-tab lock (B00-33).
+  readonly shared?: boolean;
+  exclusive?<T>(work: () => Promise<T>): Promise<T>;
+}
 
 export function hasServiceVerification(user:Me|null|undefined):boolean {
   return (user?.verification_policy==='email_lab'?user.email_verified:user?.phone_verified)===true;

@@ -62,12 +62,18 @@ export class AuthSession {
     this.update({ phase: 'anonymous', user: null });
     await this.storage.clear();
   }
+  private exclusive<T>(work: () => Promise<T>) { return this.storage.exclusive ? this.storage.exclusive(work) : work(); }
   restore = () => this.run(async () => {
     this.update({ phase: 'loading' });
     try {
-      const token = await this.storage.read();
-      if (!token) { this.update({ phase: 'anonymous', user: null }); return; }
-      await this.accept(await this.api.refresh(token));
+      // Read, refresh and store under one cross-tab lock so two tabs never spend the same refresh token.
+      const restored = await this.exclusive(async () => {
+        const token = await this.storage.read();
+        if (!token) return false;
+        await this.accept(await this.api.refresh(token));
+        return true;
+      });
+      if (!restored) this.update({ phase: 'anonymous', user: null });
     } catch (error) {
       if (error instanceof ApiError && error.code === 'UNAUTHENTICATED') { await this.forget(); return; }
       this.update({ phase: 'restore-error', user: null }); throw error;
@@ -78,7 +84,15 @@ export class AuthSession {
   register = (input: Registration) => this.run(async () => { await this.accept(await this.api.register(input)); });
   private async rotate() {
     if (!this.session) return;
-    try { await this.accept(await this.api.refresh(this.session.refresh_token)); }
+    try {
+      await this.exclusive(async () => {
+        if (!this.session) throw new ApiError('UNAUTHENTICATED');
+        // Another tab may already have rotated (our token is spent) or signed out (nothing stored).
+        const token = this.storage.shared ? await this.storage.read() : this.session.refresh_token;
+        if (!token) throw new ApiError('UNAUTHENTICATED');
+        await this.accept(await this.api.refresh(token));
+      });
+    }
     catch (error) { if (error instanceof ApiError && error.code === 'UNAUTHENTICATED') await this.forget(); throw error; }
   }
   verify = () => {

@@ -1,4 +1,5 @@
 import { ApiError } from '../../../lib/http/api-error';
+import { AuthSession } from './auth-session';
 import { authFixture, credentials, session } from '../../../../test/helpers/auth';
 
 test('register persists only refresh token and logout revokes before clearing storage', async () => {
@@ -78,4 +79,27 @@ test('already invalid logout clears storage; refresh network errors leave accoun
   f.api.me.mockRejectedValueOnce(new ApiError('UNAUTHENTICATED')); f.api.refresh.mockRejectedValueOnce(new ApiError('NETWORK'));
   await f.manager.verify(); expect(f.manager.getSnapshot().phase).toBe('authenticated');
   f.api.logout.mockRejectedValueOnce(new ApiError('UNAUTHENTICATED')); await f.manager.logout(); expect(f.manager.getSnapshot().phase).toBe('anonymous');
+});
+
+test('two web tabs sharing one stored sign-in never replay a spent refresh token (B00-33)', async () => {
+  // Server: each refresh token works once; a replay revokes the whole login.
+  let current = 'r0', n = 0, revoked = false;
+  const refresh = jest.fn(async (token: string) => {
+    await new Promise(r => setTimeout(r, 5));
+    if (revoked || token !== current) { revoked = true; throw new ApiError('UNAUTHENTICATED'); }
+    current = 'r' + (++n); return { ...session, refresh_token: current };
+  });
+  let saved: string | null = 'r0', queue = Promise.resolve();
+  const storage = {
+    shared: true, read: jest.fn(async () => saved), write: jest.fn(async (t: string) => { saved = t; }), clear: jest.fn(async () => { saved = null; }),
+    exclusive<T>(work: () => Promise<T>) { const run = queue.then(work); queue = run.then(() => undefined, () => undefined); return run; },
+  };
+  const tab = () => { const f = authFixture(); f.api.refresh.mockImplementation(refresh); return new AuthSession(f.api, storage); };
+  const a = tab(), b = tab();
+  await Promise.all([a.restore(), b.restore()]);
+  expect([a.getSnapshot().phase, b.getSnapshot().phase]).toEqual(['authenticated', 'authenticated']);
+  await Promise.all([a['rotate'](), b['rotate'](), a['rotate']()]);
+  expect(revoked).toBe(false); expect(saved).toBe(current); expect(refresh).toHaveBeenCalledTimes(5);
+  await b.logout(); await expect(a['rotate']()).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
+  expect(a.getSnapshot().phase).toBe('anonymous');
 });

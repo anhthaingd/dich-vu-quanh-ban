@@ -16,6 +16,16 @@ test('account journey uses real API, unverified contact and server logout', asyn
   await page.getByLabel('Mật khẩu', { exact: true }).fill('web-test-only-password');
   await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
   await expect(page.getByText('Người thử web', { exact: true })).toBeVisible();
-  expect(await page.evaluate(() => Object.keys(globalThis.localStorage))).toEqual([]);
+  // B00-33: only the refresh token is kept in the browser, so the sign-in survives a reload; logout removes it.
+  const authKeys = () => page.evaluate(() => Object.keys(globalThis.localStorage).filter(k => k.startsWith('dvqb.auth.')));
+  expect(await authKeys()).toHaveLength(1);
+  expect(await page.evaluate(() => JSON.stringify({ ...globalThis.localStorage }))).not.toContain('eyJ');
+  await page.reload();
+  await page.getByRole('button', { name: 'Tài khoản', exact: true }).click();
+  await expect(page.getByText('Người thử web', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Đăng xuất', exact: true }).click();
+  await expect.poll(authKeys).toEqual([]);
+  await page.reload();
+  await page.getByRole('button', { name: 'Tài khoản', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Chưa có tài khoản? Đăng ký' })).toBeVisible();
 });

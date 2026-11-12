@@ -15,13 +15,14 @@ const grants=['support.read','support.manage','moderation.manage','audit.read'];
 const report:Item={id:'report',version:1,subject:'DEMO support',body:'DEMO body',state:'open',evidence_ids:[],updates:[],history:[]};
 const verification:Item={id:'verify',version:1,partner_name:'DEMO partner',state:'pending',details:{kind:'identity',statement:'DEMO statement'},document_asset_ids:['photo'],history:[]};
 const review:Item={id:'review',version:1,stars:4,body:'DEMO review',hidden:false,removed:false,history:[]};
-function fixture(permissions=grants){
+function fixture(permissions=grants,restored=false){
  const f=authFixture('saved');const user={...session.user,admin_permissions:permissions};
  f.api.refresh.mockResolvedValue({...session,user});f.api.me.mockResolvedValue(user);
  jest.spyOn(AdminApi.prototype,'request').mockResolvedValue({counts:{open:'1',reviewing:'0',awaiting_evidence:'0',resolved:'0',closed:'0'}});
  const status=jest.spyOn(AdminApi.prototype,'status').mockResolvedValue(true);
- const verify=jest.spyOn(AdminApi.prototype,'verify').mockResolvedValue(undefined);
- jest.spyOn(AdminApi.prototype,'expiresAt','get').mockReturnValue(Date.now()+900000);
+ // Not verified until verify() runs; restored=true models a reload with a stored admin session (B00-33).
+ let verified=restored;const verify=jest.spyOn(AdminApi.prototype,'verify').mockImplementation(async()=>{verified=true;});
+ jest.spyOn(AdminApi.prototype,'expiresAt','get').mockImplementation(()=>verified?Date.now()+900000:0);
  const enroll=jest.spyOn(AdminApi.prototype,'enroll').mockResolvedValue({secret:'DEMO-SECRET',uri:'demo'});
  const page=jest.spyOn(AdminApi.prototype,'page').mockImplementation(async d=>({items:[d==='reports'?report:d==='verifications'?verification:review],next_cursor:null}));
  const item=jest.spyOn(AdminApi.prototype,'item').mockImplementation(async d=>d==='reports'?report:d==='verifications'?verification:review);
@@ -69,6 +70,9 @@ test('admin setup requires confirmation and backgrounding clears the MFA secret 
  fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.press(screen.getByTestId('admin-verify'));await screen.findByText('DEMO-SECRET');
  act(()=>onChange.forEach(f=>f('background')));await waitFor(()=>expect(screen.queryByText('DEMO-SECRET')).toBeNull());expect(screen.getByTestId('admin-password')).toHaveProp('value','');
  fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.changeText(screen.getByTestId('admin-code'),'123456');fireEvent.press(screen.getByTestId('admin-verify'));await screen.findByTestId('admin-queue');expect(f.enroll).toHaveBeenCalledTimes(1);expect(f.verify).toHaveBeenCalledWith('DEMO password','123456',true,false);
+});
+test('a reload with a stored admin session opens the console without asking for MFA again (B00-33)',async()=>{
+ const f=fixture(['support.read'],true);mount(f);await screen.findByTestId('admin-queue');expect(screen.queryByTestId('admin-password')).toBeNull();expect(f.verify).not.toHaveBeenCalled();
 });
 test('an open admin console stays signed in when the app goes to the background (B00-32)',async()=>{
  const f=fixture(['support.read']);const onChange=new Set<(s:AppStateStatus)=>void>();jest.spyOn(AppState,'addEventListener').mockImplementation((type,listener)=>{if(type==='change')onChange.add(listener);return {remove:()=>onChange.delete(listener)};});mount(f);await enter();

@@ -31,3 +31,13 @@ test('completion API validates preview money and sends exact authorization and r
  f.transport.mockResolvedValueOnce(response({settlement_id:'s',actor_kind:'admin',invoice:{id:'i',settled:true,review_eligible:false}}));await f.client.complete('r',{checked:true,preview_token:'preview'},'same-key');expect(f.transport.mock.calls.at(-1)![1]!.headers).toMatchObject({'Idempotency-Key':'same-key'});
  f.transport.mockResolvedValueOnce(response({actor_kind:'worker'}));await expect(f.client.complete('r',{},'k')).rejects.toMatchObject({code:'INVALID_RESPONSE'});
 });
+
+test('verified admin session is kept for reloads per owner and forgotten on lock or rejection, not on leaving the screen (B00-33)',async()=>{
+ const f=await fixture();let stored:Record<string,unknown>|null=null;
+ const store={read:jest.fn((owner:string)=>stored&&stored.owner===owner?{token:stored.token as string,expires_at:stored.expires_at as string,fresh_until:stored.fresh_until as string}:null),write:jest.fn((owner:string,m:typeof mfa)=>{stored={owner,...m};}),clear:jest.fn(()=>{stored=null;})};
+ const client=new AdminApi(f.manager,session.user.id,'https://api.example.test/v1',f.transport,store);expect(client.expiresAt).toBe(0);
+ f.transport.mockResolvedValueOnce(response(mfa));await client.verify('DEMO','123456',false);expect(stored).toMatchObject({owner:session.user.id,token:'DEMO-mfa'});
+ client.detach();const reloaded=new AdminApi(f.manager,session.user.id,'https://api.example.test/v1',f.transport,store);expect(reloaded.expiresAt).toBe(Date.parse(mfa.expires_at));
+ expect(new AdminApi(f.manager,'00000000-0000-4000-8000-000000000999','https://api.example.test/v1',f.transport,store).expiresAt).toBe(0);
+ f.transport.mockResolvedValueOnce(response({}));await reloaded.lock();expect(stored).toBeNull();expect(reloaded.expiresAt).toBe(0);
+});

@@ -1,5 +1,12 @@
 # Checklist chức năng và bằng chứng
 
+## B00-33 — Lưu đăng nhập trên trình duyệt, 12/11/2026
+
+- [x] App web giữ refresh token trong localStorage (dùng bộ nhớ khi trình duyệt chặn); làm mới dưới khoá giữa các tab và đọc mã mới nhất, không dùng lại mã đã tiêu.
+- [x] Màn admin trong app web giữ phiên admin theo tài khoản qua F5; khoá/đăng xuất/bị từ chối thì xoá. Trang admin riêng giữ đăng nhập + phiên admin, các tab nhận mã đã đổi.
+- [x] Kiểm local: mobile 415/415, admin client 3/3, web E2E chọn lọc 10/10 (đăng nhập, ngôn ngữ, admin, bảo mật tài khoản), typecheck, ESLint. Không có bằng chứng SDD. [Báo cáo B00-33](bao-cao/B00-33-luu-dang-nhap-trinh-duyet.md).
+- [ ] Deploy lab cùng B00-32 và UAT: F5, hai tab, đăng xuất một tab.
+
 ## B00-32 — Admin đăng nhập một lần, mật khẩu từ 8 ký tự, API 0,5 vCPU, tạm dừng SDD, 12/11/2026
 
 - [x] Phiên admin sống bằng phiên đăng nhập (30 ngày), bỏ yêu cầu nhập lại MFA sau 5 phút; màn admin trong app không khoá khi xuống nền; hẹn giờ không vượt giới hạn trình duyệt.
@@ -7,9 +14,9 @@
 - [x] Task API lab `cpu = 512`; `lab:up --upgrade` (chỉ migrate) và `--skip-sdd` (ghi journal).
 - [x] CI chỉ chạy `SDD project` khi chạy tay; cổng image pilot đòi đúng job SDD thành công. `AGENTS.md` ghi quyết định tạm dừng SDD và đẩy thẳng `main`.
 - [x] Kiểm local: API unit 41/41 + integration 171/171, mobile 84/84, công cụ lab 32/32, Terraform 8/8, typecheck, ESLint. Không có bằng chứng SDD, chưa chạy web E2E/native. [Báo cáo B00-32](bao-cao/B00-32-noi-phien-admin-mat-khau-cpu-ci.md).
-- [ ] Chủ dự án gỡ bắt buộc status check/enforce admins của nhánh `main` trên GitHub (công cụ không được phép tự làm).
+- [x] Chủ dự án đã gỡ bắt buộc status check của nhánh `main`; `031583a` đẩy thẳng lên `main`.
 - [ ] Deploy lab bằng `lab:up --upgrade --skip-sdd`, UAT: admin không bị đẩy ra sau 15 phút/khi chuyển tab, mật khẩu 8 ký tự, gửi ảnh xác minh.
-- [ ] Quyết định: có giữ đăng nhập web qua F5 (lưu token trong trình duyệt) hay không.
+- [x] Quyết định: chủ dự án chọn lưu đăng nhập web trong trình duyệt, làm trong B00-33.
 
 ## B00-31 — Sửa API treo khi tải ảnh, lịch mất thao tác chọn ngày và CI chạy trùng, 12/11/2026
 

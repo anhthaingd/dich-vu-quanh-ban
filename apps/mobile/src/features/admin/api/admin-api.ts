@@ -1,3 +1,4 @@
+import {Platform} from 'react-native';
 import {ApiError} from '../../../lib/http/api-error';
 import {requestJson} from '../../../lib/http/request';
 import {record} from '../../jobs/api/jobs-api';
@@ -5,13 +6,26 @@ import type {AuthSession} from '../../auth/state/auth-session';
 import {isCompletionPreview,isCompletionResult,isItem, type Item, type Audit, type Page, type Domain} from '../models';
 
 type Mfa = {token:string;expires_at:string;fresh_until:string};
+export type MfaStore = {read(owner:string):Mfa|null;write(owner:string,mfa:Mfa):void;clear():void};
+// B00-33: on web the verified admin session survives a reload, like the sign-in. Native keeps it in memory.
+const mfaKey='dvqb.admin.mfa.v1';
+function local():Storage|null{try{return Platform.OS==='web'?globalThis.localStorage??null:null;}catch{return null;}}
+export const browserMfaStore:MfaStore={
+  read(owner){try{const v:unknown=JSON.parse(local()?.getItem(mfaKey)??'null');
+    return record(v)&&v.owner===owner&&typeof v.token==='string'&&typeof v.expires_at==='string'&&Date.parse(v.expires_at)>Date.now()&&typeof v.fresh_until==='string'?{token:v.token,expires_at:v.expires_at,fresh_until:v.fresh_until}:null;}catch{return null;}},
+  write(owner,mfa){try{local()?.setItem(mfaKey,JSON.stringify({owner,...mfa}));}catch{/* memory only */}},
+  clear(){try{local()?.removeItem(mfaKey);}catch{/* nothing stored */}},
+};
 export class AdminApi {
   private mfa:Mfa|null = null;
   private generation = 0;
   constructor(private readonly manager:AuthSession, private readonly owner:string,
-    private readonly base:string|undefined, private readonly transport:typeof fetch=globalThis.fetch.bind(globalThis)) {}
+    private readonly base:string|undefined, private readonly transport:typeof fetch=globalThis.fetch.bind(globalThis),
+    private readonly store:MfaStore=browserMfaStore) {this.mfa=store.read(owner);}
   get expiresAt(){return this.mfa ? Date.parse(this.mfa.expires_at) : 0;}
-  clear(){this.generation++;this.mfa=null;}
+  // Lock, logout and a rejected admin session forget it everywhere; leaving the screen only cancels work.
+  clear(){this.generation++;this.mfa=null;this.store.clear();}
+  detach(){this.generation++;}
   private async call<T>(path:string,validate:(v:unknown)=>v is T,body?:unknown,key?:string,method:'POST'|'PUT'='POST'):Promise<T> {
     if (!this.base || !/^https?:\/\//.test(this.base)) throw new ApiError('CONFIG');
     const generation=this.generation, mfa=this.mfa;
@@ -26,7 +40,8 @@ export class AdminApi {
   async status(){return (await this.call('/admin/auth/status',(v):v is {enrolled:boolean}=>record(v)&&typeof v.enrolled==='boolean')).enrolled;}
   enroll(password:string){return this.call('/admin/auth/enrollment',(v):v is {secret:string;uri:string}=>record(v)&&typeof v.secret==='string'&&typeof v.uri==='string',{password});}
   async verify(password:string,code:string,enrollment:boolean,recovery=false){
-    this.mfa=await this.call(recovery?'/admin/auth/recover':enrollment?'/admin/auth/enrollment/confirm':'/admin/auth/verify',(v):v is Mfa=>record(v)&&typeof v.token==='string'&&typeof v.expires_at==='string'&&Number.isFinite(Date.parse(v.expires_at))&&typeof v.fresh_until==='string'&&Number.isFinite(Date.parse(v.fresh_until)),{password,code});
+    const mfa=await this.call(recovery?'/admin/auth/recover':enrollment?'/admin/auth/enrollment/confirm':'/admin/auth/verify',(v):v is Mfa=>record(v)&&typeof v.token==='string'&&typeof v.expires_at==='string'&&Number.isFinite(Date.parse(v.expires_at))&&typeof v.fresh_until==='string'&&Number.isFinite(Date.parse(v.fresh_until)),{password,code});
+    this.mfa=mfa;this.store.write(this.owner,mfa);
   }
   replace(password:string){return this.call('/admin/auth/replacement',(v):v is {secret:string;uri:string}=>record(v)&&typeof v.secret==='string'&&typeof v.uri==='string',{password});}
   async backupCodes(){return (await this.call('/admin/auth/backup-codes',(v):v is {codes:string[]}=>record(v)&&Array.isArray(v.codes)&&v.codes.length===10&&v.codes.every(c=>typeof c==='string'&&/^[a-f0-9]{32}$/.test(c)),{})).codes;}

@@ -48,7 +48,8 @@ test('language changes keep form/session/category, translate errors and persist 
   await page.reload();
   await expect(page.getByRole('heading', { name: 'ぴったりの提供者を探す。', exact: true })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
-  expect(await page.evaluate(() => ({ ...globalThis.localStorage }))).toEqual({ 'dvqb.locale.v1': 'ja' });
+  // The sign-in is also kept since B00-33; the language choice is the only other stored value.
+  expect(await page.evaluate(() => Object.entries(globalThis.localStorage).filter(([k]) => !k.startsWith('dvqb.auth.')))).toEqual([['dvqb.locale.v1', 'ja']]);
   expect((await environment.pool.query('SELECT locale,version FROM users WHERE id=$1', [account.id])).rows[0]).toEqual({ locale: 'ja', version: 2 });
   const horizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
   expect(horizontalOverflow).toBe(false);

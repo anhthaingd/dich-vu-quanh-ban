@@ -15,11 +15,13 @@ const errorCode=(e:unknown)=>e instanceof ClientError?e.code:'NETWORK';
 function message(code:string,t:T){return t(code==='NETWORK'||code==='INVALID_RESPONSE'?'network':code==='RATE_LIMITED'?'rate':code==='VERSION_CONFLICT'||code==='STATE_CONFLICT'?'conflict':['FORBIDDEN','UNAUTHENTICATED','REAUTH_REQUIRED'].includes(code)?'forbidden':'failed');}
 const states:Record<string,string[]>={users:['active','suspended','deletion_requested','anonymized'],partners:['active','new_work_suspended','suspended'],categories:['active','inactive'],skills:['active','inactive'],reports:['open','reviewing','awaiting_evidence','resolved','closed'],verifications:['pending','awaiting_evidence','approved','rejected'],reviews:['visible','hidden','removed']};
 export function App({client}:{client:AdminClient}){
- const [locale,setLocale]=useState<Locale>('vi'),[phase,setPhase]=useState<'login'|'mfa'|'desk'>('login'),[enrolled,setEnrolled]=useState(false),[setup,setSetup]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[epoch,setEpoch]=useState(0);
+ const [locale,setLocale]=useState<Locale>('vi'),[phase,setPhase]=useState<'login'|'mfa'|'desk'>(()=>!client.session?'login':client.mfa?'desk':'mfa'),[enrolled,setEnrolled]=useState(()=>!!client.mfa),[setup,setSetup]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[epoch,setEpoch]=useState(0);
  const t=useMemo(()=>translator(locale),[locale]);
  const [recovery,setRecovery]=useState(false),mt=mfaText(locale);
  const fail=(e:unknown)=>{const c=errorCode(e);setError(c);if(c==='UNAUTHENTICATED'){client.clear();setSetup('');setPhase('login');}else if(c==='FORBIDDEN'||c==='REAUTH_REQUIRED'){client.mfa=null;setSetup('');setPhase('mfa');}};
  const lock=async()=>{setBusy(true);try{await client.lock();setError('');}catch(e){setError(errorCode(e));}finally{setPhase('mfa');setSetup('');setEpoch(n=>n+1);setBusy(false);}};
+ // After a reload with a stored sign-in but no admin session, learn whether MFA still needs setup.
+ useEffect(()=>{if(phase!=='mfa'||!client.session)return;let live=true;void client.status().then(v=>{if(live)setEnrolled(v);}).catch(e=>{if(live)fail(e);});return()=>{live=false;};},[]);
  useEffect(()=>{if(phase!=='desk'||!client.mfa)return;const timer=setTimeout(()=>{client.mfa=null;setPhase('mfa');setEpoch(n=>n+1);},Math.min(maxTimer,Math.max(0,Date.parse(client.mfa.expires_at)-Date.now())));return()=>clearTimeout(timer);},[phase,client,epoch]);
  const submit=async(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();const form=e.currentTarget,data=new FormData(form);setBusy(true);setError('');try{
   const password=String(data.get('password')??'');

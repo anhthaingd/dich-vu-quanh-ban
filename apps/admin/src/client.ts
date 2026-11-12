@@ -7,16 +7,47 @@ export type Page={items:Item[];next_cursor:string|null};
 export type Audit={id:string;resource_type:string;resource_id:string;actor_id:string|null;action:string;reason:string|null;created_at:string};
 function object(v:unknown):v is Record<string,unknown>{return !!v&&typeof v==='object'&&!Array.isArray(v);}
 export function isItem(v:unknown):v is Item{return object(v)&&typeof v.id==='string'&&Number.isInteger(v.version)&&Number(v.version)>0&&(v.internal_notes===undefined||Array.isArray(v.internal_notes)&&v.internal_notes.every(n=>object(n)&&typeof n.id==='string'&&typeof n.body==='string'&&typeof n.created_at==='string'))&&Array.isArray(v.history)&&v.history.every(h=>object(h)&&typeof h.reason==='string'&&typeof h.action==='string'&&typeof h.created_at==='string')&&(typeof v.name==='string'&&typeof v.state==='string'||typeof v.subject==='string'&&typeof v.body==='string'&&Array.isArray(v.evidence_ids)&&Array.isArray(v.updates)||typeof v.stars==='number'&&typeof v.body==='string'&&typeof v.hidden==='boolean'&&typeof v.removed==='boolean'||object(v.details)&&typeof v.details.statement==='string'&&Array.isArray(v.document_asset_ids));}
+export type Stored={session:Session;mfa:AdminSession|null};
+export type CredentialStore={read():Stored|null;write(value:Stored):void;clear():void};
+type Locks={request<T>(name:string,work:()=>Promise<T>):Promise<T>};
+// B00-33 (owner decision 12/11/2026): the console keeps its sign-in and verified admin session across reloads
+// and tabs. Refresh tokens are single use and a replay revokes the login, so tabs refresh under one lock and
+// adopt a token another tab already rotated.
+export function browserStore(key='dvqb.admin.console.v1'):CredentialStore{
+ const local=()=>{try{return globalThis.localStorage??null;}catch{return null;}};
+ return {
+  read(){try{const v:unknown=JSON.parse(local()?.getItem(key)??'null');return object(v)&&isSession(v.session)&&(v.mfa===null||isAdminSession(v.mfa))?{session:v.session,mfa:v.mfa as AdminSession|null}:null;}catch{return null;}},
+  write(value){try{local()?.setItem(key,JSON.stringify(value));}catch{/* memory only */}},
+  clear(){try{local()?.removeItem(key);}catch{/* nothing stored */}},
+ };
+}
 export class AdminClient {
- session:Session|null=null;mfa:AdminSession|null=null;
- constructor(readonly base:string,private readonly transport:typeof fetch=globalThis.fetch.bind(globalThis)){}
- clear(){this.session=null;this.mfa=null;}
+ private current:Session|null=null;private admin:AdminSession|null=null;
+ constructor(readonly base:string,private readonly transport:typeof fetch=globalThis.fetch.bind(globalThis),private readonly store?:CredentialStore){
+  const stored=store?.read();if(stored){this.current=stored.session;this.admin=stored.mfa&&Date.parse(stored.mfa.expires_at)>Date.now()?stored.mfa:null;}
+ }
+ get session(){return this.current;}
+ set session(v:Session|null){this.current=v;this.save();}
+ get mfa(){return this.admin;}
+ set mfa(v:AdminSession|null){this.admin=v;this.save();}
+ private save(){if(!this.store)return;if(this.current)this.store.write({session:this.current,mfa:this.admin});else this.store.clear();}
+ clear(){this.current=null;this.admin=null;this.save();}
+ private async refresh(){
+  const run=async()=>{
+   const stored=this.store?.read();
+   if(stored&&this.current&&stored.session.refresh_token!==this.current.refresh_token&&stored.session.user.id===this.current.user.id){this.current=stored.session;if(stored.mfa)this.admin=stored.mfa;return;}
+   // Signed out elsewhere: the server revoked the family, so the refresh below answers 401 and clears.
+   const refresh=await this.call('/auth/refresh','POST',{refresh_token:this.current!.refresh_token},undefined,false);if(!isSession(refresh)){this.clear();throw new ClientError('UNAUTHENTICATED');}this.session=refresh;
+  };
+  const locks=this.store?(globalThis.navigator as {locks?:Locks}|undefined)?.locks:undefined;
+  return locks?locks.request('dvqb.admin.refresh',run):run();
+ }
  async call(path:string,method='GET',body?:unknown,key?:string,retry=true):Promise<unknown>{
   const abort=new AbortController(),timer=setTimeout(()=>abort.abort(),20000);
   try{
    const r=await this.transport(this.base+path,{method,signal:abort.signal,cache:'no-store',headers:{'Content-Type':'application/json',...(this.session?{Authorization:'Bearer '+this.session.access_token}:{}),...(this.mfa?{'X-Admin-Session':this.mfa.token}:{}),...(key?{'Idempotency-Key':key}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});
    if(r.status===401&&retry&&this.session&&path!=='/auth/refresh'){
-    const refresh=await this.call('/auth/refresh','POST',{refresh_token:this.session.refresh_token},undefined,false);if(!isSession(refresh)){this.clear();throw new ClientError('UNAUTHENTICATED');}this.session=refresh;return this.call(path,method,body,key,false);
+    await this.refresh();return this.call(path,method,body,key,false);
    }
    const v=await r.json();if(!r.ok){const code=object(v)&&typeof v.code==='string'?v.code:r.status===401?'UNAUTHENTICATED':r.status===403?'FORBIDDEN':'FAILED';if(r.status===401)this.clear();throw new ClientError(code);}return v;
   }catch(e){if(e instanceof ClientError)throw e;throw new ClientError('NETWORK');}finally{clearTimeout(timer);}
@@ -39,6 +70,7 @@ export class AdminClient {
  async logout(){try{await this.call('/auth/logout','POST');}finally{this.clear();}}
  async lock(){try{await this.call('/admin/auth/lock','POST');}finally{this.mfa=null;}}
 }
+function isAdminSession(v:unknown):v is AdminSession{return object(v)&&typeof v.token==='string'&&typeof v.expires_at==='string'&&typeof v.fresh_until==='string';}
 function isSession(v:unknown):v is Session{return object(v)&&typeof v.access_token==='string'&&typeof v.refresh_token==='string'&&typeof v.expires_at==='string'&&object(v.user)&&typeof v.user.id==='string'&&Array.isArray(v.user.admin_permissions)&&v.user.admin_permissions.every(p=>typeof p==='string');}
 
 export type CompletionPreview={invoice_id:string;invoice_version_id:string;invoice_expected_version:number;total:string;cash_due:string;fee:string;points_used:string;reward:string;partner_delta:string;preview_token:string;expires_at:string};

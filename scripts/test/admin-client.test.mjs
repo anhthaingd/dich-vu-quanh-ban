@@ -17,3 +17,21 @@ test('admin refresh retries an uncertain request with unchanged key and MFA, and
  assert.equal(requests[0].init.body,requests[2].init.body);assert.equal(requests[0].init.headers['Idempotency-Key'],requests[2].init.headers['Idempotency-Key']);assert.equal(requests[2].init.headers['X-Admin-Session'],'mfa');assert.equal(requests[2].init.headers.Authorization,'Bearer new-access');
  await assert.rejects(client.call('/admin/reports'),/UNAUTHENTICATED/);assert.equal(client.session,null);assert.equal(client.mfa,null);
 });
+test('admin console keeps sign-in and admin session across reloads and tabs without replaying a spent refresh token (B00-33)',async()=>{
+ let saved=null;const store={read:()=>saved&&JSON.parse(saved),write:v=>{saved=JSON.stringify(v);},clear:()=>{saved=null;}};
+ // Server: each refresh token works once; any replay revokes the login.
+ let current='r0',n=0,revoked=false;const user={id:'admin',admin_permissions:['support.read']};
+ const transport=async(url,init)=>{const path=String(url).replace('http://localhost/v1','');const body=init.body?JSON.parse(init.body):{};
+  if(path==='/auth/login'){return new globalThis.Response(JSON.stringify({access_token:'a0',refresh_token:current,expires_at:'2099-01-01T00:00:00Z',user}),{status:200});}
+  if(path==='/auth/refresh'){if(revoked||body.refresh_token!==current){revoked=true;return new globalThis.Response('{}',{status:401});}current='r'+(++n);return new globalThis.Response(JSON.stringify({access_token:'a'+n,refresh_token:current,expires_at:'2099-01-01T00:00:00Z',user}),{status:200});}
+  if(path==='/admin/auth/verify')return new globalThis.Response(JSON.stringify({token:'m',expires_at:'2099-01-01T00:00:00Z',fresh_until:'2099-01-01T00:00:00Z'}),{status:201});
+  if(path==='/auth/logout')return new globalThis.Response('{}',{status:200});
+  // Access tokens older than the newest rotation are rejected, as the server revokes the rotated session row.
+  return new globalThis.Response('{"ok":true}',{status:init.headers.Authorization==='Bearer a'+n?200:401});};
+ const a=new AdminClient('http://localhost/v1',transport,store);await a.login('admin@example.test','DEMO');await a.verify('DEMO','123456',false);
+ const b=new AdminClient('http://localhost/v1',transport,store);assert.equal(b.session.refresh_token,'r0');assert.equal(b.mfa.token,'m');
+ assert.deepEqual(await a.call('/admin/reports'),{ok:true});assert.deepEqual(await b.call('/admin/reports'),{ok:true});assert.deepEqual(await a.call('/admin/reports'),{ok:true});
+ assert.equal(revoked,false);assert.equal(JSON.parse(saved).session.refresh_token,current);
+ const expired=new AdminClient('http://localhost/v1',transport,{read:()=>({session:JSON.parse(saved).session,mfa:{token:'old',expires_at:'2000-01-01T00:00:00Z',fresh_until:'2000-01-01T00:00:00Z'}}),write(){},clear(){}});assert.equal(expired.mfa,null);
+ await a.logout();assert.equal(saved,null);
+});
