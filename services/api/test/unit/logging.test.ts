@@ -1,4 +1,4 @@
-import { safeRoute } from '../../src/logging/sanitize.js';
+import { safeRoute, loggedRoute, sanitize as sanitizeRecord } from '../../src/logging/sanitize.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -57,4 +57,16 @@ test('account route logging keeps templates only and rejects arbitrary private p
   assert.equal(safeRoute(`/v1/me/addresses/${id}/archive`),'/v1/me/addresses/:id/archive');
   assert.equal(safeRoute(`/v1/me/sessions/${id}/revoke`),'/v1/me/sessions/:id/revoke');
   for(const path of ['/v1/me/addresses/PRIVATE_CANARY',`/v1/me/sessions/${id}/archive`,'/private']) assert.equal(safeRoute(path),'unmatched');
+});
+
+test('logs keep the matched route template, never path values (B00-31)', () => {
+  const id='00000000-0000-4000-8000-000000000001';
+  assert.equal(loggedRoute('/v1/partners/:id/verification',`/v1/partners/${id}/verification`),'/v1/partners/:id/verification');
+  assert.equal(loggedRoute('/v1/admin/verifications/:id/decision',`/v1/admin/verifications/${id}/decision`),'/v1/admin/verifications/:id/decision');
+  // No router match (404) or an unexpected value falls back to the reviewed allowlist.
+  assert.equal(loggedRoute(undefined,`/v1/me/addresses/${id}`),'/v1/me/addresses/:id');
+  for(const bad of [`/v1/partners/${id}`,'/v1/x/PRIVATE CANARY','/private/:id',['/v1/jobs'],'/v1/'+'a'.repeat(130)]) assert.notEqual(loggedRoute(bad,'/v1/me/addresses/PRIVATE_CANARY'),bad);
+  assert.equal(loggedRoute(`/v1/partners/${id}`,'/x'),'unmatched');
+  assert.deepEqual(sanitizeRecord({ route: '/v1/partners/:id/verification' }), { route: '/v1/partners/:id/verification' });
+  assert.deepEqual(sanitizeRecord({ route: '/secret/:id' }), {});
 });

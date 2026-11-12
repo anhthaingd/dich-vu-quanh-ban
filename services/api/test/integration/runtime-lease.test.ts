@@ -33,7 +33,20 @@ test('singleton heartbeat timeout fails closed without reacquiring or releasing 
  const {EventEmitter}=await import('node:events');
  let queries=0,releases=0,losses=0;
  const client=Object.assign(new EventEmitter(),{query:async()=>{queries++;if(queries===1)return {rows:[{acquired:true}]};return new Promise<never>(()=>{});},release:()=>{releases++;}});
- const lease=new RuntimeLease({connect:async()=>client} as unknown as import('pg').Pool,true);
+ const lease=new RuntimeLease({connect:async()=>client} as unknown as import('pg').Pool,true,50);
  lease.onLoss(()=>{losses++;});await lease.acquire();await assert.rejects(lease.check());assert.equal(lease.ready,false);assert.equal(releases,1);assert.ok(losses>=1);
  await assert.rejects(lease.check());await lease.onModuleDestroy();assert.equal(releases,1);assert.equal(queries,2);
+});
+
+test('slow but live heartbeat keeps the singleton lease (CPU starvation is not loss)',async()=>{
+ const {EventEmitter}=await import('node:events');
+ let queries=0,releases=0,losses=0;
+ // Replies after 1.2s: slower than the former 1s limit that stopped the lab API on 12/11 (B00-31).
+ const client=Object.assign(new EventEmitter(),{query:async()=>{queries++;if(queries===1)return {rows:[{acquired:true}]};await new Promise(r=>setTimeout(r,1200));return {rows:[{'?column?':1}]};},release:()=>{releases++;}});
+ const lease=new RuntimeLease({connect:async()=>client} as unknown as import('pg').Pool,true);
+ lease.onLoss(()=>{losses++;});await lease.acquire();
+ await lease.check();assert.equal(lease.ready,true);assert.equal(losses,0);assert.equal(releases,0);
+ // A dropped session still fails closed immediately through the client error event.
+ client.emit('error',new Error('terminated'));assert.equal(lease.ready,false);assert.equal(losses,1);assert.equal(releases,1);
+ await assert.rejects(lease.check());await lease.onModuleDestroy();assert.equal(releases,1);
 });

@@ -6,7 +6,10 @@ import {ServiceUnavailableException,type OnModuleDestroy} from '@nestjs/common';
 export class RuntimeLease implements OnModuleDestroy {
  private client?:PoolClient;private timer?:ReturnType<typeof setInterval>;private pending?:Promise<void>;
  private active:boolean;private readonly listeners=new Set<()=>void>();
- constructor(private readonly pool:Pool,private readonly enabled=false){this.active=!enabled;}
+ // A dropped session reaches us immediately as a client 'error'; the timeout only bounds a hung socket.
+ // PostgreSQL keeps the advisory lock while the session lives, so a slow reply (e.g. the 0.25 vCPU task
+ // starved by image processing and scrypt) must not be treated as loss: 1s did, and ECS killed the API (B00-31).
+ constructor(private readonly pool:Pool,private readonly enabled=false,private readonly heartbeatTimeoutMs=10_000){this.active=!enabled;}
  get ready(){return this.active;}
  onLoss(fn:()=>void){this.listeners.add(fn);return()=>{this.listeners.delete(fn);};}
  async acquire(){
@@ -27,7 +30,7 @@ export class RuntimeLease implements OnModuleDestroy {
  async check(){
   if(!this.active)throw new ServiceUnavailableException();
   if(!this.enabled)return;
-  if(!this.pending)this.pending=(async()=>{try{let timeout:ReturnType<typeof setTimeout>|undefined;try{await Promise.race([this.client!.query('SELECT 1'),new Promise<never>((_,reject)=>{timeout=setTimeout(()=>reject(new Error('Lease heartbeat timeout')),1000);})]);}finally{clearTimeout(timeout);}if(!this.active)throw new Error('lease lost');}catch{this.lost();throw new ServiceUnavailableException();}})().finally(()=>{this.pending=undefined;});
+  if(!this.pending)this.pending=(async()=>{try{let timeout:ReturnType<typeof setTimeout>|undefined;try{await Promise.race([this.client!.query('SELECT 1'),new Promise<never>((_,reject)=>{timeout=setTimeout(()=>reject(new Error('Lease heartbeat timeout')),this.heartbeatTimeoutMs);})]);}finally{clearTimeout(timeout);}if(!this.active)throw new Error('lease lost');}catch{this.lost();throw new ServiceUnavailableException();}})().finally(()=>{this.pending=undefined;});
   return this.pending;
  }
  async onModuleDestroy(){this.lost();await this.pending?.catch(()=>{});this.listeners.clear();}

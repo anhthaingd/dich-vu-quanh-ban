@@ -1649,6 +1649,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-31-sua-api-treo-lich-va-ci.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
       "kind": "documentation"
     },
@@ -6041,6 +6045,10 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/integration/request-locking.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/integration/reviews.test.ts",
       "kind": "test"
     },
@@ -6983,6 +6991,7 @@
       "services/api/test/integration/profile.test.ts",
       "services/api/test/integration/push.test.ts",
       "services/api/test/integration/realtime.test.ts",
+      "services/api/test/integration/request-locking.test.ts",
       "services/api/test/integration/reviews.test.ts",
       "services/api/test/integration/runtime-lease.test.ts",
       "services/api/test/integration/support.test.ts",

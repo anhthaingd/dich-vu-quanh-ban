@@ -95,10 +95,21 @@ export class AuthService {
       claims = (await jwtVerify(header.slice(7), this.key, { algorithms: ['HS256'], issuer, audience, requiredClaims: ['sub','sid','exp','iat'] })).payload;
     } catch { throw new UnauthorizedException(); }
     if (typeof claims.sid !== 'string' || !uuid.test(claims.sid) || !claims.sub || !uuid.test(claims.sub)) throw new UnauthorizedException();
-    const { rows: [user] } = await db.query<User>(`UPDATE sessions s SET last_seen_at=clock_timestamp() FROM users u
-      WHERE s.user_id=u.id AND s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND ((u.status='active' AND s.scope='app') OR ($3::boolean AND u.status='suspended' AND s.scope='support')) RETURNING u.id,u.display_name,u.status,u.locale,u.version`, [claims.sid,claims.sub,allowSupport]);
+    // Inside a caller's transaction, share-lock the session: a concurrent revocation still waits for this
+    // write to commit, but other requests of the same session no longer queue behind it. Previously this
+    // was an UPDATE (exclusive row lock), so one slow write stalled every read of that user until
+    // statement_timeout cancelled them (B00-31).
+    const inTransaction = db !== this.pool;
+    const { rows: [user] } = await db.query<User>(`SELECT u.id,u.display_name,u.status,u.locale,u.version FROM sessions s JOIN users u ON u.id=s.user_id
+      WHERE s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND ((u.status='active' AND s.scope='app') OR ($3::boolean AND u.status='suspended' AND s.scope='support'))${inTransaction ? ' FOR SHARE OF s' : ''}`, [claims.sid,claims.sub,allowSupport]);
     if (!user) throw new UnauthorizedException();
+    if (!inTransaction) await this.touch(claims.sid);
     return { user: await this.me(user, db), sessionId: claims.sid, expiresAt: Number(claims.exp)*1000 };
+  }
+  // Last activity is advisory: write at most once a minute and never wait for a row another request holds.
+  private async touch(sessionId: string) {
+    await this.pool.query(`UPDATE sessions SET last_seen_at=clock_timestamp() WHERE id=(SELECT id FROM sessions
+      WHERE id=$1 AND (last_seen_at IS NULL OR last_seen_at<clock_timestamp()-interval '1 minute') FOR NO KEY UPDATE SKIP LOCKED)`, [sessionId]);
   }
   async logout(header: string | undefined) {
     const { sessionId, user } = await this.authenticate(header,this.pool,true);

@@ -1,5 +1,14 @@
 # Checklist chức năng và bằng chứng
 
+## B00-31 — Sửa API treo khi tải ảnh, lịch mất thao tác chọn ngày và CI chạy trùng, 12/11/2026
+
+- [x] Tìm nguyên nhân sự cố lab 16:01–16:05: xử lý ảnh trong giao dịch giữ khoá phiên, đọc bị huỷ sau 5 giây, nhịp kiểm khoá 1 giây trên 0,25 vCPU làm ECS thay task.
+- [x] Xử lý ảnh ngoài giao dịch; xác thực trong giao dịch dùng khoá chia sẻ, `last_seen_at` tối đa mỗi phút; nhịp kiểm khoá 10 giây; pool 10; log ghi mẫu route.
+- [x] Lịch: nút hồ sơ hiện trước khi tải việc, không đẩy lịch khi đang nhấn. CI: một lượt cho mỗi commit PR, `main` không bị huỷ.
+- [x] Test hồi quy mới thất bại trên code cũ, đạt trên code mới; SDD local 12/12, API 211/211, web E2E 35/35. [Báo cáo B00-31](bao-cao/B00-31-sua-api-treo-lich-va-ci.md).
+- [ ] CI `SDD project` trên commit mới, merge PR #1, deploy lab từ commit và thử lại gửi ảnh xác minh trên lab.
+- [ ] Quyết định chi phí nếu muốn tăng CPU task API; quyết định có nới khoá phiên admin hay không.
+
 ## B00-30 — Tổng kết deploy AWS-02, 11/11/2026
 
 - [x] Ghi việc đã làm: AWS account/credits, DNS/ACM, Resend/LiveKit/Expo, Terraform lab và các endpoint đã phát hành.

@@ -1,10 +1,17 @@
 name: Quality
-on: [push, pull_request, workflow_dispatch]
+# main is protected: changes arrive through pull requests. Running on both push and
+# pull_request doubled every PR run (~25 min each) in separate concurrency groups.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: quality-${{ github.ref }}
-  cancel-in-progress: true
+  group: quality-${{ github.event.pull_request.number || github.ref }}
+  # Superseded PR runs are cancelled; a run on main always finishes and records evidence.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 env:
   CI: '1'
   NODE_ENV: test
