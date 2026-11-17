@@ -16,6 +16,7 @@ Sau khi hoàn tất, bạn sẽ mở app và trang quản trị qua Internet, d�
 | [04 Domain, DNS và HTTPS](04-domain-https.md) | ACM, CNAME, Cloudflare, DNS only; hoàn tất bước đang dừng |
 | [05 Chuẩn bị và chạy deploy](05-chuan-bi-deploy.md) | Config, key, provider, plan/apply, database và quản trị viên đầu tiên |
 | [06 Vận hành, dọn lab và xử lý lỗi](06-van-hanh.md) | Kiểm app thật, theo dõi phí, dựng/dọn an toàn, đọc lỗi và tự kiểm hiểu |
+| [07 Dịch vụ AWS và cách xem trên Console](07-dich-vu-va-console.md) | Mỗi dịch vụ để làm gì, nối với nhau ra sao, xem tình trạng/chỉ số/chi phí ở màn nào; kiểm sức khoẻ 5 phút và tra sự cố (thêm ngày 17/11/2026, B00-34) |
 
 Đây là tài liệu học theo trường hợp của bạn. [Runbook kỹ thuật](../../../infra/aws/lab/README.md) và [code runner](../../../scripts/aws/lab.mjs) là nơi đối chiếu cách lệnh thực thi. [AWS-02](../de-xuat/AWS-02-lab-khong-phi-khi-tat.md) là hướng đã chọn; AWS-01 là hướng pilot lịch sử.
 

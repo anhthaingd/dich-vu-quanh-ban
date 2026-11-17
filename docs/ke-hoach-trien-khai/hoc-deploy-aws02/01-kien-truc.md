@@ -66,7 +66,7 @@ Hai subnet database ở hai Availability Zone phục vụ bố trí mạng. RDS 
 
 | Cấu hình code | Tác dụng và đánh đổi |
 |---|---|
-| Fargate `cpu = 256`, `memory = 1024` | Task 0,25 vCPU và 1 GiB RAM; phải đo thực tế, không suy ra đủ tải production |
+| Fargate `cpu = 512`, `memory = 1024` | Task API 0,5 vCPU và 1 GiB RAM (B00-32 tăng từ 0,25 vCPU sau sự cố 12/11); phải đo thực tế, không suy ra đủ tải production |
 | RDS `db.t4g.micro`, PostgreSQL 17 | Database nhỏ cho lab; image API x86 không cần cùng kiến trúc CPU với DB qua mạng |
 | RDS storage 20 GiB, tối đa 100 GiB | Có khả năng tự tăng storage trong code lab; khác hướng dẫn onboarding tạm thời tắt autoscaling |
 | Backup retention 0, bỏ final snapshot | Phù hợp lab dữ liệu thử bị xóa; không phải cấu hình giữ dữ liệu người dùng thật |

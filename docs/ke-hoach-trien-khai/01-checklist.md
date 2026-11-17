@@ -1,5 +1,10 @@
 # Checklist chức năng và bằng chứng
 
+## B00-34 — Tài liệu học dịch vụ AWS và cách xem trên Console, 17/11/2026
+
+- [x] Viết [phần 07](hoc-deploy-aws02/07-dich-vu-va-console.md): vai trò từng dịch vụ, cách nối, hành trình request, các bước xem trên Console, chi phí/credits/budget, Logs Insights, kiểm sức khoẻ và tra sự cố. [Báo cáo B00-34](bao-cao/B00-34-tai-lieu-dich-vu-aws-console.md).
+- [ ] Chủ dự án đọc kèm Console thật; ghi lại màn nào khác mô tả để cập nhật.
+
 ## B00-33 — Lưu đăng nhập trên trình duyệt, 12/11/2026
 
 - [x] App web giữ refresh token trong localStorage (dùng bộ nhớ khi trình duyệt chặn); làm mới dưới khoá giữa các tab và đọc mã mới nhất, không dùng lại mã đã tiêu.

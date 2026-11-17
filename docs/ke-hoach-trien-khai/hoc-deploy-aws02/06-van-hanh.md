@@ -108,4 +108,4 @@ Lỗi Lambda onboarding đã gặp là `Identifier 'handler' has already been de
 6. **Xóa EC2 có dọn lab này không?** Không, lab dùng nhiều dịch vụ độc lập; dùng vòng đời runner và audit.
 7. **Test local xanh có chứng minh email/push thật không?** Không; cần kiểm provider và thiết bị tương ứng.
 
-Quay lại [checklist thực tế](README.md) và ghi mốc đạt khi có bằng chứng.
+Tiếp: [Dịch vụ AWS và cách xem trên Console](07-dich-vu-va-console.md). Quay lại [checklist thực tế](README.md) và ghi mốc đạt khi có bằng chứng.

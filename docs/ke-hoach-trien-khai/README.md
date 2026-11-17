@@ -1,5 +1,7 @@
 # Kế hoạch triển khai và học code
 
+**17/11/2026 — Hiểu và xem các dịch vụ AWS trên Console:** [B00-34](bao-cao/B00-34-tai-lieu-dich-vu-aws-console.md) giới thiệu [phần 07](hoc-deploy-aws02/07-dich-vu-va-console.md) của bộ học deploy: mỗi dịch vụ AWS của lab để làm gì, nối với nhau thế nào, xem tình trạng và chi phí ở màn Console nào.
+
 **12/11/2026 — Lưu đăng nhập trên trình duyệt:** [B00-33](bao-cao/B00-33-luu-dang-nhap-trinh-duyet.md) giải thích vì sao F5 không còn đăng xuất, hai tab dùng chung đăng nhập mà không tự đăng xuất nhau, và rủi ro khi lưu token trong trình duyệt.
 
 **12/11/2026 — Nới phiên admin, mật khẩu, CPU và CI:** [B00-32](bao-cao/B00-32-noi-phien-admin-mat-khau-cpu-ci.md) giải thích vì sao admin giờ chỉ cần đăng nhập một lần, mật khẩu từ 8 ký tự, API lab 0,5 vCPU, cách cập nhật lab đang chạy bằng `--upgrade` và việc tạm dừng SDD khi push.

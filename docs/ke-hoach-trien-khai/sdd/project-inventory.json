@@ -1661,6 +1661,10 @@
       "kind": "documentation"
     },
     {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-34-tai-lieu-dich-vu-aws-console.md",
+      "kind": "documentation"
+    },
+    {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B01-01-email-mat-khau.md",
       "kind": "documentation"
     },
@@ -4566,6 +4570,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/hoc-deploy-aws02/06-van-hanh.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/hoc-deploy-aws02/07-dich-vu-va-console.md",
       "kind": "documentation"
     },
     {
