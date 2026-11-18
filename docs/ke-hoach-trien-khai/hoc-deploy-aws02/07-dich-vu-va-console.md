@@ -206,16 +206,18 @@ flowchart TD
   A["Mac build image API"] --> B["Đẩy image vào ECR"]
   B --> C["Terraform tạo bản task definition mới"]
   C --> D["Task ops chạy migrate database"]
-  D --> E["ECS bật task API mới, task cũ vẫn chạy"]
+  D --> E["ECS dừng task cũ rồi bật task mới (realtime chỉ cho 1 task)"]
   E --> F{"ALB gọi /v1/ready: task mới khoẻ chưa?"}
-  F -->|"khoẻ 2 lần liền"| G["ALB chuyển request sang task mới, dừng task cũ"]
+  F -->|"khoẻ 2 lần liền"| G["ALB chuyển request sang task mới"]
   F -->|"lỗi nhiều lần"| H["Circuit breaker quay về bản cũ"]
   G --> I["Cập nhật DNS Cloudflare"]
   I --> J["Build web/admin, đẩy lên S3, xoá bản lưu CloudFront"]
   J --> K["Kiểm HTTPS app, admin, API"]
 ```
 
-"Circuit breaker" là cơ chế tự ngắt của ECS: bản mới không khoẻ thì quay về bản cũ, người dùng không bị mất dịch vụ. Khi điều này xảy ra, bản mới **chưa** được deploy thành công.
+Lab bật realtime (chat, cuộc gọi). Realtime chỉ chạy đúng một task API, nên ECS phải dừng task cũ trước rồi mới bật task mới. **API gián đoạn vài phút mỗi lần deploy.** Lần deploy ngày 18/11 ngừng khoảng 3 phút. Nếu tắt realtime, ECS bật task mới trước, đợi nó khoẻ rồi mới dừng task cũ, nên không gián đoạn.
+
+"Circuit breaker" là cơ chế tự ngắt của ECS: bản mới không khoẻ thì quay về bản cũ. Khi điều này xảy ra, bản mới **chưa** được deploy thành công.
 
 ## 5. Cloudflare DNS (ngoài AWS)
 
@@ -373,7 +375,14 @@ Kích thước task API: **0,5 vCPU, 1 GB RAM** theo B00-32. Bản này có hi�
 
 ## 10. ALB và target group: người điều phối
 
-**Để làm gì:** ALB (Application Load Balancer) nhận request từ CloudFront và chuyển cho task API đang khoẻ. Khi deploy, ALB chỉ chuyển sang task mới sau khi task đó khoẻ, nên người dùng không bị gián đoạn.
+**Để làm gì:** ALB (Application Load Balancer) nhận request từ CloudFront và chuyển cho task API đang khoẻ. Khi deploy, ALB chỉ chuyển sang task mới sau khi task đó khoẻ. Vì lab chạy một task (do realtime), giữa lúc dừng task cũ và lúc task mới khoẻ, API vẫn gián đoạn vài phút; xem [hành trình 4](#hành-trình-4-một-lần-labup-deploy-bản-mới).
+
+**Vì sao không để CloudFront gọi thẳng task:**
+
+- IP của task đổi mỗi lần deploy. ALB có địa chỉ cố định, ECS tự đăng ký và huỷ IP task với ALB.
+- CloudFront chỉ vào mạng riêng qua ALB, NLB hoặc EC2, không nối thẳng vào task Fargate. Không có ALB thì phải mở task ra Internet, bỏ qua WAF.
+- ALB chỉ gửi request tới task khoẻ, kiểm header bí mật, và cung cấp số liệu cho ba cảnh báo `unhealthy`, `errors`, `latency`.
+- Sau này chạy nhiều task, ALB tự chia request mà không phải sửa CloudFront.
 
 **Trong lab:**
 
