@@ -97,6 +97,12 @@ Region là "vùng địa lý" của AWS. Nút chọn region nằm ở góc trên
 | WAF cho CloudFront | Trong màn WAF chọn **Global (CloudFront)** |
 | CloudFront, IAM, Billing, Budgets, Cost Explorer | Dịch vụ toàn cầu, không cần chọn region |
 
+**Singapore không có trong menu region.** Tài khoản này ở chế độ advanced mode. Ban đầu chế độ này chỉ hiển thị Sydney, N. Virginia và Oregon. Singapore được mở sau bằng cách sửa SCP ([phần 03](03-cli-region.md)), nên quyền dùng có, nhưng Console vẫn xếp Singapore vào **Restricted Regions** và không hiện nó trong menu. Kiểm ngày 18/11/2026:
+
+1. Mở thẳng link có ghi region. Ví dụ ECS: `https://ap-southeast-1.console.aws.amazon.com/ecs/v2/clusters?region=ap-southeast-1`. Với dịch vụ khác, thay phần `ecs/v2/clusters` bằng đường dẫn của dịch vụ đó, và giữ `?region=ap-southeast-1`.
+2. Console hiện hộp thoại **"Region Asia Pacific (Singapore) restricted"**. Bấm dấu **X** để đóng; dữ liệu phía sau vẫn xem được.
+3. Không bấm **Take me back** (về Sydney). Chưa bấm **Edit visible Regions** khi chưa trao đổi: nếu AWS sinh lại SCP, hai quyền chỉ-đọc thêm ngày 12/11 có thể mất và `lab:status --live` lỗi 254 ([B00-30](../bao-cao/B00-30-tong-ket-deploy-aws02.md)).
+
 Cách tìm dịch vụ nhanh nhất: gõ tên vào ô tìm kiếm trên cùng (phím tắt `Alt+S` trên Windows, `Option+S` trên Mac).
 
 ### Xem toàn bộ tài nguyên của lab trên một màn
