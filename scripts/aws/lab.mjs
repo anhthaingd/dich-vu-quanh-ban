@@ -7,6 +7,19 @@ import { validateConfig, privateJson, readJson, lock, requireConfirmation, asser
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const tfRoot = join(root, 'infra/aws/lab');
+// `ecs wait services-stable` only checks deployment count and task count; ECS marks
+// rolloutState COMPLETED a few seconds later, so poll for it instead of checking once.
+export async function waitForRollout(describe, taskDefinition, { timeoutMs = 300000, intervalMs = 10000, sleep = ms => new Promise(r => setTimeout(r, ms)) } = {}) {
+  const fail = Error('API has not reached the expected completed running deployment; a rollback is not a successful release.');
+  if (!taskDefinition) throw fail;
+  for (const end = Date.now() + timeoutMs; ; await sleep(intervalMs)) {
+    const service = describe();
+    const primary = service?.deployments?.find(x => x.status === 'PRIMARY');
+    if (primary?.taskDefinition === taskDefinition && primary.rolloutState === 'FAILED') throw fail;
+    if (service?.runningCount >= 1 && primary?.taskDefinition === taskDefinition && primary.rolloutState === 'COMPLETED') return service;
+    if (Date.now() >= end) throw fail;
+  }
+}
 export function parseArgs(args) {
   const action = args.shift();
   if (!['init','up','down','status','admin','media-check','help'].includes(action)) throw Error('Use init, up, down, status, admin, media-check or help.');
@@ -208,8 +221,7 @@ async function main() {
     // ECS injects secret values only at task start, including a resumed run with the same digest.
     aws(['ecs','update-service','--cluster',d.cluster,'--service',d.service,'--force-new-deployment']);
     aws(['ecs','wait','services-stable','--cluster',d.cluster,'--services',d.service]);
-    const service = aws(['ecs','describe-services','--cluster',d.cluster,'--services',d.service]).services?.[0];
-    if (!d.api_task || !service || service.runningCount < 1 || !service.deployments?.some(x => x.status === 'PRIMARY' && x.rolloutState === 'COMPLETED' && x.taskDefinition === d.api_task)) throw Error('API has not reached the expected completed running deployment; a rollback is not a successful release.');
+    await waitForRollout(() => aws(['ecs','describe-services','--cluster',d.cluster,'--services',d.service]).services?.[0], d.api_task);
     await dns.sync(d.dns_records);
     const smoke = async url => { const r = await fetch(url, { signal: globalThis.AbortSignal.timeout(30000) }); if (!r.ok) throw Error(`HTTPS check failed: ${url} (${r.status}). DNS may still be propagating; retry up.`); };
     await smoke(`${d.api_origin}/v1/ready`);

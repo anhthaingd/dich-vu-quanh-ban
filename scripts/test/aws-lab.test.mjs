@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import vm from 'node:vm';
 import { validateConfig, privateJson, lock, requireConfirmation, assertIdentity, assertJournal, cleanEnvironment, terraformVariables, cloudflare, auditResources, rememberState, assertCleanState, manualPages, abortLabUploads } from '../aws/lab-core.mjs';
-import { parseArgs, validatePrerequisites } from '../aws/lab.mjs';
+import { parseArgs, validatePrerequisites, waitForRollout } from '../aws/lab.mjs';
 
 const config = { lab_id:'learn', expected_account_id:'123456789012', region:'ap-southeast-1', domain:'iimissher.com', profile:'dvqb-lab', cloudflare_zone_id:'a'.repeat(32), certificate_arn:'arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000000', ses_from:'owner@example.com', alert_email:'owner@example.com', pilot_emails:['owner@example.com'], monthly_budget_usd:20 };
 const journal = () => ({ account:config.expected_account_id,lab_id:config.lab_id,region:config.region,domain:config.domain,observed:[] });
@@ -206,4 +206,19 @@ test('public email registration is explicit, Resend-only and does not remove boo
  assert.equal(terraformVariables(opened,journal()).public_email_registration,true);
  assert.deepEqual(terraformVariables(opened,journal()).pilot_emails,config.pilot_emails);
  for(const patch of [{public_email_registration:'true'},{email_provider:'ses'},{pilot_emails:[]}])assert.throws(()=>validateConfig({...opened,...patch}));
+});
+
+test('lab waits for ECS to mark the expected rollout completed and rejects failed or rolled-back releases', async () => {
+  const td = 'arn:aws:ecs:ap-southeast-1:123456789012:task-definition/dvqb-lab-learn-api:10';
+  const svc = (rolloutState, taskDefinition = td) => ({ runningCount: 1, deployments: [{ status: 'PRIMARY', taskDefinition, rolloutState }] });
+  const opts = { timeoutMs: 50, intervalMs: 0, sleep: async () => {} };
+  // Steady-state waiter returns while the rollout is still IN_PROGRESS; keep polling until COMPLETED.
+  const seen = [svc('IN_PROGRESS'), svc('IN_PROGRESS'), svc('COMPLETED')];
+  let calls = 0;
+  assert.equal(await waitForRollout(() => seen[calls++], td, opts), seen[2]);
+  assert.equal(calls, 3);
+  await assert.rejects(waitForRollout(() => svc('FAILED'), td, opts), /rollback is not a successful release/);
+  await assert.rejects(waitForRollout(() => svc('COMPLETED', td.replace(':10', ':9')), td, opts), /rollback/);
+  await assert.rejects(waitForRollout(() => ({ ...svc('COMPLETED'), runningCount: 0 }), td, opts), /rollback/);
+  await assert.rejects(waitForRollout(() => svc('COMPLETED'), '', opts), /rollback/);
 });
