@@ -15,7 +15,7 @@ import { useLocale } from '../../../app/providers/LocaleProvider';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { AppText } from '../../../components/ui/AppText';
-import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 import { JobFeedback } from '../components/JobFeedback';
 import { sessionOperation,sessionReady } from '../state/session-ready';
 import type { Job } from '../models';
@@ -25,7 +25,7 @@ function List({ owner, open,initialPartner }: {
     open: (id: string) => void;
 }) {
     const role=useProductRole();
-    const changePartner=async(id?:string)=>{if(!role.available){setPartner(id);return;}setBusy(true);try{await role.choose(id??null);}catch(e){setError(e instanceof ApiError?e.code:'NETWORK');}finally{setBusy(false);}};
+    const changePartner=async(id?:string)=>{if(!role.available){setPartner(id);return;}setBusy(true);try{await role.choose(id??null);}catch(e){setError(toErrorInfo(e));}finally{setBusy(false);}};
     const { manager, state: auth } = useAuth(), { t, locale } = useLocale();
     const generation = useRef(0);
     const loadedScope = useRef<string | null>(null);
@@ -34,8 +34,8 @@ function List({ owner, open,initialPartner }: {
     const [partner, setPartner] = useState<string | undefined>(initialPartner), [partners, setPartners] = useState<{
         id: string;
         name: string;
-    }[]>([]), [items, setItems] = useState<Job[]>([]), [next, setNext] = useState<string | null>(null), [busy, setBusy] = useState(false), [error, setError] = useState<ApiErrorCode | null>(null), [attempt, setAttempt] = useState(0);
-    useRealtimeRefresh({error,busy,matches:s=>s.kind==='event'&&(s.event.type.startsWith('job.')||s.event.type.startsWith('invoice.')||s.event.type==='notification.created.v1'),refresh:()=>setAttempt(v=>v+1)});
+    }[]>([]), [items, setItems] = useState<Job[]>([]), [next, setNext] = useState<string | null>(null), [busy, setBusy] = useState(false), [error, setError] = useState<ErrorInfo | null>(null), [attempt, setAttempt] = useState(0);
+    useRealtimeRefresh({error:error?.code??null,busy,matches:s=>s.kind==='event'&&(s.event.type.startsWith('job.')||s.event.type.startsWith('invoice.')||s.event.type==='notification.created.v1'),refresh:()=>setAttempt(v=>v+1)});
     useFocusEffect(useCallback(() => {
         let active = true;
         const epoch = ++generation.current;
@@ -63,9 +63,9 @@ function List({ owner, open,initialPartner }: {
             setItems(page.items);
             setNext(page.next_cursor);
         } })().catch(e => { if (active) {
-            const code = e instanceof ApiError ? e.code : 'NETWORK';
-            setError(code);
-            if (['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(code)) { setItems([]); setNext(null); }
+            const failure = toErrorInfo(e);
+            setError(failure);
+            if (['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(failure.code)) { setItems([]); setNext(null); }
         } }).finally(() => { if (active)
             setBusy(false); });
         return () => { active = false; generation.current++; };
@@ -79,7 +79,7 @@ function List({ owner, open,initialPartner }: {
         setError(null);
     }
     catch (e) {
-        if (generation.current === epoch) setError(e instanceof ApiError ? e.code : 'NETWORK');
+        if (generation.current === epoch) setError(toErrorInfo(e));
     }
     finally {
         if (generation.current === epoch) setBusy(false);

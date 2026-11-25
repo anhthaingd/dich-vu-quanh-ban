@@ -146,3 +146,8 @@ test('admin reset keeps target version reason and retry key; TOTP replacement re
  fireEvent.changeText(screen.getByTestId('mfa-reset-reason'),'DEMO identity checked');fireEvent(screen.getByTestId('mfa-reset-checked'),'valueChange',true);fireEvent.press(screen.getByTestId('mfa-reset'));await screen.findByText('Thử lại cùng yêu cầu');expect(screen.getByTestId('mfa-reset-reason')).toHaveProp('editable',false);fireEvent.press(screen.getByTestId('mfa-reset'));await screen.findByText('Đã reset. Admin cần thiết lập TOTP lại.');expect(request.mock.calls[1]).toEqual(request.mock.calls[2]);expect(request.mock.calls[1][2]).toEqual({expected_version:3,reason:'DEMO identity checked'});
  fireEvent.changeText(screen.getByLabelText('Mật khẩu hiện tại để thay TOTP'),'DEMO password');f.status.mockResolvedValue(false);fireEvent.press(screen.getByText('Thiết lập TOTP mới'));await screen.findByText('DEMO-REPLACEMENT');expect(replace).toHaveBeenCalledWith('DEMO password');expect(screen.queryByTestId('admin-queue')).toBeNull();
 });
+test('admin verification names the wrong MFA code and keeps the console locked',async()=>{
+ const f=fixture();f.verify.mockRejectedValueOnce(new ApiError('REAUTH_REQUIRED',403,'req-2',undefined,undefined,'ADMIN_MFA_CODE_INCORRECT'));mount(f);await screen.findByTestId('admin-password');
+ fireEvent.changeText(screen.getByTestId('admin-password'),'DEMO password');fireEvent.changeText(screen.getByTestId('admin-code'),'000000');fireEvent.press(screen.getByTestId('admin-verify'));
+ await screen.findByText('Mã MFA không đúng hoặc đã được dùng. Chờ mã mới trong ứng dụng xác thực rồi nhập lại.');expect(screen.queryByTestId('admin-queue')).toBeNull();expect(screen.getByTestId('admin-password')).toHaveProp('value','');
+});

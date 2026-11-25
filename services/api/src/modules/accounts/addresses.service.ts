@@ -22,8 +22,8 @@ export class AddressesService {
     return this.tx.run(header, id ? 'editAddress' : 'addAddress', key, { id, ...input }, async (db, { user }) => {
       if (id) {
         const { rows: [row] } = await db.query('SELECT version FROM saved_addresses WHERE id=$1 AND user_id=$2 AND archived_at IS NULL', [id, user.id]);
-        if (!row) throw new NotFoundException();
-        if (row.version !== input.expected_version) throw new ConflictException({ code: 'VERSION_CONFLICT' });
+        if (!row) throw new NotFoundException({ reason: 'ADDRESS_NOT_FOUND' });
+        if (row.version !== input.expected_version) throw new ConflictException({ code: 'VERSION_CONFLICT', reason: 'ADDRESS_VERSION_CONFLICT' });
       }
       const { rows: [count] } = await db.query('SELECT count(*)::int n FROM saved_addresses WHERE user_id=$1 AND archived_at IS NULL', [user.id]);
       const makeDefault = input.is_default || (!id && count.n === 0);
@@ -39,7 +39,7 @@ export class AddressesService {
     return this.tx.run(header, 'archiveAddress', key, { id }, async (db, { user }) => {
       const { rows: [row] } = await db.query(`UPDATE saved_addresses SET archived_at=COALESCE(archived_at,now()),is_default=false,
         version=version+CASE WHEN archived_at IS NULL THEN 1 ELSE 0 END WHERE id=$1 AND user_id=$2 RETURNING id,version`, [id,user.id]);
-      if (!row) throw new NotFoundException();
+      if (!row) throw new NotFoundException({ reason: 'ADDRESS_NOT_FOUND' });
       return { ...row, state: 'archived' };
     });
   }

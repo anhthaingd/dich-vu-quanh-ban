@@ -26,7 +26,7 @@ export class SessionsService {
   revoke(header: string | undefined, id: string, key: string) {
     return this.tx.run(header, 'revokeSession', key, { id }, async (db, { user }) => {
       const result = await db.query('UPDATE sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1 AND family_id=$2 RETURNING id', [user.id,id]);
-      if (!result.rowCount) throw new NotFoundException();
+      if (!result.rowCount) throw new NotFoundException({ reason: 'LOGIN_SESSION_NOT_FOUND' });
       return { id, version: 1, state: 'revoked' };
     });
   }

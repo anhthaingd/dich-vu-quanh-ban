@@ -123,6 +123,12 @@ test('public lab email registration opens email only and preserves closed defaul
  assert.deepEqual(config({...lab,PUBLIC_EMAIL_REGISTRATION:'0'}).pilotEmails,closed.pilotEmails);
  for(const patch of [{PUBLIC_EMAIL_REGISTRATION:'true'},{PUBLIC_EMAIL_REGISTRATION:'1',EMAIL_PROVIDER:'ses'},{PUBLIC_EMAIL_REGISTRATION:'1',LAB_EMAIL_VERIFICATION:'0'},{PUBLIC_EMAIL_REGISTRATION:'1',CLOUD_PROXY_MODE:'alb'}])assert.throws(()=>config({...lab,...patch}));
  assert.throws(()=>config({NODE_ENV:'test',DATABASE_URL:'postgresql://localhost/dvqb_test',CURSOR_SECRET:'c'.repeat(48),PUBLIC_EMAIL_REGISTRATION:'1'}));
+ // Local Mailpit may accept any email when the owner opts in; phones stay allowlisted.
+ const local={NODE_ENV:'test',DATABASE_URL:'postgresql://localhost/dvqb_test',CURSOR_SECRET:'c'.repeat(48),LOCAL_MESSAGES:'1',LOCAL_MESSAGES_SECRET:'m'.repeat(48),LOCAL_SMS_DIRECTORY:'/tmp/sms',LOCAL_MESSAGE_CONTACTS:'demo@example.test'};
+ assert.throws(()=>new LocalMessages({} as Pool,config(local).localMessages).requireContact('new@example.com'));
+ const openLocal=new LocalMessages({} as Pool,config({...local,PUBLIC_EMAIL_REGISTRATION:'1'}).localMessages);
+ assert.doesNotThrow(()=>openLocal.requireContact('new@example.com'));
+ for(const contact of ['+84900000001','invalid','a@example.com,b@example.com'])assert.throws(()=>openLocal.requireContact(contact));
  // Local test delivery remains explicitly allowlisted unless configured otherwise.
  assert.throws(()=>new LocalMessages({} as Pool,{secret:'m'.repeat(48),mailpit:'',smsDirectory:'',contacts:[]}).requireContact('new@example.com'));
 });

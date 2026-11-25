@@ -1,9 +1,10 @@
-import { BadRequestException } from '@nestjs/common';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { object, identifier, pageInput } from '../accounts/accounts.input.js';
 import type { Mode } from '../partners/partners.input.js';
+import { invalid, reasoned } from '../partners/partners.errors.js';
 export function searchInput(value: Record<string, unknown>) {
-  const v = object(value, [
+  // Unknown filter names are user input: never echo them back as `field`.
+  const v = reasoned(() => object(value, [
     'latitude',
     'longitude',
     'radius_m',
@@ -14,10 +15,11 @@ export function searchInput(value: Record<string, unknown>) {
     'sort',
     'cursor',
     'limit'
-  ]);
-  if (Object.values(v).some((x) => typeof x !== 'string'))
-    throw new BadRequestException();
-  const number = (v: unknown, min: number, max: number) => {
+  ]), 'SEARCH_FILTER_UNKNOWN');
+  const repeated = Object.keys(v).find((k) => typeof v[k] !== 'string');
+  if (repeated !== undefined)
+    throw invalid('SEARCH_FILTER_REPEATED', repeated);
+  const number = (v: unknown, min: number, max: number, reason: string, field: string) => {
     if (
       typeof v !== 'string' ||
       !/^-?\d+(\.\d+)?$/.test(v) ||
@@ -25,29 +27,26 @@ export function searchInput(value: Record<string, unknown>) {
       +v < min ||
       +v > max
     )
-      throw new BadRequestException();
+      throw invalid(reason, field);
     return +v;
   };
-  const latitude = number(v.latitude, -90, 90),
-    longitude = number(v.longitude, -180, 180);
-  const radius = number(v.radius_m ?? '10000', 1, 2147483647);
-  if (
-    !Number.isInteger(radius) ||
-    (v.sort !== undefined && !['distance','rating','recommended'].includes(String(v.sort))) ||
-    (v.verified !== undefined &&
-      v.verified !== 'true' &&
-      v.verified !== 'false') ||
-    (v.service_mode !== undefined &&
-      !['at_shop', 'at_customer', 'custom'].includes(String(v.service_mode)))
-  )
-    throw new BadRequestException();
+  const latitude = number(v.latitude, -90, 90, 'SEARCH_LOCATION_INVALID', 'latitude'),
+    longitude = number(v.longitude, -180, 180, 'SEARCH_LOCATION_INVALID', 'longitude');
+  const radius = number(v.radius_m ?? '10000', 1, 2147483647, 'SEARCH_RADIUS_INVALID', 'radius_m');
+  if (!Number.isInteger(radius)) throw invalid('SEARCH_RADIUS_INVALID', 'radius_m');
+  if (v.sort !== undefined && !['distance','rating','recommended'].includes(String(v.sort)))
+    throw invalid('SEARCH_SORT_INVALID', 'sort');
+  if (v.verified !== undefined && v.verified !== 'true' && v.verified !== 'false')
+    throw invalid('SEARCH_VERIFIED_INVALID', 'verified');
+  if (v.service_mode !== undefined && !['at_shop', 'at_customer', 'custom'].includes(String(v.service_mode)))
+    throw invalid('SEARCH_SERVICE_MODE_INVALID', 'service_mode');
   return {
     sort:(v.sort??'distance') as 'distance'|'rating'|'recommended',
     latitude,
     longitude,
     radius,
-    skill: v.skill_id === undefined ? null : identifier(v.skill_id),
-    category: v.category_id === undefined ? null : identifier(v.category_id),
+    skill: v.skill_id === undefined ? null : identifier(v.skill_id, 'SEARCH_SKILL_INVALID', 'skill_id'),
+    category: v.category_id === undefined ? null : identifier(v.category_id, 'SEARCH_CATEGORY_INVALID', 'category_id'),
     mode: (v.service_mode ?? null) as Mode | null,
     verified: v.verified === 'true',
     ...pageInput({
@@ -112,7 +111,7 @@ export class SearchCursor {
         id: identifier(p.id)
       };
     } catch {
-      throw new BadRequestException();
+      throw invalid('CURSOR_INVALID', 'cursor');
     }
   }
 }

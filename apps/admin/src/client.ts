@@ -1,4 +1,20 @@
-export class ClientError extends Error{constructor(public code:string){super(code);}}
+// `code` is the value panels branch on. The rest only picks a precise message: `reason` is the
+// API's exact cause, `field` the input it named (field_errors[0].field), `requestId` the
+// server's request id, `status` the HTTP status and `timeout` an abandoned slow request.
+export type ErrorDetail={reason?:string;field?:string;requestId?:string;status?:number;timeout?:boolean};
+export class ClientError extends Error{
+ readonly reason?:string;readonly field?:string;readonly requestId?:string;readonly status?:number;readonly timeout?:boolean;
+ constructor(public code:string,detail:ErrorDetail={}){super(code);if(detail.reason)this.reason=detail.reason;if(detail.field)this.field=detail.field;if(detail.requestId)this.requestId=detail.requestId;if(detail.status)this.status=detail.status;if(detail.timeout)this.timeout=true;}
+}
+const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,reasonPattern=/^[A-Z][A-Z0-9_]{1,63}$/,fieldPattern=/^[a-z][a-zA-Z0-9_.]{0,63}$/;
+/** Reads `{ reason?, field_errors?: [{ field }], correlation_id }` and the x-request-id header; anything malformed is dropped. */
+export function responseDetail(status:number,headers:{get(name:string):string|null}|undefined,body:unknown):ErrorDetail{
+ const b=object(body)?body:{},header=headers?.get('x-request-id');
+ const requestId=header&&uuid.test(header)?header:typeof b.correlation_id==='string'&&uuid.test(b.correlation_id)?b.correlation_id:undefined;
+ const reason=typeof b.reason==='string'&&reasonPattern.test(b.reason)?b.reason:undefined;
+ const first:unknown=Array.isArray(b.field_errors)?b.field_errors[0]:undefined,field=object(first)&&typeof first.field==='string'&&fieldPattern.test(first.field)?first.field:undefined;
+ return {status,...(reason?{reason}:{}),...(field?{field}:{}),...(requestId?{requestId}:{})};
+}
 export type Session={access_token:string;refresh_token:string;expires_at:string;user:{id:string;admin_permissions:string[]}};
 export type AdminSession={token:string;expires_at:string;fresh_until:string};
 export type History={actor_id:string;action:string;reason:string;version:number;created_at:string};
@@ -43,16 +59,19 @@ export class AdminClient {
   return locks?locks.request('dvqb.admin.refresh',run):run();
  }
  async call(path:string,method='GET',body?:unknown,key?:string,retry=true):Promise<unknown>{
-  const abort=new AbortController(),timer=setTimeout(()=>abort.abort(),20000);
+  let timedOut=false,status:number|undefined;const abort=new AbortController(),timer=setTimeout(()=>{timedOut=true;abort.abort();},20000);
   try{
    const r=await this.transport(this.base+path,{method,signal:abort.signal,cache:'no-store',headers:{'Content-Type':'application/json',...(this.session?{Authorization:'Bearer '+this.session.access_token}:{}),...(this.mfa?{'X-Admin-Session':this.mfa.token}:{}),...(key?{'Idempotency-Key':key}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});
    if(r.status===401&&retry&&this.session&&path!=='/auth/refresh'){
     await this.refresh();return this.call(path,method,body,key,false);
    }
-   const v=await r.json();if(!r.ok){const code=object(v)&&typeof v.code==='string'?v.code:r.status===401?'UNAUTHENTICATED':r.status===403?'FORBIDDEN':'FAILED';if(r.status===401)this.clear();throw new ClientError(code);}return v;
-  }catch(e){if(e instanceof ClientError)throw e;throw new ClientError('NETWORK');}finally{clearTimeout(timer);}
+   status=r.status;let v:unknown;
+   // An unreadable body keeps the old codes (NETWORK for error pages, so writes stay retryable); status and timeout pick the message.
+   try{v=await r.json();}catch{throw new ClientError(r.ok&&!timedOut?'INVALID_RESPONSE':'NETWORK',{status:r.status,timeout:timedOut,...(timedOut?{}:responseDetail(r.status,r.headers,undefined))});}
+   if(!r.ok){const code=object(v)&&typeof v.code==='string'?v.code:r.status===401?'UNAUTHENTICATED':r.status===403?'FORBIDDEN':'FAILED';if(r.status===401)this.clear();throw new ClientError(code,responseDetail(r.status,r.headers,v));}return v;
+  }catch(e){if(e instanceof ClientError)throw e;throw new ClientError('NETWORK',{timeout:timedOut,...(status?{status}:{})});}finally{clearTimeout(timer);}
  }
- async login(email:string,password:string){const v=await this.call('/auth/login','POST',{email,password});if(!isSession(v))throw new ClientError('INVALID_RESPONSE');this.session=v;this.mfa=null;if(!v.user.admin_permissions.length){this.clear();throw new ClientError('FORBIDDEN');}}
+ async login(email:string,password:string){const v=await this.call('/auth/login','POST',{email,password});if(!isSession(v))throw new ClientError('INVALID_RESPONSE');this.session=v;this.mfa=null;if(!v.user.admin_permissions.length){this.clear();throw new ClientError('FORBIDDEN',{reason:'ADMIN_ACCESS_REQUIRED'});}}
  async status(){const v=await this.call('/admin/auth/status');if(!object(v)||typeof v.enrolled!=='boolean')throw new ClientError('INVALID_RESPONSE');return v.enrolled;}
  async enroll(password:string){const v=await this.call('/admin/auth/enrollment','POST',{password});if(!object(v)||typeof v.secret!=='string'||typeof v.uri!=='string')throw new ClientError('INVALID_RESPONSE');return {secret:v.secret,uri:v.uri};}
  async verify(password:string,code:string,enrollment:boolean,recovery=false){const v=await this.call(recovery?'/admin/auth/recover':enrollment?'/admin/auth/enrollment/confirm':'/admin/auth/verify','POST',{password,code});if(!object(v)||typeof v.token!=='string'||typeof v.expires_at!=='string'||typeof v.fresh_until!=='string')throw new ClientError('INVALID_RESPONSE');this.mfa={token:v.token,expires_at:v.expires_at,fresh_until:v.fresh_until};}
@@ -66,7 +85,7 @@ export class AdminClient {
  async completionPreview(id:string){const v=await this.call(`/admin/reports/${id}/completion-preview`);if(!isCompletionPreview(v))throw new ClientError('INVALID_RESPONSE');return v;}
  async complete(id:string,input:unknown,key:string){const v=await this.call(`/admin/reports/${id}/complete-on-behalf`,'POST',input,key);if(!isCompletionResult(v))throw new ClientError('INVALID_RESPONSE');return v;}
  async audit(cursor?:string,resourceId?:string){const v=await this.call('/admin/audit?'+new URLSearchParams({...(cursor?{cursor}:{}),...(resourceId?{resource_id:resourceId}:{})}));if(!object(v)||!Array.isArray(v.items)||!v.items.every(i=>object(i)&&typeof i.id==='string'&&(i.reason===null||typeof i.reason==='string')&&typeof i.action==='string'&&typeof i.resource_type==='string'&&typeof i.resource_id==='string'&&(i.actor_id===null||typeof i.actor_id==='string')&&typeof i.created_at==='string')||!(v.next_cursor===null||typeof v.next_cursor==='string'))throw new ClientError('INVALID_RESPONSE');return v as {items:Audit[];next_cursor:string|null};}
- async photo(id:string){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);try{const r=await this.transport(this.base+`/assets/${id}/admin-content`,{signal:controller.signal,cache:'no-store',headers:{Authorization:'Bearer '+this.session?.access_token,'X-Admin-Session':this.mfa?.token??''}});if(!r.ok)throw new ClientError(r.status===403?'FORBIDDEN':'FAILED');return await r.blob();}finally{clearTimeout(timer);}}
+ async photo(id:string){let timedOut=false;const controller=new AbortController(),timer=setTimeout(()=>{timedOut=true;controller.abort();},20000);try{const r=await this.transport(this.base+`/assets/${id}/admin-content`,{signal:controller.signal,cache:'no-store',headers:{Authorization:'Bearer '+this.session?.access_token,'X-Admin-Session':this.mfa?.token??''}});if(!r.ok){let v:unknown;try{v=await r.json();}catch{/* not a JSON error body */}throw new ClientError(r.status===403?'FORBIDDEN':'FAILED',responseDetail(r.status,r.headers,v));}return await r.blob();}catch(e){if(e instanceof ClientError)throw e;throw new ClientError('NETWORK',{timeout:timedOut});}finally{clearTimeout(timer);}}
  async logout(){try{await this.call('/auth/logout','POST');}finally{this.clear();}}
  async lock(){try{await this.call('/admin/auth/lock','POST');}finally{this.mfa=null;}}
 }

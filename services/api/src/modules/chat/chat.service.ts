@@ -44,21 +44,21 @@ export class ChatService {
             if (input.partner_id) {
                 const { rows: [p] } = await db.query("SELECT id FROM partners WHERE id=$1 AND publication_status='published' AND moderation_status<>'suspended' AND archived_at IS NULL FOR UPDATE", [input.partner_id]);
                 if (!p)
-                    throw new NotFoundException();
+                    throw new NotFoundException({ reason: 'CHAT_PARTNER_NOT_FOUND' });
                 if (await memberAccess(db, p.id, actor.user.id))
-                    throw new ForbiddenException();
+                    throw new ForbiddenException({ reason: 'CHAT_OWN_PARTNER' });
                 id = await partnerConversation(db, p.id, actor.user.id);
             }
             else {
                 if (actor.user.id === input.peer_user_id)
-                    throw new ForbiddenException();
+                    throw new ForbiddenException({ reason: 'CHAT_SELF_NOT_ALLOWED' });
                 const { rows: [existing] } = await db.query("SELECT id FROM conversations WHERE kind='direct' AND user_low=LEAST($1::uuid,$2::uuid) AND user_high=GREATEST($1::uuid,$2::uuid)", [actor.user.id, input.peer_user_id]);
                 if (existing)
                     id = existing.id;
                 else {
                     const { rows: [peer] } = await db.query("SELECT u.id FROM users u JOIN memberships m ON m.user_id=u.id JOIN partners p ON p.id=m.partner_id WHERE u.id=$1 AND u.status='active' AND m.active AND m.is_owner AND p.kind='solo' AND p.publication_status='published' AND p.moderation_status<>'suspended' AND p.archived_at IS NULL LIMIT 1", [input.peer_user_id]);
                     if (!peer)
-                        throw new NotFoundException();
+                        throw new NotFoundException({ reason: 'CHAT_PEER_NOT_FOUND' });
                     id = await directConversation(db, actor.user.id, peer.id);
                 }
             }
@@ -90,7 +90,7 @@ export class ChatService {
             if (start) {
                 const { rows: [m] } = await db.query('SELECT sequence FROM messages WHERE id=$1 AND conversation_id=$2', [start.id, id]);
                 if (!m)
-                    throw new BadRequestException();
+                    throw new BadRequestException({ reason: 'CURSOR_INVALID', field: 'cursor' });
                 sequence = Number(m.sequence);
             }
             const { rows } = await db.query<MessageRow>(`SELECT * FROM messages WHERE conversation_id=$1 AND ($2::bigint IS NULL OR sequence>$2) AND ($3::bigint IS NULL OR sequence>$3) ORDER BY sequence LIMIT $4`, [id, q.after ?? null, sequence, q.limit + 1]);
@@ -104,7 +104,7 @@ export class ChatService {
             const { rows: [old] } = await db.query<MessageRow>('SELECT * FROM messages WHERE sender_id=$1 AND client_message_id=$2', [actor.user.id, input.client_message_id]);
             if (old) {
                 if (old.conversation_id !== id || old.body !== input.body || old.job_id !== input.job_id)
-                    throw new ConflictException({ code: 'IDEMPOTENCY_MISMATCH' });
+                    throw new ConflictException({ code: 'IDEMPOTENCY_MISMATCH', reason: 'CHAT_MESSAGE_ID_REUSED' });
                 return dto(old);
             }
             const { rows: [c] } = await db.query('UPDATE conversations SET next_sequence=next_sequence+1 WHERE id=$1 RETURNING next_sequence-1 AS sequence', [id]);
@@ -115,7 +115,7 @@ export class ChatService {
             if (input.job_id) {
                 await jobAccess(db, input.job_id, actor.user.id);
                 if (!(await db.query('SELECT 1 FROM job_conversations WHERE job_id=$1 AND conversation_id=$2', [input.job_id, id])).rowCount)
-                    throw new NotFoundException();
+                    throw new NotFoundException({ reason: 'CHAT_JOB_NOT_LINKED' });
             }
             await conversationAccess(db, id, actor.user.id);
         });
@@ -124,7 +124,7 @@ export class ChatService {
         return this.tx.run(header, `read.${id}`, key, { last_sequence: sequence }, async (db, actor) => {
             const { rows: [c] } = await db.query('SELECT next_sequence FROM conversations WHERE id=$1 FOR UPDATE', [id]);
             if (sequence >= Number(c.next_sequence))
-                throw new BadRequestException();
+                throw new BadRequestException({ reason: 'CHAT_READ_SEQUENCE_AHEAD', field: 'last_sequence' });
             const { rows: [read] } = await db.query('INSERT INTO conversation_reads(conversation_id,user_id,last_sequence) VALUES($1,$2,$3) ON CONFLICT(conversation_id,user_id) DO UPDATE SET last_sequence=GREATEST(conversation_reads.last_sequence,EXCLUDED.last_sequence) RETURNING last_sequence', [id, actor.user.id, sequence]);
             const last = Number(read.last_sequence);
             await event(db, `read:${id}:${actor.user.id}:${last}`, id, Math.max(1, last), 'conversation.read.v1', { conversation_id: id, user_id: actor.user.id, last_sequence: last });

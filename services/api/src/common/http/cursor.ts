@@ -19,7 +19,7 @@ export class Cursor {
       const value = JSON.parse(Buffer.from(body, 'base64url').toString());
       if (value.scope !== scope || !uuid.test(value.id) || typeof value.created_at !== 'string' || !Number.isFinite(Date.parse(value.created_at))) throw new Error();
       return { id: value.id, created_at: value.created_at };
-    } catch { throw new BadRequestException('Cursor không hợp lệ cho bộ lọc này.'); }
+    } catch { throw new BadRequestException({ reason: 'CURSOR_INVALID', field: 'cursor' }); }
   }
   private sign(body: string) { return createHmac('sha256', this.secret).update(body).digest('base64url'); }
 }

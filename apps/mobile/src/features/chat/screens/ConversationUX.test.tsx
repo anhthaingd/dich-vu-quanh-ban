@@ -38,3 +38,10 @@ test('losing permission while marking new messages read clears private messages 
  expect(screen.queryByText('Tin riêng')).toBeNull();expect(screen.getByTestId('chat-send')).toBeDisabled();
  fireEvent.press(screen.getByTestId('chat-send'));expect(f.chat.send).not.toHaveBeenCalled();
 });
+test('a rejected message shows the exact API reason, not a generic failure',async()=>{
+ const f=workFixture();mount(f);await waitFor(()=>expect(f.chat.read).toHaveBeenCalledTimes(1));
+ f.chat.send.mockRejectedValueOnce(new ApiError('VALIDATION',400,undefined,undefined,undefined,'CHAT_MESSAGE_INVALID_CHARACTERS','body'));
+ fireEvent.changeText(screen.getByTestId('chat-body'),'Xin chào');fireEvent.press(screen.getByTestId('chat-send'));
+ expect(await screen.findByText(/ký tự đặc biệt không gửi được/)).toBeTruthy();
+ expect(screen.getByTestId('chat-body').props.value).toBe('Xin chào');expect(screen.queryByTestId('work-retry')).toBeNull();
+});

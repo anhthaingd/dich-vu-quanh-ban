@@ -21,3 +21,10 @@ test('a cancelled queued intent cannot be replayed after returning to the screen
  const mutation=new Mutation<number>(),work=jest.fn().mockRejectedValue(new ApiError('CANCELLED'));
  await mutation.run(work);expect(mutation.getSnapshot().pending).toBe(false);await mutation.run();expect(work).toHaveBeenCalledTimes(1);
 });
+test('a failure keeps the API reason and field next to the category code',async()=>{
+ const mutation=new Mutation<number>();
+ await mutation.run(async()=>{throw new ApiError('STATE_CONFLICT',409,'req',undefined,undefined,'JOB_WITHDRAWN');});
+ expect(mutation.getSnapshot()).toMatchObject({error:'STATE_CONFLICT',failure:{code:'STATE_CONFLICT',reason:'JOB_WITHDRAWN',requestId:'req'},pending:false});
+ await mutation.run(async()=>{throw new Error('offline');});
+ expect(mutation.getSnapshot()).toMatchObject({error:'NETWORK',failure:{code:'NETWORK'},pending:true});
+});

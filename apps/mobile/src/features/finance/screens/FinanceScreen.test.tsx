@@ -116,3 +116,15 @@ test('banking permission loss clears wallet data instead of being treated as a t
  mount();await screen.findByText('100.000 ₫');await waitFor(()=>expect(screen.getByRole('button',{name:'Tải lại'})).not.toBeDisabled());fetchMock.mockResolvedValue({ok:false,status:403,headers:new Headers(),json:async()=>({code:'FORBIDDEN'})});
  await act(async()=>{fireEvent.press(screen.getByRole('button',{name:'Tải lại'}));});await waitFor(()=>expect(screen.queryByText('100.000 ₫')).toBeNull());expect(screen.queryByTestId('finance-bank-unavailable')).toBeNull();expect(screen.queryByTestId('finance-topup')).toBeNull();
 });
+test('money errors show the exact API reason instead of a generic sentence and are not offered for blind retry',async()=>{
+ const {financeReasons}=jest.requireActual('../../../lib/errors/reasons/finance');
+ const failure=(status:number,body:unknown)=>({ok:false,status,headers:new Headers(),json:async()=>body});
+ fetchMock.mockImplementation(async(url:string,init:{method:string})=>{
+  if(url.endsWith('/reauthenticate'))return failure(403,{code:'REAUTH_REQUIRED',reason:'FINANCE_PASSWORD_INCORRECT',message:'x',correlation_id:'c',retryable:false});
+  if(init.method==='PUT')return response(initial);
+  return response(url.endsWith('/bank')?initial:{items:[],next_cursor:null});
+ });
+ mount();await screen.findByText('100.000 ₫');fireEvent.press(screen.getByTestId('finance-bank'));fireEvent.changeText(screen.getByTestId('finance-bank-code'),'DEMO');fireEvent.changeText(screen.getByTestId('finance-bank-number'),'1234567890');fireEvent.changeText(screen.getByTestId('finance-bank-holder'),'DEMO OWNER');fireEvent.changeText(screen.getByTestId('finance-reason'),'DEMO new bank');fireEvent.changeText(screen.getByTestId('finance-password'),'wrong');fireEvent.press(screen.getByTestId('finance-send'));
+ expect(await screen.findByText(financeReasons.vi.FINANCE_PASSWORD_INCORRECT)).toBeTruthy();expect(screen.queryByText('Thử lại đúng thao tác')).toBeNull();expect(screen.queryByText(/Thao tác chưa hoàn tất/)).toBeNull();
+ expect(fetchMock.mock.calls.some(([,init])=>init.method==='PUT')).toBe(false);
+});

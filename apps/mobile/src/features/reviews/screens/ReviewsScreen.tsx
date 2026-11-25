@@ -17,13 +17,14 @@ import {Input} from '../../../components/ui/Input';
 import {JobFeedback} from '../../jobs/components/JobFeedback';
 import {Mutation} from '../../jobs/state/mutation';
 import {sessionReady,sessionOperation} from '../../jobs/state/session-ready';
-import {ApiError,type ApiErrorCode} from '../../../lib/http/api-error';
+import {ApiError} from '../../../lib/http/api-error';
+import {toErrorInfo,type ErrorInfo} from '../../../lib/errors/describe';
 import type {Review,ReviewAsset} from '../models';
 export function ReviewsScreen({navigation,route}:NativeStackScreenProps<RootStackParamList,'Reviews'>){return <AccountPage title="reviews.title" back={()=>navigation.goBack()} login={() => navigation.navigate('Account',{returnTo:{screen:'Reviews',params:{id:route.params.id}}})}>{owner=><Content key={`${owner}:${route.params.id}`} owner={owner} id={route.params.id} report={review=>navigation.navigate('Support',{context:{kind:'review',job_id:route.params.id,review_id:review}})}/>}</AccountPage>;}
 function Content({owner,id,report}:{owner:string;id:string;report:(id:string)=>void}){
  const {manager,state:auth}=useAuth(),{t}=useLocale();
  const [items,setItems]=useState<Review[]>([]),[eligible,setEligible]=useState(false),[canWrite,setCanWrite]=useState(false),[direction,setDirection]=useState<Review['direction']>('customer_to_partner');
- const [loaded,setLoaded]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState<ApiErrorCode|null>(null),[attempt,setAttempt]=useState(0);
+ const [loaded,setLoaded]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState<ErrorInfo|null>(null),[attempt,setAttempt]=useState(0);
  const [removeDraft,setRemoveDraft]=useState<{id:string;version:number}|null>(null);
  const [editing,setEditing]=useState(false),[editVersion,setEditVersion]=useState<number|null>(null),[stars,setStars]=useState(0),[body,setBody]=useState('');
  const focusVersion=useRef(0);
@@ -35,7 +36,7 @@ function Content({owner,id,report}:{owner:string;id:string;report:(id:string)=>v
  const blocked=(!loaded&&busy)||state.busy||state.pending||up.busy||up.pending||picking;
  const refresh=useCallback(()=>{setAttempt(v=>v+1);return true;},[]);
  useAccountRefresh(busy,refresh,!busy&&!blocked);
- useRealtimeRefresh({busy:busy||blocked||editing||!!replyDraft||!!removeDraft,error,matches:s=>s.kind==='event'&&s.event.type==='review.updated.v1',refresh:()=>{refresh();},revoke:()=>{setItems([]);setRemoveDraft(null);}});
+ useRealtimeRefresh({busy:busy||blocked||editing||!!replyDraft||!!removeDraft,error:error?.code??null,matches:s=>s.kind==='event'&&s.event.type==='review.updated.v1',refresh:()=>{refresh();},revoke:()=>{setItems([]);setRemoveDraft(null);}});
  useFocusEffect(useCallback(()=>{
   let active=true;mounted.current=true;setBusy(true);setError(null);
   void (async()=>{
@@ -51,7 +52,7 @@ function Content({owner,id,report}:{owner:string;id:string;report:(id:string)=>v
    const all:Review[]=[];let cursor:string|undefined;const seen=new Set<string>();
    do{const p=await read(()=>manager.jobReviews(owner,id,cursor));for(const r of p.items){const old=all.findIndex(v=>v.id===r.id);if(old<0)all.push(r);else if(r.version>all[old].version)all[old]=r;}cursor=p.next_cursor??undefined;if(cursor&&seen.has(cursor))throw new ApiError('INVALID_RESPONSE');if(cursor)seen.add(cursor);}while(cursor&&active);
    if(active){setItems(all);setDirection(customer?'customer_to_partner':'partner_to_customer');setCanWrite(write);setEligible(invoice.review_eligible);setLoaded(true);}
-  })().catch(e=>{if(active){const code=e instanceof ApiError?e.code:'NETWORK';setError(code);if(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)){setItems([]);setLoaded(false);setCanWrite(false);setEditing(false);setBody('');setStars(0);setPhotoId(null);setReplyDraft(null);setRemoveDraft(null);}}}).finally(()=>{if(active)setBusy(false);});
+  })().catch(e=>{if(active){const failure=toErrorInfo(e);setError(failure);if(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(failure.code)){setItems([]);setLoaded(false);setCanWrite(false);setEditing(false);setBody('');setStars(0);setPhotoId(null);setReplyDraft(null);setRemoveDraft(null);}}}).finally(()=>{if(active)setBusy(false);});
   return()=>{active=false;mounted.current=false;};
  },[manager,owner,id,attempt]));
  const own=items.find(r=>r.direction===direction),finish=(r:Review|null)=>{if(r&&mounted.current){setItems(all=>[...all.filter(x=>x.id!==r.id),r]);setEditing(false);setBody('');setStars(0);setPhotoId(null);setReplyDraft(null);setRemoveDraft(null);refresh();}};
@@ -65,9 +66,9 @@ function Content({owner,id,report}:{owner:string;id:string;report:(id:string)=>v
   if(selected.canceled||!selected.assets[0]||!mounted.current)return;
   const chosen=selected.assets[0],raw=chosen.file??await(await fetch(chosen.uri)).blob();
   const blob=raw.type?raw:raw.slice(0,raw.size,chosen.mimeType??'');
-  if(!['image/png','image/jpeg','image/webp'].includes(blob.type)||!blob.size||blob.size>10*1024*1024)throw new ApiError('VALIDATION');
+  if(!['image/png','image/jpeg','image/webp'].includes(blob.type)||!blob.size||blob.size>10*1024*1024)throw new ApiError('VALIDATION',undefined,undefined,undefined,undefined,'REVIEW_PHOTO_INVALID','asset_id');
   const asset=await upload.run(k=>manager.uploadReview(owner,blob,k));if(asset&&mounted.current)setPhotoId(asset.id);
- }catch(e){if(mounted.current)setError(e instanceof ApiError?e.code:'NETWORK');}finally{if(mounted.current)setPicking(false);}};
+ }catch(e){if(mounted.current)setError(toErrorInfo(e));}finally{if(mounted.current)setPicking(false);}};
  const saveReply=()=>{if(!replyDraft)return;const draft={...replyDraft};void run(k=>manager.replyReview(owner,draft.id,draft.version,draft.body.trim(),k)).then(finish);};
  const conflict=state.error==='VERSION_CONFLICT'||state.error==='STATE_CONFLICT';
  usePageActions(loaded ? removeDraft ? <Button testID="review-remove-confirm" label={t('reviews.remove')} variant="danger" disabled={blocked||conflict} onPress={()=>{const target={...removeDraft};void run(k=>manager.reviewVisibility(owner,target.id,target.version,true,k)).then(finish);}}/> : replyDraft ? <Button testID="review-reply-save" label={t('reviews.saveReply')} disabled={blocked||conflict||!replyDraft.body.trim()} onPress={saveReply}/> : eligible&&canWrite&&(!own||editing) ? <Button testID="review-save" label={t(own?'reviews.save':'reviews.send')} disabled={blocked||!stars||conflict} onPress={save}/> : null : null);
@@ -82,8 +83,8 @@ function Content({owner,id,report}:{owner:string;id:string;report:(id:string)=>v
  {loaded&&replyDraft&&<Card><Input testID="review-reply-body" label={t('reviews.reply')} multiline value={replyDraft.body} editable={!blocked&&!conflict} onChangeText={body=>setReplyDraft({...replyDraft,body})}/><Button label={t('accountTools.cancel')} variant="secondary" disabled={blocked} onPress={()=>setReplyDraft(null)}/></Card>}
  {loaded&&!replyDraft&&!removeDraft&&eligible&&canWrite&&(!own||editing)&&<Card><AppText variant="section">{t('reviews.experience')}</AppText><View style={{flexDirection:'row',flexWrap:'wrap',gap:6}}>{[1,2,3,4,5].map(n=><Button key={n} testID={`review-star-${n}`} label={n<=stars?'★':'☆'} accessibilityLabel={t('reviews.score',{stars:n})} accessibilityState={{selected:stars===n}} variant={n<=stars?'primary':'secondary'} disabled={blocked||conflict} onPress={()=>setStars(n)}/>)}</View>{stars>0&&<AppText testID="review-selected-score" tone="primary">{t('reviews.score',{stars})}</AppText>}<Input testID="review-body" label={t('reviews.body')} multiline value={body} editable={!blocked&&!conflict} onChangeText={setBody}/><AppText>{t('reviews.photo')}</AppText>{photoId&&<><ReviewPhoto key={photoId} id={photoId} load={loadPhoto}/><Button testID="review-photo-remove" label={t('reviews.removePhoto')} variant="secondary" disabled={blocked||conflict} onPress={()=>setPhotoId(null)}/></>}<Button testID="review-photo-pick" label={t('reviews.pickPhoto')} variant="secondary" disabled={blocked||conflict} onPress={()=>void pick()}/>{editing&&<Button label={t('accountTools.cancel')} variant="secondary" disabled={blocked} onPress={()=>setEditing(false)}/>}</Card>}
  {loaded&&eligible&&!canWrite&&<AppText>{t('reviews.readOnly')}</AppText>}
- <JobFeedback error={up.error} pending={up.pending} busy={up.busy||auth.busy} retry={up.pending?()=>void upload.run().then(a=>{if(a&&mounted.current)setPhotoId(a.id);}):undefined}/>
- <JobFeedback error={state.error} pending={state.pending} busy={state.busy||auth.busy} retry={state.pending?()=>void mutation.run().then(finish):undefined}/>
+ <JobFeedback error={up.failure} pending={up.pending} busy={up.busy||auth.busy} retry={up.pending?()=>void upload.run().then(a=>{if(a&&mounted.current)setPhotoId(a.id);}):undefined}/>
+ <JobFeedback error={state.failure} pending={state.pending} busy={state.busy||auth.busy} retry={state.pending?()=>void mutation.run().then(finish):undefined}/>
  {conflict&&<AppText>{t('jobs.reloadBeforeRetry')}</AppText>}
  </>;
 }

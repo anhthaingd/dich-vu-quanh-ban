@@ -29,10 +29,12 @@ export class LocalMessages implements OnModuleInit, OnModuleDestroy {
   private readonly transport?: (id: string, message: LocalMessage) => Promise<void>) {
   this.secrets = new MessageSecrets(settings?.secret ?? randomBytes(32).toString('hex'));
  }
- requireConfigured() { if (!this.settings) throw new ServiceUnavailableException(); }
+ requireConfigured() { if (!this.settings) throw new ServiceUnavailableException({ reason: 'LOCAL_MESSAGES_NOT_CONFIGURED' }); }
  requireContact(contact: string) {
+  this.requireConfigured();
   const publicEmail = this.settings?.allowAnyEmail === true && /^[^\s,@]+@[^\s,@]+\.[^\s,@]+$/.test(contact);
-  if (!this.settings || (!publicEmail && !this.settings.contacts.includes(contact))) throw new ServiceUnavailableException();
+  // Lab/local delivery only reaches allowlisted contacts (or any email with PUBLIC_EMAIL_REGISTRATION=1).
+  if (!publicEmail && !this.settings!.contacts.includes(contact)) throw new ServiceUnavailableException({ code: 'LOCAL_CONTACT_NOT_ALLOWED', reason: contact.startsWith('+') ? 'LOCAL_PHONE_NOT_ALLOWED' : 'LOCAL_EMAIL_NOT_ALLOWED' });
  }
  async queue(db: PoolClient, kind: 'challenge'|'invitation'|'admin_invitation', id: string, message: LocalMessage, expiry: Date) {
   this.requireContact(message.contact);

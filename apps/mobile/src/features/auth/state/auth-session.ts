@@ -20,12 +20,14 @@ import type { Locale } from '../../../lib/i18n';
 import type { AccountsApi, ProfileEdit } from '../../accounts/api/accounts-api';
 import type { AddressInput } from '../../accounts/models';
 import { ApiError } from '../../../lib/http/api-error';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 import type { AuthApi, Credentials, Me, Registration, Session, TokenStorage } from '../models/auth.types';
 export type AuthErrorCode = 'UNAUTHENTICATED' | 'RATE_LIMITED' | 'VALIDATION' | 'SESSION_UNAVAILABLE';
-type Snapshot = { phase: 'loading' | 'anonymous' | 'authenticated' | 'restore-error'; user: Me | null; busy: boolean; error: AuthErrorCode | null };
+// `error` keeps the coarse code screens branch on; `errorInfo` keeps the API reason for the message.
+type Snapshot = { phase: 'loading' | 'anonymous' | 'authenticated' | 'restore-error'; user: Me | null; busy: boolean; error: AuthErrorCode | null; errorInfo?: ErrorInfo | null };
 export class AuthSession {
   private session: Session | null = null;
-  private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null };
+  private snapshot: Snapshot = { phase: 'loading', user: null, busy: false, error: null, errorInfo: null };
   private readonly listeners = new Set<() => void>();
   constructor(private readonly api: AuthApi, private readonly storage: TokenStorage, private readonly accounts?: AccountsApi, private readonly partners?: PartnersApi, private readonly jobs?: JobsApi, private readonly chat?: ChatApi, private readonly invoices?: InvoicesApi, private readonly organizations?: OrganizationsApi, private readonly notifications?:NotificationsApi, private readonly reviews?:ReviewsApi,private readonly support?:SupportApi,private readonly verification?:VerificationApi) {}
   bindRealtime(client:RealtimeClient){
@@ -40,11 +42,12 @@ export class AuthSession {
   // resurrecting a session after logout. Tokens never enter React state.
   private async run(work: () => Promise<void>) {
     if (this.snapshot.busy) return;
-    this.update({ busy: true, error: null });
+    this.update({ busy: true, error: null, errorInfo: null });
     try { await work(); }
     catch (error) {
       const code = error instanceof ApiError ? error.code : undefined;
-      this.update({ error: code === 'UNAUTHENTICATED' || code === 'RATE_LIMITED' || code === 'VALIDATION' ? code : 'SESSION_UNAVAILABLE' });
+      // Non-API failures (secure storage) have no server reason; the screen shows errors.session.
+      this.update({ error: code === 'UNAUTHENTICATED' || code === 'RATE_LIMITED' || code === 'VALIDATION' ? code : 'SESSION_UNAVAILABLE', errorInfo: error instanceof ApiError ? toErrorInfo(error) : null });
     } finally { this.update({ busy: false }); }
   }
   private async accept(session: Session) {
@@ -116,7 +119,7 @@ export class AuthSession {
   private async accountOperation<T>(owner: string, work: (token: string) => Promise<T>): Promise<T> {
     if (this.snapshot.busy) throw new ApiError('BUSY');
     if (!this.session || this.snapshot.user?.id !== owner) throw new ApiError('UNAUTHENTICATED');
-    this.update({ busy: true, error: null });
+    this.update({ busy: true, error: null, errorInfo: null });
     try {
       if (Date.parse(this.session.expires_at) <= Date.now()) await this.rotate();
       let result: T;

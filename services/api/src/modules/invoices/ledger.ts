@@ -10,8 +10,8 @@ export async function lockAccounts(db:PoolClient,customer:string,partner:string)
 }
 export async function held(db:PoolClient,id:string,kind?:string) {return BigInt((await db.query("SELECT COALESCE(sum(amount),0)::text AS amount FROM holds WHERE account_id=$1 AND state='active' AND ($2::text IS NULL OR kind=$2)",[id,kind??null])).rows[0].amount);}
 export async function reserve(db:PoolClient,accounts:Awaited<ReturnType<typeof lockAccounts>>,invoice:string,fee:string,points:string) {
- if(BigInt(accounts.points.balance)-await held(db,accounts.points.id)<BigInt(points))throw new UnprocessableEntityException({code:'INSUFFICIENT_POINTS'});
- if(BigInt(accounts.partner.balance)+100000n-await held(db,accounts.partner.id)<BigInt(fee))throw new UnprocessableEntityException({code:'PARTNER_FUNDING_REQUIRED'});
+ if(BigInt(accounts.points.balance)-await held(db,accounts.points.id)<BigInt(points))throw new UnprocessableEntityException({code:'INSUFFICIENT_POINTS',reason:'INVOICE_POINTS_INSUFFICIENT',field:'points_used'});
+ if(BigInt(accounts.partner.balance)+100000n-await held(db,accounts.partner.id)<BigInt(fee))throw new UnprocessableEntityException({code:'PARTNER_FUNDING_REQUIRED',reason:'INVOICE_PARTNER_FUNDING_REQUIRED'});
  for(const [id,kind,amount] of [[accounts.points.id,'invoice_points',points],[accounts.partner.id,'invoice_fee',fee]])if(BigInt(amount)>0n)
   await db.query('INSERT INTO holds(account_id,kind,reference_id,amount) VALUES($1,$2,$3,$4)',[id,kind,invoice,amount]);
 }

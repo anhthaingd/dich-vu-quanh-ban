@@ -19,7 +19,7 @@ export class CallsService implements OnModuleInit,OnModuleDestroy {
  async onModuleDestroy(){clearInterval(this.timer);this.unsubscribe?.();await this.running?.catch(()=>{});}
  private async locked(db:PoolClient){await db.query('SELECT pg_advisory_xact_lock(2026102105)');}
  private async readTx<T>(header:string|undefined,work:(db:PoolClient,user:string,session:string)=>Promise<T>){const db=await this.pool.connect();try{await db.query('BEGIN');const a=await this.auth.authenticate(header,db);await this.locked(db);const result=await work(db,a.user.id,a.sessionId);await db.query('COMMIT');return result;}catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}}
- private async row(db:PoolClient,id:string,user:string){const c=(await db.query<CallRow>('SELECT * FROM calls WHERE id=$1 AND (caller_id=$2 OR recipient_id=$2) FOR UPDATE',[id,user])).rows[0];if(!c)throw new NotFoundException();return c;}
+ private async row(db:PoolClient,id:string,user:string){const c=(await db.query<CallRow>('SELECT * FROM calls WHERE id=$1 AND (caller_id=$2 OR recipient_id=$2) FOR UPDATE',[id,user])).rows[0];if(!c)throw new NotFoundException({reason:'CALL_NOT_FOUND'});return c;}
  private async family(db:PoolClient,session:string){return (await db.query('SELECT family_id FROM sessions WHERE id=$1',[session])).rows[0].family_id as string;}
  private async validFamilies(db:PoolClient,c:CallRow){return !(await db.query(`SELECT 1 FROM (VALUES($1::uuid,$2::uuid),($3::uuid,$4::uuid)) p(user_id,family) WHERE family IS NOT NULL AND NOT EXISTS(SELECT 1 FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.user_id=p.user_id AND s.family_id=p.family AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND s.scope='app' AND u.status='active')`,[c.caller_id,c.caller_family,c.recipient_id,c.recipient_family])).rowCount;}
  private async finish(db:PoolClient,c:CallRow,state:string){
@@ -45,16 +45,16 @@ export class CallsService implements OnModuleInit,OnModuleDestroy {
  targets(header:string|undefined,id:string){return this.readTx(header,async(db,user)=>({items:await callTargets(db,id,user)}));}
  async create(header:string|undefined,input:ReturnType<typeof callCreate>,key:string){
   await this.runtime?.check();
-  if(!this.media)throw new ServiceUnavailableException({code:'CALLS_UNAVAILABLE'});
+  if(!this.media)throw new ServiceUnavailableException({code:'CALLS_UNAVAILABLE',reason:'CALL_SERVICE_NOT_CONFIGURED'});
   await this.sweep();
   return this.tx.run(header,'startCall',key,input,async(db,a)=>{
    const targets=await callTargets(db,input.job_id,a.user.id);
    const recipient=input.recipient_id??targets.find(t=>t.role===(input.target==='worker'?'assigned':'contact'))?.user_id;
-   if(!recipient||!targets.some(t=>t.user_id===recipient))throw new NotFoundException();
+   if(!recipient||!targets.some(t=>t.user_id===recipient))throw new NotFoundException({reason:'CALL_RECIPIENT_UNAVAILABLE'});
    const conversation=await directConversation(db,a.user.id,recipient);
    await db.query('INSERT INTO job_conversations(job_id,conversation_id) VALUES($1,$2) ON CONFLICT DO NOTHING',[input.job_id,conversation]);
    const occupied=(await db.query('SELECT user_id FROM active_call_users WHERE user_id=ANY($1::uuid[])',[ [a.user.id,recipient] ])).rows;
-   if(occupied.some(o=>o.user_id===a.user.id))throw new ConflictException({code:'STATE_CONFLICT'});
+   if(occupied.some(o=>o.user_id===a.user.id))throw new ConflictException({code:'STATE_CONFLICT',reason:'CALL_ALREADY_IN_CALL'});
    const state=occupied.length?'busy':'ringing';
    const c=(await db.query<CallRow>(`INSERT INTO calls(job_id,conversation_id,caller_id,recipient_id,caller_family,state,ended_at) VALUES($1,$2,$3,$4,$5,$6,CASE WHEN $6='busy' THEN clock_timestamp() END) RETURNING *`,[input.job_id,conversation,a.user.id,recipient,await this.family(db,a.sessionId),state])).rows[0];
    if(state==='ringing'){
@@ -63,7 +63,7 @@ export class CallsService implements OnModuleInit,OnModuleDestroy {
     await queuePush(db,`call:${c.id}:ringing`,'call.incoming.v1',{conversation_id:conversation,job_id:input.job_id},[{user_id:recipient}]);
    }
    await this.changed(db,c);return dto(c);
-  },async(db,a)=>{await this.locked(db);const targets=await callTargets(db,input.job_id,a.user.id);if(input.recipient_id&&!targets.some(t=>t.user_id===input.recipient_id))throw new NotFoundException();const old=(await db.query("SELECT response_snapshot->>'id' AS id FROM idempotency_keys WHERE actor_id=$1 AND operation='startCall' AND request_key=$2",[a.user.id,key])).rows[0];if(old){const c=await this.row(db,old.id,a.user.id);await callRelation(db,c);}});
+  },async(db,a)=>{await this.locked(db);const targets=await callTargets(db,input.job_id,a.user.id);if(input.recipient_id&&!targets.some(t=>t.user_id===input.recipient_id))throw new NotFoundException({reason:'CALL_RECIPIENT_UNAVAILABLE'});const old=(await db.query("SELECT response_snapshot->>'id' AS id FROM idempotency_keys WHERE actor_id=$1 AND operation='startCall' AND request_key=$2",[a.user.id,key])).rows[0];if(old){const c=await this.row(db,old.id,a.user.id);await callRelation(db,c);}});
  }
  async get(header:string|undefined,id:string){await this.sweep();return this.readTx(header,async(db,user)=>dto(await this.row(db,id,user)));}
  async list(header:string|undefined,q:ReturnType<typeof callsQuery>){await this.sweep();return this.readTx(header,async(db,user)=>{
@@ -74,15 +74,16 @@ export class CallsService implements OnModuleInit,OnModuleDestroy {
  async change(header:string|undefined,id:string,action:'accept'|'decline'|'end'|'fail',input:ReturnType<typeof callChange>,key:string){
   await this.sweep();
   const result=await this.tx.run(header,`call.${id}.${action}`,key,input,async(db,a)=>{
-   const c=await this.row(db,id,a.user.id);if(c.version!==input.expected_version)throw new ConflictException({code:'VERSION_CONFLICT'});
-   if(!active(c)||(['accept','decline'].includes(action)&&c.state!=='ringing'))throw new ConflictException({code:'STATE_CONFLICT'});
+   const c=await this.row(db,id,a.user.id);if(c.version!==input.expected_version)throw new ConflictException({code:'VERSION_CONFLICT',reason:'CALL_VERSION_CHANGED'});
+   if(!active(c))throw new ConflictException({code:'STATE_CONFLICT',reason:'CALL_ALREADY_ENDED'});
+   if(['accept','decline'].includes(action)&&c.state!=='ringing')throw new ConflictException({code:'STATE_CONFLICT',reason:'CALL_NOT_RINGING'});
    if(action==='accept'){
     const next=(await db.query<CallRow>(`UPDATE calls SET state='accepted',version=version+1,answered_at=clock_timestamp(),recipient_family=$2,caller_heartbeat=clock_timestamp(),recipient_heartbeat=clock_timestamp() WHERE id=$1 RETURNING *`,[id,await this.family(db,a.sessionId)])).rows[0];await this.changed(db,next);return dto(next);
    }
    return dto(await this.finish(db,c,action==='decline'?'declined':action==='fail'?'failed':'ended'));
   },async(db,a)=>{
    await this.locked(db);const c=await this.row(db,id,a.user.id);
-   if(['accept','decline'].includes(action)&&a.user.id!==c.recipient_id)throw new ForbiddenException();
+   if(['accept','decline'].includes(action)&&a.user.id!==c.recipient_id)throw new ForbiddenException({reason:'CALL_NOT_RECIPIENT'});
    // Ending one's media remains allowed after relationship revocation. Accept/replay always checks current access.
    if(['accept','decline'].includes(action))await callRelation(db,c);
   });
@@ -90,12 +91,12 @@ export class CallsService implements OnModuleInit,OnModuleDestroy {
  }
  async mediaToken(header:string|undefined,id:string){
   await this.runtime?.check();
-  if(!this.media)throw new ServiceUnavailableException({code:'CALLS_UNAVAILABLE'});
+  if(!this.media)throw new ServiceUnavailableException({code:'CALLS_UNAVAILABLE',reason:'CALL_SERVICE_NOT_CONFIGURED'});
   await this.sweep();
   return this.readTx(header,async(db,user,session)=>{
-   const c=await this.row(db,id,user);await callRelation(db,c);if(c.state!=='accepted')throw new ConflictException({code:'STATE_CONFLICT'});
-   if(await this.family(db,session)!==(user===c.caller_id?c.caller_family:c.recipient_family))throw new ForbiddenException();
-   let result;try{result=await this.media!.token(roomName(id),user);}catch{throw new ServiceUnavailableException({code:'CALLS_UNAVAILABLE'});}
+   const c=await this.row(db,id,user);await callRelation(db,c);if(c.state!=='accepted')throw new ConflictException({code:'STATE_CONFLICT',reason:'CALL_NOT_ACCEPTED'});
+   if(await this.family(db,session)!==(user===c.caller_id?c.caller_family:c.recipient_family))throw new ForbiddenException({reason:'CALL_OTHER_DEVICE'});
+   let result;try{result=await this.media!.token(roomName(id),user);}catch{throw new ServiceUnavailableException({code:'CALLS_UNAVAILABLE',reason:'CALL_MEDIA_UNAVAILABLE'});}
    await this.runtime?.check();
    await db.query(`UPDATE calls SET media_issued_until=clock_timestamp()+interval '35 seconds',caller_heartbeat=CASE WHEN caller_id=$2 THEN clock_timestamp() ELSE caller_heartbeat END,recipient_heartbeat=CASE WHEN recipient_id=$2 THEN clock_timestamp() ELSE recipient_heartbeat END WHERE id=$1`,[id,user]);
    return {call_id:id,...result};
@@ -103,7 +104,7 @@ export class CallsService implements OnModuleInit,OnModuleDestroy {
  }
  async heartbeat(header:string|undefined,id:string){await this.sweep();return this.readTx(header,async(db,user,session)=>{
   const c=await this.row(db,id,user);if(c.state==='accepted'){
-   await callRelation(db,c);if(await this.family(db,session)!==(user===c.caller_id?c.caller_family:c.recipient_family))throw new ForbiddenException();
+   await callRelation(db,c);if(await this.family(db,session)!==(user===c.caller_id?c.caller_family:c.recipient_family))throw new ForbiddenException({reason:'CALL_OTHER_DEVICE'});
    await db.query(`UPDATE calls SET caller_heartbeat=CASE WHEN caller_id=$2 THEN clock_timestamp() ELSE caller_heartbeat END,recipient_heartbeat=CASE WHEN recipient_id=$2 THEN clock_timestamp() ELSE recipient_heartbeat END WHERE id=$1`,[id,user]);
   }return dto(c);
  });}

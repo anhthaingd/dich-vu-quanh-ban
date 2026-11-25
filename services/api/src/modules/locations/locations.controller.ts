@@ -9,14 +9,14 @@ export class LocationsController {
   constructor(@Inject(GeoapifyProvider) private readonly provider:GeoapifyProvider,@Inject(LocationLimit) private readonly limit:LocationLimit,@Optional() @Inject(AuthService) private readonly auth?:AuthService) {}
   @Post(':action') @HttpCode(200) @Header('Cache-Control','no-store')
   async lookup(@Param('action') action:string,@Body() body:unknown,@Headers('authorization') header:string|undefined,@Req() req:IncomingMessage,@Res({passthrough:true}) res:ServerResponse) {
-    if(!['autocomplete','geocode','reverse'].includes(action))throw new BadRequestException();
+    if(!['autocomplete','geocode','reverse'].includes(action))throw new BadRequestException({reason:'LOCATION_ACTION_INVALID',field:'action'});
     const input=locationInput(action as LocationAction,body);
     // Express applies the server's trust-proxy policy; never parse client IP headers here.
-    if (header && !this.auth) throw new UnauthorizedException();
+    if (header && !this.auth) throw new UnauthorizedException({reason:'LOCATION_SIGN_IN_UNSUPPORTED'});
     const user=header&&this.auth?(await this.auth.authenticate(header)).user.id:null;
     const ip=(req as IncomingMessage & {ip?:string}).ip??req.socket.remoteAddress??'unknown';
     const retry=this.limit.take(user?`user:${user}`:`ip:${ip}`);
-    if(retry){res.setHeader('Retry-After',retry);throw new HttpException('Rate limited',429);}
+    if(retry){res.setHeader('Retry-After',retry);throw new HttpException({reason:'LOCATION_RATE_LIMITED'},429);}
     try {return await this.provider.lookup(action as LocationAction,input);}
     catch(e){if(e instanceof HttpException&&e.getStatus()===429)res.setHeader('Retry-After',60);throw e;}
   }

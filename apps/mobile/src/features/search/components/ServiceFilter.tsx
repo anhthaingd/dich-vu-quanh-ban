@@ -8,6 +8,8 @@ import { Button } from '../../../components/ui/Button';
 import { LoadingState, ErrorState, EmptyState } from '../../../components/ui/Feedback';
 import type { Category, Skill } from '../../catalog/models/catalog.types';
 import { theme } from '../../../theme/tokens';
+import { useErrorText } from '../../../components/ui/ErrorMessage';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 export type ServiceSelection = { categoryId?: string; skillId?: string };
 
 // Stable catalog codes keep the same visual identity in every language.
@@ -29,43 +31,45 @@ export function ServiceFilter({ value, onChange, locationControl, submitControl 
   locationControl?: ReactNode; submitControl?: ReactNode;
   value: ServiceSelection; onChange: (value: ServiceSelection) => void;
 }) {
-  const api = useCatalogApi(), { t, locale } = useLocale();
+  const api = useCatalogApi(), { t, locale } = useLocale(), errorText = useErrorText();
+  // The catalog hint mentions the connection, so use it only for network failures.
+  const catalogError = (e: ErrorInfo) => errorText(e, code => code === 'NETWORK' ? t('catalog.error') : undefined);
   const [query, setQuery] = useState('');
   const [matches, setMatches] = useState<{locale: string; items: Skill[]} | null>(null);
-  const [queryError, setQueryError] = useState(false);
+  const [queryError, setQueryError] = useState<ErrorInfo | null>(null);
   const [opened, setOpened] = useState(false);
   const [browse, setBrowse] = useState(value.categoryId);
   const [retry, setRetry] = useState(0);
   const [tree, setTree] = useState<{locale: string; items: Category[]} | null>(null);
   const [services, setServices] = useState<{locale: string; categoryId?: string; items: Skill[]} | null>(null);
-  const [treeError, setTreeError] = useState(false), [skillError, setSkillError] = useState(false);
+  const [treeError, setTreeError] = useState<ErrorInfo | null>(null), [skillError, setSkillError] = useState<ErrorInfo | null>(null);
   const categoryId = opened ? browse : value.categoryId;
   // The current catalog has industry → group. Load category labels once per locale;
   // skill lists are loaded only for the category being viewed.
   useEffect(() => {
     const controller = new AbortController();
-    setTree(null); setTreeError(false);
+    setTree(null); setTreeError(null);
     api.categories(undefined, controller.signal, locale).then(async roots => {
       const groups = await Promise.all(roots.map(root => api.categories(root.id, controller.signal, locale)));
       if (!controller.signal.aborted) setTree({locale,items:[...new Map([...roots,...groups.flat()].map(item=>[item.id,item])).values()]});
-    }).catch(() => {if (!controller.signal.aborted) setTreeError(true);});
+    }).catch(e => {if (!controller.signal.aborted) setTreeError(toErrorInfo(e));});
     return () => controller.abort();
   }, [api, locale, retry]);
   useEffect(() => {
     const controller = new AbortController();
-    setServices(null); setSkillError(false);
+    setServices(null); setSkillError(null);
     (categoryId ? api.skills(categoryId, controller.signal, locale) : Promise.resolve([]))
       .then(items => {if (!controller.signal.aborted) setServices({locale,categoryId,items});})
-      .catch(() => {if (!controller.signal.aborted) setSkillError(true);});
+      .catch(e => {if (!controller.signal.aborted) setSkillError(toErrorInfo(e));});
     return () => controller.abort();
   }, [api, categoryId, locale, retry]);
   useEffect(() => {
     if (!opened || !query.trim() || !tree || tree.locale !== locale) return;
     const controller = new AbortController();
-    setMatches(null); setQueryError(false);
+    setMatches(null); setQueryError(null);
     Promise.all(tree.items.filter(c => !c.parent_id).map(c => api.skills(c.id, controller.signal, locale)))
       .then(lists => { if (!controller.signal.aborted) setMatches({locale, items: [...new Map(lists.flat().map(s => [s.id, s])).values()]}); })
-      .catch(() => { if (!controller.signal.aborted) setQueryError(true); });
+      .catch(e => { if (!controller.signal.aborted) setQueryError(toErrorInfo(e)); });
     return () => controller.abort();
   }, [api, tree, locale, opened, !!query.trim(), retry]);
   const categories = tree?.locale === locale ? tree.items : [];
@@ -104,7 +108,7 @@ export function ServiceFilter({ value, onChange, locationControl, submitControl 
           <AppText style={styles.categoryText} tone={(selectedRoot??'')===item.id ? 'primary' : 'muted'}>{item.name}</AppText>
         </Pressable>)}
       </View></ScrollView>
-      {treeError ? <ErrorState message={t('catalog.error')} retryLabel={t('common.retry')} onRetry={()=>setRetry(n=>n+1)}/> : !tree ? <LoadingState message={t('catalog.loading')}/> : categories.length===0 ? <EmptyState message={t('catalog.empty')}/> : null}
+      {treeError ? <ErrorState message={catalogError(treeError)} retryLabel={t('common.retry')} onRetry={()=>setRetry(n=>n+1)}/> : !tree ? <LoadingState message={t('catalog.loading')}/> : categories.length===0 ? <EmptyState message={t('catalog.empty')}/> : null}
       {categories.some(c=>c.name_locale!==locale) && <AppText variant="caption" tone="muted">{t('catalog.translationNotice')}</AppText>}
     </> : <>
       <AppText variant="section">{t('serviceFilter.title')}</AppText>
@@ -119,7 +123,7 @@ export function ServiceFilter({ value, onChange, locationControl, submitControl 
           <AppText tone="muted">{t('home.searchCatalogHint')}</AppText>
           <TextInput testID="service-query" accessibilityLabel={t('home.searchServices')} placeholder={t('home.placeholder')} value={query} onChangeText={setQuery} style={styles.query} />
           {query.trim() ? <>
-            {queryError || treeError ? <ErrorState message={t('catalog.error')} retryLabel={t('common.retry')} onRetry={()=>setRetry(n=>n+1)}/> : !matches ? <LoadingState message={t('catalog.loading')}/> : <>
+            {queryError || treeError ? <ErrorState message={catalogError((queryError ?? treeError)!)} retryLabel={t('common.retry')} onRetry={()=>setRetry(n=>n+1)}/> : !matches ? <LoadingState message={t('catalog.loading')}/> : <>
               {filtered.map(item=><Button key={item.id} testID={`service-match-${item.id}`} label={item.name} variant="secondary" onPress={()=>choose({categoryId:item.category_ids[0],skillId:item.id})}/>)}
               {!filtered.length && <EmptyState message={t('catalog.empty')}/>}
             </>}
@@ -128,7 +132,7 @@ export function ServiceFilter({ value, onChange, locationControl, submitControl 
           <Button testID="service-all" variant="secondary" label={t('serviceFilter.all')} onPress={()=>choose({})} />
           {browse && <Button testID="service-root" variant="link" label={t('serviceFilter.industries')} onPress={()=>setBrowse(undefined)} />}
           {current?.parent_id && <Button testID="service-parent" variant="link" label={categories.find(item=>item.id===current.parent_id)?.name ?? t('common.back')} onPress={()=>setBrowse(current.parent_id!)} />}
-          {treeError || skillError ? <ErrorState message={t('catalog.error')} retryLabel={t('common.retry')} onRetry={()=>setRetry(n=>n+1)} /> : !ready ? <LoadingState message={t('catalog.loading')} /> : <>
+          {treeError || skillError ? <ErrorState message={catalogError((treeError ?? skillError)!)} retryLabel={t('common.retry')} onRetry={()=>setRetry(n=>n+1)} /> : !ready ? <LoadingState message={t('catalog.loading')} /> : <>
             {current && <><AppText variant="section">{current.name}</AppText><Button testID="service-category-apply" label={t('serviceFilter.inCategory',{name:current.name})} onPress={()=>choose({categoryId:current.id})} /></>}
             {children.map(item=><Button key={item.id} testID={`service-category-${item.id}`} label={item.name} variant="secondary" onPress={()=>setBrowse(item.id)} />)}
             {directSkills.map(item=><Button key={item.id} testID={`service-skill-${item.id}`} label={item.name} variant="secondary" accessibilityState={{selected:value.skillId===item.id}} onPress={()=>choose({categoryId:browse,skillId:item.id})} />)}

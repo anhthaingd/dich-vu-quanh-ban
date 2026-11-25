@@ -13,7 +13,7 @@ export class SupportService {
  constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly cursor:Cursor){this.tx=new AccountTransaction(pool,auth,true);}
  private async own(db:PoolClient,id:string,user:string,lock=false):Promise<ReportRow>{
   const r=(await db.query(`SELECT * FROM reports WHERE id=$1 AND reporter_id=$2${lock?' FOR UPDATE':''}`,[id,user])).rows[0];
-  if(!r)throw new NotFoundException();return r;
+  if(!r)throw new NotFoundException({reason:'SUPPORT_REPORT_NOT_FOUND'});return r;
  }
  async dto(db:PoolClient,r:ReportRow){
   const {rows:updates}=await db.query("SELECT id,actor_id,body,visibility,created_at FROM report_updates WHERE report_id=$1 AND visibility='participants' ORDER BY created_at,id",[r.id]);
@@ -24,12 +24,12 @@ export class SupportService {
   let job=input.job_id;
   if(input.invoice_id){
    const r=(await db.query('SELECT i.job_id,v.sent_at FROM invoices i JOIN invoice_versions v ON v.invoice_id=i.id WHERE i.id=$1 AND v.id=$2',[input.invoice_id,input.invoice_version_id])).rows[0];
-   if(!r||job&&job!==r.job_id)throw new NotFoundException();
+   if(!r||job&&job!==r.job_id)throw new NotFoundException({reason:'SUPPORT_INVOICE_NOT_FOUND'});
    const access=await jobAccess(db,r.job_id,user);
-   if(access.customer&&!r.sent_at)throw new NotFoundException();job=r.job_id;
+   if(access.customer&&!r.sent_at)throw new NotFoundException({reason:'SUPPORT_INVOICE_NOT_FOUND'});job=r.job_id;
   }else if(input.review_id){
    const r=(await db.query('SELECT r.job_id,j.partner_id FROM reviews r JOIN jobs j ON j.id=r.job_id WHERE r.id=$1',[input.review_id])).rows[0];
-   if(!r||job&&job!==r.job_id)throw new NotFoundException();job=r.job_id;
+   if(!r||job&&job!==r.job_id)throw new NotFoundException({reason:'SUPPORT_REVIEW_NOT_FOUND'});job=r.job_id;
    try{await jobAccess(db,job!,user);}catch(e){
     if(!(e instanceof NotFoundException))throw e;
     const member=await memberAccess(db,r.partner_id,user);
@@ -40,7 +40,7 @@ export class SupportService {
  }
  private async evidence(db:PoolClient,id:string,ids:string[],user:string,update:string|null=null){
   for(const asset of [...ids].sort()){
-   if(!(await db.query("SELECT 1 FROM assets WHERE id=$1 AND uploader_id=$2 AND purpose='evidence' AND status='ready' FOR SHARE",[asset,user])).rowCount)throw new BadRequestException();
+   if(!(await db.query("SELECT 1 FROM assets WHERE id=$1 AND uploader_id=$2 AND purpose='evidence' AND status='ready' FOR SHARE",[asset,user])).rowCount)throw new BadRequestException({reason:'SUPPORT_EVIDENCE_NOT_READY',field:'evidence_ids'});
    await db.query('INSERT INTO report_evidence(report_id,asset_id,submitted_by,update_id) VALUES($1,$2,$3,$4) ON CONFLICT(report_id,asset_id) DO NOTHING',[id,asset,user,update]);
   }
  }
@@ -55,12 +55,12 @@ export class SupportService {
    await event(db,`report:${r.id}:${r.version}`,r.id,r.version,'report.updated.v1',{report_id:r.id,resource_version:r.version});
    return this.dto(db,r);
   },async(_db,a)=>{
-   if(a.user.status==='suspended'&&(input.job_id||input.invoice_id||input.review_id||input.kind!=='account'))throw new BadRequestException();
+   if(a.user.status==='suspended'&&(input.job_id||input.invoice_id||input.review_id||input.kind!=='account'))throw new BadRequestException({reason:'SUPPORT_ACCOUNT_REPORT_ONLY'});
   });
  }
  reply(header:string|undefined,id:string,input:ReturnType<typeof reportReply>,key:string){
   return this.tx.run(header,`addReportUpdate:${id}`,key,input,async(db,a)=>{
-   const r=await this.own(db,id,a.user.id,true);if(r.state==='closed')throw new ConflictException({code:'STATE_CONFLICT'});
+   const r=await this.own(db,id,a.user.id,true);if(r.state==='closed')throw new ConflictException({code:'STATE_CONFLICT',reason:'SUPPORT_REPORT_CLOSED'});
    const update=(await db.query("INSERT INTO report_updates(report_id,actor_id,body,visibility) VALUES($1,$2,$3,'participants') RETURNING id",[id,a.user.id,input.body])).rows[0];
    await this.evidence(db,id,input.evidence_ids,a.user.id,update.id);
    const next=(await db.query("UPDATE reports SET state=CASE WHEN state='awaiting_evidence' THEN 'reviewing' ELSE state END,version=version+1 WHERE id=$1 RETURNING *",[id])).rows[0];

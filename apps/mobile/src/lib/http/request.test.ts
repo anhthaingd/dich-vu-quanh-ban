@@ -72,7 +72,7 @@ test.each([[401, 'UNAUTHENTICATED'], [403, 'FORBIDDEN'], [429, 'RATE_LIMITED']] 
     const json = jest.fn(async () => ({ message: 'SERVER_CANARY' }));
     const fetcher = jest.fn().mockResolvedValue({ ok: false, status, headers: { get: () => id }, json });
     await expect(requestJson('http://localhost', fetcher)).rejects.toMatchObject({ code, status });
-    if(status===403)expect(json).toHaveBeenCalledTimes(1);else expect(json).not.toHaveBeenCalled();
+    expect(json).toHaveBeenCalledTimes(1); // read for reason/field only; the message never leaves this function
     expect(fetcher).toHaveBeenCalledTimes(1);
   },
 );
@@ -84,4 +84,16 @@ test('a timed out mutation is cancelled without automatic replay', async () => {
   await jest.advanceTimersByTimeAsync(10000); await result;
   expect(fetcher).toHaveBeenCalledTimes(1);
   expect(fetcher.mock.calls[0][1]?.signal?.aborted).toBe(true);
+});
+test.each([
+  [409, { code: 'STATE_CONFLICT', reason: 'JOB_ALREADY_ACCEPTED' }, { code: 'STATE_CONFLICT', reason: 'JOB_ALREADY_ACCEPTED' }],
+  [404, { code: 'NOT_FOUND', reason: 'JOB_NOT_FOUND' }, { code: 'NOT_FOUND', reason: 'JOB_NOT_FOUND' }],
+  [400, { code: 'VALIDATION', reason: 'PHONE_INVALID', field_errors: [{ field: 'phone', code: 'PHONE_INVALID' }] }, { code: 'VALIDATION', reason: 'PHONE_INVALID', field: 'phone' }],
+  [403, { code: 'STATE_CONFLICT', reason: 'bad reason', field_errors: [{ field: 'Bad Field', code: 'X' }] }, { code: 'FORBIDDEN', reason: undefined, field: undefined }],
+  [503, { code: 'LOCAL_CONTACT_NOT_ALLOWED' }, { code: 'LOCAL_CONTACT_NOT_ALLOWED' }],
+])('error body %i keeps category, safe reason and field', async (status, body, expected) => {
+  const log = createDiagnosticLogger();
+  const fetcher = jest.fn().mockResolvedValue({ ok: false, status, headers: new Headers(), json: async () => ({ ...body, message: 'PRIVATE_CANARY' }) });
+  await expect(requestJson('http://localhost', fetcher, undefined, log)).rejects.toMatchObject(expected);
+  expect(log.exportJsonl()).not.toContain('PRIVATE_CANARY');
 });

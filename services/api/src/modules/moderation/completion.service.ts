@@ -14,17 +14,21 @@ export class CompletionService {
  private async authorize(db:PoolClient,a:Actor,token:string|undefined){await this.admin.grants(db,a,'support.read');return this.admin.check(db,a,token,'finance.review');}
  private async context(db:PoolClient,id:string){
   const ref=(await db.query('SELECT j.id,j.partner_id FROM reports r JOIN invoices i ON i.id=r.invoice_id JOIN jobs j ON j.id=i.job_id WHERE r.id=$1',[id])).rows[0];
-  if(!ref)throw new NotFoundException();
+  if(!ref)throw new NotFoundException({reason:'ADMIN_COMPLETION_REPORT_NOT_FOUND'});
   // Same resource order as worker settlement, report creation and job transitions.
   const partner=(await db.query('SELECT moderation_status FROM partners WHERE id=$1 FOR UPDATE',[ref.partner_id])).rows[0];
   const job=(await db.query('SELECT * FROM jobs WHERE id=$1 FOR UPDATE',[ref.id])).rows[0];
   const i=(await db.query('SELECT * FROM invoices WHERE job_id=$1 FOR UPDATE',[job.id])).rows[0];
   const report=(await db.query('SELECT * FROM reports WHERE id=$1 FOR UPDATE',[id])).rows[0];
-  if(report.state==='closed'||report.job_id!==job.id||report.invoice_id!==i.id||report.invoice_version_id!==i.locked_version_id||i.state!=='locked'||i.current_version_id!==i.locked_version_id||job.state!=='awaiting_settlement')throw new ConflictException({code:'STATE_CONFLICT'});
+  if(report.state==='closed')throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_REPORT_CLOSED'});
+  if(report.job_id!==job.id||report.invoice_id!==i.id||report.invoice_version_id!==i.locked_version_id||i.state!=='locked'||i.current_version_id!==i.locked_version_id||job.state!=='awaiting_settlement')throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_COMPLETION_INVOICE_NOT_LOCKED'});
   const c=(await db.query('SELECT c.*,v.labor,v.materials FROM invoice_confirmations c JOIN invoice_versions v ON v.id=c.version_id WHERE c.invoice_id=$1',[i.id])).rows[0];
-  if(!c||c.version_id!==i.locked_version_id||partner.moderation_status==='suspended'||!(await db.query("SELECT 1 FROM users WHERE id=$1 AND status='active'",[job.customer_id])).rowCount||!(await db.query("SELECT 1 FROM memberships m JOIN users u ON u.id=m.user_id WHERE m.partner_id=$1 AND m.is_owner AND m.active AND u.status='active'",[job.partner_id])).rowCount)throw new ConflictException({code:'STATE_CONFLICT'});
+  if(!c||c.version_id!==i.locked_version_id)throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_COMPLETION_NOT_CONFIRMED'});
+  if(partner.moderation_status==='suspended')throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_COMPLETION_PARTNER_SUSPENDED'});
+  if(!(await db.query("SELECT 1 FROM users WHERE id=$1 AND status='active'",[job.customer_id])).rowCount)throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_COMPLETION_CUSTOMER_INACTIVE'});
+  if(!(await db.query("SELECT 1 FROM memberships m JOIN users u ON u.id=m.user_id WHERE m.partner_id=$1 AND m.is_owner AND m.active AND u.status='active'",[job.partner_id])).rowCount)throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_COMPLETION_OWNER_INACTIVE'});
   const evidence=(await db.query("SELECT a.id FROM report_evidence e JOIN assets a ON a.id=e.asset_id WHERE e.report_id=$1 AND a.status='ready' AND a.purpose='evidence' ORDER BY a.id FOR SHARE OF a",[id])).rows.map(r=>r.id as string);
-  if(!evidence.length)throw new ConflictException({code:'STATE_CONFLICT'});
+  if(!evidence.length)throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_COMPLETION_EVIDENCE_MISSING'});
   const money={fee:c.fee,points_used:c.points_used,reward:c.reward,partner_delta:String(BigInt(c.points_used)-BigInt(c.fee)),total:String(BigInt(c.labor)+BigInt(c.materials)),cash_due:c.cash_due};
   return {report,job,i,evidence,money};
  }
@@ -37,10 +41,11 @@ export class CompletionService {
  });}
  complete(header:string|undefined,token:string|undefined,id:string,input:ReturnType<typeof completionInput>,key:string){return this.tx.run(header,`admin.reports.complete:${id}`,key,input,async(db,a)=>{
   const c=await this.context(db,id);await this.authorize(db,a,token);
-  if(input.expected_version!==c.report.version||input.invoice_id!==c.i.id||input.invoice_version_id!==c.i.locked_version_id||input.invoice_expected_version!==c.i.version)throw new ConflictException({code:'VERSION_CONFLICT'});
-  let preview;try{preview=JSON.parse(this.admin.secrets.decrypt(input.preview_token));}catch{throw new BadRequestException();}
-  if(!preview||preview.scope!==this.fingerprint(c,a)||!Number.isFinite(Date.parse(preview.expires_at))||Date.parse(preview.expires_at)<=Date.now())throw new ConflictException({code:'STATE_CONFLICT'});
-  if(input.evidence_ids.some(asset=>!c.evidence.includes(asset)))throw new BadRequestException();
+  if(input.expected_version!==c.report.version||input.invoice_id!==c.i.id||input.invoice_version_id!==c.i.locked_version_id||input.invoice_expected_version!==c.i.version)throw new ConflictException({code:'VERSION_CONFLICT',reason:'ADMIN_COMPLETION_PREVIEW_OUTDATED'});
+  let preview;try{preview=JSON.parse(this.admin.secrets.decrypt(input.preview_token));}catch{throw new BadRequestException({reason:'ADMIN_COMPLETION_PREVIEW_INVALID',field:'preview_token'});}
+  if(!preview||preview.scope!==this.fingerprint(c,a))throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_COMPLETION_PREVIEW_OUTDATED'});
+  if(!Number.isFinite(Date.parse(preview.expires_at))||Date.parse(preview.expires_at)<=Date.now())throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_COMPLETION_PREVIEW_EXPIRED'});
+  if(input.evidence_ids.some(asset=>!c.evidence.includes(asset)))throw new BadRequestException({reason:'ADMIN_COMPLETION_EVIDENCE_INVALID',field:'evidence_ids'});
   const settlement=await settleLockedInvoice(db,c.job,c.i,{id:a.user.id,kind:'admin',report:id,reason:input.reason});
   for(const asset of input.evidence_ids)await db.query('INSERT INTO admin_completion_evidence(settlement_id,asset_id) VALUES($1,$2)',[settlement,asset]);
   await db.query('UPDATE reports SET version=version+1 WHERE id=$1',[id]);

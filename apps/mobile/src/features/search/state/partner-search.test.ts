@@ -41,7 +41,7 @@ test('deduplicates pages, retries read errors and rejects cursor loops', async (
     });
   await search.search(q);
   await search.more();
-  expect(search.getSnapshot().error).toBe('INVALID_RESPONSE');
+  expect(search.getSnapshot().error).toEqual({ code: 'INVALID_RESPONSE' });
   expect(search.getSnapshot().items).toEqual([{ id: 'one' }]);
   api.search.mockResolvedValueOnce({
     items: [{ id: 'one' }],
@@ -89,7 +89,7 @@ test('failed filter refresh preserves last results and retry uses newly selected
  const {api,search}=fixture();
  api.search.mockResolvedValueOnce({items:[{id:'one'}],next_cursor:'old'}).mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce({items:[],next_cursor:null});
  await search.search(q);await search.search({...q,radius_m:5000});
- expect(search.getSnapshot()).toMatchObject({items:[{id:'one'}],error:'NETWORK',next:null,searched:true});
+ expect(search.getSnapshot()).toMatchObject({items:[{id:'one'}],error:{code:'NETWORK'},next:null,searched:true});
  await search.more();expect(api.search).toHaveBeenCalledTimes(2);
  await search.retry();expect(api.search.mock.calls[2][0]).toEqual({...q,radius_m:5000});
  expect(search.getSnapshot()).toMatchObject({items:[],error:null,criteria:{...q,radius_m:5000}});

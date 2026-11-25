@@ -10,7 +10,8 @@ import { Button } from '../../../components/ui/Button';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { theme } from '../../../theme/tokens';
 import { AppText } from '../../../components/ui/AppText';
-import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
+import { ApiError } from '../../../lib/http/api-error';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 import { LoadingState, RefreshError } from '../../../components/ui/Feedback';
 import { sessionReady, sessionOperation } from '../../jobs/state/session-ready';
 import type { Conversation } from '../models';
@@ -21,12 +22,12 @@ function List({ owner, jobId, open }: {
     open: (id: string) => void;
 }) {
     const { manager, state: auth } = useAuth(), { t } = useLocale();
-    const [items, setItems] = useState<Conversation[]>([]), [busy, setBusy] = useState(false), [error, setError] = useState<ApiErrorCode | null>(null), [attempt, setAttempt] = useState(0), [next, setNext] = useState<string | null>(null);
+    const [items, setItems] = useState<Conversation[]>([]), [busy, setBusy] = useState(false), [error, setError] = useState<ErrorInfo | null>(null), [attempt, setAttempt] = useState(0), [next, setNext] = useState<string | null>(null);
     const [pulling, setPulling] = useState(false), [loaded, setLoaded] = useState(false);
     const generation = useRef(0), pageCount = useRef(1);
     const reload = () => { if (!busy && !auth.busy) { setPulling(true); setAttempt(v => v + 1); return true; } return false; };
     useAccountRefresh(pulling, reload, !busy && !auth.busy);
-    useRealtimeRefresh({error,busy,matches:s=>s.kind==='event'&&s.event.type.startsWith('conversation.'),refresh:()=>setAttempt(v=>v+1),revoke:()=>setItems([])});
+    useRealtimeRefresh({error:error?.code??null,busy,matches:s=>s.kind==='event'&&s.event.type.startsWith('conversation.'),refresh:()=>setAttempt(v=>v+1),revoke:()=>setItems([])});
     useFocusEffect(useCallback(() => {
         const epoch = ++generation.current; let active = true;
         setBusy(true);
@@ -45,8 +46,8 @@ function List({ owner, jobId, open }: {
             setItems([...found.values()]); setNext(cursor ?? null); setError(null); setLoaded(true);
         })().catch(e => {
             if (!active) return;
-            const code = e instanceof ApiError ? e.code : 'NETWORK'; setError(code);
-            if (['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(code)) { setItems([]); setNext(null); }
+            const info = toErrorInfo(e); setError(info);
+            if (['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(info.code)) { setItems([]); setNext(null); }
         }).finally(() => { if (active && epoch === generation.current) { setBusy(false); setPulling(false); } });
         return () => { active = false; generation.current++; };
     }, [manager, owner, attempt]));
@@ -60,8 +61,8 @@ function List({ owner, jobId, open }: {
             setNext(p.next_cursor); pageCount.current++; setError(null);
         } catch (e) {
             if (epoch !== generation.current) return;
-            const code = e instanceof ApiError ? e.code : 'NETWORK'; setError(code);
-            if (['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(code)) { setItems([]); setNext(null); }
+            const info = toErrorInfo(e); setError(info);
+            if (['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(info.code)) { setItems([]); setNext(null); }
         } finally { if (epoch === generation.current) setBusy(false); }
     };
     const shown = items.filter(c => !jobId || c.job_ids.includes(jobId));

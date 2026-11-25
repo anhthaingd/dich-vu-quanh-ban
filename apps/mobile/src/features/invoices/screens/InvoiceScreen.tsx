@@ -15,6 +15,9 @@ import {Card} from '../../../components/ui/Card';
 import {Input} from '../../../components/ui/Input';
 import {theme} from '../../../theme/tokens';
 import {ApiError,type ApiErrorCode} from '../../../lib/http/api-error';
+import {toErrorInfo,type ErrorInfo} from '../../../lib/errors/describe';
+// Checked before sending; uses the same reasons the API returns for these rules.
+const invalidInput=(reason:string,field:string):ErrorInfo=>({code:'VALIDATION',reason,field});
 import {sessionReady,sessionOperation} from '../../jobs/state/session-ready';
 import {Mutation} from '../../jobs/state/mutation';
 import {JobFeedback} from '../../jobs/components/JobFeedback';
@@ -30,7 +33,7 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
  const financeReady=useRef(false);
  const [ledgerBusy,setLedgerBusy]=useState(false),[ledgerError,setLedgerError]=useState(false),[ledgerAttempt,setLedgerAttempt]=useState(0);
  const [ledger,setLedger]=useState<LedgerPage|null>(null),[history,setHistory]=useState(false);
- const [busy,setBusy]=useState(true),[error,setError]=useState<ApiErrorCode|null>(null),[attempt,setAttempt]=useState(0),[saved,setSaved]=useState(false);
+ const [busy,setBusy]=useState(true),[error,setError]=useState<ErrorInfo|null>(null),[attempt,setAttempt]=useState(0),[saved,setSaved]=useState(false);
  const [labor,setLabor]=useState(''),[materials,setMaterials]=useState(''),[note,setNote]=useState(''),[points,setPoints]=useState('0'),[reason,setReason]=useState(''),[revision,setRevision]=useState(false),[received,setReceived]=useState(false);
  const [mutation]=useState(()=>new Mutation<Invoice>()),[upload]=useState(()=>new Mutation<Asset>());
  const state=useSyncExternalStore(mutation.subscribe,mutation.getSnapshot,mutation.getSnapshot),up=useSyncExternalStore(upload.subscribe,upload.getSnapshot,upload.getSnapshot);
@@ -38,7 +41,7 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
  const readTask=useRef<Promise<void>>(Promise.resolve());
  const [stale,setStale]=useState(false);
  const edited=useRef(false),currentInvoice=useRef(invoice);currentInvoice.current=invoice;
- useRealtimeRefresh({error,resource:{type:'job',id},busy:busy||state.busy||state.pending||up.busy||up.pending,matches:s=>s.kind==='event'&&(s.event.data.job_id===id||s.event.type==='notification.created.v1'||s.event.type.startsWith('invoice.')&&(!invoice||s.event.data.invoice_id===invoice.id)),refresh:()=>setAttempt(v=>v+1),revoke:()=>{setJob(null);setInvoice(null);setAssets([]);setError('NOT_FOUND');}});
+ useRealtimeRefresh({error:error?.code??null,resource:{type:'job',id},busy:busy||state.busy||state.pending||up.busy||up.pending,matches:s=>s.kind==='event'&&(s.event.data.job_id===id||s.event.type==='notification.created.v1'||s.event.type.startsWith('invoice.')&&(!invoice||s.event.data.invoice_id===invoice.id)),refresh:()=>setAttempt(v=>v+1),revoke:()=>{setJob(null);setInvoice(null);setAssets([]);setError({code:'NOT_FOUND'});}});
  useFocusEffect(useCallback(()=>{
   let active=true;mounted.current=true;setBusy(true);setError(null);
   readTask.current=(async()=>{
@@ -72,7 +75,7 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
     }
     if(active){setPhotoError(failed);setPhotosBusy(false);}
    })();
-  })().catch(e=>{if(active){setError(e instanceof ApiError?e.code:'NETWORK');if(e instanceof ApiError&&['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(e.code)){setJob(null);setInvoice(null);setAssets([]);}}}).finally(()=>{if(active)setBusy(false);});
+  })().catch(e=>{if(active){setError(toErrorInfo(e));if(e instanceof ApiError&&['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(e.code)){setJob(null);setInvoice(null);setAssets([]);}}}).finally(()=>{if(active)setBusy(false);});
   return ()=>{active=false;mounted.current=false;};
  },[manager,owner,id,attempt]));
  useEffect(()=>{
@@ -106,13 +109,17 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
  const apply=(i:Invoice|null)=>{if(!i||!mounted.current)return;edited.current=false;setStale(false);setInvoice(i);setSaved(false);setRevision(false);setReason('');setReceived(false);setAttempt(x=>x+1);};
  const act=async(action:InvoiceAction)=>{
   if(!invoice)return;setError(null);
-  if(action==='confirm'&&(!financeReady.current||available===null||!validAmount(points)||BigInt(points)>BigInt(invoice.total)||BigInt(points)>BigInt(available))){setError('VALIDATION');return;}
-  if(action==='revision-requests'&&!reason.trim()){setError('VALIDATION');return;}
+  if(action==='confirm'&&(!financeReady.current||available===null)){setError({code:'VALIDATION'});return;}
+  if(action==='confirm'&&!validAmount(points)){setError(invalidInput('INVOICE_POINTS_INVALID','points_used'));return;}
+  if(action==='confirm'&&BigInt(points)>BigInt(invoice.total)){setError(invalidInput('INVOICE_POINTS_EXCEED_TOTAL','points_used'));return;}
+  if(action==='confirm'&&BigInt(points)>BigInt(available!)){setError(invalidInput('INVOICE_POINTS_INSUFFICIENT','points_used'));return;}
+  if(action==='revision-requests'&&!reason.trim()){setError(invalidInput('INVOICE_REVISION_REASON_REQUIRED','reason'));return;}
   const input:InvoiceChange={expected_version:invoice.version,...(action==='send'?{draft_version_id:invoice.version_id}:action==='revision-requests'?{reason:reason.trim()}:{version_id:invoice.version_id}),...(action==='confirm'?{points_used:points}:{}),...(action==='payment-reported'?{confirmed:true as const}:{}),...(['settle','receipt-confirmed'].includes(action)?{received_in_full:true as const}:{})};
   apply(await mutation.run(key=>afterRead(()=>{if(action==='confirm'&&!financeReady.current)throw new ApiError('VALIDATION');return manager.changeInvoice(owner,invoice.id,action,input,key);})));
  };
  const save=async(send:boolean)=>{
-  if(!validAmount(labor)||!validAmount(materials)||(send&&!assets.length)){setError('VALIDATION');return;}
+  const problem=!validAmount(materials)?invalidInput('INVOICE_MATERIALS_INVALID','materials'):!validAmount(labor)?invalidInput('INVOICE_LABOR_INVALID','labor'):send&&!assets.length?invalidInput('INVOICE_PHOTOS_REQUIRED','result_asset_ids'):null;
+  if(problem){setError(problem);return;}
   setError(null);setSaved(false);const input={expected_version:invoice?.version??1,labor,materials,note,result_asset_ids:assets.map(a=>a.id)};
   // A saved draft is retained within the retry closure, so a lost send response
   // never creates another draft/version on the next attempt.
@@ -124,12 +131,13 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
   setError(null);
   try{const r=await ImagePicker.launchImageLibraryAsync({mediaTypes:['images'],allowsEditing:false,quality:1});if(r.canceled||!r.assets[0]||!mounted.current)return;
    edited.current=true;const photo=r.assets[0];const blob=photo.file??await(await fetch(photo.uri)).blob();
-   if(!['image/png','image/jpeg','image/webp'].includes(blob.type)||blob.size>10*1024*1024||!blob.size){setError('VALIDATION');return;}
+   if(!['image/png','image/jpeg','image/webp'].includes(blob.type)||blob.size>10*1024*1024||!blob.size){setError({code:'VALIDATION'});return;}
    const a=await upload.run(key=>manager.uploadResult(owner,blob,key));if(a&&mounted.current)setAssets(old=>[...old.filter(x=>x.id!==a.id),a]);
-  }catch(e){if(mounted.current)setError(e instanceof ApiError?e.code:'NETWORK');}
+  }catch(e){if(mounted.current)setError(toErrorInfo(e));}
  };
- const feedback=error??state.error??up.error;
- const special=feedback==='PARTNER_FUNDING_REQUIRED'?'invoice.funding':feedback==='INSUFFICIENT_POINTS'?'invoice.insufficient':feedback==='VALIDATION'?'invoice.invalid':null;
+ const feedback=error??state.failure??up.failure;
+ // Used only when the API sent no exact reason (e.g. a photo of the wrong type).
+ const invoiceText=(code:ApiErrorCode)=>code==='PARTNER_FUNDING_REQUIRED'?t('invoice.funding'):code==='INSUFFICIENT_POINTS'?t('invoice.insufficient'):code==='VALIDATION'?t('invoice.invalid'):undefined;
  const row=(label:string,value:string,kind?:'total'|'cash')=><View style={[styles.amount,kind==='total'&&styles.total,kind==='cash'&&styles.cash]}><AppText style={styles.amountLabel} tone={kind==='cash'?'surface':'text'}>{label}</AppText><AppText style={[styles.amountValue,kind==='total'&&styles.totalAmount,kind==='cash'&&styles.cashValue]} tone={kind==='cash'?'surface':'text'}>{value}</AppText></View>;
  const photos=<View style={styles.photos}>{assets.filter(a=>a.download_url).map(a=><Image key={a.id} testID="invoice-photo" source={{uri:a.download_url??undefined}} accessibilityLabel={t('invoice.photoAlt')} style={styles.photo} resizeMode="contain"/>)}</View>;
  const canConfirm=customer&&job?.state==='accepted'&&invoice?.state==='sent';
@@ -140,7 +148,7 @@ function InvoiceContent({owner,id,report}:{owner:string;id:string;report:(invoic
 
   {stale&&<AppText accessibilityRole="alert">{t('jobs.reloadBeforeRetry')}</AppText>}
   {busy&&!job&&<AppText>{t('accountTools.loading')}</AppText>}
-  {special?<AppText accessibilityRole="alert" tone="error">{t(special)}</AppText>:<JobFeedback error={feedback} pending={state.pending||up.pending} busy={state.busy||up.busy||auth.busy} retry={state.pending?()=>void mutation.run().then(apply):up.pending?()=>void upload.run().then(a=>{if(a&&mounted.current)setAssets(old=>[...old.filter(x=>x.id!==a.id),a]);}):undefined}/>}
+  <JobFeedback error={feedback} screen={invoiceText} pending={state.pending||up.pending} busy={state.busy||up.busy||auth.busy} retry={state.pending?()=>void mutation.run().then(apply):up.pending?()=>void upload.run().then(a=>{if(a&&mounted.current)setAssets(old=>[...old.filter(x=>x.id!==a.id),a]);}):undefined}/>
   {job&&<>
 
    {job.state==='stopped'&&<AppText tone="muted">{t('jobs.stopped')}</AppText>}

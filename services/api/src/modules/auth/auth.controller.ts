@@ -15,7 +15,7 @@ export class AuthController {
     const entry = this.attempts.get(key) ?? { count: 0, reset: now + 60000 };
     if (entry.count >= 10 || (!this.attempts.has(key) && this.attempts.size >= 10000)) {
       res.setHeader('Retry-After', Math.max(1, Math.ceil((entry.reset - now) / 1000)));
-      throw new HttpException('Rate limited', 429);
+      throw new HttpException({ reason: 'AUTH_TOO_MANY_ATTEMPTS' }, 429);
     }
     entry.count++; this.attempts.set(key, entry);
   }

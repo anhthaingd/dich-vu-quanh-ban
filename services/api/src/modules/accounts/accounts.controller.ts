@@ -3,7 +3,7 @@ import { AccountsService } from './accounts.service.js';
 import { profileInput } from './profile.input.js';
 import { AddressesService } from './addresses.service.js';
 import { SessionsService } from './sessions.service.js';
-import { addressInput, emptyBody, identifier, pageInput } from './accounts.input.js';
+import { addressInput, emptyBody, identifier, idempotencyKey, pageInput } from './accounts.input.js';
 @Controller('me')
 export class AccountsController {
   constructor(@Inject(AccountsService) private readonly accounts: AccountsService,
@@ -21,7 +21,7 @@ export class AccountsController {
   }
   @Post('sessions/:id/revoke') @Header('Cache-Control', 'no-store')
   revoke(@Headers('authorization') auth: string | undefined, @Headers('idempotency-key') key: string | undefined, @Param('id') id: string, @Body() body: unknown) {
-    emptyBody(body); return this.sessions.revoke(auth, identifier(id), identifier(key));
+    emptyBody(body); return this.sessions.revoke(auth, identifier(id), idempotencyKey(key));
   }
   @Get('addresses') @Header('Cache-Control', 'no-store')
   listAddresses(@Headers('authorization') auth: string | undefined, @Query() query: Record<string, unknown>) {
@@ -29,14 +29,14 @@ export class AccountsController {
   }
   @Post('addresses') @Header('Cache-Control', 'no-store')
   addAddress(@Headers('authorization') auth: string | undefined, @Headers('idempotency-key') key: string | undefined, @Body() body: unknown) {
-    return this.addresses.save(auth, null, addressInput(body, false), identifier(key));
+    return this.addresses.save(auth, null, addressInput(body, false), idempotencyKey(key));
   }
   @Put('addresses/:id') @Header('Cache-Control', 'no-store')
   editAddress(@Headers('authorization') auth: string | undefined, @Headers('idempotency-key') key: string | undefined, @Param('id') id: string, @Body() body: unknown) {
-    return this.addresses.save(auth, identifier(id), addressInput(body, true), identifier(key));
+    return this.addresses.save(auth, identifier(id), addressInput(body, true), idempotencyKey(key));
   }
   @Post('addresses/:id/archive') @Header('Cache-Control', 'no-store')
   archiveAddress(@Headers('authorization') auth: string | undefined, @Headers('idempotency-key') key: string | undefined, @Param('id') id: string, @Body() body: unknown) {
-    emptyBody(body); return this.addresses.archive(auth, identifier(id), identifier(key));
+    emptyBody(body); return this.addresses.archive(auth, identifier(id), idempotencyKey(key));
   }
 }

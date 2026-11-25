@@ -82,3 +82,20 @@ test('account renders Point and invitation independently without duplicate React
   expect(errors.mock.calls.filter(args=>String(args[0]).includes('same key'))).toEqual([]);
  }finally{errors.mockRestore();}
 });
+
+test('login and registration failures show the exact API reason', async () => {
+  const f = authFixture();
+  f.api.login.mockRejectedValueOnce(new ApiError('UNAUTHENTICATED', 401, undefined, undefined, undefined, 'AUTH_INVALID_CREDENTIALS'));
+  f.api.register.mockRejectedValueOnce(new ApiError('VALIDATION', 400, undefined, undefined, undefined, 'AUTH_EMAIL_ALREADY_REGISTERED', 'email'));
+  await mount(f);
+  await screen.findByRole('button', { name: 'Đăng nhập' });
+  fireEvent.changeText(screen.getByLabelText('Email'), credentials.email);
+  fireEvent.changeText(screen.getByLabelText('Mật khẩu'), credentials.password);
+  fireEvent.press(screen.getByRole('button', { name: 'Đăng nhập' }));
+  expect(await screen.findByText(/Email hoặc mật khẩu không đúng/)).toBeVisible();
+  fireEvent.press(screen.getByRole('button', { name: 'Chưa có tài khoản? Đăng ký' }));
+  fireEvent.changeText(screen.getByLabelText('Tên hiển thị'), 'Người thử');
+  fireEvent.changeText(screen.getByLabelText('Mật khẩu'), credentials.password);
+  fireEvent.press(screen.getByRole('button', { name: 'Đăng ký' }));
+  expect(await screen.findByText(/Email này đã có tài khoản/)).toBeVisible();
+});

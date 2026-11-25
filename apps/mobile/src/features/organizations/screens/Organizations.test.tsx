@@ -62,3 +62,13 @@ test('membership cards contain no raw text children that crash native views',asy
  const inspect=(node:unknown)=>{if(Array.isArray(node)){node.forEach(inspect);return;}if(!node||typeof node!=='object')return;const n=node as {type?:string;children?:unknown[]};if(n.type==='View')for(const child of n.children??[])if(typeof child==='string')invalid.push(child);n.children?.forEach(inspect);};
  inspect(view.toJSON());expect(invalid).toEqual([]);
 });
+test('team errors show the exact API reason, then team wording, and never blame the connection for a server rule',async()=>{
+ const {organizationsReasons}=jest.requireActual('../../../lib/errors/reasons/organizations');const {categoryMessages}=jest.requireActual('../../../lib/errors/categories');
+ const f=fixture();f.team.memberships.mockResolvedValue({items:[{...mine,is_owner:false}],next_cursor:null});mount(f,'Organizations');await screen.findByTestId('team-leave-self');
+ fireEvent.changeText(screen.getByTestId('team-token'),'b'.repeat(64));f.team.accept.mockRejectedValueOnce(new ApiError('STATE_CONFLICT',409,undefined,undefined,undefined,'TEAM_INVITATION_EXPIRED'));fireEvent.press(screen.getByTestId('team-accept'));
+ expect(await screen.findByText(organizationsReasons.vi.TEAM_INVITATION_EXPIRED)).toBeTruthy();expect(screen.queryByText('Thử lại')).toBeNull();
+ fireEvent.changeText(screen.getByTestId('team-token'),'c'.repeat(64));f.team.accept.mockRejectedValueOnce(new ApiError('STATE_CONFLICT',409));fireEvent.press(screen.getByTestId('team-accept'));
+ expect(await screen.findByText('Dữ liệu đã thay đổi. Tải lại rồi kiểm tra trước khi tiếp tục.')).toBeTruthy();
+ fireEvent.changeText(screen.getByTestId('team-token'),'d'.repeat(64));f.team.accept.mockRejectedValueOnce(new ApiError('SERVICE_UNAVAILABLE',503));fireEvent.press(screen.getByTestId('team-accept'));
+ expect(await screen.findByText(categoryMessages.vi.SERVICE_UNAVAILABLE)).toBeTruthy();
+});

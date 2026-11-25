@@ -22,10 +22,15 @@ import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Card } from '../../../components/ui/Card';
 import { LoadingState } from '../../../components/ui/Feedback';
+import { ErrorMessage } from '../../../components/ui/ErrorMessage';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
+import type { ApiErrorCode } from '../../../lib/http/api-error';
 
-const errorMessages: Record<AuthErrorCode, MessageKey & `errors.${string}`> = {
+const errorMessages: Record<AuthErrorCode, Exclude<MessageKey & `errors.${string}`, 'errors.reference'>> = {
   UNAUTHENTICATED: 'errors.authentication', RATE_LIMITED: 'errors.rateLimited', VALIDATION: 'errors.validation', SESSION_UNAVAILABLE: 'errors.session',
 };
+// Screen text only where it adds context; infrastructure codes fall through to the precise category message.
+const screenError = (code: ApiErrorCode): Exclude<AuthErrorCode, 'SESSION_UNAVAILABLE'> | undefined => code === 'UNAUTHENTICATED' || code === 'RATE_LIMITED' || code === 'VALIDATION' ? code : undefined;
 export function AccountScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'Account'>) {
   const role=useProductRole();
   const { t,locale } = useLocale();
@@ -57,7 +62,9 @@ export function AccountScreen({ navigation, route }: NativeStackScreenProps<Root
   };
   return <ProductShell title={t('common.account')} keyboardDismissMode="on-drag" onBack={() => navigation.goBack()}>
     <View style={styles.section}>
-    {state.error && <AppText tone="error" accessibilityRole="alert">{t(errorMessages[state.error])}</AppText>}
+    {state.error && (state.errorInfo
+      ? <ErrorMessage error={state.errorInfo} screen={code => { const key = screenError(code); return key ? t(errorMessages[key]) : undefined; }} />
+      : <AppText tone="error" accessibilityRole="alert">{t(errorMessages[state.error])}</AppText>)}
     {state.phase === 'loading' && <LoadingState message={t('auth.restoring')} />}
     {state.phase === 'restore-error' && <Button label={t('common.retry')} loading={state.busy} onPress={() => void manager.restore()} />}
     {state.phase === 'authenticated' && <>
@@ -117,7 +124,7 @@ function AccountLink({label,onPress,testID,disabled,loading}:{label:string;onPre
 }
 function AccountPoints({owner}:{owner:string}){
  const {manager}=useAuth(),{t,locale}=useLocale();
- const [value,setValue]=useState<PointWallet|null>(null),[failed,setFailed]=useState(false),[attempt,setAttempt]=useState(0);
- useFocusEffect(useCallback(()=>{let active=true;setFailed(false);void sessionOperation(manager,owner,()=>manager.getPoints(owner),()=>active).then(v=>{if(active)setValue(v);}).catch(()=>{if(active){setValue(null);setFailed(true);}});return()=>{active=false;};},[manager,owner,attempt]));
- return <Card style={styles.points}><AppText variant="brand" tone="primary">{t('invoice.pointWallet')}</AppText>{value?<><AppText testID="account-points" variant="title">{formatInteger(value.available,locale)} Point</AppText><AppText variant="caption" tone="muted">{t('invoice.availablePoints')}</AppText></>:failed?<><AppText tone="error">{t('accountTools.error')}</AppText><Button label={t('common.retry')} variant="link" onPress={()=>setAttempt(v=>v+1)}/></>:<AppText>{t('accountTools.loading')}</AppText>}</Card>;
+ const [value,setValue]=useState<PointWallet|null>(null),[failed,setFailed]=useState<ErrorInfo|null>(null),[attempt,setAttempt]=useState(0);
+ useFocusEffect(useCallback(()=>{let active=true;setFailed(null);void sessionOperation(manager,owner,()=>manager.getPoints(owner),()=>active).then(v=>{if(active)setValue(v);}).catch(e=>{if(active){setValue(null);setFailed(toErrorInfo(e));}});return()=>{active=false;};},[manager,owner,attempt]));
+ return <Card style={styles.points}><AppText variant="brand" tone="primary">{t('invoice.pointWallet')}</AppText>{value?<><AppText testID="account-points" variant="title">{formatInteger(value.available,locale)} Point</AppText><AppText variant="caption" tone="muted">{t('invoice.availablePoints')}</AppText></>:failed?<><ErrorMessage error={failed}/><Button label={t('common.retry')} variant="link" onPress={()=>setAttempt(v=>v+1)}/></>:<AppText>{t('accountTools.loading')}</AppText>}</Card>;
 }

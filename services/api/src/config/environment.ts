@@ -29,7 +29,8 @@ export function config(env = process.env): Config {
   if(env.EMAIL_PROVIDER === 'resend' && env.CLOUD_PILOT !== '1') throw new Error('Resend requires reviewed cloud configuration');
   if(env.PUBLIC_EMAIL_REGISTRATION !== undefined && !['0','1'].includes(env.PUBLIC_EMAIL_REGISTRATION)) throw new Error('Invalid public email registration setting');
   const publicEmailRegistration = env.PUBLIC_EMAIL_REGISTRATION === '1';
-  if(publicEmailRegistration && !(env.CLOUD_PILOT === '1' && proxyMode === 'cloudfront-alb' && labEmail && env.EMAIL_PROVIDER === 'resend')) throw new Error('Public email registration requires the Resend email lab');
+  // Local: any email may receive test codes, but only into loopback Mailpit (LOCAL_MESSAGES guards below).
+  if(publicEmailRegistration && !(env.CLOUD_PILOT === '1' && proxyMode === 'cloudfront-alb' && labEmail && env.EMAIL_PROVIDER === 'resend') && !(env.CLOUD_PILOT !== '1' && env.LOCAL_MESSAGES === '1')) throw new Error('Public email registration requires the Resend email lab or local Mailpit messages');
   let resend:Config['resend'];
   const port = Number(env.PORT ?? 3100);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid PORT');
@@ -46,7 +47,7 @@ export function config(env = process.env): Config {
     if(!['development','test'].includes(env.NODE_ENV??'') || !['localhost','127.0.0.1','[::1]'].includes(url.hostname) || !localDatabase || (env.LOCAL_MESSAGES_SECRET?.length??0)<32 || !env.LOCAL_SMS_DIRECTORY || !env.LOCAL_MESSAGE_CONTACTS) throw new Error('Local messages require an explicitly enabled local database, secret and explicit DEMO contacts');
     const mailpit=new URL(env.LOCAL_MAILPIT_URL??'http://127.0.0.1:8025');
     if(mailpit.protocol!=='http:'||!['127.0.0.1','localhost','[::1]'].includes(mailpit.hostname)||mailpit.username||mailpit.password||mailpit.pathname!=='/'||mailpit.search||mailpit.hash)throw new Error('Mailpit must be loopback only');
-    localMessages={secret:env.LOCAL_MESSAGES_SECRET!,mailpit:mailpit.origin,smsDirectory:env.LOCAL_SMS_DIRECTORY,contacts:env.LOCAL_MESSAGE_CONTACTS.split(',').map(x=>x.trim().toLowerCase())};
+    localMessages={secret:env.LOCAL_MESSAGES_SECRET!,mailpit:mailpit.origin,smsDirectory:env.LOCAL_SMS_DIRECTORY,contacts:env.LOCAL_MESSAGE_CONTACTS.split(',').map(x=>x.trim().toLowerCase()),allowAnyEmail:publicEmailRegistration};
   }
   let admin:Config['admin'];
   if(env.ADMIN_LOCAL_SECRET){

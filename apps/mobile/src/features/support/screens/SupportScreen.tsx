@@ -19,10 +19,11 @@ import {Button} from '../../../components/ui/Button';
 import {Card} from '../../../components/ui/Card';
 import {Input} from '../../../components/ui/Input';
 import {RefreshError} from '../../../components/ui/Feedback';
-import {JobFeedback} from '../../jobs/components/JobFeedback';
+import {ActionError,captureError,withDetail} from '../../chat/components/ActionError';
 import {sessionReady} from '../../jobs/state/session-ready';
 import {Mutation} from '../../jobs/state/mutation';
-import {ApiError,type ApiErrorCode} from '../../../lib/http/api-error';
+import {ApiError} from '../../../lib/http/api-error';
+import {toErrorInfo,type ErrorInfo} from '../../../lib/errors/describe';
 import {formatBusinessDate} from '../../../lib/i18n/formatters';
 import {reportStates,type Report,type ReportContext,type ReportState} from '../models';
 type Props=NativeStackScreenProps<RootStackParamList,'Support'>;
@@ -35,7 +36,8 @@ function Desk({owner,context,initialId}:{owner:string;context?:ReportContext;ini
  const [items,setItems]=useState<Report[]>([]),[selected,setSelected]=useState<Report|null>(null),[creating,setCreating]=useState(!!context),[body,setBody]=useState(''),[subject,setSubject]=useState('');
  const [photos,setPhotos]=useState<string[]>([]),[picking,setPicking]=useState(false);
  const [upload]=useState(()=>new Mutation<EvidenceAsset>()),up=useSyncExternalStore(upload.subscribe,upload.getSnapshot,upload.getSnapshot);
- const [filter,setFilter]=useState<ReportState|'all'>('all'),[busy,setBusy]=useState(false),[loaded,setLoaded]=useState(false),[error,setError]=useState<ApiErrorCode|null>(null),[attempt,setAttempt]=useState(0);
+ const [filter,setFilter]=useState<ReportState|'all'>('all'),[busy,setBusy]=useState(false),[loaded,setLoaded]=useState(false),[error,setError]=useState<ErrorInfo|null>(null),[attempt,setAttempt]=useState(0);
+ const [sendError,setSendError]=useState<ErrorInfo|null>(null),[uploadError,setUploadError]=useState<ErrorInfo|null>(null);
  const [mutation,setMutation]=useState(()=>new Mutation<Report>()),state=useSyncExternalStore(mutation.subscribe,mutation.getSnapshot,mutation.getSnapshot);
  const [linkedId,setLinkedId]=useState(initialId);
  const active=useRef(false),generation=useRef(0),selectedId=selected?.id??linkedId;
@@ -44,7 +46,7 @@ function Desk({owner,context,initialId}:{owner:string;context?:ReportContext;ini
  useEffect(()=>{if(state.error&&['NOT_FOUND','FORBIDDEN','UNAUTHENTICATED'].includes(state.error))clearPrivate();},[state.error,clearPrivate]);
  const reload=useCallback(()=>{setAttempt(n=>n+1);return true;},[]);
  useAccountRefresh(busy,reload,!blocked);
- useRealtimeRefresh({busy:blocked||!!body||photos.length>0,error,matches:s=>s.kind==='event'&&s.event.type==='report.updated.v1',refresh:()=>{reload();},revoke:()=>{clearPrivate();}});
+ useRealtimeRefresh({busy:blocked||!!body||photos.length>0,error:error?.code??null,matches:s=>s.kind==='event'&&s.event.type==='report.updated.v1',refresh:()=>{reload();},revoke:()=>{clearPrivate();}});
  useFocusEffect(useCallback(()=>{
   active.current=true;const request=++generation.current;setBusy(true);setError(null);
   const valid=()=>active.current&&request===generation.current;
@@ -57,11 +59,11 @@ function Desk({owner,context,initialId}:{owner:string;context?:ReportContext;ini
     if(valid())setItems(all);
    }
    if(valid())setLoaded(true);
-  })().catch(e=>{if(valid()){const code=e instanceof ApiError?e.code:'NETWORK';setError(code);if(['NOT_FOUND','FORBIDDEN','UNAUTHENTICATED'].includes(code))clearPrivate();}}).finally(()=>{if(valid())setBusy(false);});
+  })().catch(e=>{if(valid()){const info=toErrorInfo(e);setError(info);if(['NOT_FOUND','FORBIDDEN','UNAUTHENTICATED'].includes(info.code))clearPrivate();}}).finally(()=>{if(valid())setBusy(false);});
   return()=>{active.current=false;generation.current++;};
  },[manager,owner,selectedId,attempt,clearPrivate]));
  const finish=(r:Report|null)=>{if(r&&active.current){setSelected(r);setItems(all=>[r,...all.filter(x=>x.id!==r.id)]);setCreating(false);setBody('');setSubject('');setPhotos([]);reload();}};
- const send=()=>{const text=body.trim();if(!text)return;const id=selected?.id,ids=[...photos],input={...(context??{kind:'account' as const}),subject:subject.trim(),body:text,evidence_ids:ids};void mutation.run(k=>id?manager.replyReport(owner,id,text,ids,k):manager.createReport(owner,input,k)).then(finish);};
+ const send=()=>{const text=body.trim();if(!text)return;const id=selected?.id,ids=[...photos],input={...(context??{kind:'account' as const}),subject:subject.trim(),body:text,evidence_ids:ids};void mutation.run(captureError(k=>id?manager.replyReport(owner,id,text,ids,k):manager.createReport(owner,input,k),setSendError)).then(finish);};
  const back=()=>{setLinkedId(undefined);setSelected(null);setCreating(false);setBody('');setSubject('');setPhotos([]);setMutation(new Mutation<Report>());reload();};
  const loadPhoto=useCallback(async(id:string)=>{for(let i=0;;i++){await sessionReady(manager,owner);if(!active.current)throw new ApiError('CANCELLED');try{return await manager.evidenceAsset(owner,id);}catch(e){if(!(e instanceof ApiError)||e.code!=='BUSY'||i>=2)throw e;}}},[manager,owner]);
  const uploaded=(a:EvidenceAsset|null)=>{if(a&&active.current)setPhotos(ids=>ids.includes(a.id)?ids:[...ids,a.id]);};
@@ -69,9 +71,10 @@ function Desk({owner,context,initialId}:{owner:string;context?:ReportContext;ini
   const result=await ImagePicker.launchImageLibraryAsync({mediaTypes:['images'],allowsEditing:false,quality:1});
   if(result.canceled||!result.assets[0]||!active.current)return;
   const chosen=result.assets[0],raw=chosen.file??await(await fetch(chosen.uri)).blob(),blob=raw.type?raw:raw.slice(0,raw.size,chosen.mimeType??'');
-  if(!['image/png','image/jpeg','image/webp'].includes(blob.type)||!blob.size||blob.size>10*1024*1024)throw new ApiError('VALIDATION');
-  uploaded(await upload.run(k=>manager.uploadEvidence(owner,blob,k)));
- }catch(e){if(active.current)setError(e instanceof ApiError?e.code:'NETWORK');}finally{if(active.current)setPicking(false);}};
+  if(!['image/png','image/jpeg','image/webp'].includes(blob.type))throw new ApiError('VALIDATION',undefined,undefined,undefined,undefined,'SUPPORT_PHOTO_TYPE_UNSUPPORTED');
+  if(!blob.size||blob.size>10*1024*1024)throw new ApiError('VALIDATION',undefined,undefined,undefined,undefined,'SUPPORT_PHOTO_SIZE_INVALID');
+  uploaded(await upload.run(captureError(k=>manager.uploadEvidence(owner,blob,k),setUploadError)));
+ }catch(e){if(active.current)setError(e instanceof ApiError?toErrorInfo(e):{code:'NETWORK'});}finally{if(active.current)setPicking(false);}};
  const photoEditor=<><AppText>{t('support.photo')}</AppText>{photos.map(id=><Card key={id}><EvidencePhoto id={id} load={loadPhoto}/><Button testID={`evidence-remove-${id}`} label={t('support.removePhoto')} disabled={blocked} variant="secondary" onPress={()=>setPhotos(ids=>ids.filter(x=>x!==id))}/></Card>)}<Button testID="evidence-pick" label={t('support.pickPhoto')} disabled={blocked} variant="secondary" onPress={()=>void pick()}/></>;
  const visible=items.filter(r=>filter==='all'||r.state===filter);
  return <>
@@ -88,8 +91,8 @@ function Desk({owner,context,initialId}:{owner:string;context?:ReportContext;ini
    {loaded&&!error&&!visible.length&&<AppText>{t('support.empty')}</AppText>}
    {visible.map(r=><Card key={r.id}><AppText variant="caption">{t(`support.${r.state}`)}</AppText><AppText variant="section">{r.subject}</AppText><AppText numberOfLines={3}>{r.body}</AppText><Button testID={`support-open-${r.id}`} label={t('support.view')} variant="secondary" disabled={blocked} onPress={()=>{setSelected(r);setBody('');}}/></Card>)}
   </>}
-  <JobFeedback error={up.error} pending={up.pending} busy={up.busy||auth.busy} retry={up.pending?()=>void upload.run().then(uploaded):undefined}/>
-  <JobFeedback error={state.error} pending={state.pending} busy={state.busy||auth.busy} retry={state.pending?()=>void mutation.run().then(finish):undefined}/>
+  <ActionError testID="support-upload-error" error={withDetail(up.error,uploadError)} busy={up.busy||auth.busy} retry={up.pending?()=>void upload.run().then(uploaded):undefined}/>
+  <ActionError testID="support-send-error" error={withDetail(state.error,sendError)} busy={state.busy||auth.busy} retry={state.pending?()=>void mutation.run().then(finish):undefined}/>
   {state.error==='STATE_CONFLICT'&&<Button label={t('accountTools.reload')} disabled={blocked} onPress={()=>{setMutation(new Mutation<Report>());reload();}}/>}
  </>;
 }

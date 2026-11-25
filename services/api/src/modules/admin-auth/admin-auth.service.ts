@@ -7,25 +7,31 @@ import {MessageSecrets} from '../../integrations/local-messages.js';
 import {base32,decode32,matchCounter} from './totp.js';
 export type AdminConfig={secret:string};
 export type Actor=Awaited<ReturnType<AuthService['authenticate']>>;
+// A failed re-verification still commits (the attempt row counts toward the limit), so work returns the reason instead of throwing.
+type Failed={failed:string};
+const fail=(reason:string):Failed=>({failed:reason});
+const failed=(r:unknown):r is Failed=>!!r&&typeof r==='object'&&'failed' in r;
+const reauth=(reason:string)=>new ForbiddenException({code:'REAUTH_REQUIRED',reason});
 export const tokenHash=(s:string)=>createHash('sha256').update(s).digest('hex');
 export class AdminAuthService {
  readonly secrets:MessageSecrets;
  constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly config?:AdminConfig){this.secrets=new MessageSecrets(config?.secret??randomBytes(32).toString('hex'));}
- requireConfigured(){if(!this.config)throw new ServiceUnavailableException();}
+ requireConfigured(){if(!this.config)throw new ServiceUnavailableException({reason:'ADMIN_NOT_CONFIGURED'});}
  async grants(db:PoolClient,a:Actor,permission?:string){
   this.requireConfigured();const rows=(await db.query('SELECT permission FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL ORDER BY permission FOR SHARE',[a.user.id])).rows;
-  if(!rows.length||(permission&&!rows.some(r=>r.permission===permission)))throw new ForbiddenException();
+  if(!rows.length)throw new ForbiddenException({reason:'ADMIN_ACCESS_REQUIRED'});
+  if(permission&&!rows.some(r=>r.permission===permission))throw new ForbiddenException({reason:'ADMIN_PERMISSION_REQUIRED'});
  }
  async check(db:PoolClient,a:Actor,token:string|undefined,permission?:string){
   await this.grants(db,a,permission);
-  if(!token||!/^[a-f0-9]{64}$/.test(token))throw new ForbiddenException({code:'REAUTH_REQUIRED'});
+  if(!token||!/^[a-f0-9]{64}$/.test(token))throw reauth('ADMIN_SESSION_REQUIRED');
   const row=(await db.query(`SELECT x.* FROM admin_sessions x JOIN sessions s ON s.family_id=x.family_id
     WHERE x.token_hash=$1 AND x.user_id=$2 AND s.id=$3 AND x.revoked_at IS NULL AND x.expires_at>clock_timestamp()
     AND EXISTS(SELECT 1 FROM admin_factors f WHERE f.user_id=x.user_id AND f.enabled_at IS NOT NULL) FOR SHARE OF x`,[tokenHash(token),a.user.id,a.sessionId])).rows[0];
   // B00-32 (owner decision 12/11/2026): one password+MFA verification lasts for the whole login. Sensitive
   // actions no longer require a re-verification within 5 minutes; logout, lock, refresh-family revocation,
   // grant revocation or MFA replacement still end the admin session immediately.
-  if(!row)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return row;
+  if(!row)throw reauth('ADMIN_SESSION_EXPIRED');return row;
  }
  async read<T>(header:string|undefined,token:string|undefined,permission:string|undefined,work:(db:PoolClient,a:Actor)=>Promise<T>){return this.transaction(header,async(db,a)=>{await this.check(db,a,token,permission);return work(db,a);});}
  async transaction<T>(header:string|undefined,work:(db:PoolClient,a:Actor)=>Promise<T>){
@@ -35,7 +41,7 @@ export class AdminAuthService {
  async status(header:string|undefined){return this.transaction(header,async(db,a)=>{await this.grants(db,a);const r=(await db.query('SELECT enabled_at FROM admin_factors WHERE user_id=$1',[a.user.id])).rows[0];return {enrolled:!!r?.enabled_at};});}
  private async password(db:PoolClient,a:Actor,password:string){
   const n=(await db.query("SELECT count(*) FROM admin_auth_attempts WHERE user_id=$1 AND created_at>clock_timestamp()-interval '15 minutes'",[a.user.id])).rows[0];
-  if(Number(n.count)>=10)throw new HttpException({code:'RATE_LIMITED'},429);
+  if(Number(n.count)>=10)throw new HttpException({code:'RATE_LIMITED',reason:'ADMIN_AUTH_TOO_MANY_ATTEMPTS'},429);
   await db.query('INSERT INTO admin_auth_attempts(user_id) VALUES($1)',[a.user.id]);
   const r=(await db.query("SELECT password_hash FROM identities WHERE user_id=$1 AND provider='email'",[a.user.id])).rows[0];return verifyPassword(password,r?.password_hash??null);
  }
@@ -47,26 +53,28 @@ export class AdminAuthService {
  }
  async enroll(header:string|undefined,password:string,replace=false,token?:string){
   const result=await this.transaction(header,async(db,a)=>{
-   await this.grants(db,a);if(replace)await this.check(db,a,token);if(!await this.password(db,a,password))return null;
-   const f=(await db.query('SELECT enabled_at FROM admin_factors WHERE user_id=$1',[a.user.id])).rows[0];if(f?.enabled_at&&!replace)throw new ConflictException({code:'STATE_CONFLICT'});
+   await this.grants(db,a);if(replace)await this.check(db,a,token);if(!await this.password(db,a,password))return fail('ADMIN_PASSWORD_INCORRECT');
+   const f=(await db.query('SELECT enabled_at FROM admin_factors WHERE user_id=$1',[a.user.id])).rows[0];if(f?.enabled_at&&!replace)throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_MFA_ALREADY_ENROLLED'});
    if(replace){await db.query('DELETE FROM admin_backup_codes WHERE user_id=$1',[a.user.id]);await db.query('UPDATE admin_sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1',[a.user.id]);await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.mfa.replace',$1,'Fresh MFA and password verified','{}')",[a.user.id]);}
    const secret=base32(randomBytes(20));
    await db.query(`INSERT INTO admin_factors(user_id,secret_cipher,enrollment_family,pending_until)
     SELECT $1,$2,family_id,clock_timestamp()+interval '5 minutes' FROM sessions WHERE id=$3
     ON CONFLICT(user_id) DO UPDATE SET secret_cipher=EXCLUDED.secret_cipher,enrollment_family=EXCLUDED.enrollment_family,pending_until=EXCLUDED.pending_until,last_counter=-1,enabled_at=NULL`,[a.user.id,this.secrets.encrypt(secret),a.sessionId]);
    return {secret,uri:`otpauth://totp/DVQB:${a.user.id}?secret=${secret}&issuer=DVQB&algorithm=SHA1&digits=6&period=30`};
-  });if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return result;
+  });if(failed(result))throw reauth(result.failed);return result;
  }
  async verify(header:string|undefined,password:string,code:string,enrollment=false){
   const result=await this.transaction(header,async(db,a)=>{
-   await this.grants(db,a);if(!await this.password(db,a,password))return null;
+   await this.grants(db,a);if(!await this.password(db,a,password))return fail('ADMIN_PASSWORD_INCORRECT');
    const f=(await db.query('SELECT f.*,s.family_id FROM admin_factors f JOIN sessions s ON s.id=$2 WHERE f.user_id=$1 FOR UPDATE OF f',[a.user.id,a.sessionId])).rows[0];
-   if(!f||Boolean(f.enabled_at)===enrollment||(enrollment&&(f.pending_until<=new Date()||f.enrollment_family!==f.family_id)))return null;
-   const counter=matchCounter(decode32(this.secrets.decrypt(f.secret_cipher)),code,Date.now(),Number(f.last_counter));if(counter===null)return null;
+   if(!f||Boolean(f.enabled_at)===enrollment)return fail(enrollment?(f?'ADMIN_MFA_ALREADY_ENROLLED':'ADMIN_MFA_ENROLLMENT_NOT_STARTED'):'ADMIN_MFA_NOT_ENROLLED');
+   if(enrollment&&f.pending_until<=new Date())return fail('ADMIN_MFA_ENROLLMENT_EXPIRED');
+   if(enrollment&&f.enrollment_family!==f.family_id)return fail('ADMIN_MFA_ENROLLMENT_OTHER_SESSION');
+   const counter=matchCounter(decode32(this.secrets.decrypt(f.secret_cipher)),code,Date.now(),Number(f.last_counter));if(counter===null)return fail('ADMIN_MFA_CODE_INCORRECT');
    await db.query('UPDATE admin_factors SET enabled_at=COALESCE(enabled_at,clock_timestamp()),last_counter=$2 WHERE user_id=$1',[a.user.id,counter]);
    await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,$2,$1,'MFA', '{}')",[a.user.id,enrollment?'admin.mfa.enroll':'admin.mfa.verify']);
    return this.issue(db,a);
-  });if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return result;
+  });if(failed(result))throw reauth(result.failed);return result;
  }
  async backupCodes(header:string|undefined,token:string|undefined){
   return this.transaction(header,async(db,a)=>{
@@ -81,18 +89,18 @@ export class AdminAuthService {
  }
  async recover(header:string|undefined,password:string,code:string){
   const result=await this.transaction(header,async(db,a)=>{
-   await this.grants(db,a);if(!await this.password(db,a,password))return null;
+   await this.grants(db,a);if(!await this.password(db,a,password))return fail('ADMIN_PASSWORD_INCORRECT');
    const factor=(await db.query('SELECT 1 FROM admin_factors WHERE user_id=$1 AND enabled_at IS NOT NULL',[a.user.id])).rowCount;
-   if(!factor)return null;
+   if(!factor)return fail('ADMIN_MFA_NOT_ENROLLED');
    const used=await db.query('UPDATE admin_backup_codes SET consumed_at=clock_timestamp() WHERE user_id=$1 AND code_hash=$2 AND consumed_at IS NULL RETURNING user_id',[a.user.id,tokenHash(code)]);
-   if(!used.rowCount)return null;
+   if(!used.rowCount)return fail('ADMIN_BACKUP_CODE_INVALID');
    await db.query('UPDATE admin_sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1',[a.user.id]);
    await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'admin.mfa.recover',$1,'Single-use backup code','{}')",[a.user.id]);
    return this.issue(db,a);
-  });if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return result;
+  });if(failed(result))throw reauth(result.failed);return result;
  }
  async reset(header:string|undefined,token:string|undefined,id:string,input:{expected_version:number;reason:string},key:string){
-  const initial=await this.auth.authenticate(header);if(initial.user.id===id)throw new ForbiddenException();
+  const initial=await this.auth.authenticate(header);if(initial.user.id===id)throw new ForbiddenException({reason:'ADMIN_MFA_RESET_SELF'});
   const db=await this.pool.connect(),operation='admin.mfa.reset:'+id,hash=tokenHash(JSON.stringify(input));
   try{
    await db.query('BEGIN');
@@ -100,11 +108,11 @@ export class AdminAuthService {
    await db.query('SELECT id FROM users WHERE id=ANY($1::uuid[]) ORDER BY id FOR NO KEY UPDATE',[[initial.user.id,id]]);
    const a=await this.auth.authenticate(header,db);await this.check(db,a,token,'grant.manage');
    const target=(await db.query("SELECT u.version FROM users u WHERE u.id=$1 AND u.status='active' AND EXISTS(SELECT 1 FROM admin_grants g WHERE g.user_id=u.id AND g.revoked_at IS NULL)",[id])).rows[0];
-   if(!target)throw new NotFoundException();
+   if(!target)throw new NotFoundException({reason:'ADMIN_MFA_RESET_TARGET_NOT_FOUND'});
    const previous=(await db.query('SELECT request_hash,response_snapshot FROM idempotency_keys WHERE actor_id=$1 AND operation=$2 AND request_key=$3',[a.user.id,operation,key])).rows[0];
-   if(previous&&previous.request_hash!==hash)throw new ConflictException({code:'IDEMPOTENCY_MISMATCH'});
+   if(previous&&previous.request_hash!==hash)throw new ConflictException({code:'IDEMPOTENCY_MISMATCH',reason:'ADMIN_REQUEST_KEY_REUSED'});
    if(previous){await db.query('COMMIT');return previous.response_snapshot;}
-   if(target.version!==input.expected_version)throw new ConflictException({code:'VERSION_CONFLICT'});
+   if(target.version!==input.expected_version)throw new ConflictException({code:'VERSION_CONFLICT',reason:'ADMIN_RECORD_CHANGED'});
    await db.query('DELETE FROM admin_backup_codes WHERE user_id=$1',[id]);
    await db.query('DELETE FROM admin_factors WHERE user_id=$1',[id]);
    await db.query('UPDATE admin_sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1',[id]);

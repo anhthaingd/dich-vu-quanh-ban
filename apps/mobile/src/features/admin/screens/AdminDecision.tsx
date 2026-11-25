@@ -6,27 +6,28 @@ import {Button} from '../../../components/ui/Button';
 import {Input} from '../../../components/ui/Input';
 import type {AdminApi} from '../api/admin-api';
 import type {Domain,Item} from '../models';
-import {codeOf,errorText,type Translate} from './presentation';
+import {adminScreen,codeOf,infoOf,sessionEnded,uncertain,type ErrorInfo,type Translate} from './presentation';
+import {ErrorMessage} from '../../../components/ui/ErrorMessage';
 import {AdminChoice} from './AdminChoice';
 export function AdminDecision({item,domain,client,t,allowed,saved,fail,reload}:{item:Item;domain:Domain;client:AdminApi;t:Translate;allowed:boolean;saved:(r:Item)=>void;fail:(e:unknown)=>void;reload:()=>void}){
  const choices=domain==='users'?['suspend_all','restore']:domain==='partners'?['warn','suspend_new','restore']:domain==='reports'?['reviewing','awaiting_evidence','resolved','closed','internal_note']:domain==='verifications'?['request_evidence','reject','approve']:['keep','hide','unhide'];
  const [review,setReview]=useState(false);
- const [action,setAction]=useState(choices[0]),[reason,setReason]=useState(''),[checked,setChecked]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const [action,setAction]=useState(choices[0]),[reason,setReason]=useState(''),[checked,setChecked]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState<ErrorInfo|null>(null);
  const pending=useRef<{input:unknown;key:string;note:boolean}|null>(null),live=useRef(true),sending=useRef(false);
  useEffect(()=>{live.current=true;return()=>{live.current=false;};},[]);
  const submit=async()=>{
   if(sending.current)return;sending.current=true;
   const task=pending.current??{key:randomUUID(),note:action==='internal_note',input:action==='internal_note'?{expected_version:item.version,body:reason.trim()}:{expected_version:item.version,...(domain==='reports'?{state:action}:{action}),reason:reason.trim(),...(domain==='verifications'?{checked}:{})}};
-  pending.current=task;setBusy(true);setError('');
+  pending.current=task;setBusy(true);setError(null);
   try{const r=await (task.note?client.note(item.id,task.input,task.key):client.decision(domain,item.id,task.input,task.key));if(live.current){pending.current=null;saved(r);}}
-  catch(e){if(live.current){const c=codeOf(e);setError(c);if(!['NETWORK','TIMEOUT','SERVICE_UNAVAILABLE','INTERNAL','INVALID_RESPONSE'].includes(c))pending.current=null;if(['FORBIDDEN','REAUTH_REQUIRED','UNAUTHENTICATED'].includes(c))fail(e);}}
+  catch(e){if(live.current){const c=codeOf(e);setError(infoOf(e));if(!uncertain(c))pending.current=null;if(sessionEnded(c))fail(e);}}
   finally{sending.current=false;if(live.current)setBusy(false);}
  };
  if(!allowed||domain==='users'&&!['active','suspended'].includes(item.state??'')||domain==='reports'&&item.state==='closed'||domain==='verifications'&&item.state!=='pending')return <AppText>{t(!allowed&&domain==='reports'?'reportReadOnly':'readOnly')}</AppText>;
  return <View style={{gap:12}}><AppText variant="section">{t(action==='internal_note'?'internalNotes':'decision')}</AppText>{action==='internal_note'&&<AppText tone="muted">{t('internalHint')}</AppText>}{domain==='reports'&&<Button label={t(action==='internal_note'?'decision':'internalNotes')} variant="secondary" disabled={busy||!!pending.current||review} onPress={()=>setAction(action==='internal_note'?'reviewing':'internal_note')}/>}{action!=='internal_note'&&<AdminChoice id="admin-action" label={t('decision')} value={action} choices={choices.filter(s=>s!=='internal_note')} onChange={setAction} disabled={busy||!!pending.current||review} t={t}/>}
  <Input testID="admin-reason" label={t(action==='internal_note'?'internalNotes':'reason')} multiline value={reason} onChangeText={setReason} maxLength={4000} editable={!busy&&!pending.current&&!review} style={{minHeight:110,textAlignVertical:'top'}}/>
  {domain==='verifications'&&<View><AppText>{t('checked')}</AppText><Switch testID="admin-checked" accessibilityLabel={t('checked')} value={checked} onValueChange={setChecked} disabled={busy||!!pending.current}/></View>}
- {error&&<AppText tone="error" accessibilityRole="alert">{errorText(error,t)}</AppText>}
- {review&&<View style={{padding:16,gap:12,backgroundColor:'#edf3ff',borderRadius:10}}><AppText variant="card">{t('decision')}: {t(action)}</AppText><AppText>{reason}</AppText>{!pending.current&&<Button label={t('back')} variant="secondary" disabled={busy} onPress={()=>setReview(false)}/>}</View>}{['VERSION_CONFLICT','STATE_CONFLICT'].includes(error)?<Button testID="admin-decision-refresh" label={t('refresh')} onPress={reload}/>:<Button testID="admin-save" label={t(pending.current?'retry':domain==='reports'&&!review?'reviewDecision':action==='internal_note'?'internal_note':'save')} loading={busy} disabled={!reason.trim()||domain==='verifications'&&action==='approve'&&!checked} onPress={()=>{if(domain==='reports'&&!review&&!pending.current)setReview(true);else void submit();}}/>}
+ <ErrorMessage error={error} screen={adminScreen(t,!!pending.current)}/>
+ {review&&<View style={{padding:16,gap:12,backgroundColor:'#edf3ff',borderRadius:10}}><AppText variant="card">{t('decision')}: {t(action)}</AppText><AppText>{reason}</AppText>{!pending.current&&<Button label={t('back')} variant="secondary" disabled={busy} onPress={()=>setReview(false)}/>}</View>}{['VERSION_CONFLICT','STATE_CONFLICT'].includes(error?.code??'')?<Button testID="admin-decision-refresh" label={t('refresh')} onPress={reload}/>:<Button testID="admin-save" label={t(pending.current?'retry':domain==='reports'&&!review?'reviewDecision':action==='internal_note'?'internal_note':'save')} loading={busy} disabled={!reason.trim()||domain==='verifications'&&action==='approve'&&!checked} onPress={()=>{if(domain==='reports'&&!review&&!pending.current)setReview(true);else void submit();}}/>}
  </View>;
 }

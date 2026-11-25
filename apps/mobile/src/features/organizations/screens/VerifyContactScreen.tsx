@@ -9,21 +9,26 @@ import {Card} from '../../../components/ui/Card';
 import {Input} from '../../../components/ui/Input';
 import {Button} from '../../../components/ui/Button';
 import {ApiError,type ApiErrorCode} from '../../../lib/http/api-error';
-import {TeamFeedback} from './TeamFeedback';
+import {ErrorMessage} from '../../../components/ui/ErrorMessage';
+import {toErrorInfo,type ErrorInfo} from '../../../lib/errors/describe';
 import type {Challenge} from '../models';
 export function VerifyContactScreen({navigation}:NativeStackScreenProps<RootStackParamList,'VerifyContact'>){return <AccountPage title="team.verifyTitle" back={()=>navigation.goBack()} login={()=>navigation.navigate('Account',{returnTo:'VerifyContact'})}>{owner=><VerifyForm key={owner} owner={owner}/>}</AccountPage>;}
 function VerifyForm({owner}:{owner:string}){
- const {manager,state}=useAuth(),{t}=useLocale();const [contact,setContact]=useState(''),[code,setCode]=useState(''),[challenge,setChallenge]=useState<Challenge|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState<ApiErrorCode|null>(null),[done,setDone]=useState(false),[until,setUntil]=useState(0),[clock,setClock]=useState(Date.now());
+ const {manager,state}=useAuth(),{t}=useLocale();const [contact,setContact]=useState(''),[code,setCode]=useState(''),[challenge,setChallenge]=useState<Challenge|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState<ErrorInfo|null>(null),[done,setDone]=useState(false),[until,setUntil]=useState(0),[clock,setClock]=useState(Date.now());
  useEffect(()=>{const timer=setInterval(()=>setClock(Date.now()),1000);return()=>clearInterval(timer);},[]);
- const send=async()=>{if(busy||state.busy||Date.now()<until)return;setBusy(true);setError(null);setDone(false);setCode('');try{const c=await manager.requestChallenge(owner,contact);setChallenge(c);setUntil(Date.now()+c.resend_after_seconds*1000);}catch(e){setError(e instanceof ApiError?e.code:'NETWORK');setUntil(Date.now()+60000);}finally{setBusy(false);}};
- const verify=async()=>{if(!challenge||busy||state.busy)return;setBusy(true);setError(null);const value=code;setCode('');try{await manager.verifyChallenge(owner,challenge.id,value);await manager.loadProfile(owner);setDone(true);setChallenge(null);}catch(e){setError(e instanceof ApiError?e.code:'NETWORK');}finally{setBusy(false);}};
+ const send=async()=>{if(busy||state.busy||Date.now()<until)return;setBusy(true);setError(null);setDone(false);setCode('');try{const c=await manager.requestChallenge(owner,contact);setChallenge(c);const now=Date.now();setClock(now);setUntil(now+c.resend_after_seconds*1000);}catch(e){setError(toErrorInfo(e));
+  // Only the server's rate limit imposes a wait; any other failure may be retried at once.
+  if(e instanceof ApiError&&e.code==='RATE_LIMITED'){const now=Date.now();setClock(now);setUntil(now+(e.retryAfter??60)*1000);}}finally{setBusy(false);}};
+ const verify=async()=>{if(!challenge||busy||state.busy)return;setBusy(true);setError(null);const value=code;setCode('');try{await manager.verifyChallenge(owner,challenge.id,value);await manager.loadProfile(owner);setDone(true);setChallenge(null);}catch(e){setError(toErrorInfo(e));}finally{setBusy(false);}};
  const emailLab=state.user?.verification_policy==='email_lab';
+ // Screen text only adds context for code outcomes; everything else uses the precise reason/category message.
+ const verifyText=(c:ApiErrorCode)=>c==='CHALLENGE_INVALID'?t('team.invalidCode'):c==='CHALLENGE_EXPIRED'?t('team.expiredCode'):undefined;
  const disabled=busy||state.busy,seconds=Math.max(0,Math.ceil((until-clock)/1000));
  return <><AppText tone="muted">{t(emailLab?'verification.emailHint':'team.localHint')}</AppText><Card>
   <AppText>{t(state.user?.email_verified?'team.emailVerified':'team.emailUnverified')}</AppText><AppText>{t(state.user?.phone_verified?'team.phoneVerified':'team.phoneUnverified')}</AppText>
-  <Input testID="verify-contact" label={t(emailLab?'verification.emailLabel':'team.contact')} hint={t(emailLab?'verification.emailContactHint':'team.contactHint')} keyboardType={emailLab?'email-address':'default'} value={contact} editable={!disabled} autoCapitalize="none" autoCorrect={false} onChangeText={v=>{setContact(v);setChallenge(null);setDone(false);setCode('');}}/>
+  <Input testID="verify-contact" label={t(emailLab?'verification.emailLabel':'team.contact')} hint={t(emailLab?'verification.emailContactHint':'team.contactHint')} keyboardType={emailLab?'email-address':'default'} value={contact} editable={!disabled} autoCapitalize="none" autoCorrect={false} onChangeText={v=>{setContact(v);setChallenge(null);setDone(false);setCode('');setError(null);}}/>
   <Button testID="verify-send" label={seconds?t('team.wait',{seconds}):t(challenge?'team.resendCode':'team.sendCode')} disabled={disabled||!contact.trim()||(emailLab&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.trim()))||seconds>0} onPress={()=>void send()}/>
-  {challenge&&<><AppText>{t('team.codeSent')}</AppText><Input testID="verify-code" label={t('team.code')} value={code} onChangeText={setCode} editable={!disabled} keyboardType="number-pad" secureTextEntry maxLength={6}/><Button testID="verify-confirm" label={t('team.verify')} disabled={disabled||!/^\d{6}$/.test(code)} onPress={()=>void verify()}/></>}
-  <TeamFeedback error={error}/>{done&&<AppText testID="verify-done" accessibilityLiveRegion="polite">{t('team.verified')}</AppText>}
+  {challenge&&<><AppText>{t('team.codeSent')}</AppText><Input testID="verify-code" label={t('team.code')} value={code} onChangeText={v=>{setCode(v);setError(null);}} editable={!disabled} keyboardType="number-pad" secureTextEntry maxLength={6}/><Button testID="verify-confirm" label={t('team.verify')} disabled={disabled||!/^\d{6}$/.test(code)} onPress={()=>void verify()}/></>}
+  <ErrorMessage error={error} screen={verifyText}/>{done&&<AppText testID="verify-done" accessibilityLiveRegion="polite">{t('team.verified')}</AppText>}
  </Card></>;
 }

@@ -17,7 +17,7 @@ export async function readManagement(db: Database, id: string) {
     COALESCE(profile->>'phone','') AS phone,COALESCE(profile->>'zalo','') AS zalo FROM partners WHERE id=$1 AND archived_at IS NULL`,
     [id]
   );
-  if (!p) throw new NotFoundException();
+  if (!p) throw new NotFoundException({ reason: 'PARTNER_NOT_FOUND' });
   const skills = (
     await db.query(
       `SELECT skill_id,modes,reference_labor::text,inspection_fee::text,travel_fee::text FROM partner_skills WHERE partner_id=$1 AND active ORDER BY skill_id`,

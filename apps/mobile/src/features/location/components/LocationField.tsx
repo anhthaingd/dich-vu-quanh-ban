@@ -14,6 +14,8 @@ import { LocationMap } from './LocationMap';
 import { LocationAttribution } from './LocationAttribution';
 import type { SavedAddress } from '../../accounts/models';
 import { theme } from '../../../theme/tokens';
+import { ErrorMessage } from '../../../components/ui/ErrorMessage';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 export function LocationField({ lat, lng, text = '', radius, prefix, disabled = false, onChange, renderTrigger }: {
   renderTrigger?: (open: () => void) => ReactNode;
   lat: string; lng: string; text?: string; radius?: number; prefix: string; disabled?: boolean;
@@ -34,14 +36,14 @@ export function LocationField({ lat, lng, text = '', radius, prefix, disabled = 
 function LocationPicker({ initial, radius, close, confirm }: { initial: LocationValue | null; radius?: number; close: () => void; confirm: (v: LocationValue) => void }) {
   const { t, locale } = useLocale();
   const { manager, state: auth } = useAuth();
-  const [saved, setSaved] = useState<SavedAddress[]>([]), [next, setNext] = useState<string | null>(null), [savedError, setSavedError] = useState(false);
+  const [saved, setSaved] = useState<SavedAddress[]>([]), [next, setNext] = useState<string | null>(null), [savedError, setSavedError] = useState<ErrorInfo | null>(null);
   const [savedBusy, setSavedBusy] = useState(false);
   const alive = useRef(true);
   useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   const loadSaved = async (cursor?: string) => {
-    const owner = auth.user?.id; if (!owner || savedBusy) return; setSavedBusy(true); setSavedError(false);
+    const owner = auth.user?.id; if (!owner || savedBusy) return; setSavedBusy(true); setSavedError(null);
     try { const page = await manager.listAddresses(owner, cursor); if (alive.current) { setSaved(v => cursor ? [...v, ...page.items] : page.items); setNext(page.next_cursor); } }
-    catch { if (alive.current) setSavedError(true); }
+    catch (e) { if (alive.current) setSavedError(toErrorInfo(e)); }
     finally { if (alive.current) setSavedBusy(false); }
   };
   const [draft] = useState(() => new LocationDraft(locationsApi, initial));
@@ -89,9 +91,10 @@ function LocationPicker({ initial, radius, close, confirm }: { initial: Location
         <Button testID="location-search" label={t('location.search')} disabled={state.query.trim().length < 3} loading={state.busy} onPress={() => { invalidate(); void draft.search('geocode', locale); }} />
         {state.items.map((item, index) => <Button key={`${item.id}-${index}`} testID={`location-result-${index}`} variant="secondary" label={`${item.text}${item.precision === 'approximate' ? ` · ${t('location.approximate')}` : ''}`} onPress={() => { invalidate(); draft.choose(item); }} />)}
         {state.searched && !state.items.length && <AppText>{t('location.empty')}</AppText>}
-        {state.error && <AppText accessibilityRole="alert" tone="error">{t(state.error === 'RATE_LIMITED' ? 'errors.rateLimited' : 'location.lookupError')}</AppText>}
+        {/* API reason first (e.g. address service down, query too short); lookup hint only for unexplained input errors. */}
+        <ErrorMessage testID="location-error" error={state.error} screen={code => code === 'VALIDATION' || code === 'HTTP' ? t('location.lookupError') : undefined} />
         {auth.user && <Button label={t('search.savedAddresses')} variant="secondary" loading={savedBusy} onPress={() => void loadSaved()} />}
-        {savedError && <AppText tone="error">{t('accountTools.error')}</AppText>}
+        <ErrorMessage error={savedError} />
         {saved.map(a => <Button key={a.id} label={`${a.label} · ${a.address.text}`} variant="secondary" onPress={() => { invalidate(); draft.choose({...a.address, source:'saved'}); }} />)}
         {next && <Button label={t('accountTools.more')} disabled={savedBusy} onPress={() => void loadSaved(next)} />}
         <Button testID="location-gps" variant="secondary" label={t('location.gps')} loading={gps === 'busy'} onPress={() => void locate()} />

@@ -1,13 +1,16 @@
 import { randomUUID } from 'expo-crypto';
-import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
+import type { ApiErrorCode } from '../../../lib/http/api-error';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 // Retain the same immutable operation and key until its result is known.
 export class Mutation<T> {
     private state: {
         busy: boolean;
         pending: boolean;
         error: ApiErrorCode | null;
+        // Same failure with the API reason/field, for showing the exact cause.
+        failure: ErrorInfo | null;
         value: T | null;
-    } = { busy: false, pending: false, error: null, value: null };
+    } = { busy: false, pending: false, error: null, failure: null, value: null };
     private listeners = new Set<() => void>();
     private attempt: {
         key: string;
@@ -23,7 +26,7 @@ export class Mutation<T> {
             this.attempt = { key: randomUUID(), work };
         if (!this.attempt)
             return null;
-        this.update({ busy: true, pending: true, error: null, value: null });
+        this.update({ busy: true, pending: true, error: null, failure: null, value: null });
         try {
             const value = await this.attempt.work(this.attempt.key);
             this.attempt = null;
@@ -31,10 +34,10 @@ export class Mutation<T> {
             return value;
         }
         catch (e) {
-            const error = e instanceof ApiError ? e.code : 'NETWORK';
+            const failure = toErrorInfo(e), error = failure.code;
             if (['CANCELLED', 'CHALLENGE_INVALID', 'CHALLENGE_EXPIRED', 'REAUTH_REQUIRED', 'INSUFFICIENT_POINTS', 'PARTNER_FUNDING_REQUIRED', 'VALIDATION', 'FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED', 'VERSION_CONFLICT', 'STATE_CONFLICT', 'IDEMPOTENCY_MISMATCH', 'BUSY'].includes(error))
                 this.attempt = null;
-            this.update({ error, pending: !!this.attempt });
+            this.update({ error, failure, pending: !!this.attempt });
             return null;
         }
         finally {

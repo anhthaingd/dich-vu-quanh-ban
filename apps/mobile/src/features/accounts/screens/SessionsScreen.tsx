@@ -6,6 +6,7 @@ import { useLocale } from '../../../app/providers/LocaleProvider';
 import { AppText } from '../../../components/ui/AppText';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
+import { ErrorMessage } from '../../../components/ui/ErrorMessage';
 import { AccountPage } from '../components/AccountPage';
 import { CollectionStatus } from '../components/CollectionStatus';
 import { AccountCollection } from '../state/account-collection';
@@ -39,7 +40,8 @@ function Sessions({ owner }: { owner: string }) {
         <Button testID="sessions-cancel-others" label={t('accountTools.cancel')} variant="secondary" onPress={batch.cancel} />
       </>}
       {['running', 'failed'].includes(bulk.phase) && <AppText testID="sessions-batch-progress" accessibilityLiveRegion="polite">{t('sessions.progress', { completed: bulk.completed, total: bulk.total })}</AppText>}
-      {bulk.error && <AppText accessibilityRole="alert" tone="error">{t('sessions.batchError')}</AppText>}
+      <ErrorMessage error={bulk.error ? bulk.errorInfo ?? bulk.error : null} />
+      {bulk.phase === 'failed' && <AppText>{t('sessions.batchError')}</AppText>}
       {bulk.phase === 'failed' && <Button testID="sessions-batch-retry" label={t('common.retry')} disabled={auth.busy} onPress={() => void runBatch()} />}
       {bulk.phase === 'done' && <AppText testID="sessions-batch-done" accessibilityLiveRegion="polite">{t(bulk.total ? 'sessions.batchDone' : 'sessions.noOthers', { count: bulk.completed })}</AppText>}
     </Card>

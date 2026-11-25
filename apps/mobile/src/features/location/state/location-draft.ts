@@ -1,8 +1,9 @@
-import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
+import { ApiError } from '../../../lib/http/api-error';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 import type { Locale } from '../../../lib/i18n';
 import type { LocationsApi } from '../api/locations-api';
 import { validPoint, type LocationValue, type Point, type Suggestion } from '../models';
-type Snapshot = { query: string; value: LocationValue | null; items: Suggestion[]; busy: boolean; searched: boolean; approximate: boolean; error: ApiErrorCode | null };
+type Snapshot = { query: string; value: LocationValue | null; items: Suggestion[]; busy: boolean; searched: boolean; approximate: boolean; error: ErrorInfo | null };
 // Every user intent has a generation. Even transports ignoring abort cannot replace a newer choice.
 export class LocationDraft {
   private snapshot: Snapshot;
@@ -25,7 +26,7 @@ export class LocationDraft {
   search = async (action: 'autocomplete' | 'geocode', locale: Locale) => {
     this.cancel(); const query = this.snapshot.query.trim();
     if (query.length < 3) return;
-    if (Date.now() < this.retryAt) { this.update({ error: 'RATE_LIMITED' }); return; }
+    if (Date.now() < this.retryAt) { this.update({ error: { code: 'RATE_LIMITED', reason: 'LOCATION_RATE_LIMITED' } }); return; }
     const version = this.generation, controller = this.controller = new AbortController();
     this.update({ busy: true, error: null });
     try { const items = await this.api.search(action, query, locale, controller.signal); if (version === this.generation) this.update({ items, searched: true }); }
@@ -37,10 +38,10 @@ export class LocationDraft {
     this.cancel(); const version = this.generation, controller = this.controller = new AbortController();
     this.update({ value: { text: '', point, source }, items: [], searched: false, approximate: true, error: null, busy: source !== 'manual' });
     if (source === 'manual') return;
-    if (Date.now() < this.retryAt) { this.update({ error: 'RATE_LIMITED', busy: false }); return; }
+    if (Date.now() < this.retryAt) { this.update({ error: { code: 'RATE_LIMITED', reason: 'LOCATION_RATE_LIMITED' }, busy: false }); return; }
     try { const result = await this.api.reverse(point, locale, controller.signal); if (version === this.generation && result) this.update({ value: { text: result.text, point, source } }); }
     catch (e) { this.fail(e, version); }
     finally { if (version === this.generation) this.update({ busy: false }); }
   };
-  private fail(e: unknown, version: number) { if (version === this.generation) { if (e instanceof ApiError && e.code === 'RATE_LIMITED') this.retryAt = Date.now() + (e.retryAfter ?? 60) * 1000; this.update({ error: e instanceof ApiError ? e.code : 'NETWORK' }); } }
+  private fail(e: unknown, version: number) { if (version === this.generation) { if (e instanceof ApiError && e.code === 'RATE_LIMITED') this.retryAt = Date.now() + (e.retryAfter ?? 60) * 1000; this.update({ error: toErrorInfo(e) }); } }
 }

@@ -11,7 +11,8 @@ import {Input} from '../../../components/ui/Input';
 import {Card} from '../../../components/ui/Card';
 import type {AdminApi} from '../api/admin-api';
 import type {Audit,Domain,Item} from '../models';
-import {codeOf,errorText,type Translate} from './presentation';
+import {adminScreen,codeOf,infoOf,sessionEnded,type ErrorInfo,type Translate} from './presentation';
+import {ErrorMessage} from '../../../components/ui/ErrorMessage';
 import {AdminDecision} from './AdminDecision';
 import {AdminChoice} from './AdminChoice';
 const states:Record<Domain,string[]>={users:['active','suspended','deletion_requested','anonymized'],partners:['active','new_work_suspended','suspended'],categories:['active','inactive'],skills:['active','inactive'],reports:['open','reviewing','awaiting_evidence','resolved','closed'],verifications:['pending','awaiting_evidence','approved','rejected'],reviews:['visible','hidden','removed']};
@@ -22,29 +23,29 @@ function Photo({id,client,t,fail}:{id:string;client:AdminApi;t:Translate;fail:(e
 }
 export function AdminDesk({client,grants,t,locale,fail,lock,initialDomain,range,initialState,onDetailChange}:{onDetailChange?:(open:boolean)=>void;initialDomain?:Domain|'audit';range?:SupportRange;initialState?:string;client:AdminApi;grants:string[];t:Translate;locale:string;fail:(e:unknown)=>void;lock:()=>void}){
  const sections=[...(grants.includes('accounts.manage')?['users' as const]:[]),...(grants.includes('catalog.manage')?['categories' as const,'skills' as const]:[]),...(grants.includes('support.read')?['reports' as const]:[]),...(grants.includes('moderation.manage')?['verifications' as const,'reviews' as const,'partners' as const]:[]),...(grants.includes('audit.read')?['audit' as const]:[])];
- const [domain,setDomain]=useState<Domain|'audit'>(initialDomain??sections[0]??'reports'),[items,setItems]=useState<Item[]>([]),[audit,setAudit]=useState<Audit[]>([]),[cursor,setCursor]=useState<string|null>(null),[selected,setSelected]=useState<Item|null>(null),[q,setQ]=useState(''),[state,setState]=useState(initialState??'all'),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[loaded,setLoaded]=useState(false),[request,setRequest]=useState(0);
+ const [domain,setDomain]=useState<Domain|'audit'>(initialDomain??sections[0]??'reports'),[items,setItems]=useState<Item[]>([]),[audit,setAudit]=useState<Audit[]>([]),[cursor,setCursor]=useState<string|null>(null),[selected,setSelected]=useState<Item|null>(null),[q,setQ]=useState(''),[state,setState]=useState(initialState??'all'),[busy,setBusy]=useState(false),[error,setError]=useState<ErrorInfo|null>(null),[notice,setNotice]=useState(''),[loaded,setLoaded]=useState(false),[request,setRequest]=useState(0);
  const [sort,setSort]=useState('newest'),[detailTab,setDetailTab]=useState('content'),u=(k:string)=>uxText(locale as UxLocale,k);
  useEffect(()=>{onDetailChange?.(!!selected);},[!!selected,onDetailChange]);
  const generation=useRef(0),alive=useRef(true),params=useRef({q:'',state:initialState??'all',sort:'newest'});
  useEffect(()=>{alive.current=true;return()=>{alive.current=false;generation.current++;};},[]);
  useEffect(()=>{if(!selected)return;const sub=BackHandler.addEventListener('hardwareBackPress',()=>{setSelected(null);setNotice('');return true;});return()=>sub.remove();},[selected]);
- const handle=(e:unknown)=>{if(!alive.current)return;const c=codeOf(e);if(c==='CANCELLED')return;setError(c);if(['FORBIDDEN','UNAUTHENTICATED','REAUTH_REQUIRED'].includes(c)){setItems([]);setAudit([]);setSelected(null);fail(e);}};
+ const handle=(e:unknown)=>{if(!alive.current)return;const c=codeOf(e);if(c==='CANCELLED')return;setError(infoOf(e));if(sessionEnded(c)){setItems([]);setAudit([]);setSelected(null);fail(e);}};
  const load=async(more=false)=>{
-  const gen=++generation.current;setBusy(true);setError('');
+  const gen=++generation.current;setBusy(true);setError(null);
   try{if(domain==='audit'){const p=await client.audit(more?cursor??undefined:undefined,params.current.q||undefined);if(gen===generation.current&&alive.current){setAudit(all=>more?[...all,...p.items]:p.items);setCursor(p.next_cursor);}}
    else{const p=await client.page(domain,params.current.q,params.current.state,more?cursor??undefined:undefined,domain==='reports'?{...range,sort:params.current.sort}:undefined);if(gen===generation.current&&alive.current){setItems(all=>more?[...all,...p.items]:p.items);setCursor(p.next_cursor);}}
    if(gen===generation.current&&alive.current)setLoaded(true);
   }catch(e){if(gen===generation.current)handle(e);}finally{if(gen===generation.current&&alive.current)setBusy(false);}
  };
  useEffect(()=>{void load();return()=>{generation.current++;};},[domain,request]);
- const change=(next:Domain|'audit')=>{generation.current++;setDomain(next);setItems([]);setAudit([]);setSelected(null);setCursor(null);setQ('');setState('all');setSort('newest');params.current={q:'',state:'all',sort:'newest'};setError('');setNotice('');setLoaded(false);setRequest(n=>n+1);};
- const open=async(id:string)=>{if(domain==='audit')return;const gen=++generation.current;setBusy(true);setError('');try{const item=await client.item(domain,id);if(gen===generation.current&&alive.current){setSelected(item);if(!selected||selected.id!==id)setDetailTab('content');}}catch(e){if(gen===generation.current)handle(e);}finally{if(gen===generation.current&&alive.current)setBusy(false);}};
+ const change=(next:Domain|'audit')=>{generation.current++;setDomain(next);setItems([]);setAudit([]);setSelected(null);setCursor(null);setQ('');setState('all');setSort('newest');params.current={q:'',state:'all',sort:'newest'};setError(null);setNotice('');setLoaded(false);setRequest(n=>n+1);};
+ const open=async(id:string)=>{if(domain==='audit')return;const gen=++generation.current;setBusy(true);setError(null);try{const item=await client.item(domain,id);if(gen===generation.current&&alive.current){setSelected(item);if(!selected||selected.id!==id)setDetailTab('content');}}catch(e){if(gen===generation.current)handle(e);}finally{if(gen===generation.current&&alive.current)setBusy(false);}};
  const status=(r:Item)=>r.state??(r.removed?'removed':r.hidden?'hidden':'visible');
  const title=(r:Item)=>r.name??r.subject??r.partner_name??`${r.stars}/5 ${t('stars')}`;
  const format=(s:string)=>new Intl.DateTimeFormat(locale,{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Ho_Chi_Minh'}).format(new Date(s));
  return <View style={{gap:20}} testID="admin-desk">
  {!initialDomain&&<><AppText variant="title" accessibilityRole="header">{t('intro')}</AppText><Button testID="admin-lock" label={t('lock')} variant="secondary" onPress={lock}/><SegmentedTabs value={domain} onChange={change} accessibilityLabel={t('title')} options={sections.map(value=>({value,label:t(value),testID:'admin-tab-'+value}))}/></>}
- {error&&<Card><AppText tone="error" accessibilityRole="alert">{errorText(error,t)}</AppText><Button label={t('retry')} disabled={busy} onPress={()=>selected?.id?void open(selected.id):void load()}/></Card>}
+ {error&&<Card><ErrorMessage error={error} screen={adminScreen(t)}/><Button label={t('retry')} disabled={busy} onPress={()=>selected?.id?void open(selected.id):void load()}/></Card>}
  {notice&&<AppText accessibilityLiveRegion="polite">{t(notice)}</AppText>}
  {busy&&<AppText accessibilityLiveRegion="polite">{t('load')}</AppText>}
  {(domain==='categories'||domain==='skills')&&!selected&&<Button testID="catalog-create" label={t('create')} onPress={()=>setSelected({id:'',version:1,name:'',state:'active',history:[]})}/>}

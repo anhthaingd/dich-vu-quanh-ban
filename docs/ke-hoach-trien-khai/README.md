@@ -1,5 +1,7 @@
 # Kế hoạch triển khai và học code
 
+**25/11/2026 — Báo lỗi chính xác:** [B00-35](bao-cao/B00-35-bao-loi-chinh-xac.md) giải thích vì sao app từng báo "Kiểm tra kết nối" cho mọi lỗi, cách mỗi lỗi giờ có nguyên nhân riêng và câu báo 3 ngôn ngữ, cách cho mọi email nhận mã thử ở local, và các mã trạng thái cần chủ dự án quyết.
+
 **17/11/2026 — Hiểu và xem các dịch vụ AWS trên Console:** [B00-34](bao-cao/B00-34-tai-lieu-dich-vu-aws-console.md) giới thiệu [phần 07](hoc-deploy-aws02/07-dich-vu-va-console.md) của bộ học deploy: mỗi dịch vụ AWS của lab để làm gì, nối với nhau thế nào, xem tình trạng và chi phí ở màn Console nào.
 
 **12/11/2026 — Lưu đăng nhập trên trình duyệt:** [B00-33](bao-cao/B00-33-luu-dang-nhap-trinh-duyet.md) giải thích vì sao F5 không còn đăng xuất, hai tab dùng chung đăng nhập mà không tự đăng xuất nhau, và rủi ro khi lưu token trong trình duyệt.

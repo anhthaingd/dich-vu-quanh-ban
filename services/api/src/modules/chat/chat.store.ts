@@ -6,22 +6,22 @@ import { hasPermission, memberAccess } from '../jobs/jobs.access.js';
 export async function conversationAccess(db: PoolClient, id: string, user: string) {
     const { rows: [c] } = await db.query('SELECT * FROM conversations WHERE id=$1', [id]);
     if (!c)
-        throw new NotFoundException();
+        throw new NotFoundException({ reason: 'CHAT_CONVERSATION_NOT_FOUND' });
     if (c.kind === 'direct') {
         if (c.user_low !== user && c.user_high !== user)
-            throw new NotFoundException();
+            throw new NotFoundException({ reason: 'CHAT_CONVERSATION_NOT_FOUND' });
     }
     else if (c.customer_id !== user) {
         await db.query('SELECT id FROM partners WHERE id=$1 FOR SHARE', [c.partner_id]);
         const m = await memberAccess(db, c.partner_id, user);
         if (!hasPermission(m, 'jobs.accept') && !hasPermission(m, 'jobs.manage'))
-            throw new NotFoundException();
+            throw new NotFoundException({ reason: 'CHAT_CONVERSATION_NOT_FOUND' });
     }
     return c;
 }
 export async function directConversation(db: PoolClient, a: string, b: string) {
     if (a === b)
-        throw new ForbiddenException();
+        throw new ForbiddenException({ reason: 'CHAT_SELF_NOT_ALLOWED' });
     const [low, high] = [a, b].sort();
     const { rows: [c] } = await db.query(`INSERT INTO conversations(kind,user_low,user_high) VALUES('direct',$1,$2) ON CONFLICT(user_low,user_high) DO UPDATE SET user_low=EXCLUDED.user_low RETURNING id`, [low, high]);
     return c.id as string;
@@ -29,11 +29,11 @@ export async function directConversation(db: PoolClient, a: string, b: string) {
 export async function partnerConversation(db: PoolClient, partner: string, customer: string) {
     const { rows: [p] } = await db.query('SELECT kind FROM partners WHERE id=$1', [partner]);
     if (!p)
-        throw new NotFoundException();
+        throw new NotFoundException({ reason: 'CHAT_PARTNER_NOT_FOUND' });
     if (p.kind === 'solo') {
         const { rows: [owner] } = await db.query('SELECT user_id FROM memberships WHERE partner_id=$1 AND active AND is_owner', [partner]);
         if (!owner)
-            throw new NotFoundException();
+            throw new NotFoundException({ reason: 'CHAT_PARTNER_NOT_FOUND' });
         return directConversation(db, customer, owner.user_id);
     }
     const { rows: [c] } = await db.query(`INSERT INTO conversations(kind,customer_id,partner_id) VALUES('partner',$1,$2) ON CONFLICT(customer_id,partner_id) DO UPDATE SET customer_id=EXCLUDED.customer_id RETURNING id`, [customer, partner]);

@@ -2,7 +2,7 @@ import { Body, Controller, Get, Header, Headers, Inject, Param, Post, Put } from
 import { Query } from '@nestjs/common';
 import { identifier, pageInput } from '../accounts/accounts.input.js';
 import { ChatService } from './chat.service.js';
-import { conversationInput, messageInput, messagesQuery, readInput } from './chat.input.js';
+import { conversationInput, idempotencyKey, messageInput, messagesQuery, readInput } from './chat.input.js';
 @Controller('conversations')
 export class ChatController {
     constructor(
@@ -16,7 +16,7 @@ export class ChatController {
     @Headers('idempotency-key')
     key: string | undefined,
     @Body()
-    body: unknown) { return this.service.open(auth, conversationInput(body), identifier(key)); }
+    body: unknown) { return this.service.open(auth, conversationInput(body), idempotencyKey(key)); }
     @Get()
     @Header('Cache-Control', 'no-store')
     list(
@@ -43,7 +43,7 @@ export class ChatController {
     @Param('id')
     id: string,
     @Body()
-    body: unknown) { return this.service.send(auth, identifier(id), messageInput(body), identifier(key)); }
+    body: unknown) { return this.service.send(auth, identifier(id), messageInput(body), idempotencyKey(key)); }
     @Put(':id/read')
     @Header('Cache-Control', 'no-store')
     read(
@@ -54,5 +54,5 @@ export class ChatController {
     @Param('id')
     id: string,
     @Body()
-    body: unknown) { return this.service.read(auth, identifier(id), readInput(body), identifier(key)); }
+    body: unknown) { return this.service.read(auth, identifier(id), readInput(body), idempotencyKey(key)); }
 }

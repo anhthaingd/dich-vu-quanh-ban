@@ -1,5 +1,6 @@
 import { Controller, Get, Header, Headers, Inject, Param, Query } from '@nestjs/common';
-import { identifier, pageInput } from '../accounts/accounts.input.js';
+import { pageInput } from '../accounts/accounts.input.js';
+import { pathId } from './jobs.input.js';
 import { JobsService } from './jobs.service.js';
 @Controller('partners')
 export class MembersController {
@@ -14,5 +15,5 @@ export class MembersController {
     @Param('id')
     id: string,
     @Query()
-    q: Record<string, unknown>) { return this.service.members(auth, identifier(id), pageInput(q)); }
+    q: Record<string, unknown>) { return this.service.members(auth, pathId(id), pageInput(q)); }
 }

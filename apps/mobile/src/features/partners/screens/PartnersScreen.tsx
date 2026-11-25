@@ -12,6 +12,8 @@ import { Card } from '../../../components/ui/Card';
 import { AppText } from '../../../components/ui/AppText';
 import { LoadingState, ErrorState } from '../../../components/ui/Feedback';
 import { ApiError } from '../../../lib/http/api-error';
+import { useErrorText } from '../../../components/ui/ErrorMessage';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 import type { Partner } from '../models';
 export function PartnersScreen({
   navigation
@@ -43,16 +45,17 @@ function Profiles({
   open: (id?: string) => void;
 }) {
   const { manager, state } = useAuth(),
-    { t,locale } = useLocale();
+    { t,locale } = useLocale(),
+    errorText = useErrorText();
   const [items, setItems] = useState<Partner[]>([]),
     [busy, setBusy] = useState(true),
-    [error, setError] = useState(false),
+    [error, setError] = useState<ErrorInfo | null>(null),
     [attempt, setAttempt] = useState(0);
   useFocusEffect(
     useCallback(() => {
       let active = true;
       setBusy(true);
-      setError(false);
+      setError(null);
       void (async () => {
         const me = await manager.loadProfile(owner);
         const values: Partner[] = [];
@@ -70,8 +73,8 @@ function Profiles({
         }
         if (active) setItems(values);
       })()
-        .catch(() => {
-          if (active) setError(true);
+        .catch((e) => {
+          if (active) setError(toErrorInfo(e));
         })
         .finally(() => {
           if (active) setBusy(false);
@@ -88,7 +91,7 @@ function Profiles({
         <LoadingState message={t('accountTools.loading')} />
       ) : error ? (
         <ErrorState
-          message={t('partners.error')}
+          message={errorText(error)}
           retryLabel={t('common.retry')}
           onRetry={() => setAttempt((n) => n + 1)}
         />

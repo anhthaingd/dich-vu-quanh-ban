@@ -3,7 +3,7 @@ import {PublicGallery} from '../components/PublicGallery';
 import {PartnerReviews} from '../../reviews/screens/PartnerReviews';
 import {sessionReady} from '../../jobs/state/session-ready';
 import {Mutation} from '../../jobs/state/mutation';
-import {JobFeedback} from '../../jobs/components/JobFeedback';
+import { MutationFeedback, captured } from '../components/MutationFeedback';
 import type {Conversation} from '../../chat/models';
 import { PublicLocation } from '../../location/components/PublicLocation';
 import { useCallback, useState, useSyncExternalStore } from 'react';
@@ -19,6 +19,8 @@ import { AppText } from '../../../components/ui/AppText';
 import { Button } from '../../../components/ui/Button';
 import { ErrorState, LoadingState } from '../../../components/ui/Feedback';
 import { ApiError } from '../../../lib/http/api-error';
+import { useErrorText } from '../../../components/ui/ErrorMessage';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 import type { PartnerProfile } from '../models';
 export function PartnerProfileScreen({
   navigation,
@@ -44,13 +46,15 @@ export function PartnerProfileScreen({
 function Profile({ id, login, hire, chat }: { id: string; login: () => void; hire:()=>void; chat:(id:string)=>void }) {
   const { manager, state } = useAuth(),
     api = usePartnersApi(),
-    { t, locale } = useLocale();
+    { t, locale } = useLocale(),
+    errorText = useErrorText();
   const owner = state.user?.id;
   const [opening]=useState(()=>new Mutation<Conversation>());
   const openingState=useSyncExternalStore(opening.subscribe,opening.getSnapshot,opening.getSnapshot);
-  const openChat=async()=>{if(owner){const c=await opening.run(key=>manager.openConversation(owner,{partner_id:id},key));if(c)chat(c.id);}};
+  const [openingInfo,setOpeningInfo]=useState<ErrorInfo|null>(null);
+  const openChat=async()=>{if(owner){const c=await opening.run(key=>captured(setOpeningInfo,()=>manager.openConversation(owner,{partner_id:id},key)));if(c)chat(c.id);}};
   const [profile, setProfile] = useState<PartnerProfile | null>(null),
-    [error, setError] = useState<string | null>(null),
+    [error, setError] = useState<ErrorInfo | null>(null),
     [attempt, setAttempt] = useState(0);
   useFocusEffect(
     useCallback(() => {
@@ -73,7 +77,7 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
         })
         .catch((e) => {
           if (!c.signal.aborted)
-            setError(e instanceof ApiError ? e.code : 'NETWORK');
+            setError(toErrorInfo(e));
         });
       return () => c.abort();
     }, [api, manager, owner, id, locale, attempt])
@@ -82,7 +86,7 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
   if (error)
     return (
       <ErrorState
-        message={t(error === 'NOT_FOUND' ? 'search.notFound' : 'search.error')}
+        message={errorText(error, (code) => (code === 'NOT_FOUND' ? t('search.notFound') : undefined))}
         retryLabel={t('common.retry')}
         onRetry={() => setAttempt((n) => n + 1)}
       />
@@ -104,7 +108,7 @@ function Profile({ id, login, hire, chat }: { id: string; login: () => void; hir
       </Card>
       <Card>
         {profile.can_message&&<Button testID="profile-chat" variant="secondary" label={t('chat.open')} disabled={state.busy||openingState.pending} onPress={()=>void openChat()}/>}
-        <JobFeedback error={openingState.error} pending={openingState.pending} busy={openingState.busy||state.busy} retry={openingState.pending?()=>void opening.run().then(c=>{if(c)chat(c.id);}):undefined}/>
+        <MutationFeedback error={openingState.error} info={openingInfo} pending={openingState.pending} busy={openingState.busy||state.busy} retry={openingState.pending?()=>void opening.run().then(c=>{if(c)chat(c.id);}):undefined}/>
         {profile.contact === null ? (
           <Button label={t('search.loginContact')} variant="secondary" onPress={login} />
         ) : (

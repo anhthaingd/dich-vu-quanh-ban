@@ -21,7 +21,9 @@ import { sessionOperation } from '../state/session-ready';
 import { JobStatus } from '../components/JobStatus';
 import { JobFeedback } from '../components/JobFeedback';
 import type { Job, JobAction, JobChange, Member } from '../models';
-import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
+// Checked before sending; uses the same reasons the API returns for these rules.
+const invalidInput = (reason: string, field: string): ErrorInfo => ({ code: 'VALIDATION', reason, field });
 export function JobDetailScreen({ navigation, route }: NativeStackScreenProps<RootStackParamList, 'JobDetail'>) { return <AccountPage title="jobs.detail" back={() => navigation.goBack()} login={() => navigation.navigate('Account',{returnTo:{screen:'JobDetail',params:{id:route.params.id}}})}>{owner => <Detail key={`${owner}:${route.params.id}`} id={route.params.id} owner={owner} support={() => navigation.navigate('Support', {context:{kind:'service',job_id:route.params.id}})} reviews={() => navigation.navigate('Reviews', { id:route.params.id })} invoice={() => navigation.navigate('Invoice', { id:route.params.id })} chat={() => navigation.navigate('Conversations', { jobId: route.params.id })}/>}</AccountPage>; }
 function Detail({ id, owner, chat, invoice, reviews, support }: {
     id: string;
@@ -33,11 +35,11 @@ function Detail({ id, owner, chat, invoice, reviews, support }: {
 }) {
     const { manager, state: auth } = useAuth(), { t, locale } = useLocale();
     const [partnerName,setPartnerName]=useState('');
-    const [names, setNames] = useState<Record<string, string>>({}), [job, setJob] = useState<Job | null>(null), [members, setMembers] = useState<Member[]>([]), [busy, setBusy] = useState(false), [error, setError] = useState<ApiErrorCode | null>(null), [attempt, setAttempt] = useState(0);
+    const [names, setNames] = useState<Record<string, string>>({}), [job, setJob] = useState<Job | null>(null), [members, setMembers] = useState<Member[]>([]), [busy, setBusy] = useState(false), [error, setError] = useState<ErrorInfo | null>(null), [attempt, setAttempt] = useState(0);
     const [action, setAction] = useState<JobAction | null>(null), [reason, setReason] = useState(''), [eta, setEta] = useState('30'), [day, setDay] = useState(''), [time, setTime] = useState(''), [charges, setCharges] = useState(false), [member, setMember] = useState('');
     const [mutation] = useState(() => new Mutation<Job>());
     const state = useSyncExternalStore(mutation.subscribe, mutation.getSnapshot, mutation.getSnapshot);
-    useRealtimeRefresh({error,resource:{type:'job',id},busy:busy||state.busy||state.pending||!!action,matches:s=>s.kind==='event'&&(s.event.data.job_id===id||s.event.type==='notification.created.v1'||s.event.type.startsWith('invoice.')),refresh:()=>setAttempt(v=>v+1),revoke:()=>{setJob(null);setAction(null);setError('NOT_FOUND');}});
+    useRealtimeRefresh({error:error?.code??null,resource:{type:'job',id},busy:busy||state.busy||state.pending||!!action,matches:s=>s.kind==='event'&&(s.event.data.job_id===id||s.event.type==='notification.created.v1'||s.event.type.startsWith('invoice.')),refresh:()=>setAttempt(v=>v+1),revoke:()=>{setJob(null);setAction(null);setError({code:'NOT_FOUND'});}});
     useFocusEffect(useCallback(() => {
         let active = true;
         setBusy(true);
@@ -66,9 +68,9 @@ function Detail({ id, owner, chat, invoice, reviews, support }: {
                 setNames(labels);
             }
         })().catch(e => { if (active) {
-            const code = e instanceof ApiError ? e.code : 'NETWORK';
-            setError(code);
-            if (['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(code))
+            const failure = toErrorInfo(e);
+            setError(failure);
+            if (['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(failure.code))
                 setJob(null);
         } }).finally(() => { if (active)
             setBusy(false); });
@@ -87,14 +89,14 @@ function Detail({ id, owner, chat, invoice, reviews, support }: {
         const input: JobChange = { expected_version: job.version };
         if (action === 'accept' && job.time_mode === 'now') {
             if (!/^\d+$/.test(eta) || +eta < 1 || !Number.isSafeInteger(+eta) || !Number.isFinite(new Date(Date.now() + Number(eta) * 60000).getTime())) {
-                setError('VALIDATION');
+                setError(invalidInput(eta.trim() ? 'JOB_ETA_INVALID' : 'JOB_ETA_REQUIRED', 'eta'));
                 return;
             }
             input.eta = new Date(Date.now() + Number(eta) * 60000).toISOString();
         }
         if (['decline', 'withdraw', 'stop'].includes(action)) {
             if (!reason.trim()) {
-                setError('VALIDATION');
+                setError(invalidInput('JOB_REASON_REQUIRED', 'reason'));
                 return;
             }
             input.reason = reason.trim();
@@ -102,7 +104,7 @@ function Detail({ id, owner, chat, invoice, reviews, support }: {
         if (action === 'reschedule') {
             const date = appointment(day, time);
             if (!date || Date.parse(date) <= Date.now()) {
-                setError('VALIDATION');
+                setError(invalidInput(!date ? day || time ? 'JOB_SCHEDULED_AT_INVALID' : 'JOB_SCHEDULED_AT_REQUIRED' : 'JOB_SCHEDULED_AT_PAST', 'scheduled_at'));
                 return;
             }
             input.scheduled_at = date;
@@ -112,7 +114,7 @@ function Detail({ id, owner, chat, invoice, reviews, support }: {
             input.has_agreed_charges = charges;
         if (action === 'assignments') {
             if (!member) {
-                setError('VALIDATION');
+                setError(invalidInput('JOB_ASSIGNEE_REQUIRED', 'membership_id'));
                 return;
             }
             input.membership_id = member;
@@ -129,5 +131,5 @@ function Detail({ id, owner, chat, invoice, reviews, support }: {
 </Card>
  {!action&&job.allowed_actions.some(a=>['decline','withdraw','stop'].includes(a))&&<Card><AppText variant="card" tone="error">{t('jobs.dangerActions')}</AppText>{job.allowed_actions.filter((a):a is JobAction=>['decline','withdraw','stop'].includes(a)).map(a=><Button key={a} testID={`job-action-${a}`} label={t(`jobs.${a}`)} variant="danger" disabled={draftingBlocked} onPress={()=>{setAction(a);setReason('');setError(null);}}/>)}</Card>}
  <Button variant="link" testID="job-reload" label={t('accountTools.reload')} disabled={blocked} onPress={() => setAttempt(v => v + 1)}/>
- <JobFeedback error={state.error} pending={state.pending} busy={state.busy || auth.busy} retry={state.pending ? () => void mutation.run().then(finished) : undefined}/>{(state.error === 'VERSION_CONFLICT' || state.error === 'STATE_CONFLICT') && <AppText>{t('jobs.reloadBeforeRetry')}</AppText>}</>}</>;
+ <JobFeedback error={state.failure} pending={state.pending} busy={state.busy || auth.busy} retry={state.pending ? () => void mutation.run().then(finished) : undefined}/>{(state.error === 'VERSION_CONFLICT' || state.error === 'STATE_CONFLICT') && <AppText>{t('jobs.reloadBeforeRetry')}</AppText>}</>}</>;
 }

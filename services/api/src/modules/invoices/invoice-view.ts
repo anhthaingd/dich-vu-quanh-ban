@@ -3,10 +3,11 @@ import type {PoolClient} from 'pg';
 import {invoiceAmounts} from './money.js';
 const iso=(v:Date|null)=>v?.toISOString()??null;
 export async function readInvoice(db:PoolClient,job:string,customer=false){
-  const i=(await db.query('SELECT * FROM invoices WHERE job_id=$1 FOR UPDATE',[job])).rows[0];if(!i)throw new NotFoundException();
+  const i=(await db.query('SELECT * FROM invoices WHERE job_id=$1 FOR UPDATE',[job])).rows[0];if(!i)throw new NotFoundException({reason:'INVOICE_NOT_FOUND'});
   const revising=customer&&i.state==='draft';
   const v=revising?(await db.query('SELECT * FROM invoice_versions WHERE invoice_id=$1 AND sent_at IS NOT NULL ORDER BY version_no DESC LIMIT 1',[i.id])).rows[0]:(await db.query('SELECT * FROM invoice_versions WHERE id=$1',[i.current_version_id])).rows[0];
-  if(!v)throw new NotFoundException();
+  // A customer never sees a draft that was not sent yet.
+  if(!v)throw new NotFoundException({reason:'INVOICE_NOT_FOUND'});
   const c=(await db.query('SELECT * FROM invoice_confirmations WHERE invoice_id=$1',[i.id])).rows[0];
   const assets=(await db.query('SELECT asset_id FROM invoice_assets WHERE version_id=$1 ORDER BY created_at,id',[v.id])).rows.map(x=>x.asset_id);
   const money=invoiceAmounts(v.labor,v.materials,c?.points_used??'0');

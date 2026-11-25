@@ -3,10 +3,11 @@ import {randomUUID} from 'expo-crypto';
 import {createContext,useCallback,useContext,useEffect,useMemo,useRef,useState,type PropsWithChildren} from 'react';
 import {AppState} from 'react-native';
 import {useAuth} from '../../app/providers/AuthProvider';
-import {ApiError,type ApiErrorCode} from '../../lib/http/api-error';
+import {ApiError} from '../../lib/http/api-error';
+import {toErrorInfo,type ErrorInfo} from '../../lib/errors/describe';
 import {Mutation} from '../jobs/state/mutation';
 import type {Notice,NotificationSettings} from './api/notifications-api';
-type Inbox={items:Notice[];loading:boolean;loaded:boolean;error:ApiErrorCode|null;refresh:()=>Promise<void>;markRead:(ids:string[])=>Promise<void>};
+type Inbox={items:Notice[];loading:boolean;loaded:boolean;error:ErrorInfo|null;refresh:()=>Promise<void>;markRead:(ids:string[])=>Promise<void>};
 const Context=createContext<Inbox>({items:[],loading:false,loaded:false,error:null,refresh:async()=>{},markRead:async()=>{}});
 export const useNotifications=()=>useContext(Context);
 // The provider owns this store for the current authenticated session, not a screen.
@@ -31,7 +32,7 @@ export function NotificationsProvider({children}:PropsWithChildren){
   const {manager,state}=useAuth(),owner=state.phase==='authenticated'&&state.user?.status==='active'?state.user.id:undefined;
   const settingsSession=useMemo(()=>new SettingsSession(),[owner,manager]);
   useEffect(()=>()=>settingsSession.clear(),[settingsSession]);
-  const [data,setData]=useState<{owner?:string;items:Notice[];loading:boolean;loaded:boolean;error:ApiErrorCode|null}>({items:[],loading:false,loaded:false,error:null});
+  const [data,setData]=useState<{owner?:string;items:Notice[];loading:boolean;loaded:boolean;error:ErrorInfo|null}>({items:[],loading:false,loaded:false,error:null});
   const current=useRef(owner),running=useRef(false),last=useRef(0),dirty=useRef(false),generation=useRef(0),failures=useRef(0),invalidations=useRef(0);current.current=owner;
   const invalidate=useCallback(()=>{invalidations.current++;dirty.current=true;failures.current=0;},[]);
   const refresh=useCallback(async()=>{
@@ -43,7 +44,7 @@ export function NotificationsProvider({children}:PropsWithChildren){
         if(cursor&&seen.has(cursor))throw new ApiError('INVALID_RESPONSE');if(cursor)seen.add(cursor);
       }while(cursor);
       if(current.current===owner&&epoch===generation.current){setData(previous=>({owner,items:[...found.values()].map(n=>({...n,read_at:n.read_at??(previous.owner===owner?previous.items.find(x=>x.id===n.id)?.read_at:null)??null})),loading:false,loaded:true,error:null}));last.current=Date.now();failures.current=0;}
-    }catch(e){if(current.current===owner&&epoch===generation.current){const code=e instanceof ApiError?e.code:'NETWORK';if(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code))settingsSession.clear();setData(d=>({...d,loading:false,error:code,items:['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)?[]:d.items}));last.current=Date.now();failures.current=invalidations.current===invalidation?Math.min(4,failures.current+1):0;}}
+    }catch(e){if(current.current===owner&&epoch===generation.current){const info=toErrorInfo(e),code=info.code;if(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code))settingsSession.clear();setData(d=>({...d,loading:false,error:info,items:['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)?[]:d.items}));last.current=Date.now();failures.current=invalidations.current===invalidation?Math.min(4,failures.current+1):0;}}
     finally{running.current=false;}
   },[manager,owner,settingsSession]);
   useEffect(()=>{generation.current++;last.current=0;failures.current=0;dirty.current=true;

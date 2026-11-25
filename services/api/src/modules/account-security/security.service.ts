@@ -9,6 +9,9 @@ import {hashPassword,verifyPassword} from '../auth/password.js';
 import type * as Input from './security.input.js';
 type Actor=Awaited<ReturnType<AuthService['authenticate']>>;
 type Challenge=ReturnType<typeof Input.challenge>&{expected_version?:number};type Confirm=ReturnType<typeof Input.confirm>;
+// Login, reset and recovery run without a session. Their failures must look the same whether or not
+// the contact has an account, so only causes that apply equally to both keep their own reason.
+const publicReason=(reason:string)=>['CODE_SUPERSEDED','CODE_EXPIRED'].includes(reason)?reason:'CODE_REJECTED';
 export class SecurityService {
  constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly messages:LocalMessages,private readonly admin:AdminAuthService,private readonly cursor:Cursor){}
  private async tx<T>(work:(db:PoolClient)=>Promise<T>){const db=await this.pool.connect();try{await db.query('BEGIN');const r=await work(db);await db.query('COMMIT');return r;}catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}}
@@ -17,12 +20,14 @@ export class SecurityService {
   const c=this.messages.secrets.hash(contact),i=this.messages.secrets.hash(ip);
   for(const k of [c,i].sort())await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[k]);
   const r=(await db.query(`SELECT actor_id,contact_hash,ip_hash,created_at FROM auth_rate_events WHERE purpose=$1 AND created_at>clock_timestamp()-interval '1 hour' AND (contact_hash=$2 OR ip_hash=$3 OR actor_id=$4)`,[purpose,c,i,actor])).rows;
-  if(actor&&r.filter(x=>x.actor_id===actor).length>=20||r.filter(x=>x.contact_hash===c).length>=5||r.filter(x=>x.ip_hash===i).length>=100||r.some(x=>x.contact_hash===c&&x.created_at>new Date(Date.now()-60000)))throw new HttpException({code:'RATE_LIMITED'},429);
+  const quota=actor&&r.filter(x=>x.actor_id===actor).length>=20||r.filter(x=>x.contact_hash===c).length>=5||r.filter(x=>x.ip_hash===i).length>=100;
+  // Counts are per contact/IP whether or not an account exists, so the reason reveals nothing about accounts.
+  if(quota||r.some(x=>x.contact_hash===c&&x.created_at>new Date(Date.now()-60000)))throw new HttpException({code:'RATE_LIMITED',reason:purpose==='recovery'?(quota?'RECOVERY_REQUEST_LIMIT':'RECOVERY_TOO_SOON'):(quota?'CODE_REQUEST_LIMIT':'CODE_RESEND_TOO_SOON')},429);
   await db.query('INSERT INTO auth_rate_events(actor_id,contact_hash,ip_hash,purpose) VALUES($1,$2,$3,$4)',[actor,c,i,purpose]);
  }
  private async proof(db:PoolClient,a:Actor,password:string|undefined,ip:string){
   const n=(await db.query("SELECT count(*) FROM auth_rate_events WHERE actor_id=$1 AND purpose='account.password' AND created_at>clock_timestamp()-interval '15 minutes'",[a.user.id])).rows[0];
-  if(Number(n.count)>=5)throw new HttpException({code:'RATE_LIMITED'},429);
+  if(Number(n.count)>=5)throw new HttpException({code:'RATE_LIMITED',reason:'REAUTH_TOO_MANY_ATTEMPTS'},429);
   await db.query("INSERT INTO auth_rate_events(actor_id,contact_hash,ip_hash,purpose) VALUES($1,'password',$2,'account.password')",[a.user.id,this.messages.secrets.hash(ip)]);
   const i=(await db.query("SELECT password_hash FROM identities WHERE user_id=$1 AND provider='email'",[a.user.id])).rows[0];
   return verifyPassword(password??'',i?.password_hash??null);
@@ -41,7 +46,7 @@ export class SecurityService {
    if(b.purpose==='identity'){
     const a=await this.actor(db,header);
     if(key){const old=(await db.query("SELECT request_hash,response_snapshot FROM idempotency_keys WHERE actor_id=$1 AND operation='changeIdentity' AND request_key=$2",[a.user.id,key])).rows[0];if(old){if(old.request_hash!==this.messages.secrets.hash(JSON.stringify(b)))throw new ConflictException({code:'IDEMPOTENCY_MISMATCH'});return old.response_snapshot;}}
-    if(b.expected_version!==undefined&&a.user.version!==b.expected_version)throw new ConflictException({code:'VERSION_CONFLICT'});
+    if(b.expected_version!==undefined&&a.user.version!==b.expected_version)throw new ConflictException({code:'VERSION_CONFLICT',reason:'ACCOUNT_VERSION_CONFLICT'});
     if(!await this.proof(db,a,b.password,ip))return null;
     user=a.user.id;userVersion=a.user.version;family=(await db.query('SELECT family_id FROM sessions WHERE id=$1',[a.sessionId])).rows[0].family_id;
    }else{user=(await db.query(`SELECT i.user_id FROM identities i JOIN users u ON u.id=i.user_id WHERE i.provider=$1 AND i.subject=$2 AND i.verified_at IS NOT NULL AND u.status IN ('active','suspended')`,[b.provider,b.contact])).rows[0]?.user_id??null;}
@@ -49,14 +54,21 @@ export class SecurityService {
    const response=await this.issue(db,user,b.provider,b.contact,b.purpose,family,null,userVersion);
    if(key&&user)await db.query("INSERT INTO idempotency_keys(actor_id,operation,request_key,request_hash,state,response_snapshot) VALUES($1,'changeIdentity',$2,$3,'completed',$4)",[user,key,this.messages.secrets.hash(JSON.stringify(b)),JSON.stringify(response)]);
    return response;
-  });if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return result;
+  });if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED',reason:'REAUTH_PASSWORD_WRONG'});return result;
  }
  private async consume(db:PoolClient,b:Confirm,a?:Actor){
   const c=(await db.query('SELECT * FROM auth_challenges WHERE id=$1 FOR UPDATE',[b.challenge_id])).rows[0];
-  if(!c||c.purpose!==b.purpose||!c.user_id||c.consumed_at||c.invalidated_at||c.attempts>=5||c.expires_at<=new Date())return null;
-  if(a){const s=(await db.query('SELECT family_id FROM sessions WHERE id=$1',[a.sessionId])).rows[0];if(c.user_id!==a.user.id||c.family_id!==s?.family_id)return null;}
-  if(c.code_hash!==this.messages.secrets.hash(b.code)){await db.query('UPDATE auth_challenges SET attempts=attempts+1 WHERE id=$1',[c.id]);return null;}
-  return c;
+  // Failure reasons are ordered so that, for anonymous purposes, a challenge for an unknown contact
+  // (user_id NULL, code never sent) fails exactly like one for a real account: see publicReason.
+  if(!c||c.purpose!==b.purpose)return {fail:'CODE_NOT_FOUND'};
+  if(c.invalidated_at)return {fail:'CODE_SUPERSEDED'};
+  if(c.expires_at<=new Date())return {fail:'CODE_EXPIRED'};
+  if(!c.user_id)return {fail:'CODE_WRONG'};
+  if(c.consumed_at)return {fail:'CODE_ALREADY_USED'};
+  if(c.attempts>=5)return {fail:'CODE_TOO_MANY_ATTEMPTS'};
+  if(a){const s=(await db.query('SELECT family_id FROM sessions WHERE id=$1',[a.sessionId])).rows[0];if(c.user_id!==a.user.id||c.family_id!==s?.family_id)return {fail:'CODE_NOT_FOUND'};}
+  if(c.code_hash!==this.messages.secrets.hash(b.code)){await db.query('UPDATE auth_challenges SET attempts=attempts+1 WHERE id=$1',[c.id]);return {fail:'CODE_WRONG'};}
+  return {c};
  }
  async revoke(db:PoolClient,user:string){
   for(const table of ['sessions','admin_sessions','push_devices'])await db.query(`UPDATE ${table} SET revoked_at=COALESCE(revoked_at,clock_timestamp()) WHERE user_id=$1`,[user]);
@@ -72,15 +84,15 @@ export class SecurityService {
    // Lock user before challenge, matching authenticated mutations and revocations.
    const owner=(await db.query('SELECT user_id FROM auth_challenges WHERE id=$1',[b.challenge_id])).rows[0]?.user_id;
    if(owner)await db.query('SELECT id FROM users WHERE id=$1 FOR UPDATE',[owner]);
-   const c=await this.consume(db,b,a);if(!c)return null;
+   const consumed=await this.consume(db,b,a);if('fail' in consumed)return {fail:consumed.fail};const c=consumed.c;
    const u=(await db.query('SELECT id,display_name,status,locale,version FROM users WHERE id=$1',[c.user_id])).rows[0];
-   if(!u||!['active','suspended'].includes(u.status))return null;
+   if(!u||!['active','suspended'].includes(u.status))return {fail:'CODE_REJECTED'};
    const contact=this.messages.secrets.decrypt(c.contact_cipher);this.messages.requireContact(contact);
-   if(b.purpose==='identity'&&c.user_version!==null&&c.user_version!==u.version)return 'VERSION_CONFLICT';
-   if(['login','reset'].includes(b.purpose)&&!(await db.query('SELECT 1 FROM identities WHERE user_id=$1 AND provider=$2 AND subject=$3 AND verified_at IS NOT NULL',[u.id,c.provider,contact])).rowCount)return null;
+   if(b.purpose==='identity'&&c.user_version!==null&&c.user_version!==u.version)return {conflict:'VERSION_CONFLICT',reason:'ACCOUNT_VERSION_CONFLICT'};
+   if(['login','reset'].includes(b.purpose)&&!(await db.query('SELECT 1 FROM identities WHERE user_id=$1 AND provider=$2 AND subject=$3 AND verified_at IS NOT NULL',[u.id,c.provider,contact])).rowCount)return {fail:'CODE_REJECTED'};
    if(b.purpose==='recovery'){
     const r=(await db.query('SELECT * FROM account_recoveries WHERE id=$1 FOR UPDATE',[c.recovery_id])).rows[0];
-    if(!r||r.state!=='approved'||!receipt||r.receipt_hash!==this.messages.secrets.hash(receipt))return null;
+    if(!r||r.state!=='approved'||!receipt||r.receipt_hash!==this.messages.secrets.hash(receipt))return {fail:'CODE_REJECTED'};
 
    }
    // Expensive password work starts only after the challenge and recovery proof
@@ -89,7 +101,7 @@ export class SecurityService {
    if(['identity','recovery'].includes(b.purpose)){
     await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[c.contact_hash]);
     const existing=(await db.query('SELECT user_id FROM identities WHERE provider=$1 AND subject=$2',[c.provider,contact])).rows[0];
-    if(existing&&existing.user_id!==u.id)return 'IDENTITY_CONFLICT';
+    if(existing&&existing.user_id!==u.id)return {conflict:'CONFLICT',reason:'CONTACT_IN_USE'};
     await db.query(`INSERT INTO identities(user_id,provider,subject,password_hash,verified_at) VALUES($1,$2,$3,$4,clock_timestamp()) ON CONFLICT(user_id,provider) DO UPDATE SET subject=EXCLUDED.subject,password_hash=COALESCE(EXCLUDED.password_hash,identities.password_hash),verified_at=EXCLUDED.verified_at`,[u.id,c.provider,contact,hash]);
     await db.query('UPDATE users SET version=version+1 WHERE id=$1',[u.id]);
     await this.audit(db,u.id,'account.identity.changed',c.id,'Verified new contact');
@@ -104,14 +116,15 @@ export class SecurityService {
    return response;
   });
   await this.auth.accessChanged();
-  if(!result)throw new BadRequestException({code:'CHALLENGE_INVALID'});if(typeof result==='string')throw new ConflictException({code:result});return result;
+  if('fail' in result)throw new BadRequestException({code:'CHALLENGE_INVALID',reason:b.purpose==='identity'?result.fail:publicReason(result.fail)});
+  if('conflict' in result)throw new ConflictException({code:result.conflict,reason:result.reason});return result;
  }
  async changePassword(header:string|undefined,b:ReturnType<typeof Input.changePassword>,ip:string){
   const result=await this.tx(async db=>{const a=await this.actor(db,header);if(!await this.proof(db,a,b.password,ip))return null;const hash=await hashPassword(b.new_password);await db.query("UPDATE identities SET password_hash=$2 WHERE user_id=$1 AND provider='email'",[a.user.id,hash]);await this.revoke(db,a.user.id);await this.audit(db,a.user.id,'account.password.changed',a.user.id,'Fresh current-password proof');return {id:a.user.id,version:1,state:'completed'};});
-  await this.auth.accessChanged();if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return result;
+  await this.auth.accessChanged();if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED',reason:'REAUTH_PASSWORD_WRONG'});return result;
  }
  async recover(b:ReturnType<typeof Input.recovery>,ip:string,suppliedReceipt?:string){
-  this.messages.requireContact(b.next.contact);if(suppliedReceipt&&!/^[a-f0-9]{64}$/.test(suppliedReceipt))throw new BadRequestException();const receipt=suppliedReceipt??randomBytes(32).toString('hex'),requestHash=this.messages.secrets.hash(JSON.stringify(b));
+  this.messages.requireContact(b.next.contact);if(suppliedReceipt&&!/^[a-f0-9]{64}$/.test(suppliedReceipt))throw new BadRequestException({reason:'RECOVERY_RECEIPT_INVALID'});const receipt=suppliedReceipt??randomBytes(32).toString('hex'),requestHash=this.messages.secrets.hash(JSON.stringify(b));
   const row=await this.tx(async db=>{
    const receiptHash=this.messages.secrets.hash(receipt);await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[receiptHash]);
    const previous=(await db.query('SELECT id,state,version,request_hash FROM account_recoveries WHERE receipt_hash=$1',[receiptHash])).rows[0];if(previous){if(previous.request_hash!==requestHash)throw new ConflictException({code:'IDEMPOTENCY_MISMATCH'});return {id:previous.id,state:previous.state,version:previous.version};}
@@ -119,10 +132,10 @@ export class SecurityService {
    return (await db.query(`INSERT INTO account_recoveries(user_id,receipt_hash,contact_cipher,contact_hash,evidence_cipher,request_hash) VALUES($1,$2,$3,$4,$5,$6) RETURNING id,state,version`,[user,this.messages.secrets.hash(receipt),this.messages.secrets.encrypt(b.next.contact),this.messages.secrets.hash(b.next.contact),this.messages.secrets.encrypt(b.evidence),requestHash])).rows[0];});
   return {...row,receipt_token:receipt};
  }
- private async receipt(db:PoolClient,id:string,token:string|undefined){if(!token||!/^[a-f0-9]{64}$/.test(token))throw new NotFoundException();const r=(await db.query('SELECT * FROM account_recoveries WHERE id=$1 AND receipt_hash=$2 FOR UPDATE',[id,this.messages.secrets.hash(token)])).rows[0];if(!r)throw new NotFoundException();return r;}
+ private async receipt(db:PoolClient,id:string,token:string|undefined){if(!token||!/^[a-f0-9]{64}$/.test(token))throw new NotFoundException({reason:'RECOVERY_NOT_FOUND'});const r=(await db.query('SELECT * FROM account_recoveries WHERE id=$1 AND receipt_hash=$2 FOR UPDATE',[id,this.messages.secrets.hash(token)])).rows[0];if(!r)throw new NotFoundException({reason:'RECOVERY_NOT_FOUND'});return r;}
  recoveryStatus(id:string,token:string|undefined){return this.tx(async db=>{const r=await this.receipt(db,id,token);return {id:r.id,state:r.state,version:r.version,reason:r.reason};});}
- supplement(id:string,token:string|undefined,evidence:string){return this.tx(async db=>{const r=await this.receipt(db,id,token);if(!['pending','awaiting_evidence'].includes(r.state))throw new ConflictException({code:'STATE_CONFLICT'});await db.query('INSERT INTO account_recovery_supplements(recovery_id,evidence_cipher) VALUES($1,$2)',[id,this.messages.secrets.encrypt(evidence)]);await db.query("UPDATE account_recoveries SET state='pending',version=version+1 WHERE id=$1",[id]);return {id,version:r.version+1,state:'pending'};});}
- recoveryChallenge(id:string,token:string|undefined,ip:string){return this.tx(async db=>{const r=await this.receipt(db,id,token);if(r.state!=='approved'||!r.user_id)throw new ConflictException({code:'STATE_CONFLICT'});const contact=this.messages.secrets.decrypt(r.contact_cipher);this.messages.requireContact(contact);await this.rate(db,contact,ip,'recovery-verify',r.user_id);return this.issue(db,r.user_id,contact.startsWith('+')?'phone':'email',contact,'recovery',null,id);});}
+ supplement(id:string,token:string|undefined,evidence:string){return this.tx(async db=>{const r=await this.receipt(db,id,token);if(!['pending','awaiting_evidence'].includes(r.state))throw new ConflictException({code:'STATE_CONFLICT',reason:'RECOVERY_CLOSED'});await db.query('INSERT INTO account_recovery_supplements(recovery_id,evidence_cipher) VALUES($1,$2)',[id,this.messages.secrets.encrypt(evidence)]);await db.query("UPDATE account_recoveries SET state='pending',version=version+1 WHERE id=$1",[id]);return {id,version:r.version+1,state:'pending'};});}
+ recoveryChallenge(id:string,token:string|undefined,ip:string){return this.tx(async db=>{const r=await this.receipt(db,id,token);if(r.state!=='approved'||!r.user_id)throw new ConflictException({code:'STATE_CONFLICT',reason:'RECOVERY_NOT_APPROVED'});const contact=this.messages.secrets.decrypt(r.contact_cipher);this.messages.requireContact(contact);await this.rate(db,contact,ip,'recovery-verify',r.user_id);return this.issue(db,r.user_id,contact.startsWith('+')?'phone':'email',contact,'recovery',null,id);});}
  async obligations(db:PoolClient,user:string,forfeit=false){
   // Lock memberships before reading assignments. Assignment holds a membership SHARE lock:
   // either its commit is visible to the next obligation query or it rechecks inactive after deletion.
@@ -147,13 +160,13 @@ export class SecurityService {
   return {blocked:reasons.length>0,reasons,points:accounts.reduce((s,x)=>s+BigInt(x.balance),0n).toString()};
  }
  deletionPreview(header:string|undefined){return this.tx(async db=>{const a=await this.actor(db,header);return this.obligations(db,a.user.id);});}
- async requestDeletion(header:string|undefined,b:ReturnType<typeof Input.deletion>,ip:string,key?:string){this.messages.requireConfigured();const result=await this.tx(async db=>{const a=await this.actor(db,header);if(!await this.proof(db,a,b.password,ip))return {error:'REAUTH_REQUIRED'};
+ async requestDeletion(header:string|undefined,b:ReturnType<typeof Input.deletion>,ip:string,key?:string){this.messages.requireConfigured();const result=await this.tx(async db=>{const a=await this.actor(db,header);if(!await this.proof(db,a,b.password,ip))return {error:'REAUTH_REQUIRED' as const};
    if(key){const old=(await db.query("SELECT request_hash,response_snapshot FROM idempotency_keys WHERE actor_id=$1 AND operation='requestDeletion' AND request_key=$2",[a.user.id,key])).rows[0];if(old){if(old.request_hash!==this.messages.secrets.hash(JSON.stringify(b)))throw new ConflictException({code:'IDEMPOTENCY_MISMATCH'});return old.response_snapshot;}}
    const existing=(await db.query("SELECT id,state,version FROM account_deletions WHERE user_id=$1 AND state='pending'",[a.user.id])).rows[0];if(existing)return existing;
-   if(a.user.version!==b.expected_version)throw new ConflictException({code:'VERSION_CONFLICT'});
-   const o=await this.obligations(db,a.user.id,b.forfeit_points);if(o.blocked)throw new ConflictException({code:'OBLIGATIONS_PENDING',...o});
+   if(a.user.version!==b.expected_version)throw new ConflictException({code:'VERSION_CONFLICT',reason:'ACCOUNT_VERSION_CONFLICT'});
+   const o=await this.obligations(db,a.user.id,b.forfeit_points);if(o.blocked)throw new ConflictException({...o,reason:'OBLIGATIONS_PENDING'});
    const response=(await db.query('INSERT INTO account_deletions(user_id,forfeit_points,request_cipher) VALUES($1,$2,$3) RETURNING id,state,version',[a.user.id,b.forfeit_points,this.messages.secrets.encrypt(b.reason)])).rows[0];
-   if(key)await db.query("INSERT INTO idempotency_keys(actor_id,operation,request_key,request_hash,state,response_snapshot) VALUES($1,'requestDeletion',$2,$3,'completed',$4)",[a.user.id,key,this.messages.secrets.hash(JSON.stringify(b)),JSON.stringify(response)]);return response;});if('error' in result)throw new ForbiddenException({code:result.error});return result;}
+   if(key)await db.query("INSERT INTO idempotency_keys(actor_id,operation,request_key,request_hash,state,response_snapshot) VALUES($1,'requestDeletion',$2,$3,'completed',$4)",[a.user.id,key,this.messages.secrets.hash(JSON.stringify(b)),JSON.stringify(response)]);return response;});if('error' in result)throw new ForbiddenException({code:result.error,reason:'REAUTH_PASSWORD_WRONG'});return result;}
  async queue(header:string|undefined,mfa:string|undefined,domain:'recoveries'|'deletions',query:ReturnType<typeof Input.queueInput>){
   return this.admin.read(header,mfa,'accounts.manage',async(db,a)=>{
    const scope=`account-queue:${a.user.id}:${domain}:${query.state}`,position=this.cursor.decode(query.cursor,scope);
@@ -162,7 +175,7 @@ export class SecurityService {
    return {items,next_cursor:rows.length>query.limit&&last?this.cursor.encode({id:last.id,created_at:last.created_at.toISOString()},scope):null};
   });
  }
- adminDetail(header:string|undefined,mfa:string|undefined,domain:'recoveries'|'deletions',id:string){return this.admin.read(header,mfa,'accounts.manage',async db=>{const r=(await db.query(`SELECT * FROM account_${domain} WHERE id=$1`,[id])).rows[0];if(!r)throw new NotFoundException();await this.audit(db,(await this.auth.authenticate(header,db)).user.id,'account.'+domain+'.read',id,'Đọc hồ sơ');return domain==='recoveries'?{id:r.id,user_id:r.user_id,state:r.state,version:r.version,contact:this.messages.secrets.decrypt(r.contact_cipher),evidence:[this.messages.secrets.decrypt(r.evidence_cipher),...(await db.query('SELECT evidence_cipher FROM account_recovery_supplements WHERE recovery_id=$1 ORDER BY created_at,id',[id])).rows.map(s=>this.messages.secrets.decrypt(s.evidence_cipher))].join('\n\n'),reason:r.reason}:{id:r.id,user_id:r.user_id,forfeit_points:r.forfeit_points,state:r.state,version:r.version,reviewer_id:r.reviewer_id,reason:r.reason,created_at:r.created_at,application_reason:this.messages.secrets.decrypt(r.request_cipher),obligations:await this.obligations(db,r.user_id,r.forfeit_points)};});}
+ adminDetail(header:string|undefined,mfa:string|undefined,domain:'recoveries'|'deletions',id:string){return this.admin.read(header,mfa,'accounts.manage',async db=>{const r=(await db.query(`SELECT * FROM account_${domain} WHERE id=$1`,[id])).rows[0];if(!r)throw new NotFoundException({reason:domain==='recoveries'?'RECOVERY_NOT_FOUND':'DELETION_REQUEST_NOT_FOUND'});await this.audit(db,(await this.auth.authenticate(header,db)).user.id,'account.'+domain+'.read',id,'Đọc hồ sơ');return domain==='recoveries'?{id:r.id,user_id:r.user_id,state:r.state,version:r.version,contact:this.messages.secrets.decrypt(r.contact_cipher),evidence:[this.messages.secrets.decrypt(r.evidence_cipher),...(await db.query('SELECT evidence_cipher FROM account_recovery_supplements WHERE recovery_id=$1 ORDER BY created_at,id',[id])).rows.map(s=>this.messages.secrets.decrypt(s.evidence_cipher))].join('\n\n'),reason:r.reason}:{id:r.id,user_id:r.user_id,forfeit_points:r.forfeit_points,state:r.state,version:r.version,reviewer_id:r.reviewer_id,reason:r.reason,created_at:r.created_at,application_reason:this.messages.secrets.decrypt(r.request_cipher),obligations:await this.obligations(db,r.user_id,r.forfeit_points)};});}
  private audit(db:PoolClient,actor:string,action:string,id:string,reason:string){return db.query('INSERT INTO audit_events(actor_id,action,resource_id,reason) VALUES($1,$2,$3,$4)',[actor,action,id,reason]);}
  async decide(header:string|undefined,mfa:string|undefined,domain:'recoveries'|'deletions',id:string,b:ReturnType<typeof Input.decision>,key?:string){
   this.messages.requireConfigured();
@@ -170,16 +183,16 @@ export class SecurityService {
    await this.admin.check(db,a,mfa,'accounts.manage');
    const requestHash=this.messages.secrets.hash(JSON.stringify({id,...b})),operation='account.'+domain+'.decision';
    if(key){const old=(await db.query('SELECT request_hash,response_snapshot FROM idempotency_keys WHERE actor_id=$1 AND operation=$2 AND request_key=$3',[a.user.id,operation,key])).rows[0];if(old){if(old.request_hash!==requestHash)throw new ConflictException({code:'IDEMPOTENCY_MISMATCH'});return old.response_snapshot;}}
-   const target=(await db.query(`SELECT user_id FROM account_${domain} WHERE id=$1`,[id])).rows[0];if(!target)throw new NotFoundException();
-   if(target.user_id===a.user.id)throw new ForbiddenException();
+   const target=(await db.query(`SELECT user_id FROM account_${domain} WHERE id=$1`,[id])).rows[0];if(!target)throw new NotFoundException({reason:domain==='recoveries'?'RECOVERY_NOT_FOUND':'DELETION_REQUEST_NOT_FOUND'});
+   if(target.user_id===a.user.id)throw new ForbiddenException({reason:'ACCOUNT_REVIEW_SELF'});
    if(target.user_id)await db.query('SELECT id FROM users WHERE id=$1 FOR UPDATE',[target.user_id]);
    const r=(await db.query(`SELECT * FROM account_${domain} WHERE id=$1 FOR UPDATE`,[id])).rows[0];
-   if(r.version!==b.expected_version)throw new ConflictException({code:'VERSION_CONFLICT'});
-   if(!['pending','awaiting_evidence'].includes(r.state))throw new ConflictException({code:'STATE_CONFLICT'});
-   if(domain==='recoveries'&&b.action==='approve'&&!r.user_id)throw new ConflictException({code:'STATE_CONFLICT'});
-   if(domain==='deletions'&&b.action==='evidence')throw new BadRequestException();
+   if(r.version!==b.expected_version)throw new ConflictException({code:'VERSION_CONFLICT',reason:'ACCOUNT_REVIEW_VERSION_CONFLICT'});
+   if(!['pending','awaiting_evidence'].includes(r.state))throw new ConflictException({code:'STATE_CONFLICT',reason:'ACCOUNT_REVIEW_ALREADY_DECIDED'});
+   if(domain==='recoveries'&&b.action==='approve'&&!r.user_id)throw new ConflictException({code:'STATE_CONFLICT',reason:'RECOVERY_NO_ACCOUNT'});
+   if(domain==='deletions'&&b.action==='evidence')throw new BadRequestException({reason:'ACCOUNT_REVIEW_ACTION_INVALID',field:'decision'});
    if(domain==='deletions'&&b.action==='approve'){
-    const o=await this.obligations(db,r.user_id,r.forfeit_points);if(o.blocked)throw new ConflictException({code:'OBLIGATIONS_PENDING',...o});
+    const o=await this.obligations(db,r.user_id,r.forfeit_points);if(o.blocked)throw new ConflictException({...o,reason:'OBLIGATIONS_PENDING'});
     const p=(await db.query("SELECT * FROM ledger_accounts WHERE owner_user_id=$1 AND unit='POINT'",[r.user_id])).rows[0];
     if(p&&BigInt(p.balance)>0n){
      await db.query("INSERT INTO ledger_accounts(system_code,unit) VALUES('account_forfeiture','POINT') ON CONFLICT(system_code,unit) DO NOTHING");

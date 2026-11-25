@@ -23,6 +23,8 @@ import {
   Options
 } from '../components/PartnerFields';
 import { theme } from '../../../theme/tokens';
+import { ErrorMessage } from '../../../components/ui/ErrorMessage';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 export function PartnerEditorScreen({
   navigation,
   route
@@ -89,7 +91,7 @@ function Editor({
   const [categories, setCategories] = useState<Category[]>([]),
     [choices, setChoices] = useState<Skill[]>([]),
     [industry, setIndustry] = useState<string>(),
-    [catalogError, setCatalogError] = useState(false),
+    [catalogError, setCatalogError] = useState<ErrorInfo | null>(null),
     [catalogBusy, setCatalogBusy] = useState(false),
     [catalogAttempt, setCatalogAttempt] = useState(0);
   const [loaded, setLoaded] = useState(false);
@@ -127,7 +129,7 @@ function Editor({
   }, [state.value, loaded]);
   useEffect(() => {
     const c = new AbortController();
-    setCatalogError(false);
+    setCatalogError(null);
     setCatalogBusy(true);
     catalog
       .categories(undefined, c.signal, locale)
@@ -140,8 +142,8 @@ function Editor({
         if (!c.signal.aborted)
           setChoices([...new Map(all.flat().map((s) => [s.id, s])).values()]);
       })
-      .catch(() => {
-        if (!c.signal.aborted) setCatalogError(true);
+      .catch((e) => {
+        if (!c.signal.aborted) setCatalogError(toErrorInfo(e));
       })
       .finally(() => {
         if (!c.signal.aborted) setCatalogBusy(false);
@@ -174,24 +176,19 @@ function Editor({
         .then((v) => {
           if (!c.signal.aborted) setCategorySkills(v.map((s) => s.id));
         })
-        .catch(() => {
-          if (!c.signal.aborted) setCatalogError(true);
+        .catch((e) => {
+          if (!c.signal.aborted) setCatalogError(toErrorInfo(e));
         });
     return () => c.abort();
   }, [catalog, industry, locale]);
   return (
     <>
-      {state.error && (
-        <AppText testID="partner-error" accessibilityRole="alert" tone="error">
-          {t(
-            state.error === 'VERSION_CONFLICT'
-              ? 'accountTools.conflict'
-              : state.error === 'VALIDATION'
-                ? 'partners.invalid'
-                : 'partners.error'
-          )}
-        </AppText>
-      )}
+      {/* The API reason names the exact field/rule; the section hint is only for unexplained input errors. */}
+      <ErrorMessage
+        testID="partner-error"
+        error={state.error}
+        screen={(code) => (code === 'VALIDATION' ? t('partners.invalid') : undefined)}
+      />
       {state.saved && (
         <AppText testID="partner-saved" accessibilityLiveRegion="polite">
           {t('partners.saved')}
@@ -441,7 +438,7 @@ function Editor({
                 <AppText variant="card">{t('partners.chooseIndustry')}</AppText>
                 {catalogError ? (
                   <>
-                    <AppText>{t('catalog.error')}</AppText>
+                    <ErrorMessage error={catalogError} screen={(code) => (code === 'NETWORK' ? t('catalog.error') : undefined)} />
                     <Button
                       label={t('common.retry')}
                       onPress={() => setCatalogAttempt((v) => v + 1)}
@@ -491,7 +488,7 @@ function Editor({
               <Button
                 testID="partner-save-skills"
                 label={copy.saveSkills}
-                disabled={blocked || catalogBusy || catalogError}
+                disabled={blocked || catalogBusy || !!catalogError}
                 onPress={() => save({ action: 'skills', skills })}
               />
             </>

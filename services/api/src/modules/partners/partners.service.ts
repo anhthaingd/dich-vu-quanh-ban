@@ -26,14 +26,15 @@ export class PartnersService {
       'SELECT id FROM partners WHERE id=$1 AND archived_at IS NULL FOR UPDATE',
       [id]
     );
-    if (!p) throw new NotFoundException();
+    if (!p) throw new NotFoundException({ reason: 'PARTNER_NOT_FOUND' });
     const {
       rows: [member]
     } = await db.query(
       `SELECT id,is_owner FROM memberships WHERE partner_id=$1 AND user_id=$2 AND active FOR UPDATE`,
       [id, actor.user.id]
     );
-    if (!member) throw new NotFoundException();
+    // Non-members get the same 404 as a missing profile: existence stays hidden.
+    if (!member) throw new NotFoundException({ reason: 'PARTNER_NOT_FOUND' });
     if (
       !member.is_owner &&
       !(
@@ -43,7 +44,7 @@ export class PartnersService {
         )
       ).rowCount
     )
-      throw new ForbiddenException();
+      throw new ForbiddenException({ reason: 'PARTNER_PROFILE_MANAGE_REQUIRED' });
   }
   async management(header: string | undefined, id: string) {
     const db = await this.pool.connect();
@@ -85,7 +86,7 @@ export class PartnersService {
         return readManagement(db, p.id);
       },
       async (db, actor) => {
-        if (!this.auth.hasServiceVerification(actor.user)) throw new ForbiddenException();
+        if (!this.auth.hasServiceVerification(actor.user)) throw new ForbiddenException({ reason: 'PARTNER_CONTACT_VERIFICATION_REQUIRED' });
         const {
           rows: [previous]
         } = await db.query(
@@ -109,7 +110,7 @@ export class PartnersService {
        )) AS valid`,
       [id]
     );
-    if (!check.valid) throw new BadRequestException();
+    if (!check.valid) throw new BadRequestException({ reason: 'PARTNER_PROFILE_INCOMPLETE' });
   }
   edit(header: string | undefined, id: string, input: Edit, key: string) {
     return this.transaction.run(
@@ -125,14 +126,14 @@ export class PartnersService {
           [id]
         );
         if (current.version !== input.expected_version)
-          throw new ConflictException({ code: 'VERSION_CONFLICT' });
+          throw new ConflictException({ code: 'VERSION_CONFLICT', reason: 'PARTNER_VERSION_CONFLICT' });
         switch (input.action) {
           case 'gallery': {
             // Partner lock serializes all gallery edits; assets cannot be borrowed from another uploader/profile.
             const assets=(await db.query(`SELECT a.id FROM assets a WHERE a.id=ANY($1::uuid[]) AND a.purpose='gallery' AND a.status='ready'
               AND (a.uploader_id=$2 OR EXISTS(SELECT 1 FROM partner_gallery g WHERE g.partner_id=$3 AND g.asset_id=a.id))
               AND NOT EXISTS(SELECT 1 FROM partner_gallery g WHERE g.asset_id=a.id AND g.partner_id<>$3) FOR UPDATE OF a`,[input.asset_ids,actor.user.id,id])).rows;
-            if(assets.length!==input.asset_ids.length)throw new BadRequestException();
+            if(assets.length!==input.asset_ids.length)throw new BadRequestException({reason:'PARTNER_GALLERY_IMAGE_UNAVAILABLE',field:'asset_ids'});
             await db.query('DELETE FROM partner_gallery WHERE partner_id=$1',[id]);
             for(const [position,asset] of input.asset_ids.entries())await db.query('INSERT INTO partner_gallery(partner_id,asset_id,position) VALUES($1,$2,$3)',[id,asset,position]);
             await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'partner.gallery',$2,'Gallery updated',$3)",[actor.user.id,id,JSON.stringify({asset_ids:input.asset_ids})]);
@@ -158,7 +159,7 @@ export class PartnersService {
               `${visibleSkills} SELECT id FROM visible_skills WHERE id=ANY($1::uuid[])`,
               [ids]
             );
-            if (rows.length !== ids.length) throw new BadRequestException();
+            if (rows.length !== ids.length) throw new BadRequestException({ reason: 'PARTNER_SKILL_UNAVAILABLE', field: 'skills.skill_id' });
             await db.query(
               'UPDATE partner_skills SET active=false WHERE partner_id=$1',
               [id]
@@ -184,7 +185,7 @@ export class PartnersService {
               [id]
             );
             for (const a of input.areas){
-              if(a.boundary_geojson){const valid=(await db.query("SELECT ST_IsValid(g) AND NOT ST_IsEmpty(g) AND ST_Area(g)>0 AS valid FROM (SELECT ST_SetSRID(ST_GeomFromGeoJSON($1),4326) g) x",[JSON.stringify(a.boundary_geojson)])).rows[0];if(!valid.valid)throw new BadRequestException();}
+              if(a.boundary_geojson){const valid=(await db.query("SELECT ST_IsValid(g) AND NOT ST_IsEmpty(g) AND ST_Area(g)>0 AS valid FROM (SELECT ST_SetSRID(ST_GeomFromGeoJSON($1),4326) g) x",[JSON.stringify(a.boundary_geojson)])).rows[0];if(!valid.valid)throw new BadRequestException({reason:'PARTNER_AREA_BOUNDARY_SHAPE_INVALID',field:'areas.boundary_geojson'});}
               await db.query(
                 'INSERT INTO service_areas(partner_id,label,center,radius_m,boundary) VALUES($1,$2,ST_SetSRID(ST_MakePoint($3,$4),4326)::geography,$5,CASE WHEN $6::text IS NULL THEN NULL ELSE ST_SetSRID(ST_GeomFromGeoJSON($6),4326)::geography END)',
                 [id, a.label, a.center.longitude, a.center.latitude, a.boundary_geojson?null:a.radius_m,a.boundary_geojson?JSON.stringify(a.boundary_geojson):null]
@@ -213,19 +214,17 @@ export class PartnersService {
               input.publication_status === 'published' &&
               current.moderation_status !== 'active'
             )
-              throw new ForbiddenException();
+              throw new ForbiddenException({ reason: 'PARTNER_MODERATION_RESTRICTED' });
             await db.query(
               "UPDATE partners SET publication_status=$2,accepting_jobs=CASE WHEN $2='draft' THEN false ELSE accepting_jobs END WHERE id=$1",
               [id, input.publication_status]
             );
             break;
           case 'availability':
-            if (
-              input.accepting_jobs &&
-              (current.publication_status !== 'published' ||
-                current.moderation_status !== 'active')
-            )
-              throw new ForbiddenException();
+            if (input.accepting_jobs && current.publication_status !== 'published')
+              throw new ForbiddenException({ reason: 'PARTNER_NOT_PUBLISHED' });
+            if (input.accepting_jobs && current.moderation_status !== 'active')
+              throw new ForbiddenException({ reason: 'PARTNER_MODERATION_RESTRICTED' });
             await db.query(
               'UPDATE partners SET accepting_jobs=$2 WHERE id=$1',
               [id, input.accepting_jobs]
@@ -259,7 +258,7 @@ export class PartnersService {
        (p.publication_status='published' AND p.moderation_status='active') OR EXISTS(
         SELECT 1 FROM memberships m WHERE m.partner_id=p.id AND m.user_id=$2 AND m.active AND (m.is_owner OR EXISTS(
          SELECT 1 FROM membership_grants g WHERE g.membership_id=m.id AND g.permission='profile.manage' AND g.revoked_at IS NULL))))`,[id,actor?.user.id??null])).rows[0];
-      if(!p)throw new NotFoundException();
+      if(!p)throw new NotFoundException({reason:'PARTNER_NOT_FOUND'});
       const asset_ids=(await db.query('SELECT asset_id FROM partner_gallery WHERE partner_id=$1 ORDER BY position',[id])).rows.map(r=>r.asset_id as string);
       await db.query('COMMIT');return {partner_id:id,version:p.version,asset_ids};
     }catch(e){await db.query('ROLLBACK');throw e;}finally{db.release();}
@@ -267,7 +266,7 @@ export class PartnersService {
   deactivate(header:string|undefined,id:string,input:{expected_version:number;reason:string},key:string){
     return this.transaction.run(header,`partner.${id}.deactivation`,key,input,async(db,actor)=>{
       const p=(await db.query('UPDATE partners SET accepting_jobs=false,version=version+1 WHERE id=$1 AND version=$2 RETURNING version',[id,input.expected_version])).rows[0];
-      if(!p)throw new ConflictException({code:'VERSION_CONFLICT'});
+      if(!p)throw new ConflictException({code:'VERSION_CONFLICT',reason:'PARTNER_VERSION_CONFLICT'});
       await db.query("INSERT INTO audit_events(actor_id,action,resource_id,reason,details) VALUES($1,'partner.deactivation',$2,$3,'{}')",[actor.user.id,id,input.reason]);
       return {id,version:p.version,state:'inactive'};
     },(db,actor)=>this.permission(db,actor,id));
@@ -288,7 +287,7 @@ export class PartnersService {
         WHERE id=$1 AND publication_status='published' AND archived_at IS NULL AND moderation_status<>'suspended'`,
         [id]
       );
-      if (!p) throw new NotFoundException();
+      if (!p) throw new NotFoundException({ reason: 'PARTNER_NOT_FOUND' });
       const skills = (
         await db.query(
           `${visibleSkills} SELECT s.id,s.code,s.name_vi,s.translations,s.schema_version,s.form_schema,ps.modes,

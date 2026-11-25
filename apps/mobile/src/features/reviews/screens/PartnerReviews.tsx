@@ -8,13 +8,15 @@ import {Card} from '../../../components/ui/Card';
 import {AppText} from '../../../components/ui/AppText';
 import {Button} from '../../../components/ui/Button';
 import {ErrorState} from '../../../components/ui/Feedback';
+import {useErrorText} from '../../../components/ui/ErrorMessage';
+import {toErrorInfo,type ErrorInfo} from '../../../lib/errors/describe';
 const defaultApi=createReviewsApi(process.env.EXPO_PUBLIC_API_URL);
 export function PartnerReviews({id,api=defaultApi}:{id:string;api?:ReviewsApi}){
- const {t}=useLocale();const [items,setItems]=useState<Review[]>([]),[cursor,setCursor]=useState<string|null>(null),[attempt,setAttempt]=useState(0),[busy,setBusy]=useState(true),[error,setError]=useState(false);
+ const {t}=useLocale(),errorText=useErrorText();const [items,setItems]=useState<Review[]>([]),[cursor,setCursor]=useState<string|null>(null),[attempt,setAttempt]=useState(0),[busy,setBusy]=useState(true),[error,setError]=useState<ErrorInfo|null>(null);
  const generation=useRef(0);
- const load=useCallback((page?:string)=>{const request=++generation.current;setBusy(true);setError(false);if(!page){setItems([]);setCursor(null);}
-  void api.publicList(id,page).then(p=>{if(request===generation.current){setItems(old=>page?[...old.filter(r=>!p.items.some(v=>v.id===r.id)),...p.items]:p.items);setCursor(p.next_cursor);}}).catch(()=>{if(request===generation.current){setError(true);setItems([]);setCursor(null);}}).finally(()=>{if(request===generation.current)setBusy(false);});
+ const load=useCallback((page?:string)=>{const request=++generation.current;setBusy(true);setError(null);if(!page){setItems([]);setCursor(null);}
+  void api.publicList(id,page).then(p=>{if(request===generation.current){setItems(old=>page?[...old.filter(r=>!p.items.some(v=>v.id===r.id)),...p.items]:p.items);setCursor(p.next_cursor);}}).catch(e=>{if(request===generation.current){setError(toErrorInfo(e));setItems([]);setCursor(null);}}).finally(()=>{if(request===generation.current)setBusy(false);});
  },[id,api]);
  useFocusEffect(useCallback(()=>{load();return()=>{generation.current++;};},[load,attempt]));
- return <Card><AppText variant="section">{t('reviews.public')}</AppText>{busy&&<AppText>{t('accountTools.loading')}</AppText>}{error?<ErrorState message={t('search.error')} retryLabel={t('common.retry')} onRetry={()=>{setAttempt(n=>n+1);}}/>:items.map(r=><Card key={r.id}><AppText>{t('reviews.score',{stars:r.stars})}</AppText><AppText>{r.body}</AppText>{r.asset_id&&<ReviewPhoto key={r.asset_id} id={r.asset_id} load={api.asset}/>}{r.reply&&<><AppText variant="section">{t('reviews.reply')}</AppText><AppText>{r.reply.body}</AppText></>}</Card>)}{!busy&&!error&&!items.length&&<AppText>{t('reviews.empty')}</AppText>}{cursor&&<Button label={t('accountTools.more')} disabled={busy} onPress={()=>load(cursor)}/>}</Card>;
+ return <Card><AppText variant="section">{t('reviews.public')}</AppText>{busy&&<AppText>{t('accountTools.loading')}</AppText>}{error?<ErrorState message={errorText(error)} retryLabel={t('common.retry')} onRetry={()=>{setAttempt(n=>n+1);}}/>:items.map(r=><Card key={r.id}><AppText>{t('reviews.score',{stars:r.stars})}</AppText><AppText>{r.body}</AppText>{r.asset_id&&<ReviewPhoto key={r.asset_id} id={r.asset_id} load={api.asset}/>}{r.reply&&<><AppText variant="section">{t('reviews.reply')}</AppText><AppText>{r.reply.body}</AppText></>}</Card>)}{!busy&&!error&&!items.length&&<AppText>{t('reviews.empty')}</AppText>}{cursor&&<Button label={t('accountTools.more')} disabled={busy} onPress={()=>load(cursor)}/>}</Card>;
 }

@@ -1,5 +1,15 @@
 # Checklist chức năng và bằng chứng
 
+## B00-35 — Báo lỗi chính xác trên toàn hệ thống, đăng ký mọi email ở local, 25/11/2026
+
+- [x] Local: cờ `PUBLIC_EMAIL_REGISTRATION=1` cho mọi email nhận mã thử (chỉ vào Mailpit, cần `LOCAL_MESSAGES=1`); số điện thoại vẫn chỉ DEMO. Cloud giữ điều kiện cũ.
+- [x] API trả thêm `reason` (519 nguyên nhân) và `field_errors`; giữ nguyên `code`, mã trạng thái, giới hạn và thứ tự kiểm tra. Thêm `reason` tùy chọn vào schema `Error` của OpenAPI; tài liệu thiết kế khác chưa đồng bộ (theo quy tắc 15/10/2026).
+- [x] App mobile: danh mục câu báo vi/en/ja theo nhóm, `ErrorMessage` có mã tra cứu cho lỗi máy chủ; các màn lưu mã lỗi thay vì câu; sửa 12 lỗi trải nghiệm (đếm ngược sai, lỗi treo, "Kiểm tra kết nối" sai chỗ…).
+- [x] Trang quản trị web dùng cùng danh mục câu báo, có mã tra cứu; sửa 9 lỗi trải nghiệm. Chưa thử tay trên trình duyệt.
+- [x] Kiểm local: typecheck, lint, mobile 444/444, API unit 77/77 + integration 171/171, admin 6/6; tooling 98/99 (1 test lab AWS hỏng sẵn trên HEAD); thử tay Android emulator luồng xác minh liên hệ. Không có bằng chứng SDD. [Báo cáo B00-35](bao-cao/B00-35-bao-loi-chinh-xac.md).
+- [ ] Chủ dự án quyết các mã trạng thái nghi chưa hợp lý (bảng mục 7 báo cáo).
+- [ ] iOS/thiết bị thật, web E2E, deploy lab, UAT.
+
 ## B00-34 — Tài liệu học dịch vụ AWS và cách xem trên Console, 17/11/2026
 
 - [x] Viết [phần 07](hoc-deploy-aws02/07-dich-vu-va-console.md): vai trò từng dịch vụ, cách nối, hành trình request, các bước xem trên Console, chi phí/credits/budget, Logs Insights, kiểm sức khoẻ và tra sự cố. [Báo cáo B00-34](bao-cao/B00-34-tai-lieu-dich-vu-aws-console.md).

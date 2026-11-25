@@ -13,17 +13,21 @@ export async function jobAccess(db: PoolClient, id: string, user: string) {
     // Partner first matches profile edits. AccountTransaction has already locked the actor.
     const { rows: [ref] } = await db.query('SELECT partner_id FROM jobs WHERE id=$1', [id]);
     if (!ref)
-        throw new NotFoundException();
+        throw new NotFoundException({ reason: 'JOB_NOT_FOUND' });
     await db.query('SELECT id FROM partners WHERE id=$1 FOR UPDATE', [ref.partner_id]);
     const { rows: [job] } = await db.query('SELECT * FROM jobs WHERE id=$1 FOR UPDATE', [id]);
     const member = await memberAccess(db, job.partner_id, user);
     const { rows: [assignment] } = await db.query('SELECT membership_id FROM assignments WHERE job_id=$1 AND ended_at IS NULL', [id]);
     const customer = job.customer_id === user, assigned = !!member && member.id === assignment?.membership_id;
     const manages = hasPermission(member, 'jobs.manage'), accepts = hasPermission(member, 'jobs.accept'), assigns = hasPermission(member, 'jobs.assign');
+    // Same 404 as a missing job: never reveal jobs the actor cannot see.
     if (!customer && !assigned && !manages && !accepts && !assigns)
-        throw new NotFoundException();
+        throw new NotFoundException({ reason: 'JOB_NOT_FOUND' });
     return { job, member, customer, assigned, manages, accepts, assigns, assigned_member_id: assignment?.membership_id ?? null };
 }
+// STATE_CONFLICT reason naming the job state that blocks an action.
+const stateReasons: Record<string, string> = { requested: 'JOB_NOT_ACCEPTED_YET', accepted: 'JOB_ALREADY_ACCEPTED', awaiting_settlement: 'JOB_AWAITING_SETTLEMENT', completed: 'JOB_ALREADY_COMPLETED', declined: 'JOB_DECLINED', withdrawn: 'JOB_WITHDRAWN', stopped: 'JOB_STOPPED' };
+export function jobStateReason(state: string): string { return stateReasons[state] ?? 'JOB_ACTION_NOT_AVAILABLE'; }
 export type JobAccess = Awaited<ReturnType<typeof jobAccess>>;
 export function allowedActions(a: JobAccess): string[] {
     const actions: string[] = [];

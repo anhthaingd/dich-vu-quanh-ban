@@ -38,6 +38,8 @@ import type { Mode, Point } from '../../partners/models';
 import type { SavedAddress } from '../../accounts/models';
 import { searchMessages } from '../messages';
 import { theme } from '../../../theme/tokens';
+import { ErrorMessage, useErrorText } from '../../../components/ui/ErrorMessage';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 export function SearchScreen({
   navigation,
   route
@@ -45,6 +47,7 @@ export function SearchScreen({
   const insets = useSafeAreaInsets();
   const api = usePartnersApi(),
     { t, locale } = useLocale(),
+    errorText = useErrorText(),
     { state: auth } = useAuth();
   const search = useMemo(() => new PartnerSearch(api), [api]);
   const state = useSyncExternalStore(
@@ -201,7 +204,7 @@ export function SearchScreen({
       {state.error && state.items.length > 0 && <AppText tone="muted">{copy.previous}</AppText>}
       {state.error && (
         <ErrorState
-          message={t('search.error')}
+          message={errorText(state.error, code => code === 'VALIDATION' ? t('search.invalid') : undefined)}
           retryLabel={t('common.retry')}
           onRetry={() => void search.retry()}
         />
@@ -253,11 +256,11 @@ function SavedPositions({
   const [items, setItems] = useState<SavedAddress[]>([]),
     [next, setNext] = useState<string | null>(null),
     [busy, setBusy] = useState(false),
-    [error, setError] = useState(false);
+    [error, setError] = useState<ErrorInfo | null>(null);
   const load = async (more = false) => {
     if (busy) return;
     setBusy(true);
-    setError(false);
+    setError(null);
     try {
       const page = await manager.listAddresses(
         owner,
@@ -265,8 +268,8 @@ function SavedPositions({
       );
       setItems((v) => (more ? [...v, ...page.items] : page.items));
       setNext(page.next_cursor);
-    } catch {
-      setError(true);
+    } catch (e) {
+      setError(toErrorInfo(e));
     } finally {
       setBusy(false);
     }
@@ -280,7 +283,7 @@ function SavedPositions({
         disabled={busy || state.busy}
         onPress={() => void load()}
       />
-      {error && <AppText tone="error">{t('accountTools.error')}</AppText>}
+      <ErrorMessage error={error} />
       {items.map((a) => (
         <Button
           key={a.id}

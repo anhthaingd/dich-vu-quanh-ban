@@ -13,6 +13,7 @@ import { AppNavigator } from '../../../app/navigation/AppNavigator';
 import { AppProviders } from '../../../app/providers/AppProviders';
 import { AuthProvider } from '../../../app/providers/AuthProvider';
 import { authFixture, session } from '../../../../test/helpers/auth';
+import { partnersReasons } from '../../../lib/errors/reasons/partners';
 import { ApiError } from '../../../lib/http/api-error';
 import type { PartnersApi } from '../api/partners-api';
 import type { Partner } from '../models';
@@ -228,10 +229,11 @@ test('owner edits skills, modes, prices, circles and public shops with a shared 
 test('conflict preserves draft until explicit reload, access loss removes private editor', async () => {
   const f = fixture();
   await openEditor();
-  f.partners.edit.mockRejectedValueOnce(new ApiError('VERSION_CONFLICT'));
+  f.partners.edit.mockRejectedValueOnce(new ApiError('VERSION_CONFLICT', 409, undefined, undefined, undefined, 'PARTNER_VERSION_CONFLICT'));
   fireEvent.changeText(screen.getByTestId('partner-name'), 'Unsaved');
   fireEvent.press(screen.getByTestId('partner-save-profile'));
-  await screen.findByTestId('partner-error');
+  // The API reason is shown instead of a generic "check your connection" sentence.
+  expect(await screen.findByTestId('partner-error')).toHaveTextContent(partnersReasons.vi.PARTNER_VERSION_CONFLICT);
   expect(screen.getByTestId('partner-name').props.value).toBe('Unsaved');
   fireEvent.press(screen.getByTestId('partner-reload'));
   await waitFor(() =>

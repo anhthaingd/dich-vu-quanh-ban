@@ -81,6 +81,10 @@
       "kind": "product"
     },
     {
+      "path": "apps/admin/src/ErrorNote.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/admin/src/FinancePanel.tsx",
       "kind": "product"
     },
@@ -115,6 +119,10 @@
     {
       "path": "apps/admin/src/components/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "apps/admin/src/errors.ts",
+      "kind": "product"
     },
     {
       "path": "apps/admin/src/features/.gitkeep",
@@ -410,6 +418,10 @@
     },
     {
       "path": "apps/mobile/src/components/ui/Card.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/components/ui/ErrorMessage.tsx",
       "kind": "product"
     },
     {
@@ -781,6 +793,14 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/chat/components/ActionError.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/features/chat/components/ActionError.tsx",
+      "kind": "product"
+    },
+    {
       "path": "apps/mobile/src/features/chat/models.ts",
       "kind": "product"
     },
@@ -1085,12 +1105,20 @@
       "kind": "product"
     },
     {
+      "path": "apps/mobile/src/features/organizations/screens/VerifyContactScreen.test.tsx",
+      "kind": "test"
+    },
+    {
       "path": "apps/mobile/src/features/organizations/screens/VerifyContactScreen.tsx",
       "kind": "product"
     },
     {
       "path": "apps/mobile/src/features/partners/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/api/gallery-api.test.ts",
+      "kind": "test"
     },
     {
       "path": "apps/mobile/src/features/partners/api/gallery-api.ts",
@@ -1110,6 +1138,10 @@
     },
     {
       "path": "apps/mobile/src/features/partners/components/GalleryEditor.tsx",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/features/partners/components/MutationFeedback.tsx",
       "kind": "product"
     },
     {
@@ -1295,6 +1327,58 @@
     {
       "path": "apps/mobile/src/features/wallet/.gitkeep",
       "kind": "placeholder"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/categories.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/describe.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/describe.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/reasons/admin.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/reasons/auth.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/reasons/chat.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/reasons/common.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/reasons/finance.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/reasons/index.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/reasons/jobs.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/reasons/organizations.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/reasons/partners.ts",
+      "kind": "product"
+    },
+    {
+      "path": "apps/mobile/src/lib/errors/reasons/types.ts",
+      "kind": "product"
     },
     {
       "path": "apps/mobile/src/lib/http/api-error.ts",
@@ -1662,6 +1746,10 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/B00-34-tai-lieu-dich-vu-aws-console.md",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/B00-35-bao-loi-chinh-xac.md",
       "kind": "documentation"
     },
     {
@@ -3634,6 +3722,18 @@
     },
     {
       "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-30/web-live-danh-muc.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-35/android-xac-minh-email-khac-tai-khoan.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-35/android-xac-minh-goi-y-moi.png",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/ke-hoach-trien-khai/bao-cao/anh/B00-35/android-xac-minh-so-ngoai-demo.png",
       "kind": "documentation"
     },
     {
@@ -5849,6 +5949,10 @@
       "kind": "product"
     },
     {
+      "path": "services/api/src/modules/partners/partners.errors.ts",
+      "kind": "product"
+    },
+    {
       "path": "services/api/src/modules/partners/partners.input.ts",
       "kind": "product"
     },
@@ -6081,11 +6185,23 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/unit/admin-errors.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/auth-errors.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/unit/catalog-config.test.ts",
       "kind": "test"
     },
     {
       "path": "services/api/test/unit/catalog-seed.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/chat-errors.test.ts",
       "kind": "test"
     },
     {
@@ -6097,7 +6213,15 @@
       "kind": "test"
     },
     {
+      "path": "services/api/test/unit/http-errors.test.ts",
+      "kind": "test"
+    },
+    {
       "path": "services/api/test/unit/invoice-money.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/jobs-errors.test.ts",
       "kind": "test"
     },
     {
@@ -6118,6 +6242,10 @@
     },
     {
       "path": "services/api/test/unit/output.test.ts",
+      "kind": "test"
+    },
+    {
+      "path": "services/api/test/unit/partners-errors.test.ts",
       "kind": "test"
     },
     {
@@ -6939,6 +7067,7 @@
       "apps/mobile/src/features/calls/media.native.test.ts",
       "apps/mobile/src/features/catalog/api/catalog-api.test.ts",
       "apps/mobile/src/features/chat/MessageUnreadProvider.test.tsx",
+      "apps/mobile/src/features/chat/components/ActionError.test.ts",
       "apps/mobile/src/features/chat/screens/ConversationUX.test.tsx",
       "apps/mobile/src/features/finance/api/finance-api.test.ts",
       "apps/mobile/src/features/finance/screens/AdminFinance.test.tsx",
@@ -6961,6 +7090,8 @@
       "apps/mobile/src/features/notifications/screens/Notifications.test.tsx",
       "apps/mobile/src/features/organizations/api/organizations-api.test.ts",
       "apps/mobile/src/features/organizations/screens/Organizations.test.tsx",
+      "apps/mobile/src/features/organizations/screens/VerifyContactScreen.test.tsx",
+      "apps/mobile/src/features/partners/api/gallery-api.test.ts",
       "apps/mobile/src/features/partners/api/partners-api.test.ts",
       "apps/mobile/src/features/partners/components/GalleryEditor.test.tsx",
       "apps/mobile/src/features/partners/screens/Partners.test.tsx",
@@ -6976,6 +7107,7 @@
       "apps/mobile/src/features/support/screens/Support.test.tsx",
       "apps/mobile/src/features/verification/api/verification-api.test.ts",
       "apps/mobile/src/features/verification/screens/Verification.test.tsx",
+      "apps/mobile/src/lib/errors/describe.test.ts",
       "apps/mobile/src/lib/http/request.test.ts",
       "apps/mobile/src/lib/i18n/i18n.test.ts",
       "apps/mobile/src/lib/i18n/locale-state.test.ts",
@@ -7015,16 +7147,22 @@
       "services/api/test/integration/reviews.test.ts",
       "services/api/test/integration/runtime-lease.test.ts",
       "services/api/test/integration/support.test.ts",
+      "services/api/test/unit/admin-errors.test.ts",
+      "services/api/test/unit/auth-errors.test.ts",
       "services/api/test/unit/catalog-config.test.ts",
       "services/api/test/unit/catalog-seed.test.ts",
+      "services/api/test/unit/chat-errors.test.ts",
       "services/api/test/unit/cloud.test.ts",
       "services/api/test/unit/demo-options.test.ts",
+      "services/api/test/unit/http-errors.test.ts",
       "services/api/test/unit/invoice-money.test.ts",
+      "services/api/test/unit/jobs-errors.test.ts",
       "services/api/test/unit/livekit.adapter.test.ts",
       "services/api/test/unit/locations.test.ts",
       "services/api/test/unit/logging.test.ts",
       "services/api/test/unit/organizations.test.ts",
       "services/api/test/unit/output.test.ts",
+      "services/api/test/unit/partners-errors.test.ts",
       "services/api/test/unit/password-policy.test.ts",
       "services/api/test/unit/totp.test.ts"
     ],

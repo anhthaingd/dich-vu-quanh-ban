@@ -1,18 +1,19 @@
-import {BadRequestException,ConflictException,ForbiddenException,NotFoundException} from '@nestjs/common';
+import {ConflictException,ForbiddenException,NotFoundException} from '@nestjs/common';
 import type {Pool,PoolClient} from 'pg';
 import {AuthService} from '../auth/auth.service.js';
 import {AdminAuthService} from '../admin-auth/admin-auth.service.js';
 import {AccountTransaction} from '../accounts/account-transaction.js';
 import {Cursor} from '../../common/http/cursor.js';
-import {queueInput} from './moderation.input.js';
+import {invalid,type queueInput} from './moderation.input.js';
 import {operationInput,type OperationDomain} from './operations.input.js';
 import {decisionHistory,recordDecision} from './history.js';
+const notFound={users:'ADMIN_USER_NOT_FOUND',partners:'ADMIN_PARTNER_NOT_FOUND',categories:'ADMIN_CATALOG_CATEGORY_NOT_FOUND',skills:'ADMIN_CATALOG_SKILL_NOT_FOUND'} as const;
 export class OperationsService {
  private tx:AccountTransaction;
  constructor(private pool:Pool,private auth:AuthService,private admin:AdminAuthService,private cursor:Cursor){this.tx=new AccountTransaction(pool,auth);}
  permission(d:OperationDomain){return d==='users'?'accounts.manage':d==='partners'?'moderation.manage':'catalog.manage';}
  async detail(db:PoolClient,d:OperationDomain,id:string){
-  const r=(await db.query(`SELECT * FROM ${d} WHERE id=$1`,[id])).rows[0];if(!r)throw new NotFoundException();
+  const r=(await db.query(`SELECT * FROM ${d} WHERE id=$1`,[id])).rows[0];if(!r)throw new NotFoundException({reason:notFound[d]});
   const common={id:r.id,version:r.version,name:r.display_name??r.name??r.name_vi,history:await decisionHistory(db,d,id)};
   if(d==='users'){
    const contacts=(await db.query('SELECT provider,subject FROM identities WHERE user_id=$1 ORDER BY provider',[id])).rows;
@@ -25,7 +26,7 @@ export class OperationsService {
  }
  list(header:string|undefined,token:string|undefined,d:OperationDomain,q:ReturnType<typeof queueInput>){
   const states=d==='users'?['active','suspended','deletion_requested','anonymized']:d==='partners'?['active','new_work_suspended','suspended']:['active','inactive'];
-  if(q.state!=='all'&&!states.includes(q.state))throw new BadRequestException();
+  if(q.state!=='all'&&!states.includes(q.state))throw invalid('ADMIN_STATE_FILTER_INVALID','state');
   return this.admin.read(header,token,this.permission(d),async(db,a)=>{
    const scope=`operations:${d}:${a.user.id}:${JSON.stringify([q.q,q.state])}`,after=this.cursor.decode(q.cursor,scope);
    const name=d==='users'?'display_name':d==='partners'?'name':'name_vi';
@@ -52,27 +53,27 @@ export class OperationsService {
   try{return await this.tx.run(header,`admin.operations.${d}:${id??'create'}`,key,input,async(db,a)=>{
    let target=id;
    if(d==='users'){
-    if(id===a.user.id)throw new ForbiddenException();
+    if(id===a.user.id)throw new ForbiddenException({reason:'ADMIN_USER_SELF_ACTION'});
     // Do not allow the account-management role to lock another administrator.
     // Admin grant/recovery administration belongs to the separate P2 workflow.
-    if((await db.query('SELECT 1 FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL',[id])).rowCount)throw new ForbiddenException();
+    if((await db.query('SELECT 1 FROM admin_grants WHERE user_id=$1 AND revoked_at IS NULL',[id])).rowCount)throw new ForbiddenException({reason:'ADMIN_USER_IS_ADMIN'});
    }
    if(d==='categories'||d==='skills'){
     await db.query('SELECT pg_advisory_xact_lock(2809202601)');
-    if(!('name_vi' in input))throw new BadRequestException();
+    if(!('name_vi' in input))throw invalid('ADMIN_CATALOG_NAME_REQUIRED','name_vi');
     const duplicate=d==='categories'
      ?await db.query("SELECT 1 FROM categories WHERE id IS DISTINCT FROM $1::uuid AND lower(name_vi)=lower($2) AND parent_id IS NOT DISTINCT FROM CASE WHEN $1::uuid IS NULL THEN $3::uuid ELSE (SELECT parent_id FROM categories WHERE id=$1) END",[id,input.name_vi,input.parent_id])
      :await db.query("SELECT 1 FROM skills s JOIN skill_categories sc ON sc.skill_id=s.id WHERE s.id IS DISTINCT FROM $1::uuid AND lower(s.name_vi)=lower($2) AND sc.category_id=CASE WHEN $1::uuid IS NULL THEN $3::uuid ELSE (SELECT category_id FROM skill_categories WHERE skill_id=$1 LIMIT 1) END",[id,input.name_vi,input.category_ids?.[0]??null]);
-    if(duplicate.rowCount)throw new ConflictException({code:'STATE_CONFLICT'});
+    if(duplicate.rowCount)throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_CATALOG_NAME_DUPLICATE'});
     if(id){
-     const r=(await db.query(`SELECT * FROM ${d} WHERE id=$1 FOR UPDATE`,[id])).rows[0];this.version(r,input.expected_version);
+     const r=(await db.query(`SELECT * FROM ${d} WHERE id=$1 FOR UPDATE`,[id])).rows[0];this.version(d,r,input.expected_version);
      await db.query(`UPDATE ${d} SET name_vi=$2,active=$3,version=version+1 WHERE id=$1`,[id,input.name_vi,input.active]);
     }else{
      const parent=d==='categories'?input.parent_id:input.category_ids?.[0];
      if(parent){
       const p=(await db.query('SELECT parent_id,active FROM categories WHERE id=$1 FOR SHARE',[parent])).rows[0];
-      if(!p||!p.active||(d==='categories'?p.parent_id!==null:p.parent_id===null))throw new BadRequestException();
-      if(d==='skills'&&!(await db.query('SELECT 1 FROM categories WHERE id=$1 AND active',[p.parent_id])).rowCount)throw new BadRequestException();
+      if(!p||!p.active||(d==='categories'?p.parent_id!==null:p.parent_id===null))throw d==='categories'?invalid('ADMIN_CATALOG_PARENT_INVALID','parent_id'):invalid('ADMIN_CATALOG_SKILL_CATEGORY_INVALID','category_ids');
+      if(d==='skills'&&!(await db.query('SELECT 1 FROM categories WHERE id=$1 AND active',[p.parent_id])).rowCount)throw invalid('ADMIN_CATALOG_SKILL_CATEGORY_INVALID','category_ids');
      }
      const r=d==='categories'?(await db.query('INSERT INTO categories(code,name_vi,parent_id,active) VALUES($1,$2,$3,$4) RETURNING id',[input.code,input.name_vi,parent,input.active])).rows[0]
       :(await db.query('INSERT INTO skills(code,name_vi,active) VALUES($1,$2,$3) RETURNING id',[input.code,input.name_vi,input.active])).rows[0];
@@ -80,14 +81,14 @@ export class OperationsService {
      if(d==='skills')await db.query('INSERT INTO skill_categories(skill_id,category_id) VALUES($1,$2)',[target,parent]);
     }
    }else{
-    const r=(await db.query(`SELECT * FROM ${d} WHERE id=$1 FOR UPDATE`,[id])).rows[0];this.version(r,input.expected_version);
+    const r=(await db.query(`SELECT * FROM ${d} WHERE id=$1 FOR UPDATE`,[id])).rows[0];this.version(d,r,input.expected_version);
     if(d==='users'){
-     if(!['active','suspended'].includes(r.status))throw new ConflictException({code:'STATE_CONFLICT'});
+     if(!['active','suspended'].includes(r.status))throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_USER_STATE_LOCKED'});
      await db.query('UPDATE users SET status=$2,version=version+1 WHERE id=$1',[id,input.action==='restore'?'active':'suspended']);
      await db.query('UPDATE sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1',[id]);
      await db.query('UPDATE admin_sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE user_id=$1',[id]);
     }else{
-     if(r.archived_at)throw new ConflictException({code:'STATE_CONFLICT'});
+     if(r.archived_at)throw new ConflictException({code:'STATE_CONFLICT',reason:'ADMIN_PARTNER_ARCHIVED'});
      await db.query("UPDATE partners SET moderation_status=CASE WHEN $2='warn' THEN moderation_status WHEN $2='restore' THEN 'active' ELSE 'new_work_suspended' END,accepting_jobs=CASE WHEN $2='suspend_new' THEN false ELSE accepting_jobs END,version=version+1 WHERE id=$1",[id,input.action]);
     }
    }
@@ -95,8 +96,8 @@ export class OperationsService {
    await recordDecision(db,d,target!,a.user.id,input.action,input.reason,version);
    return this.detail(db,d,target!);
   },async(db,a)=>{await this.admin.check(db,a,token,this.permission(d));});
-  }catch(e){if((e as {code?:string}).code==='23505')throw new ConflictException({code:'STATE_CONFLICT'});throw e;}
+  }catch(e){if((e as {code?:string}).code==='23505')throw new ConflictException({code:'STATE_CONFLICT',reason:d==='categories'||d==='skills'?'ADMIN_CATALOG_CODE_TAKEN':'ADMIN_RECORD_CHANGED'});throw e;}
   finally{if(d==='users')await this.auth.accessChanged();}
  }
- private version(r:{version:number}|undefined,expected:number){if(!r)throw new NotFoundException();if(r.version!==expected)throw new ConflictException({code:'VERSION_CONFLICT'});}
+ private version(d:OperationDomain,r:{version:number}|undefined,expected:number){if(!r)throw new NotFoundException({reason:notFound[d]});if(r.version!==expected)throw new ConflictException({code:'VERSION_CONFLICT',reason:'ADMIN_RECORD_CHANGED'});}
 }

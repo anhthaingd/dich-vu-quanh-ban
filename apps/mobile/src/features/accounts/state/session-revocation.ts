@@ -1,15 +1,16 @@
 import { randomUUID } from 'expo-crypto';
 import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 import type { LoginSession, Page } from '../models';
 
 type State = {
   phase: 'idle' | 'preparing' | 'confirm' | 'running' | 'failed' | 'done';
-  total: number; completed: number; error: ApiErrorCode | null;
+  total: number; completed: number; error: ApiErrorCode | null; errorInfo: ErrorInfo | null;
 };
 // A client batch over the existing per-family API, not an atomic bulk endpoint.
 // Freeze the target set before confirmation; retry only the unconfirmed item.
 export class SessionRevocation {
-  private state: State = { phase: 'idle', total: 0, completed: 0, error: null };
+  private state: State = { phase: 'idle', total: 0, completed: 0, error: null, errorInfo: null };
   private targets: { id: string; key: string }[] = [];
   private readonly listeners = new Set<() => void>();
   constructor(
@@ -22,7 +23,7 @@ export class SessionRevocation {
   prepare = async () => {
     if (!['idle', 'done'].includes(this.state.phase)) return;
     this.targets = [];
-    this.update({ phase: 'preparing', total: 0, completed: 0, error: null });
+    this.update({ phase: 'preparing', total: 0, completed: 0, error: null, errorInfo: null });
     try {
       const sessions = new Map<string, LoginSession>();
       const cursors = new Set<string>();
@@ -38,15 +39,15 @@ export class SessionRevocation {
       if ([...sessions.values()].filter(x => x.is_current && x.state === 'active').length !== 1) throw new ApiError('INVALID_RESPONSE');
       this.targets = [...sessions.values()].filter(x => !x.is_current && x.state === 'active').map(x => ({ id: x.id, key: randomUUID() }));
       this.update({ phase: this.targets.length ? 'confirm' : 'done', total: this.targets.length });
-    } catch (error) { this.update({ phase: 'idle', error: error instanceof ApiError ? error.code : 'NETWORK' }); }
+    } catch (error) { const info = toErrorInfo(error); this.update({ phase: 'idle', error: info.code, errorInfo: info }); }
   };
   cancel = () => {
     if (this.state.phase !== 'confirm') return;
-    this.targets = []; this.update({ phase: 'idle', total: 0, error: null });
+    this.targets = []; this.update({ phase: 'idle', total: 0, error: null, errorInfo: null });
   };
   run = async () => {
     if (!['confirm', 'failed'].includes(this.state.phase)) return;
-    this.update({ phase: 'running', error: null });
+    this.update({ phase: 'running', error: null, errorInfo: null });
     try {
       while (this.state.completed < this.targets.length) {
         const target = this.targets[this.state.completed]!;
@@ -54,6 +55,6 @@ export class SessionRevocation {
         this.update({ completed: this.state.completed + 1 });
       }
       this.update({ phase: 'done' });
-    } catch (error) { this.update({ phase: 'failed', error: error instanceof ApiError ? error.code : 'NETWORK' }); }
+    } catch (error) { const info = toErrorInfo(error); this.update({ phase: 'failed', error: info.code, errorInfo: info }); }
   };
 }

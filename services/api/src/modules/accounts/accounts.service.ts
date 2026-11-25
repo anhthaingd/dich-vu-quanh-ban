@@ -25,7 +25,7 @@ export class AccountsService {
         // Snapshot contains only edited fields, never tokens or stored grants.
         return { ...actor.user, ...current, ...previous.response_snapshot };
       }
-      if (current.version !== input.expected_version) throw new ConflictException({ code: 'VERSION_CONFLICT' });
+      if (current.version !== input.expected_version) throw new ConflictException({ code: 'VERSION_CONFLICT', reason: 'ACCOUNT_VERSION_CONFLICT' });
       const { rows: [updated] } = await db.query(`UPDATE users SET display_name=COALESCE($2,display_name),locale=COALESCE($3,locale),version=version+1
         WHERE id=$1 RETURNING display_name,locale,version`, [current.id, input.display_name, input.locale]);
       await db.query(`INSERT INTO idempotency_keys(actor_id,operation,request_key,request_hash,state,resource_id,response_snapshot)

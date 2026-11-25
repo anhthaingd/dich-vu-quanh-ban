@@ -12,9 +12,10 @@ import {AppText} from '../../../components/ui/AppText';
 import {SegmentedTabs} from '../../../components/ui/SegmentedTabs';
 import {Button} from '../../../components/ui/Button';
 import {Card} from '../../../components/ui/Card';
-import {JobFeedback} from '../../jobs/components/JobFeedback';
+import {ActionError,captureError,withDetail} from '../../chat/components/ActionError';
 import {sessionReady} from '../../jobs/state/session-ready';
-import {ApiError,type ApiErrorCode} from '../../../lib/http/api-error';
+import {ApiError} from '../../../lib/http/api-error';
+import {toErrorInfo,type ErrorInfo} from '../../../lib/errors/describe';
 import {formatBusinessDate} from '../../../lib/i18n/formatters';
 import {useNotifications,useNotificationSettingsSession} from '../NotificationsProvider';
 import type {Notice} from '../api/notifications-api';
@@ -27,11 +28,11 @@ export function NotificationsScreen({navigation}:NativeStackScreenProps<RootStac
 }
 function Inbox({owner,navigation}:{owner:string;navigation:Navigation}){
   const {items,loading,loaded,error,refresh,markRead}=useNotifications(),{manager,state}=useAuth(),{t,locale}=useLocale();
-  const [unread,setUnread]=useState(false),[busy,setBusy]=useState(false),[failure,setFailure]=useState<ApiErrorCode|null>(null),[retry,setRetry]=useState<(()=>Promise<void>)|null>(null);
+  const [unread,setUnread]=useState(false),[busy,setBusy]=useState(false),[failure,setFailure]=useState<ErrorInfo|null>(null),[retry,setRetry]=useState<(()=>Promise<void>)|null>(null);
   const [pulling,setPulling]=useState(false);const running=useRef(false);
   const reload=()=>{if(loading||busy||state.busy)return false;setPulling(true);void refresh().finally(()=>setPulling(false));return true;};
   useAccountRefresh(pulling,reload,!loading&&!busy&&!state.busy);
-  const run=async(work:()=>Promise<void>)=>{if(running.current)return;running.current=true;setBusy(true);setFailure(null);setRetry(()=>work);try{await sessionReady(manager,owner);await work();setRetry(null);}catch(e){setFailure(e instanceof ApiError?e.code:'NETWORK');}finally{running.current=false;setBusy(false);}};
+  const run=async(work:()=>Promise<void>)=>{if(running.current)return;running.current=true;setBusy(true);setFailure(null);setRetry(()=>work);try{await sessionReady(manager,owner);await work();setRetry(null);}catch(e){setFailure(toErrorInfo(e));}finally{running.current=false;setBusy(false);}};
   const open=async(n:Notice)=>{await markRead([n.id]);const r=n.resource_ref;
     // Fetch the target with current authorization before navigation. No arbitrary URL from notification data.
     if(r.report_id){await manager.getReport(owner,r.report_id);navigation.navigate('Support',{id:r.report_id});}
@@ -43,7 +44,7 @@ function Inbox({owner,navigation}:{owner:string;navigation:Navigation}){
   const visible=items.filter(n=>!unread||!n.read_at),disabled=busy||state.busy;
   return <Card><SegmentedTabs accessibilityLabel={t('notices.title')} value={unread?'unread':'all'} onChange={v=>setUnread(v==='unread')} options={[{value:'all',label:t('notices.all'),testID:'notices-all'},{value:'unread',label:t('notices.unread'),testID:'notices-unread'}]}/>
     <Button testID="notices-read-all" label={t('notices.readAll')} variant="secondary" disabled={disabled||!items.some(n=>!n.read_at)} onPress={()=>void run(()=>markRead(items.filter(n=>!n.read_at).map(n=>n.id)))}/>
-    <JobFeedback error={failure} busy={disabled} retry={retry?()=>void run(retry):undefined}/>
+    <ActionError testID="notices-error" error={failure} busy={disabled} retry={retry?()=>void run(retry):undefined}/>
     <RefreshError error={error} busy={disabled||loading} retry={reload}/>
     {loading&&!loaded&&!error&&!pulling&&<LoadingState message={t('accountTools.loading')}/>}
     {loaded&&!error&&!visible.length&&<AppText testID="notices-empty">{t(unread?'notices.caughtUp':'notices.empty')}</AppText>}
@@ -56,11 +57,11 @@ export function NotificationSettingsScreen({navigation}:NativeStackScreenProps<R
 function Settings({owner}:{owner:string}){
   const {manager,state}=useAuth(),{t}=useLocale(),session=useNotificationSettingsSession();
   const draft=useSyncExternalStore(session.subscribe,session.getSnapshot,session.getSnapshot),value=draft.draft??draft.baseline;
-  const [error,setError]=useState<ApiErrorCode|null>(null),[attempt,setAttempt]=useState(0),[saved,setSaved]=useState(false);
+  const [error,setError]=useState<ErrorInfo|null>(null),[saveError,setSaveError]=useState<ErrorInfo|null>(null),[attempt,setAttempt]=useState(0),[saved,setSaved]=useState(false);
   const mutation=session.mutation,m=useSyncExternalStore(mutation.subscribe,mutation.getSnapshot,mutation.getSnapshot);
-  useFocusEffect(useCallback(()=>{let active=true;const version=session.getSnapshot().version;setError(null);void (async()=>{await sessionReady(manager,owner);const s=await manager.notificationSettings(owner);if(active)session.load(s,version);})().catch(e=>{if(active){const code=e instanceof ApiError?e.code:'NETWORK';setError(code);if(['FORBIDDEN','UNAUTHENTICATED','NOT_FOUND'].includes(code))session.clear();}});return()=>{active=false;};},[manager,owner,attempt,session]));
-  const save=async()=>{if(!value)return;const version=session.getSnapshot().version;setSaved(false);const result=await mutation.run(k=>manager.saveNotificationSettings(owner,value,k));if(result){session.saved(result,version);setSaved(true);}else if(['FORBIDDEN','UNAUTHENTICATED','NOT_FOUND'].includes(mutation.getSnapshot().error??'')){setError(mutation.getSnapshot().error);session.clear();}};
-  return <Card><AppText>{t('notices.settingsHint')}</AppText><PushControl owner={owner}/><JobFeedback error={error??m.error} pending={m.pending} busy={state.busy} retry={()=>void (m.error?save():setAttempt(n=>n+1))}/>
+  useFocusEffect(useCallback(()=>{let active=true;const version=session.getSnapshot().version;setError(null);void (async()=>{await sessionReady(manager,owner);const s=await manager.notificationSettings(owner);if(active)session.load(s,version);})().catch(e=>{if(active){const info=toErrorInfo(e);setError(info);if(['FORBIDDEN','UNAUTHENTICATED','NOT_FOUND'].includes(info.code))session.clear();}});return()=>{active=false;};},[manager,owner,attempt,session]));
+  const save=async()=>{if(!value)return;const version=session.getSnapshot().version;setSaved(false);const result=await mutation.run(captureError(k=>manager.saveNotificationSettings(owner,value,k),setSaveError));if(result){session.saved(result,version);setSaved(true);}else{const code=mutation.getSnapshot().error;if(code&&['FORBIDDEN','UNAUTHENTICATED','NOT_FOUND'].includes(code)){setError({code});session.clear();}}};
+  return <Card><AppText>{t('notices.settingsHint')}</AppText><PushControl owner={owner}/><ActionError testID="notices-settings-error" error={error??withDetail(m.error,saveError)} busy={state.busy} retry={()=>void (m.error?save():setAttempt(n=>n+1))}/>
     {value?(['message_push','call_push','service_push','reminder_push'] as const).map(k=><View key={k} style={styles.setting}><AppText style={{flex:1}}>{t(`notices.${k}`)}</AppText><Switch testID={`setting-${k}`} accessibilityLabel={t(`notices.${k}`)} value={value[k]} accessibilityState={{disabled:state.busy||m.pending}} disabled={state.busy||m.pending} onValueChange={v=>{session.edit({...value,[k]:v});setSaved(false);}}/></View>):!error&&<AppText>{t('accountTools.loading')}</AppText>}
     {!!draft.draft&&<AppText testID="notices-draft" tone="muted">{t('ux.notificationDraft')}</AppText>}<Button testID="notices-save" label={t('notices.save')} disabled={!value||state.busy||m.busy||!draft.draft&&!m.pending} onPress={()=>void save()}/>{saved&&<AppText testID="notices-saved" accessibilityLiveRegion="polite">{t('notices.saved')}</AppText>}
   </Card>;

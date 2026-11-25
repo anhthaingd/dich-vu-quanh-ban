@@ -12,7 +12,7 @@ test('profile PATCH sends version and operation key, validates version in Me', a
 });
 test.each(['VERSION_CONFLICT', 'IDEMPOTENCY_MISMATCH', 'SECRET_BODY'])('only known conflict codes reach UI: %s', async code => {
   const api = createAccountsApi('http://localhost/v1', jest.fn().mockResolvedValue({ ok: false, status: 409, json: async () => ({ code }) }));
-  await expect(api.edit('token', input, 'key')).rejects.toMatchObject({ code: code === 'SECRET_BODY' ? 'HTTP' : code });
+  await expect(api.edit('token', input, 'key')).rejects.toMatchObject({ code: code === 'SECRET_BODY' ? 'CONFLICT' : code });
 });
 test('address and session adapters enforce schemas, cursor encoding, mutation verbs and operation keys',async()=>{
   const address={id:session.user.id,version:1,label:'Home',is_default:true,address:{text:'Street',point:{latitude:10,longitude:106}}};

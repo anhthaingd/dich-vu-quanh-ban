@@ -35,7 +35,7 @@ export function safeError(error: unknown, seen = new Set<unknown>(), depth = 0):
 }
 export interface Metadata {
   request_id?: string; client_request_id?: string; method?: string; route?: string;
-  status_code?: number; duration_ms?: number; operation?: string; error?: unknown; code?: string;
+  status_code?: number; duration_ms?: number; operation?: string; error?: unknown; code?: string; reason?: string;
 }
 export function sanitize(input: Metadata): Metadata {
   const out: Metadata = {};
@@ -47,5 +47,7 @@ export function sanitize(input: Metadata): Metadata {
   if (['partners.search','catalog.categories','catalog.skills','health.ready','migration','seed','pool'].includes(input.operation ?? '')) out.operation = input.operation;
   if (input.error !== undefined) out.error = safeError(input.error);
   const code = errorCode(input.code); if (code) out.code = code;
+  // Error reasons are fixed UPPER_SNAKE identifiers from code, never user input.
+  if (typeof input.reason === 'string' && /^[A-Z][A-Z0-9_]{1,63}$/.test(input.reason)) out.reason = input.reason;
   return out;
 }

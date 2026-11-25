@@ -103,3 +103,11 @@ test('two web tabs sharing one stored sign-in never replay a spent refresh token
   await b.logout(); await expect(a['rotate']()).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
   expect(a.getSnapshot().phase).toBe('anonymous');
 });
+test('failed login keeps the coarse code for branching and the API reason for the message', async () => {
+  const f = authFixture(); await f.manager.restore();
+  f.api.login.mockRejectedValueOnce(new ApiError('UNAUTHENTICATED', 401, 'req-1', undefined, undefined, 'AUTH_INVALID_CREDENTIALS'));
+  await f.manager.login(credentials);
+  expect(f.manager.getSnapshot()).toMatchObject({ error: 'UNAUTHENTICATED', errorInfo: { code: 'UNAUTHENTICATED', reason: 'AUTH_INVALID_CREDENTIALS' } });
+  await f.manager.login(credentials);
+  expect(f.manager.getSnapshot()).toMatchObject({ phase: 'authenticated', error: null, errorInfo: null });
+});

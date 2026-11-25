@@ -3,7 +3,8 @@ import { attribution, type LocationAction, type LocationInput, type LocationResp
 export class GeoapifyProvider {
   constructor(private readonly key?:string,private readonly transport:typeof fetch=fetch) {}
   async lookup(action:LocationAction,input:LocationInput):Promise<LocationResponse> {
-    if(!this.key)throw new ServiceUnavailableException();
+    // 503 reasons say the address service failed, so the app does not blame the person's connection.
+    if(!this.key)throw new ServiceUnavailableException({reason:'LOCATION_SERVICE_NOT_CONFIGURED'});
     const url=new URL('https://api.geoapify.com/v1/geocode/'+(action==='geocode'?'search':action));
     url.searchParams.set('apiKey',this.key);url.searchParams.set('format','json');url.searchParams.set('lang',input.locale);url.searchParams.set('limit',action==='reverse'?'1':'5');
     if(action==='reverse') {url.searchParams.set('lat',String(input.point!.latitude));url.searchParams.set('lon',String(input.point!.longitude));}
@@ -11,14 +12,14 @@ export class GeoapifyProvider {
     const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),6000);
     try {
       const response=await this.transport(url,{signal:controller.signal,redirect:'error'});
-      if(response.status===429)throw new HttpException('Rate limited',429);
-      if(!response.ok)throw new ServiceUnavailableException();
+      if(response.status===429)throw new HttpException({reason:'LOCATION_PROVIDER_BUSY'},429);
+      if(!response.ok)throw new ServiceUnavailableException({reason:'LOCATION_PROVIDER_FAILED'});
       const body:unknown=await response.json();
-      if(!body||typeof body!=='object'||!('results' in body)||!Array.isArray(body.results))throw new ServiceUnavailableException();
+      if(!body||typeof body!=='object'||!('results' in body)||!Array.isArray(body.results))throw new ServiceUnavailableException({reason:'LOCATION_PROVIDER_FAILED'});
       const items:LocationResult[]=body.results.slice(0,5).map((v:unknown,i:number)=>{
-        if(!v||typeof v!=='object')throw new ServiceUnavailableException();
+        if(!v||typeof v!=='object')throw new ServiceUnavailableException({reason:'LOCATION_PROVIDER_FAILED'});
         const r=v as Record<string,unknown>;
-        if(typeof r.formatted!=='string'||!r.formatted.trim()||r.formatted.length>1000||typeof r.lat!=='number'||!Number.isFinite(r.lat)||Math.abs(r.lat)>90||typeof r.lon!=='number'||!Number.isFinite(r.lon)||Math.abs(r.lon)>180)throw new ServiceUnavailableException();
+        if(typeof r.formatted!=='string'||!r.formatted.trim()||r.formatted.length>1000||typeof r.lat!=='number'||!Number.isFinite(r.lat)||Math.abs(r.lat)>90||typeof r.lon!=='number'||!Number.isFinite(r.lon)||Math.abs(r.lon)>180)throw new ServiceUnavailableException({reason:'LOCATION_PROVIDER_FAILED'});
         return {id:typeof r.place_id==='string'?r.place_id.slice(0,512):String(i),text:r.formatted,point:action==='reverse'?input.point!:{latitude:r.lat,longitude:r.lon},precision:r.result_type==='building'?'address':'approximate'};
       });
       return action==='reverse'?{address:items[0]??null,attribution}:{items,attribution};
@@ -26,7 +27,7 @@ export class GeoapifyProvider {
       // Never propagate provider URL/key, response body, address or fetch cause to logs.
       if(error instanceof HttpException)throw error;
       if(controller.signal.aborted)throw new HttpException('Location timeout',504);
-      throw new ServiceUnavailableException();
+      throw new ServiceUnavailableException({reason:'LOCATION_PROVIDER_UNREACHABLE'});
     } finally {clearTimeout(timer);}
   }
 }

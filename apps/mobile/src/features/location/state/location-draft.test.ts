@@ -24,7 +24,17 @@ test('late reverse cannot overwrite a moved pin or an edited description', async
 });
 test('empty reverse and errors preserve exact point for manual description, invalid points are ignored', async () => {
  const { draft, api } = setup(); api.reverse.mockResolvedValue(null); await draft.pin(p,'en'); expect(draft.getSnapshot().value?.text).toBe('');
- api.reverse.mockRejectedValue(new ApiError('RATE_LIMITED')); await draft.pin(p,'vi'); expect(draft.getSnapshot().error).toBe('RATE_LIMITED'); expect(draft.getSnapshot().value?.point).toEqual(p);
+ api.reverse.mockRejectedValue(new ApiError('RATE_LIMITED')); await draft.pin(p,'vi'); expect(draft.getSnapshot().error).toEqual({ code: 'RATE_LIMITED' }); expect(draft.getSnapshot().value?.point).toEqual(p);
  await draft.pin({latitude:91,longitude:0},'vi'); expect(draft.getSnapshot().value?.point).toEqual(p);
  draft.query('ab'); await draft.search('autocomplete','vi'); expect(api.search).not.toHaveBeenCalled();
+});
+test('lookup failures keep the API reason so the person sees why the address service failed', async () => {
+ const { draft, api } = setup();
+ api.search.mockRejectedValueOnce(new ApiError('SERVICE_UNAVAILABLE', 503, undefined, undefined, undefined, 'LOCATION_PROVIDER_FAILED'));
+ draft.query('Hanoi'); await draft.search('geocode', 'vi');
+ expect(draft.getSnapshot().error).toEqual({ code: 'SERVICE_UNAVAILABLE', reason: 'LOCATION_PROVIDER_FAILED' });
+ api.search.mockRejectedValueOnce(new ApiError('RATE_LIMITED', 429, undefined, undefined, 30, 'LOCATION_RATE_LIMITED'));
+ await draft.search('geocode', 'vi'); await draft.search('geocode', 'vi');
+ expect(api.search).toHaveBeenCalledTimes(2);
+ expect(draft.getSnapshot().error).toEqual({ code: 'RATE_LIMITED', reason: 'LOCATION_RATE_LIMITED' });
 });

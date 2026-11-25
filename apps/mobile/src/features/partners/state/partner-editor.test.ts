@@ -48,7 +48,7 @@ test('conflict stops retries, preserves saved snapshot until explicit reload and
   expect(auth.editPartner).toHaveBeenCalledTimes(1);
   expect(editor.getSnapshot()).toMatchObject({
     pending: false,
-    error: 'VERSION_CONFLICT',
+    error: { code: 'VERSION_CONFLICT' },
     value: profile
   });
   auth.loadPartner.mockResolvedValue({ ...profile, version: 3 });
@@ -85,5 +85,5 @@ test.each(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'] as const)('access loss %s 
  await editor.load();await editor.load();expect(editor.getSnapshot().value).toBeNull();
  auth.loadPartner.mockResolvedValueOnce(profile);await editor.load();auth.editPartner.mockRejectedValueOnce(new ApiError(code));
  await editor.edit({action:'profile',expected_version:1,name:'Draft'});
- expect(editor.getSnapshot()).toMatchObject({value:null,pending:false,error:code});
+ expect(editor.getSnapshot()).toMatchObject({value:null,pending:false,error:{code}});
 });

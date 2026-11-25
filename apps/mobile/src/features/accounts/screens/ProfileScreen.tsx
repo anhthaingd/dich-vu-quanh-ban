@@ -10,6 +10,7 @@ import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Card } from '../../../components/ui/Card';
 import { LoadingState } from '../../../components/ui/Feedback';
+import { ErrorMessage } from '../../../components/ui/ErrorMessage';
 import { LanguageSettings } from '../components/LanguageSettings';
 import { ProfileEditor } from '../state/profile-editor';
 
@@ -36,8 +37,8 @@ function ProfileForm({ owner }: { owner: string }) {
         <Input testID="profile-name" label={t('auth.name')} hint={t('profile.hint')} value={state.name} maxLength={100}
           editable={!busy && !state.pending} onChangeText={editor.setName} autoComplete="name" returnKeyType="done" onSubmitEditing={() => Keyboard.dismiss()} />
       </>}
-      {state.error && <AppText accessibilityRole="alert" tone="error">{t(state.conflict ? 'profile.conflict'
-        : state.error === 'VALIDATION' ? 'profile.validation' : state.error === 'BUSY' ? 'profile.busy' : 'profile.error')}</AppText>}
+      <ErrorMessage error={state.error ? state.errorInfo ?? state.error : null} screen={code => code === 'VERSION_CONFLICT' || code === 'IDEMPOTENCY_MISMATCH' ? t('profile.conflict')
+        : code === 'VALIDATION' ? t('profile.validation') : code === 'BUSY' ? t('profile.busy') : undefined} />
       {state.pending && <AppText>{t('profile.pending')}</AppText>}
       {state.saved && <AppText testID="profile-saved" accessibilityLiveRegion="polite">{t('profile.saved')}</AppText>}
       {(!state.loaded || state.conflict) && <Button testID="profile-reload" label={t('profile.reload')} disabled={busy} onPress={() => void editor.load()} />}

@@ -1,12 +1,13 @@
 import { randomUUID } from 'expo-crypto';
-import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 import type { AuthSession } from '../../auth/state/auth-session';
 import type { Partner, PartnerCreate, PartnerEdit } from '../models';
 type State = {
   value: Partner | null;
   busy: boolean;
   pending: boolean;
-  error: ApiErrorCode | null;
+  // Codes only (with the API reason); translated at render time.
+  error: ErrorInfo | null;
   saved: boolean;
 };
 export class PartnerEditor {
@@ -44,8 +45,8 @@ export class PartnerEditor {
     try {
       this.update({ value: await this.auth.loadPartner(this.owner, this.id) });
     } catch (e) {
-      const error = e instanceof ApiError ? e.code : 'NETWORK';
-      this.update({ error, ...(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(error) ? {value:null} : {}) });
+      const error = toErrorInfo(e);
+      this.update({ error, ...(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(error.code) ? {value:null} : {}) });
     } finally {
       this.update({ busy: false });
     }
@@ -66,7 +67,7 @@ export class PartnerEditor {
       this.attempt = null;
       this.update({ value, pending: false, saved: true });
     } catch (e) {
-      const error = e instanceof ApiError ? e.code : 'NETWORK';
+      const error = toErrorInfo(e);
       if (
         [
           'VALIDATION',
@@ -76,10 +77,10 @@ export class PartnerEditor {
           'VERSION_CONFLICT',
           'IDEMPOTENCY_MISMATCH',
           'BUSY'
-        ].includes(error)
+        ].includes(error.code)
       )
         this.attempt = null;
-      this.update({ error, pending: !!this.attempt, ...(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(error) ? {value:null} : {}) });
+      this.update({ error, pending: !!this.attempt, ...(['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(error.code) ? {value:null} : {}) });
     } finally {
       this.update({ busy: false });
     }

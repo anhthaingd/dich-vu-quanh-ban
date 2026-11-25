@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { HttpException } from '@nestjs/common';
 import { readFile } from 'node:fs/promises';
 import { locationInput } from '../../src/modules/locations/locations.input.js';
 import { GeoapifyProvider } from '../../src/integrations/maps/geoapify.js';
@@ -21,11 +22,15 @@ test('provider normalizes results, limits output, preserves reverse pin and does
   assert.ok('items' in list);assert.equal(list.items[0].text,'Hà Nội');assert.equal(sent?.searchParams.get('filter'),'countrycode:vn');
 });
 test('provider distinguishes missing config, throttling, empty response and malformed data without leaking payload',async()=>{
-  await assert.rejects(new GeoapifyProvider().lookup('geocode',{text:'Hanoi',locale:'vi'}),e=> e instanceof Error && e.message==='Service Unavailable');
+  const reason=(e:unknown)=>e instanceof HttpException?(e.getResponse() as {reason?:string}).reason:undefined;
+  await assert.rejects(new GeoapifyProvider().lookup('geocode',{text:'Hanoi',locale:'vi'}),e=> e instanceof HttpException && e.getStatus()===503 && reason(e)==='LOCATION_SERVICE_NOT_CONFIGURED');
   const fake=(status:number,body:unknown)=>new GeoapifyProvider('private-key',async()=>new Response(JSON.stringify(body),{status}));
   await assert.rejects(fake(429,{secret:'never-log'}).lookup('geocode',{text:'Hanoi',locale:'vi'}),e=> e instanceof Error && !e.message.includes('never-log'));
+  await assert.rejects(fake(429,{}).lookup('geocode',{text:'Hanoi',locale:'vi'}),e=> e instanceof HttpException && e.getStatus()===429 && reason(e)==='LOCATION_PROVIDER_BUSY');
+  await assert.rejects(fake(500,{}).lookup('geocode',{text:'Hanoi',locale:'vi'}),e=> e instanceof HttpException && e.getStatus()===503 && reason(e)==='LOCATION_PROVIDER_FAILED');
+  await assert.rejects(new GeoapifyProvider('k',async()=>{throw new TypeError('fetch failed');}).lookup('geocode',{text:'Hanoi',locale:'vi'}),e=> e instanceof HttpException && e.getStatus()===503 && reason(e)==='LOCATION_PROVIDER_UNREACHABLE');
   const r=await fake(200,{results:[]}).lookup('reverse',{point,locale:'vi'});assert.ok('address' in r);assert.equal(r.address,null);
-  await assert.rejects(fake(200,{results:[{formatted:'bad',lat:999,lon:0}]}).lookup('geocode',{text:'Hanoi',locale:'vi'}));
+  await assert.rejects(fake(200,{results:[{formatted:'bad',lat:999,lon:0}]}).lookup('geocode',{text:'Hanoi',locale:'vi'}),e=>reason(e)==='LOCATION_PROVIDER_FAILED');
 });
 test('limiter caps burst, identities and daily calls and expires counters',()=>{
   let now=0;const l=new LocationLimit(()=>now,3);

@@ -15,8 +15,9 @@ import { LoadingState, RefreshError } from '../../../components/ui/Feedback';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { AppText } from '../../../components/ui/AppText';
-import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
-import { JobFeedback } from '../../jobs/components/JobFeedback';
+import { ApiError } from '../../../lib/http/api-error';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
+import { ActionError, captureError, withDetail } from '../components/ActionError';
 import { sessionReady, sessionOperation } from '../../jobs/state/session-ready';
 import { Mutation } from '../../jobs/state/mutation';
 import type { Message } from '../models';
@@ -28,12 +29,12 @@ function Room({ owner, id, jobId, openJob }: {
     openJob:()=>void;
 }) {
     const { manager, state: auth } = useAuth(), { t, locale } = useLocale();
-    const [items, setItems] = useState<Message[]>([]), [body, setBody] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState<ApiErrorCode | null>(null), [attempt, setAttempt] = useState(0);
+    const [items, setItems] = useState<Message[]>([]), [body, setBody] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState<ErrorInfo | null>(null), [attempt, setAttempt] = useState(0);
     const refreshControl=useAccountRefreshControl();
     const scroll=useRef<ScrollView>(null);
     const following = useRef(true), readThrough = useRef(0), readInFlight = useRef(false);
     const [unseen, setUnseen] = useState(false);
-    const [readError,setReadError]=useState<ApiErrorCode|null>(null);
+    const [readError,setReadError]=useState<ErrorInfo|null>(null),[sendError,setSendError]=useState<ErrorInfo|null>(null);
     const highest = useRef(0), mounted = useRef(true), focusVersion=useRef(0);
     useFocusEffect(useCallback(() => { mounted.current = true; focusVersion.current++; return () => { mounted.current = false; focusVersion.current++; }; }, []));
     const [pulling, setPulling] = useState(false), [loaded, setLoaded] = useState(false);
@@ -47,8 +48,8 @@ function Room({ owner, id, jobId, openJob }: {
             if (mounted.current && focusVersion.current === epoch) { readThrough.current = watermark; setReadError(null); invalidate(); }
         } catch (e) {
             if (mounted.current && focusVersion.current === epoch) {
-                const code = e instanceof ApiError ? e.code : 'NETWORK'; setReadError(code);
-                if (['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(code)) { setItems([]); highest.current=0; setUnseen(false); setError(code); }
+                const info = toErrorInfo(e); setReadError(info);
+                if (['FORBIDDEN','NOT_FOUND','UNAUTHENTICATED'].includes(info.code)) { setItems([]); highest.current=0; setUnseen(false); setError(info); }
             }
         } finally { readInFlight.current = false; }
     };
@@ -57,7 +58,7 @@ function Room({ owner, id, jobId, openJob }: {
     const state = useSyncExternalStore(mutation.subscribe, mutation.getSnapshot, mutation.getSnapshot);
     const reload = () => { if (!busy && !auth.busy && !state.busy && !state.pending) { setPulling(true); setAttempt(v => v + 1); return true; } return false; };
     useAccountRefresh(pulling, reload, !busy && !auth.busy && !state.busy && !state.pending);
-    useRealtimeRefresh({error,resource:{type:'conversation',id},busy:busy||state.busy||state.pending,matches:s=>s.kind==='event'&&s.event.type==='conversation.message_created.v1'&&s.event.data.conversation_id===id,refresh:()=>setAttempt(v=>v+1),revoke:()=>{setItems([]);highest.current=0;setError('NOT_FOUND');}});
+    useRealtimeRefresh({error:error?.code??null,resource:{type:'conversation',id},busy:busy||state.busy||state.pending,matches:s=>s.kind==='event'&&s.event.type==='conversation.message_created.v1'&&s.event.data.conversation_id===id,refresh:()=>setAttempt(v=>v+1),revoke:()=>{setItems([]);highest.current=0;setError({code:'NOT_FOUND'});}});
     useFocusEffect(useCallback(() => {
         let active = true, loading = false;
         const refresh = async () => {
@@ -91,9 +92,9 @@ function Room({ owner, id, jobId, openJob }: {
             }
             catch (e) {
                 if (active) {
-                    const code = e instanceof ApiError ? e.code : 'NETWORK';
-                    setError(code);
-                    if (['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(code)) {
+                    const info = toErrorInfo(e);
+                    setError(info);
+                    if (['FORBIDDEN', 'NOT_FOUND', 'UNAUTHENTICATED'].includes(info.code)) {
                         setItems([]);
                         highest.current = 0;
                     }
@@ -116,8 +117,8 @@ function Room({ owner, id, jobId, openJob }: {
         setAttempt(v => v + 1);
     } };
     const send = async () => { const text = body.trim(); if (!text)
-        return; const intentFocus=focusVersion.current; const input = { client_message_id: randomUUID(), body: text, ...(jobId ? { job_id: jobId } : {}) }; sent(await mutation.run(key => sessionOperation(manager, owner, () => manager.sendMessage(owner, id, input, key), () => mounted.current&&focusVersion.current===intentFocus))); };
-    const draftBlocked = (!loaded && busy) || state.busy || state.pending || error === 'NOT_FOUND' || error === 'FORBIDDEN' || error === 'UNAUTHENTICATED';
+        return; const intentFocus=focusVersion.current; const input = { client_message_id: randomUUID(), body: text, ...(jobId ? { job_id: jobId } : {}) }; sent(await mutation.run(captureError(key => sessionOperation(manager, owner, () => manager.sendMessage(owner, id, input, key), () => mounted.current&&focusVersion.current===intentFocus), setSendError))); };
+    const draftBlocked = (!loaded && busy) || state.busy || state.pending || ['NOT_FOUND', 'FORBIDDEN', 'UNAUTHENTICATED'].includes(error?.code ?? '');
     const blocked = draftBlocked;
     return <View style={styles.room}>
       {jobId&&<View style={styles.context}><Button variant="link" label={t('jobs.detail')} onPress={openJob}/></View>}
@@ -136,7 +137,7 @@ function Room({ owner, id, jobId, openJob }: {
         </View>)}
       </ScrollView>
       {unseen&&<Button testID="chat-new-messages" variant="secondary" label={t('ux.newMessages')} onPress={showLatest}/>}
-      <View style={styles.composer}><Input testID="chat-body" style={{maxHeight:120}} label={t('chat.message')} value={body} multiline editable={!draftBlocked} onChangeText={setBody}/><Button testID="chat-send" label={t('chat.send')} disabled={blocked || !body.trim()} onPress={()=>void send()}/><JobFeedback error={state.error} pending={state.pending} busy={state.busy || auth.busy} retry={state.pending?()=>void mutation.run().then(sent):undefined}/></View>
+      <View style={styles.composer}><Input testID="chat-body" style={{maxHeight:120}} label={t('chat.message')} value={body} multiline editable={!draftBlocked} onChangeText={setBody}/><Button testID="chat-send" label={t('chat.send')} disabled={blocked || !body.trim()} onPress={()=>void send()}/><ActionError testID="chat-send-error" error={withDetail(state.error, sendError)} busy={state.busy || auth.busy} retry={state.pending?()=>void mutation.run().then(sent):undefined}/></View>
     </View>;
 }
 const styles=StyleSheet.create({room:{flex:1},context:{backgroundColor:'#eff3fb',borderRadius:14,paddingHorizontal:14},messages:{gap:14,paddingVertical:16},bubble:{maxWidth:'88%',borderRadius:18,padding:14,gap:6},mine:{alignSelf:'flex-end',backgroundColor:'#eaf0fd',borderBottomRightRadius:4},peer:{alignSelf:'flex-start',backgroundColor:'#f0f3f8',borderBottomLeftRadius:4},system:{alignSelf:'center',backgroundColor:'#f4f7fc'},time:{fontSize:11,lineHeight:17},composer:{borderTopWidth:1,borderColor:'#dee5f0',paddingVertical:12,gap:8}});

@@ -11,9 +11,9 @@ export async function databaseOperation<T>(log: AppLog, operation: string, run: 
   } catch (error) {
     const code = (error as { code?: string })?.code;
     log.emit(code && unavailable.has(code) ? 'db.unavailable' : 'db.operation_failed', { operation, code, error, duration_ms: performance.now() - start });
-    if (code && unavailable.has(code)) throw new ServiceUnavailableException(undefined, { cause: error });
+    if (code && unavailable.has(code)) throw new ServiceUnavailableException({ reason: 'DATABASE_UNAVAILABLE' }, { cause: error });
     // pg's connection timeout has no code; classify at the driver boundary only.
-    if (error instanceof Error && /^Connection terminated due to connection timeout$|^timeout exceeded when trying to connect$/.test(error.message)) throw new ServiceUnavailableException(undefined, { cause: error });
+    if (error instanceof Error && /^Connection terminated due to connection timeout$|^timeout exceeded when trying to connect$/.test(error.message)) throw new ServiceUnavailableException({ reason: 'DATABASE_UNAVAILABLE' }, { cause: error });
     throw error;
   }
 }

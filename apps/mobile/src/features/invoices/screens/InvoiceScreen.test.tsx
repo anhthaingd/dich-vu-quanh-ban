@@ -8,6 +8,7 @@ import {AuthProvider} from '../../../app/providers/AuthProvider';
 import type {RootStackParamList} from '../../../app/navigation/routes';
 import {InvoiceScreen} from './InvoiceScreen';
 import {invoiceFixture,invoice} from '../../../../test/helpers/invoices';
+import {jobsReasons} from '../../../lib/errors/reasons/jobs';
 import {ApiError} from '../../../lib/http/api-error';
 jest.mock('../../../app/providers/RealtimeProvider',()=>({useRealtimeRefresh:jest.fn()}));
 jest.mock('expo-image-picker',()=>({launchImageLibraryAsync:jest.fn()}));
@@ -35,6 +36,12 @@ test('worker uploads ready image, keeps saved draft through lost send and confir
  fireEvent.changeText(screen.getByTestId('invoice-materials'),'-1');press('invoice-save');await screen.findByRole('alert');expect(f.invoices.save).not.toHaveBeenCalled();fireEvent.changeText(screen.getByTestId('invoice-materials'),'50000');fireEvent.changeText(screen.getByTestId('invoice-note'),'DEMO edited');
  f.invoices.change.mockRejectedValueOnce(new ApiError('NETWORK'));press('invoice-send');await screen.findByTestId('work-retry');press('work-retry');await screen.findByTestId('invoice-review');await ready();expect(f.invoices.save).toHaveBeenCalledTimes(1);expect(f.invoices.change.mock.calls[1]).toEqual(f.invoices.change.mock.calls[0]);
  f.setInvoice({...invoice,state:'locked',version:4});press('invoice-reload');await ready();expect(screen.getByTestId('invoice-receive')).toBeDisabled();press('invoice-receive-check');press('invoice-receive');await ready();expect(f.invoices.change.mock.calls.at(-1)?.[3]).toEqual({expected_version:4,version_id:'v1',received_in_full:true});expect(screen.queryByTestId('invoice-receive')).toBeNull();
+});
+test('the exact API reason replaces the generic invoice text',async()=>{
+ const f=invoiceFixture();f.invoices.change.mockRejectedValueOnce(new ApiError('STATE_CONFLICT',409,'req',undefined,undefined,'INVOICE_REVISION_REQUESTED'));mount(f);await ready();press('invoice-confirm');
+ await screen.findByText(jobsReasons.vi.INVOICE_REVISION_REQUESTED);
+ f.invoices.change.mockRejectedValueOnce(new ApiError('INSUFFICIENT_POINTS',422,'req',undefined,undefined,'INVOICE_POINTS_INSUFFICIENT','points_used'));await ready();press('invoice-confirm');
+ await screen.findByText(jobsReasons.vi.INVOICE_POINTS_INSUFFICIENT);
 });
 test.each(['INSUFFICIENT_POINTS','PARTNER_FUNDING_REQUIRED'] as const)('known financial error %s unlocks form for correction',async code=>{
  const f=invoiceFixture();f.invoices.change.mockRejectedValueOnce(new ApiError(code));mount(f);await ready();press('invoice-confirm');await screen.findByRole('alert');expect(screen.getByTestId('invoice-confirm')).not.toBeDisabled();expect(screen.queryByTestId('work-retry')).toBeNull();

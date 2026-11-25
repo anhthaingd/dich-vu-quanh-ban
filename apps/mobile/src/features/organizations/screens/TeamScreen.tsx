@@ -11,7 +11,8 @@ import {Card} from '../../../components/ui/Card';
 import {Input} from '../../../components/ui/Input';
 import {SegmentedTabs} from '../../../components/ui/SegmentedTabs';
 import {Button} from '../../../components/ui/Button';
-import {ApiError,type ApiErrorCode} from '../../../lib/http/api-error';
+import {ApiError} from '../../../lib/http/api-error';
+import {toErrorInfo,type ErrorInfo} from '../../../lib/errors/describe';
 import {Mutation} from '../../jobs/state/mutation';
 import {sessionReady} from '../../jobs/state/session-ready';
 import type {Member} from '../../jobs/models';
@@ -22,21 +23,23 @@ function Team({owner,partner}:{owner:string;partner:string}){
  const {manager,state:auth}=useAuth(),{t}=useLocale();
  const [members,setMembers]=useState<Member[]>([]),[invitations,setInvitations]=useState<Invitation[]>([]),[me,setMe]=useState<MyMembership|null>(null),[contact,setContact]=useState<{membership_id:string|null;version:number}|null>(null),[tab,setTab]=useState<'members'|'invites'|'left'|'permissions'>('members'),[query,setQuery]=useState('');
  const [form,setForm]=useState(false),[inviteContact,setInviteContact]=useState(''),[reason,setReason]=useState(''),[password,setPassword]=useState(''),[selected,setSelected]=useState<string[]>([]),[editor,setEditor]=useState<Member|null>(null),[remove,setRemove]=useState<{member:Member;preview:Departure}|null>(null),[revoke,setRevoke]=useState<Invitation|null>(null);
- const [busy,setBusy]=useState(false),[error,setError]=useState<ApiErrorCode|null>(null),[notice,setNotice]=useState(false),[mutation]=useState(()=>new Mutation<unknown>()),state=useSyncExternalStore(mutation.subscribe,mutation.getSnapshot,mutation.getSnapshot);
+ const [busy,setBusy]=useState(false),[error,setError]=useState<ErrorInfo|null>(null),[failure,setFailure]=useState<ErrorInfo|null>(null),[notice,setNotice]=useState(false),[mutation]=useState(()=>new Mutation<unknown>()),state=useSyncExternalStore(mutation.subscribe,mutation.getSnapshot,mutation.getSnapshot);
  const load=useCallback(async()=>{setBusy(true);setError(null);try{
   await sessionReady(manager,owner);const my:MyMembership[]=[];let c:string|undefined;do{const p=await manager.myMemberships(owner,c);my.push(...p.items);c=p.next_cursor??undefined;}while(c);
   const membership=my.find(m=>m.partner_id===partner&&m.active&&(m.is_owner||m.permissions.includes('members.manage')));if(!membership)throw new ApiError('FORBIDDEN');
   const people:Member[]=[],invites:Invitation[]=[];do{const p=await manager.jobMembers(owner,partner,c);people.push(...p.items);c=p.next_cursor??undefined;}while(c);do{const p=await manager.teamInvitations(owner,partner,c);invites.push(...p.items);c=p.next_cursor??undefined;}while(c);
   setContact(await manager.teamContact(owner,partner));setMe(membership);setMembers(people);setInvitations(invites);
- }catch(e){setMembers([]);setInvitations([]);setMe(null);setError(e instanceof ApiError?e.code:'NETWORK');}finally{setBusy(false);}},[manager,owner,partner]);
+ }catch(e){setMembers([]);setInvitations([]);setMe(null);setError(toErrorInfo(e));}finally{setBusy(false);}},[manager,owner,partner]);
  useFocusEffect(useCallback(()=>{void load();return()=>setPassword('');},[load]));
  const clear=()=>{setNotice(false);setForm(false);setEditor(null);setRemove(null);setRevoke(null);setPassword('');setReason('');setInviteContact('');};
- const run=async(work?:(key:string)=>Promise<unknown>)=>{setNotice(false);if(await mutation.run(work)){clear();setNotice(true);await load();}};
- const showRemove=async(m:Member)=>{setBusy(true);try{setRemove({member:m,preview:await manager.departurePreview(owner,m.id)});setReason('');}catch(e){setError(e instanceof ApiError?e.code:'NETWORK');}finally{setBusy(false);}};
- const saveGrants=async()=>{if(!editor)return;setNotice(false);setBusy(true);setError(null);const value=password;setPassword('');try{const g=await manager.reauthenticate(owner,value);const id=editor.id,version=editor.version,p=[...selected],r=reason;await run(k=>manager.editMemberGrants(owner,id,version,p,r,g.grant,k));}catch(e){setError(e instanceof ApiError?e.code:'NETWORK');}finally{setBusy(false);}};
+ // Mutation keeps only the category code; remember the full error (reason) of the last attempt here.
+ const capture=(work?:(key:string)=>Promise<unknown>)=>work&&((key:string)=>work(key).catch((e:unknown)=>{setFailure(toErrorInfo(e));throw e;}));
+ const run=async(work?:(key:string)=>Promise<unknown>)=>{setNotice(false);setFailure(null);if(await mutation.run(capture(work))){clear();setNotice(true);await load();}};
+ const showRemove=async(m:Member)=>{setBusy(true);try{setRemove({member:m,preview:await manager.departurePreview(owner,m.id)});setReason('');}catch(e){setError(toErrorInfo(e));}finally{setBusy(false);}};
+ const saveGrants=async()=>{if(!editor)return;setNotice(false);setBusy(true);setError(null);const value=password;setPassword('');try{const g=await manager.reauthenticate(owner,value);const id=editor.id,version=editor.version,p=[...selected],r=reason;await run(k=>manager.editMemberGrants(owner,id,version,p,r,g.grant,k));}catch(e){setError(toErrorInfo(e));}finally{setBusy(false);}};
  const disabled=busy||auth.busy||state.busy||state.pending,shown=members.filter(m=>(tab==='left'?!m.active:m.active)&&m.display_name.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
  return <><AppText variant="caption">{me?.partner_name??t('team.title')}</AppText><AppText variant="section">{t('team.headline')}</AppText><AppText tone="muted">{t('team.counts',{members:members.filter(m=>m.active).length,invites:invitations.filter(i=>i.status==='pending').length})}</AppText>
- <TeamFeedback error={error??state.error}/>{notice&&<AppText accessibilityLiveRegion="polite">{t('team.saved')}</AppText>}{state.pending&&<><AppText>{t('team.pendingHint')}</AppText><Button label={t('common.retry')} disabled={busy||auth.busy||state.busy} onPress={()=>void run()}/></>}
+ <TeamFeedback error={error??failure??state.error}/>{notice&&<AppText accessibilityLiveRegion="polite">{t('team.saved')}</AppText>}{state.pending&&<><AppText>{t('team.pendingHint')}</AppText><Button label={t('common.retry')} disabled={busy||auth.busy||state.busy} onPress={()=>void run()}/></>}
  <Button testID="team-reload" label={t('accountTools.reload')} variant="link" disabled={disabled} onPress={()=>void load()}/>
  {me&&<>{!form&&!editor&&!remove&&!revoke&&(tab==='members'||tab==='invites')&&<Button testID="team-invite-open" label={t('team.invite')} disabled={disabled} onPress={()=>{clear();setForm(true);}}/>}
  <SegmentedTabs accessibilityLabel={t('team.title')} value={tab} disabled={disabled} onChange={value=>{clear();setTab(value);}} options={(['members','invites','left','permissions'] as const).map(value=>({value,label:t(`team.${value}`),testID:'team-tab-'+value}))}/>

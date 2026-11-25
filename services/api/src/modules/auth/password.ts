@@ -5,7 +5,7 @@ import { ServiceUnavailableException } from '@nestjs/common';
 // entering libuv so a local login burst cannot exhaust host memory.
 let active = 0;
 async function derive(password: string, salt: string): Promise<Buffer> {
-  if (active >= 2) throw new ServiceUnavailableException();
+  if (active >= 2) throw new ServiceUnavailableException({ reason: 'AUTH_SERVER_BUSY' });
   active++;
   try {
     return await new Promise((resolve, reject) => scrypt(password, salt, 64,

@@ -17,9 +17,9 @@ export function createSupportApi(base:string|undefined,transport:typeof fetch=fe
   upload:async(token:string,blob:Blob,key:string)=>{
    const grant=await call('/assets/upload-grants',token,(v):v is {asset_id:string;upload_url:string;expires_at:string;required_headers:Record<string,string>}=>record(v)&&typeof v.asset_id==='string'&&typeof v.upload_url==='string'&&typeof v.expires_at==='string'&&Number.isFinite(Date.parse(v.expires_at))&&record(v.required_headers),{purpose:'evidence',mime:blob.type,bytes:blob.size},key);
    const existing=await call('/assets/'+grant.asset_id,token,isAsset);if(existing.status==='ready')return existing;
-   if(Date.parse(grant.expires_at)<=Date.now())throw new ApiError('VALIDATION');
+   if(Date.parse(grant.expires_at)<=Date.now())throw new ApiError('VALIDATION',undefined,undefined,undefined,undefined,'SUPPORT_UPLOAD_EXPIRED');
    const response=await transport(grant.upload_url,{method:'PUT',headers:grant.required_headers,body:blob});
-   if(!response.ok)throw new ApiError(response.status===400?'VALIDATION':response.status===404?'NOT_FOUND':'NETWORK',response.status);
+   if(!response.ok)throw new ApiError(response.status===400?'VALIDATION':response.status===404?'NOT_FOUND':'NETWORK',response.status,undefined,undefined,undefined,response.status===400||response.status===404?'SUPPORT_UPLOAD_REJECTED':undefined);
    return call('/assets/'+grant.asset_id+'/complete',token,isAsset,{expected_version:1},key);
   },
   list:(token:string,cursor?:string)=>call('/reports'+(cursor?'?cursor='+encodeURIComponent(cursor):''),token,isPage),

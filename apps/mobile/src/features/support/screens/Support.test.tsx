@@ -52,3 +52,9 @@ test('support status filter stays selected after opening and returning from a re
  fireEvent.press(screen.getByTestId('support-open-closed'));await screen.findByTestId('support-state');await ready(f);fireEvent.press(screen.getByTestId('support-list'));await screen.findByTestId('support-filter-closed');await ready(f);
  expect(screen.getByTestId('support-filter-closed').props.accessibilityState.selected).toBe(true);expect(screen.queryByTestId('support-open-r')).toBeNull();expect(screen.getByTestId('support-open-closed')).toBeTruthy();
 });
+test('a closed report shows why the update was refused',async()=>{
+ const f=fixture();f.setItems([report]);f.support.reply.mockRejectedValueOnce(new ApiError('STATE_CONFLICT',409,undefined,undefined,undefined,'SUPPORT_REPORT_CLOSED'));mount(f);await ready(f);
+ fireEvent.press(await screen.findByTestId('support-open-r'));await ready(f);
+ fireEvent.changeText(screen.getByTestId('support-body'),'DEMO more');fireEvent.press(screen.getByTestId('support-send'));
+ expect(await screen.findByText(/Báo cáo đã đóng nên không thể bổ sung/)).toBeTruthy();
+});

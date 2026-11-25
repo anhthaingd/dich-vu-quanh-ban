@@ -16,36 +16,36 @@ export class ReviewsService {
  constructor(private readonly pool: Pool, private readonly auth: AuthService, private readonly cursor: Cursor) { this.tx = new AccountTransaction(pool, auth); }
  private async access(db: PoolClient, jobId: string, user: string, write = false) {
   const ref = (await db.query('SELECT partner_id FROM jobs WHERE id=$1', [jobId])).rows[0];
-  if (!ref) throw new NotFoundException();
+  if (!ref) throw new NotFoundException({reason:'JOB_NOT_FOUND'});
   // Match job/team mutations: partner before job, then current membership and grants.
   await db.query('SELECT id FROM partners WHERE id=$1 FOR UPDATE', [ref.partner_id]);
   const job = (await db.query('SELECT * FROM jobs WHERE id=$1 FOR UPDATE', [jobId])).rows[0];
   const member = await memberAccess(db, job.partner_id, user);
   const customer = job.customer_id === user;
   const assigned = !!member && !!(await db.query('SELECT 1 FROM assignments WHERE job_id=$1 AND membership_id=$2 AND ended_at IS NULL', [jobId, member.id])).rowCount;
-  if (!customer && !assigned && !['jobs.manage','jobs.accept','jobs.assign','reviews.write','reviews.respond'].some(p => hasPermission(member,p))) throw new NotFoundException();
-  if (write && !customer && !hasPermission(member,'reviews.write')) throw new ForbiddenException();
+  if (!customer && !assigned && !['jobs.manage','jobs.accept','jobs.assign','reviews.write','reviews.respond'].some(p => hasPermission(member,p))) throw new NotFoundException({reason:'JOB_NOT_FOUND'});
+  if (write && !customer && !hasPermission(member,'reviews.write')) throw new ForbiddenException({reason:'REVIEW_WRITE_PERMISSION_REQUIRED'});
   return { job, customer, member };
  }
  private async eligible(db: PoolClient, jobId: string) {
   const { rowCount } = await db.query(`SELECT 1 FROM invoices i JOIN settlements s ON s.invoice_id=i.id
    WHERE i.job_id=$1 AND i.state='settled' AND i.customer_payment_reported_at IS NOT NULL AND i.worker_receipt_confirmed_at IS NOT NULL`, [jobId]);
-  if (!rowCount) throw new ConflictException({code:'STATE_CONFLICT'});
+  if (!rowCount) throw new ConflictException({code:'STATE_CONFLICT',reason:'REVIEW_NOT_OPEN_YET'});
  }
  private async row(db: PoolClient, id: string): Promise<ReviewRow> {
   const r = (await db.query('SELECT * FROM reviews WHERE id=$1', [id])).rows[0];
-  if (!r) throw new NotFoundException();
+  if (!r) throw new NotFoundException({reason:'REVIEW_NOT_FOUND'});
   return r;
  }
  private async own(db: PoolClient, id: string, user: string) {
   const ref = await this.row(db,id);
   const a = await this.access(db,ref.job_id,user,true);
   const r = await this.row(db,id);
-  if (r.author_id !== user) throw new ForbiddenException();
+  if (r.author_id !== user) throw new ForbiddenException({reason:'REVIEW_AUTHOR_ONLY'});
   return { ...a, r };
  }
  private async asset(db: PoolClient, id: string | null | undefined, user: string) {
-  if (id && !(await db.query("SELECT 1 FROM assets WHERE id=$1 AND uploader_id=$2 AND purpose='review' AND status='ready' FOR SHARE",[id,user])).rowCount) throw new BadRequestException();
+  if (id && !(await db.query("SELECT 1 FROM assets WHERE id=$1 AND uploader_id=$2 AND purpose='review' AND status='ready' FOR SHARE",[id,user])).rowCount) throw new BadRequestException({reason:'REVIEW_PHOTO_UNAVAILABLE',field:'asset_id'});
  }
  private async audit(db: PoolClient, user: string, partner: string, action: string, id: string, before: unknown, after: unknown, reason = '') {
   const version=Number((after as {version:number}).version);await event(db,`review:${id}:${version}`,id,version,'review.updated.v1',{review_id:id,resource_version:version});
@@ -56,7 +56,7 @@ export class ReviewsService {
    const access = await this.access(db,jobId,a.user.id,true);
    await this.eligible(db,jobId); await this.asset(db,input.asset_id,a.user.id);
    const direction = access.customer ? 'customer_to_partner' : 'partner_to_customer';
-   if ((await db.query('SELECT 1 FROM reviews WHERE job_id=$1 AND direction=$2',[jobId,direction])).rowCount) throw new ConflictException({code:'STATE_CONFLICT'});
+   if ((await db.query('SELECT 1 FROM reviews WHERE job_id=$1 AND direction=$2',[jobId,direction])).rowCount) throw new ConflictException({code:'STATE_CONFLICT',reason:'REVIEW_ALREADY_SUBMITTED'});
    const r = (await db.query('INSERT INTO reviews(job_id,direction,author_id,stars,body,asset_id) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',[jobId,direction,a.user.id,input.stars,input.body,input.asset_id??null])).rows[0];
    await this.audit(db,a.user.id,access.job.partner_id,'review.create',r.id,null,r); return reviewDto(r,this.actions(r,access,a.user.id));
   },async(db,a)=>{await this.access(db,jobId,a.user.id,true);}).then(r=>this.currentResult(header,r));
@@ -64,7 +64,7 @@ export class ReviewsService {
  edit(header: string | undefined, id: string, input: ReviewInput, key: string) {
   return this.tx.run(header,`editReview:${id}`,key,input,async(db,a)=>{
    const access = await this.own(db,id,a.user.id); const {r,job}=access;
-   if (r.version !== input.expected_version) throw new ConflictException({code:'VERSION_CONFLICT'});
+   if (r.version !== input.expected_version) throw new ConflictException({code:'VERSION_CONFLICT',reason:'REVIEW_VERSION_CHANGED'});
    await this.asset(db,input.asset_id,a.user.id);
    const next = (await db.query('UPDATE reviews SET stars=$2,body=$3,asset_id=$4,version=version+1 WHERE id=$1 RETURNING *',[id,input.stars,input.body,input.asset_id===undefined?r.asset_id:input.asset_id])).rows[0];
    await this.audit(db,a.user.id,job.partner_id,'review.edit',id,r,next); return reviewDto(next,this.actions(next,access,a.user.id));
@@ -73,7 +73,7 @@ export class ReviewsService {
  visibility(header: string | undefined, id: string, input: ReturnType<typeof visibilityInput>, key: string) {
   return this.tx.run(header,`toggleOwnReview:${id}`,key,input,async(db,a)=>{
    const access = await this.own(db,id,a.user.id); const {r,job}=access;
-   if (r.version !== input.expected_version) throw new ConflictException({code:'VERSION_CONFLICT'});
+   if (r.version !== input.expected_version) throw new ConflictException({code:'VERSION_CONFLICT',reason:'REVIEW_VERSION_CHANGED'});
    const next = (await db.query('UPDATE reviews SET removed_at=CASE WHEN $2 THEN COALESCE(removed_at,now()) ELSE NULL END,version=version+1 WHERE id=$1 RETURNING *',[id,input.removed])).rows[0];
    await this.audit(db,a.user.id,job.partner_id,'review.visibility',id,r,next,input.reason); return reviewDto(next,this.actions(next,access,a.user.id));
   },async(db,a)=>{await this.own(db,id,a.user.id);}).then(r=>this.currentResult(header,r));
@@ -95,13 +95,13 @@ export class ReviewsService {
  }
  private async recipient(db:PoolClient,id:string,user:string) {
   const ref=await this.row(db,id),access=await this.access(db,ref.job_id,user),r=await this.row(db,id);
-  if(!this.actions(r,access,user).includes('reply'))throw new ForbiddenException();
+  if(!this.actions(r,access,user).includes('reply'))throw new ForbiddenException({reason:'REVIEW_REPLY_FORBIDDEN'});
   return {...access,r};
  }
  reply(header:string|undefined,id:string,input:ReturnType<typeof replyInput>,key:string) {
   return this.tx.run(header,`replyReview:${id}`,key,input,async(db,a)=>{
    const access=await this.recipient(db,id,a.user.id),{r,job}=access;
-   if(r.version!==input.expected_version)throw new ConflictException({code:'VERSION_CONFLICT'});
+   if(r.version!==input.expected_version)throw new ConflictException({code:'VERSION_CONFLICT',reason:'REVIEW_VERSION_CHANGED'});
    const next=(await db.query('UPDATE reviews SET reply_body=$2,reply_author_id=$3,version=version+1 WHERE id=$1 RETURNING *',[id,input.body,a.user.id])).rows[0];
    await this.audit(db,a.user.id,job.partner_id,'review.reply',id,r,next);
    return reviewDto(next,this.actions(next,access,a.user.id));
@@ -110,7 +110,7 @@ export class ReviewsService {
  async customerHistory(header:string|undefined,jobId:string,q:PageInput){
   const db=await this.pool.connect();try{
    await db.query('BEGIN');const actor=await this.auth.authenticate(header,db),access=await jobAccess(db,jobId,actor.user.id);
-   if(access.customer)throw new ForbiddenException();
+   if(access.customer)throw new ForbiddenException({reason:'REVIEW_CUSTOMER_HISTORY_FORBIDDEN'});
    const scope=`customerReviews:${jobId}:${actor.user.id}`,after=this.cursor.decode(q.cursor,scope);
    const {rows}=await db.query(`SELECT r.id,r.stars,r.body,r.reply_body,date_trunc('milliseconds',r.created_at) AS created_at
     FROM reviews r JOIN jobs j ON j.id=r.job_id WHERE j.customer_id=$1 AND r.direction='partner_to_customer'
@@ -128,7 +128,7 @@ export class ReviewsService {
    await db.query('BEGIN');
    let scope = `partnerReviews:${id}`, user: string | undefined, access: Awaited<ReturnType<ReviewsService['access']>> | undefined;
    if (publicPartner) {
-    if (!(await db.query("SELECT 1 FROM partners WHERE id=$1 AND publication_status='published' AND moderation_status='active' AND archived_at IS NULL",[id])).rowCount) throw new NotFoundException();
+    if (!(await db.query("SELECT 1 FROM partners WHERE id=$1 AND publication_status='published' AND moderation_status='active' AND archived_at IS NULL",[id])).rowCount) throw new NotFoundException({reason:'JOB_PARTNER_NOT_FOUND'});
    } else {
     const a = await this.auth.authenticate(header,db); access=await this.access(db,id,a.user.id);user=a.user.id; scope = `jobReviews:${id}:${a.user.id}`;
    }

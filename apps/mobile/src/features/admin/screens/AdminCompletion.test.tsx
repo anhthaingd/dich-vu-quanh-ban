@@ -22,3 +22,7 @@ test('completion expires without sending a decision',async()=>{
 test('completion rejects an MFA failure without sending a decision',async()=>{
  const f=fixture();f.client.completionPreview.mockRejectedValueOnce(new ApiError('REAUTH_REQUIRED'));fireEvent.press(screen.getByTestId('completion-preview'));await waitFor(()=>expect(f.fail).toHaveBeenCalled());expect(f.client.complete).not.toHaveBeenCalled();
 });
+test('completion shows the exact API reason instead of a generic conflict sentence',async()=>{
+ const f=fixture();f.client.complete.mockRejectedValueOnce(new ApiError('STATE_CONFLICT',409,'req-1',undefined,undefined,'ADMIN_COMPLETION_PREVIEW_EXPIRED'));await fill();fireEvent.press(screen.getByTestId('completion-confirm'));
+ await screen.findByText('Bản xem trước đã hết hạn. Tải lại rồi xem trước lại.');expect(screen.queryByText('Hồ sơ đã thay đổi. Tải lại dữ liệu để xem trước khi quyết định.')).toBeNull();fireEvent.press(screen.getByText('Tải lại dữ liệu'));expect(f.reload).toHaveBeenCalled();
+});

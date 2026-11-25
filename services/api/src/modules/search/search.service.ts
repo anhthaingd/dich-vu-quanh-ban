@@ -80,9 +80,9 @@ export class SearchService {
     // Freeze only identity/order. Every later page rechecks current publication,
     // availability, geography and visibility before returning current public data.
     let snapshot=after?.snapshot,ids:string[],offset=after?.offset??0;
-    if(snapshot){const saved=(await this.pool.query('SELECT partner_ids FROM search_snapshots WHERE id=$1 AND expires_at>clock_timestamp()',[snapshot])).rows[0];if(!saved)throw new BadRequestException({code:'VALIDATION'});ids=saved.partner_ids;}
+    if(snapshot){const saved=(await this.pool.query('SELECT partner_ids FROM search_snapshots WHERE id=$1 AND expires_at>clock_timestamp()',[snapshot])).rows[0];if(!saved)throw new BadRequestException({reason:'SEARCH_RESULTS_EXPIRED',field:'cursor'});ids=saved.partner_ids;}
     else {
-      if(after)throw new BadRequestException();
+      if(after)throw new BadRequestException({reason:'CURSOR_INVALID',field:'cursor'});
       if(q.sort!=='distance')rows.sort((a,b)=>{
         if(q.sort==='recommended'){const verified=Number(b.verification_status==='verified')-Number(a.verification_status==='verified');if(verified)return verified;}
         return (b.stars??-1)-(a.stars??-1)||(q.sort==='recommended'?b.review_count-a.review_count:0)||a.distance_m-b.distance_m||String(a.created_at).localeCompare(String(b.created_at))||a.id.localeCompare(b.id);

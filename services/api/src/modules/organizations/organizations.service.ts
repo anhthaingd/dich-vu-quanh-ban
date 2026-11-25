@@ -1,4 +1,4 @@
-import {BadRequestException,ConflictException,ForbiddenException,NotFoundException,HttpException} from '@nestjs/common';
+import {BadRequestException,ConflictException,ForbiddenException,NotFoundException,HttpException,ServiceUnavailableException} from '@nestjs/common';
 import {randomBytes} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
 import {AccountTransaction} from '../accounts/account-transaction.js';
@@ -12,17 +12,18 @@ import {event} from '../chat/chat.store.js';
 import type {PageInput} from '../accounts/accounts.input.js';
 import type {inviteInput,changeInput,grantsInput,contactEdit,organizationQuery} from './organizations.input.js';
 type Query=ReturnType<typeof organizationQuery>;
-const conflict=()=>new ConflictException({code:'STATE_CONFLICT'});
+const conflict=(reason:string)=>new ConflictException({code:'STATE_CONFLICT',reason});
 export class OrganizationsService {
  private readonly tx:AccountTransaction;
  constructor(private readonly pool:Pool,private readonly auth:AuthService,private readonly cursor:Cursor,private readonly messages:LocalMessages){this.tx=new AccountTransaction(pool,auth);}
  private async access(db:PoolClient,partner:string,user:string){
   const p=(await db.query('SELECT * FROM partners WHERE id=$1 AND archived_at IS NULL FOR UPDATE',[partner])).rows[0];
-  const m=await memberAccess(db,partner,user);if(!p||p.kind==='solo'||!hasPermission(m,'members.manage'))throw new NotFoundException();return {p,m:m!};
+  const m=await memberAccess(db,partner,user);// Missing team, solo profile and missing permission share one 404 so other teams stay hidden.
+  if(!p||p.kind==='solo'||!hasPermission(m,'members.manage'))throw new NotFoundException({reason:'TEAM_NOT_FOUND'});return {p,m:m!};
  }
- private async member(db:PoolClient,id:string){const m=(await db.query(`SELECT m.*,u.display_name,ARRAY(SELECT permission FROM membership_grants WHERE membership_id=m.id AND revoked_at IS NULL ORDER BY permission) AS permissions FROM memberships m JOIN users u ON u.id=m.user_id WHERE m.id=$1`,[id])).rows[0];if(!m)throw new NotFoundException();return m;}
+ private async member(db:PoolClient,id:string){const m=(await db.query(`SELECT m.*,u.display_name,ARRAY(SELECT permission FROM membership_grants WHERE membership_id=m.id AND revoked_at IS NULL ORDER BY permission) AS permissions FROM memberships m JOIN users u ON u.id=m.user_id WHERE m.id=$1`,[id])).rows[0];if(!m)throw new NotFoundException({reason:'TEAM_MEMBER_NOT_FOUND'});return m;}
  private dto(m:Awaited<ReturnType<OrganizationsService['member']>>){return {id:m.id,user_id:m.user_id,display_name:m.display_name,active:m.active,is_owner:m.is_owner,permissions:m.permissions,version:m.version};}
- private cas(actual:number,expected:number){if(actual!==expected)throw new ConflictException({code:'VERSION_CONFLICT'});}
+ private cas(actual:number,expected:number,reason:string){if(actual!==expected)throw new ConflictException({code:'VERSION_CONFLICT',reason});}
  private async audit(db:PoolClient,user:string,partner:string,action:string,id:string,reason='',details:unknown={}){
   await db.query('INSERT INTO audit_events(actor_id,partner_id,action,resource_id,request_id,reason,details) VALUES($1,$2,$3,$4,$5,$6,$7)',[user,partner,action,id,requestContext.getStore()?.request_id??null,reason,JSON.stringify(details)]);
  }
@@ -34,11 +35,13 @@ export class OrganizationsService {
   return {...i,created_at:i.created_at.toISOString(),expires_at:i.expires_at.toISOString()};
  }
  private async newInvitation(db:PoolClient,partner:string,user:string,contact:string,provider:string){
-  this.messages.requireContact(contact);const hash=this.messages.secrets.hash(contact);
+  try{this.messages.requireContact(contact);}catch(e){if(e instanceof ServiceUnavailableException)throw new ServiceUnavailableException({reason:'TEAM_INVITE_CONTACT_NOT_ALLOWED'});throw e;}const hash=this.messages.secrets.hash(contact);
   await db.query("UPDATE member_invitations SET status='expired',version=version+1 WHERE partner_id=$1 AND contact_hash=$2 AND status='pending' AND expires_at<=clock_timestamp()",[partner,hash]);
-  if((await db.query("SELECT 1 FROM member_invitations WHERE partner_id=$1 AND contact_hash=$2 AND status='pending'",[partner,hash])).rowCount)throw conflict();
+  if((await db.query("SELECT 1 FROM member_invitations WHERE partner_id=$1 AND contact_hash=$2 AND status='pending'",[partner,hash])).rowCount)throw conflict('TEAM_INVITATION_ALREADY_PENDING');
   const recent=(await db.query("SELECT created_at,contact_hash FROM member_invitations WHERE invited_by=$1 AND created_at>clock_timestamp()-interval '1 hour'",[user])).rows;
-  if(recent.length>=20||recent.filter(r=>r.contact_hash===hash).length>=5||recent.some(r=>r.contact_hash===hash&&r.created_at>new Date(Date.now()-60000)))throw new HttpException({code:'RATE_LIMITED'},429);
+  if(recent.length>=20)throw new HttpException({code:'RATE_LIMITED',reason:'TEAM_INVITE_HOURLY_LIMIT'},429);
+  if(recent.filter(r=>r.contact_hash===hash).length>=5)throw new HttpException({code:'RATE_LIMITED',reason:'TEAM_INVITE_CONTACT_LIMIT'},429);
+  if(recent.some(r=>r.contact_hash===hash&&r.created_at>new Date(Date.now()-60000)))throw new HttpException({code:'RATE_LIMITED',reason:'TEAM_INVITE_TOO_SOON'},429);
   const token=randomBytes(32).toString('hex'),masked=provider==='email'?contact[0]+'***@'+contact.split('@')[1]:contact.slice(0,3)+'***'+contact.slice(-2);
   const i=(await db.query(`INSERT INTO member_invitations(partner_id,invited_by,provider,contact_hash,contact_cipher,contact_masked,token_hash,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,clock_timestamp()+interval '7 days') RETURNING id,expires_at`,[partner,user,provider,hash,this.messages.secrets.encrypt(contact),masked,this.messages.secrets.hash(token)])).rows[0];
   await this.messages.queue(db,'invitation',i.id,{contact,subject:'Lời mời tham gia đội ngũ — DEMO',text:`Lời mời có hiệu lực 7 ngày. Mở app, đăng nhập đúng liên hệ đã xác minh, chọn Đội ngũ → Nhận lời mời và dán mã sau:\n${token}\nChỉ xác nhận nếu bạn muốn tham gia.`},i.expires_at);
@@ -52,17 +55,18 @@ export class OrganizationsService {
   const rows=(await db.query(`SELECT id,date_trunc('milliseconds',created_at) AS created_at FROM member_invitations WHERE partner_id=$1 AND ($2::text IS NULL OR CASE WHEN status='pending' AND expires_at<=clock_timestamp() THEN 'expired' ELSE status END=$2) AND ($3::timestamptz IS NULL OR (date_trunc('milliseconds',created_at),id)<($3::timestamptz,$4::uuid)) ORDER BY date_trunc('milliseconds',created_at) DESC,id DESC LIMIT $5`,[partner,q.filter??null,c?.created_at??null,c?.id??null,q.limit+1])).rows;
   const page=rows.slice(0,q.limit),last=page.at(-1);return {items:await Promise.all(page.map(i=>this.summary(db,i.id))),next_cursor:rows.length>q.limit?this.cursor.encode({id:last.id,created_at:last.created_at.toISOString()},scope):null};
  });}
- private async invitationAccess(db:PoolClient,id:string,user:string){const i=(await db.query('SELECT * FROM member_invitations WHERE id=$1',[id])).rows[0];if(!i)throw new NotFoundException();await this.access(db,i.partner_id,user);return (await db.query('SELECT * FROM member_invitations WHERE id=$1 FOR UPDATE',[id])).rows[0];}
+ private async invitationAccess(db:PoolClient,id:string,user:string){const i=(await db.query('SELECT * FROM member_invitations WHERE id=$1',[id])).rows[0];if(!i)throw new NotFoundException({reason:'TEAM_INVITATION_NOT_FOUND'});await this.access(db,i.partner_id,user);return (await db.query('SELECT * FROM member_invitations WHERE id=$1 FOR UPDATE',[id])).rows[0];}
  invitationChange(header:string|undefined,id:string,action:'resend'|'revoke',input:ReturnType<typeof changeInput>,key:string){
   return this.tx.run(header,`invitation.${id}.${action}`,key,input,async(db,a)=>{
-   const i=await this.invitationAccess(db,id,a.user.id);this.cas(i.version,input.expected_version);
+   const i=await this.invitationAccess(db,id,a.user.id);this.cas(i.version,input.expected_version,'TEAM_INVITATION_CHANGED');
    if(action==='revoke'){
-    if(i.status!=='pending'||i.expires_at<=new Date())throw conflict();
+    if(i.status!=='pending')throw conflict('TEAM_INVITATION_NOT_PENDING');
+    if(i.expires_at<=new Date())throw conflict('TEAM_INVITATION_EXPIRED');
     await db.query("UPDATE member_invitations SET status='revoked',version=version+1 WHERE id=$1",[id]);
    }else{
-    if(!['pending','expired','revoked'].includes(i.status))throw conflict();
+    if(!['pending','expired','revoked'].includes(i.status))throw conflict('TEAM_INVITATION_NOT_RESENDABLE');
     const contact=this.messages.secrets.decrypt(i.contact_cipher);
-    if((await db.query('SELECT 1 FROM identities i JOIN memberships m ON m.user_id=i.user_id WHERE i.provider=$1 AND i.subject=$2 AND m.partner_id=$3 AND m.active',[i.provider,contact,i.partner_id])).rowCount)throw conflict();
+    if((await db.query('SELECT 1 FROM identities i JOIN memberships m ON m.user_id=i.user_id WHERE i.provider=$1 AND i.subject=$2 AND m.partner_id=$3 AND m.active',[i.provider,contact,i.partner_id])).rowCount)throw conflict('TEAM_MEMBER_ALREADY_ACTIVE');
     await db.query("UPDATE member_invitations SET status='replaced',version=version+1 WHERE id=$1",[id]);
     const next=await this.newInvitation(db,i.partner_id,a.user.id,contact,i.provider);
     await db.query('UPDATE member_invitations SET replacement_id=$2 WHERE id=$1',[id,next.id]);
@@ -72,21 +76,23 @@ export class OrganizationsService {
   },async(db,a)=>{await this.invitationAccess(db,id,a.user.id);});
  }
  private async acceptance(db:PoolClient,hash:string,user:string){
-  let i=(await db.query('SELECT * FROM member_invitations WHERE token_hash=$1',[hash])).rows[0];if(!i)throw new NotFoundException();
-  const p=(await db.query('SELECT * FROM partners WHERE id=$1 AND archived_at IS NULL FOR UPDATE',[i.partner_id])).rows[0];if(!p)throw new NotFoundException();
+  // Unknown token, archived team and a token for another contact share one 404: the token is not shown to belong to anyone.
+  let i=(await db.query('SELECT * FROM member_invitations WHERE token_hash=$1',[hash])).rows[0];if(!i)throw new NotFoundException({reason:'TEAM_INVITATION_UNUSABLE'});
+  const p=(await db.query('SELECT * FROM partners WHERE id=$1 AND archived_at IS NULL FOR UPDATE',[i.partner_id])).rows[0];if(!p)throw new NotFoundException({reason:'TEAM_INVITATION_UNUSABLE'});
   i=(await db.query('SELECT * FROM member_invitations WHERE id=$1 FOR UPDATE',[i.id])).rows[0];
   const contact=this.messages.secrets.decrypt(i.contact_cipher);
-  if(!(await db.query('SELECT 1 FROM identities WHERE user_id=$1 AND provider=$2 AND subject=$3 AND verified_at IS NOT NULL',[user,i.provider,contact])).rowCount)throw new NotFoundException();
-  if(!hasPermission(await memberAccess(db,i.partner_id,i.invited_by),'members.manage'))throw new ForbiddenException();
+  if(!(await db.query('SELECT 1 FROM identities WHERE user_id=$1 AND provider=$2 AND subject=$3 AND verified_at IS NOT NULL',[user,i.provider,contact])).rowCount)throw new NotFoundException({reason:'TEAM_INVITATION_UNUSABLE'});
+  if(!hasPermission(await memberAccess(db,i.partner_id,i.invited_by),'members.manage'))throw new ForbiddenException({reason:'TEAM_INVITER_NOT_MANAGER'});
   if(i.status==='accepted'){
-   if(i.accepted_by!==user||!await memberAccess(db,i.partner_id,user))throw new ForbiddenException();
-  }else if(i.status!=='pending'||i.expires_at<=new Date())throw conflict();
+   if(i.accepted_by!==user||!await memberAccess(db,i.partner_id,user))throw new ForbiddenException({reason:'TEAM_INVITATION_ALREADY_USED'});
+  }else if(i.status!=='pending')throw conflict('TEAM_INVITATION_NO_LONGER_VALID');
+  else if(i.expires_at<=new Date())throw conflict('TEAM_INVITATION_EXPIRED');
   return i;
  }
  accept(header:string|undefined,token:string,key:string){const hash=this.messages.secrets.hash(token);
   return this.tx.run(header,'acceptInvitation',key,{token_hash:hash},async(db,a)=>{
-   const i=await this.acceptance(db,hash,a.user.id);if(i.status!=='pending')throw conflict();
-   if(await memberAccess(db,i.partner_id,a.user.id))throw conflict();
+   const i=await this.acceptance(db,hash,a.user.id);if(i.status!=='pending')throw conflict('TEAM_INVITATION_ALREADY_ACCEPTED');
+   if(await memberAccess(db,i.partner_id,a.user.id))throw conflict('TEAM_MEMBER_ALREADY_ACTIVE');
    const m=(await db.query(`INSERT INTO memberships(partner_id,user_id) VALUES($1,$2) ON CONFLICT(partner_id,user_id) DO UPDATE SET active=true,left_at=NULL,version=memberships.version+1 RETURNING id`,[i.partner_id,a.user.id])).rows[0];
    await db.query('UPDATE membership_grants SET revoked_at=COALESCE(revoked_at,clock_timestamp()) WHERE membership_id=$1',[m.id]);
    await db.query("UPDATE member_invitations SET status='accepted',accepted_by=$2,version=version+1 WHERE id=$1",[i.id,a.user.id]);
@@ -101,22 +107,23 @@ export class OrganizationsService {
  private async target(db:PoolClient,id:string,user:string,self=false){
   const ref=await this.member(db,id);await db.query('SELECT id FROM partners WHERE id=$1 FOR UPDATE',[ref.partner_id]);
   const m=await this.member(db,id);
-  if(self?m.user_id!==user:!hasPermission(await memberAccess(db,m.partner_id,user),'members.manage'))throw new NotFoundException();
-  if(m.is_owner)throw new ForbiddenException();return m;
+  if(self?m.user_id!==user:!hasPermission(await memberAccess(db,m.partner_id,user),'members.manage'))throw new NotFoundException({reason:'TEAM_MEMBER_NOT_FOUND'});
+  if(m.is_owner)throw new ForbiddenException({reason:'TEAM_OWNER_PROTECTED'});return m;
  }
+ private editable(m:{active:boolean;user_id:string},user:string){if(!m.active)throw new ForbiddenException({reason:'TEAM_MEMBER_INACTIVE'});if(m.user_id===user)throw new ForbiddenException({reason:'TEAM_GRANTS_SELF_EDIT'});}
  grants(header:string|undefined,id:string,input:ReturnType<typeof grantsInput>,key:string){
   const {reauth_grant,...safe}=input,hash=this.messages.secrets.hash(reauth_grant);
   return this.tx.run(header,'editGrants.'+id,key,{...safe,reauth_hash:hash},async(db,a)=>{
-   const m=await this.target(db,id,a.user.id);this.cas(m.version,input.expected_version);if(!m.active||m.user_id===a.user.id)throw new ForbiddenException();
+   const m=await this.target(db,id,a.user.id);this.cas(m.version,input.expected_version,'TEAM_MEMBER_CHANGED');this.editable(m,a.user.id);
    const actor=await memberAccess(db,m.partner_id,a.user.id);
-   for(const p of new Set<string>([...m.permissions,...input.permissions]))if(m.permissions.includes(p)!==input.permissions.includes(p)&&!hasPermission(actor,p))throw new ForbiddenException();
+   for(const p of new Set<string>([...m.permissions,...input.permissions]))if(m.permissions.includes(p)!==input.permissions.includes(p)&&!hasPermission(actor,p))throw new ForbiddenException({reason:'TEAM_GRANT_NOT_HELD'});
    const consumed=await db.query(`UPDATE reauth_grants SET consumed_at=clock_timestamp() WHERE grant_hash=$1 AND user_id=$2 AND family_id=(SELECT family_id FROM sessions WHERE id=$3) AND scope='membership.grants' AND consumed_at IS NULL AND expires_at>clock_timestamp() RETURNING grant_hash`,[hash,a.user.id,a.sessionId]);
-   if(!consumed.rowCount)throw new ForbiddenException({code:'REAUTH_REQUIRED'});
+   if(!consumed.rowCount)throw new ForbiddenException({code:'REAUTH_REQUIRED',reason:'TEAM_REAUTH_EXPIRED'});
    await db.query('UPDATE membership_grants SET revoked_at=clock_timestamp() WHERE membership_id=$1 AND revoked_at IS NULL AND NOT(permission=ANY($2::text[]))',[id,input.permissions]);
    for(const p of input.permissions)await db.query('INSERT INTO membership_grants(membership_id,permission,granted_by) VALUES($1,$2,$3) ON CONFLICT(membership_id,permission) WHERE revoked_at IS NULL DO NOTHING',[id,p,a.user.id]);
    await db.query('UPDATE memberships SET version=version+1 WHERE id=$1',[id]);
    await this.audit(db,a.user.id,m.partner_id,'membership.grants',id,input.reason,{before:m.permissions,after:input.permissions});return this.dto(await this.member(db,id));
-  },async(db,a)=>{const m=await this.target(db,id,a.user.id);if(!m.active||m.user_id===a.user.id)throw new ForbiddenException();});
+  },async(db,a)=>{const m=await this.target(db,id,a.user.id);this.editable(m,a.user.id);});
  }
  preview(header:string|undefined,id:string,q:PageInput){return this.read(header,async(db,user)=>{
   const ref=await this.member(db,id),m=await this.target(db,id,user,ref.user_id===user);const scope=JSON.stringify(['departure',user,id,m.version]),c=this.cursor.decode(q.cursor,scope);
@@ -126,7 +133,7 @@ export class OrganizationsService {
  });}
  departure(header:string|undefined,id:string,action:'leave'|'deactivate',input:ReturnType<typeof changeInput>,key:string){
   return this.tx.run(header,`membership.${id}.${action}`,key,input,async(db,a)=>{
-   const m=await this.target(db,id,a.user.id,action==='leave');this.cas(m.version,input.expected_version);if(!m.active)throw conflict();
+   const m=await this.target(db,id,a.user.id,action==='leave');this.cas(m.version,input.expected_version,'TEAM_MEMBER_CHANGED');if(!m.active)throw conflict('TEAM_MEMBER_INACTIVE');
    const jobs=(await db.query('SELECT j.id,j.version FROM jobs j JOIN assignments a ON a.job_id=j.id WHERE a.membership_id=$1 AND a.ended_at IS NULL ORDER BY j.id FOR UPDATE OF j',[id])).rows,handed:string[]=[];
    for(const j of jobs){
     const i=(await db.query('SELECT worker_receipt_confirmed_at FROM invoices WHERE job_id=$1 FOR UPDATE',[j.id])).rows[0];if(i?.worker_receipt_confirmed_at)continue;
@@ -145,8 +152,8 @@ export class OrganizationsService {
   const {p}=await this.access(db,partner,user);return {partner_id:partner,membership_id:(await db.query('SELECT membership_id FROM partner_contacts WHERE partner_id=$1',[partner])).rows[0]?.membership_id??null,version:p.version};
  });}
  setContact(header:string|undefined,partner:string,input:ReturnType<typeof contactEdit>,key:string){return this.tx.run(header,'setCallContact.'+partner,key,input,async(db,a)=>{
-  const {p}=await this.access(db,partner,a.user.id);this.cas(p.version,input.expected_version);
-  if(input.membership_id&&!(await db.query('SELECT 1 FROM memberships WHERE id=$1 AND partner_id=$2 AND active',[input.membership_id,partner])).rowCount)throw new BadRequestException();
+  const {p}=await this.access(db,partner,a.user.id);this.cas(p.version,input.expected_version,'TEAM_CONTACT_CHANGED');
+  if(input.membership_id&&!(await db.query('SELECT 1 FROM memberships WHERE id=$1 AND partner_id=$2 AND active',[input.membership_id,partner])).rowCount)throw new BadRequestException({reason:'TEAM_CONTACT_MEMBER_INVALID',field:'membership_id'});
   await db.query('INSERT INTO partner_contacts(partner_id,membership_id) VALUES($1,$2) ON CONFLICT(partner_id) DO UPDATE SET membership_id=EXCLUDED.membership_id',[partner,input.membership_id]);
   await db.query('UPDATE partners SET version=version+1 WHERE id=$1',[partner]);await this.audit(db,a.user.id,partner,'partner.call_contact',partner,'',{membership_id:input.membership_id});return {id:partner,version:p.version+1,state:'updated'};
  },async(db,a)=>{await this.access(db,partner,a.user.id);});}

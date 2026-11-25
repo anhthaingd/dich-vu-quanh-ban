@@ -42,7 +42,7 @@ export class AuthService {
     finally { db.release(); }
   }
   async register(email: string, password: string, name: string) {
-    if(this.pilotEmails&&!this.pilotEmails.includes(email))throw new BadRequestException();
+    if(this.pilotEmails&&!this.pilotEmails.includes(email))throw new BadRequestException({ reason: 'AUTH_EMAIL_NOT_ALLOWED', field: 'email' });
     const hash = await hashPassword(password);
     try {
       return await this.transaction(async db => {
@@ -51,19 +51,21 @@ export class AuthService {
         return this.issue(db, user);
       });
     } catch (error) {
-      if ((error as { code?: string }).code === '23505') throw new BadRequestException();
+      // Approved design: registration says the email is taken (login never does).
+      if ((error as { code?: string }).code === '23505') throw new BadRequestException({ reason: 'AUTH_EMAIL_ALREADY_REGISTERED', field: 'email' });
       throw error;
     }
   }
   async login(email: string, password: string) {
     const { rows: [identity] } = await this.pool.query('SELECT user_id,password_hash FROM identities WHERE provider=$1 AND subject=$2', ['email',email]);
     const valid = await verifyPassword(password, identity?.password_hash ?? null);
-    if (!identity || !valid) throw new UnauthorizedException();
+    // One reason for unknown email, wrong password and closed accounts: no account enumeration.
+    if (!identity || !valid) throw new UnauthorizedException({ reason: 'AUTH_INVALID_CREDENTIALS' });
     return this.transaction(async db => {
       const { rows: [user] } = await db.query<User>('SELECT id,display_name,status,locale,version FROM users WHERE id=$1 FOR UPDATE', [identity.user_id]);
-      if (!user || !['active','suspended'].includes(user.status)) throw new UnauthorizedException();
+      if (!user || !['active','suspended'].includes(user.status)) throw new UnauthorizedException({ reason: 'AUTH_INVALID_CREDENTIALS' });
       const current = (await db.query("SELECT password_hash FROM identities WHERE user_id=$1 AND provider='email' AND subject=$2", [user.id,email])).rows[0];
-      if (!current || !await verifyPassword(password,current.password_hash)) throw new UnauthorizedException();
+      if (!current || !await verifyPassword(password,current.password_hash)) throw new UnauthorizedException({ reason: 'AUTH_INVALID_CREDENTIALS' });
       return this.issue(db, user);
     });
   }
@@ -71,7 +73,7 @@ export class AuthService {
     const result = await this.transaction(async db => {
       const hash = digest(token);
       const { rows: [owner] } = await db.query('SELECT user_id FROM sessions WHERE refresh_hash=$1', [hash]);
-      if (!owner) return null;
+      if (!owner) return 'AUTH_TOKEN_INVALID';
       // All rotations for this user serialize, then reread the session. A
       // replay of the old token revokes its entire family, including a racing
       // rotation. Commit that revocation before returning 401.
@@ -79,22 +81,23 @@ export class AuthService {
       const { rows: [session] } = await db.query('SELECT * FROM sessions WHERE refresh_hash=$1', [hash]);
       if (session.revoked_at || session.expires_at <= new Date() || !['active','suspended'].includes(user.status) || session.scope !== (user.status==='suspended'?'support':'app')) {
         await db.query('UPDATE sessions SET revoked_at=COALESCE(revoked_at,now()) WHERE family_id=$1', [session.family_id]);
-        return null;
+        return session.revoked_at ? 'SESSION_REVOKED' : session.expires_at <= new Date() ? 'SESSION_EXPIRED' : 'AUTH_ACCOUNT_STATUS_CHANGED';
       }
       await db.query('UPDATE sessions SET revoked_at=now() WHERE id=$1', [session.id]);
       return this.issue(db, user, session.family_id, session.expires_at);
     });
     await this.accessChanged();
-    if (!result) throw new UnauthorizedException();
+    if (typeof result === 'string') throw new UnauthorizedException({ reason: result });
     return result;
   }
   async authenticate(header: string | undefined, db: Pool | PoolClient = this.pool, allowSupport=false) {
-    if (!header?.startsWith('Bearer ') || header.length > 4096) throw new UnauthorizedException();
+    if (!header) throw new UnauthorizedException({ reason: 'AUTH_REQUIRED' });
+    if (!header.startsWith('Bearer ') || header.length > 4096) throw new UnauthorizedException({ reason: 'AUTH_TOKEN_INVALID' });
     let claims;
     try {
       claims = (await jwtVerify(header.slice(7), this.key, { algorithms: ['HS256'], issuer, audience, requiredClaims: ['sub','sid','exp','iat'] })).payload;
-    } catch { throw new UnauthorizedException(); }
-    if (typeof claims.sid !== 'string' || !uuid.test(claims.sid) || !claims.sub || !uuid.test(claims.sub)) throw new UnauthorizedException();
+    } catch (error) { throw new UnauthorizedException({ reason: (error as { code?: string }).code === 'ERR_JWT_EXPIRED' ? 'SESSION_EXPIRED' : 'AUTH_TOKEN_INVALID' }); }
+    if (typeof claims.sid !== 'string' || !uuid.test(claims.sid) || !claims.sub || !uuid.test(claims.sub)) throw new UnauthorizedException({ reason: 'AUTH_TOKEN_INVALID' });
     // Inside a caller's transaction, share-lock the session: a concurrent revocation still waits for this
     // write to commit, but other requests of the same session no longer queue behind it. Previously this
     // was an UPDATE (exclusive row lock), so one slow write stalled every read of that user until
@@ -102,9 +105,20 @@ export class AuthService {
     const inTransaction = db !== this.pool;
     const { rows: [user] } = await db.query<User>(`SELECT u.id,u.display_name,u.status,u.locale,u.version FROM sessions s JOIN users u ON u.id=s.user_id
       WHERE s.id=$1 AND u.id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND ((u.status='active' AND s.scope='app') OR ($3::boolean AND u.status='suspended' AND s.scope='support'))${inTransaction ? ' FOR SHARE OF s' : ''}`, [claims.sid,claims.sub,allowSupport]);
-    if (!user) throw new UnauthorizedException();
+    if (!user) throw new UnauthorizedException({ reason: await this.rejection(db, claims.sid, claims.sub, allowSupport) });
     if (!inTransaction) await this.touch(claims.sid);
     return { user: await this.me(user, db), sessionId: claims.sid, expiresAt: Number(claims.exp)*1000 };
+  }
+  // Failure path only: name why a signed token no longer opens a session. The token holder already
+  // proved this account, so its own status is not an enumeration leak.
+  private async rejection(db: Pool | PoolClient, sid: string, sub: string, allowSupport: boolean) {
+    const { rows: [s] } = await db.query<{ revoked: boolean; expired: boolean; status: string; scope: string }>(`SELECT s.revoked_at IS NOT NULL AS revoked,
+      s.expires_at<=clock_timestamp() AS expired,u.status,s.scope FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.id=$1 AND u.id=$2`, [sid, sub]);
+    if (!s) return 'AUTH_TOKEN_INVALID';
+    if (s.revoked) return 'SESSION_REVOKED';
+    if (s.expired) return 'SESSION_EXPIRED';
+    if (s.status === 'suspended' && s.scope === 'support' && !allowSupport) return 'AUTH_ACCOUNT_SUSPENDED';
+    return 'AUTH_ACCOUNT_STATUS_CHANGED';
   }
   // Last activity is advisory: write at most once a minute and never wait for a row another request holds.
   private async touch(sessionId: string) {

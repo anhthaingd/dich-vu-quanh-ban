@@ -28,9 +28,9 @@ export class RuntimeLease implements OnModuleDestroy {
   for(const fn of this.listeners)fn();
  };
  async check(){
-  if(!this.active)throw new ServiceUnavailableException();
+  if(!this.active)throw new ServiceUnavailableException({reason:'SERVICE_RUNTIME_INACTIVE'});
   if(!this.enabled)return;
-  if(!this.pending)this.pending=(async()=>{try{let timeout:ReturnType<typeof setTimeout>|undefined;try{await Promise.race([this.client!.query('SELECT 1'),new Promise<never>((_,reject)=>{timeout=setTimeout(()=>reject(new Error('Lease heartbeat timeout')),this.heartbeatTimeoutMs);})]);}finally{clearTimeout(timeout);}if(!this.active)throw new Error('lease lost');}catch{this.lost();throw new ServiceUnavailableException();}})().finally(()=>{this.pending=undefined;});
+  if(!this.pending)this.pending=(async()=>{try{let timeout:ReturnType<typeof setTimeout>|undefined;try{await Promise.race([this.client!.query('SELECT 1'),new Promise<never>((_,reject)=>{timeout=setTimeout(()=>reject(new Error('Lease heartbeat timeout')),this.heartbeatTimeoutMs);})]);}finally{clearTimeout(timeout);}if(!this.active)throw new Error('lease lost');}catch{this.lost();throw new ServiceUnavailableException({reason:'SERVICE_RUNTIME_INACTIVE'});}})().finally(()=>{this.pending=undefined;});
   return this.pending;
  }
  async onModuleDestroy(){this.lost();await this.pending?.catch(()=>{});this.listeners.clear();}

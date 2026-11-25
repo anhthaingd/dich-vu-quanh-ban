@@ -7,7 +7,8 @@ import { object, type PageInput } from '../accounts/accounts.input.js';
 import type { Cursor } from '../../common/http/cursor.js';
 export function settingsInput(body:unknown) {
   const b=object(body,['message_push','call_push','service_push','reminder_push']);
-  if(['message_push','call_push','service_push','reminder_push'].some(k=>typeof b[k]!=='boolean'))throw new BadRequestException();
+  const invalid=(['message_push','call_push','service_push','reminder_push'] as const).find(k=>typeof b[k]!=='boolean');
+  if(invalid)throw new BadRequestException({reason:'NOTIFICATION_SETTING_INVALID',field:invalid});
   return {message_push:b.message_push as boolean,call_push:b.call_push as boolean,service_push:b.service_push as boolean,reminder_push:b.reminder_push as boolean};
 }
 export class NotificationsService {
@@ -36,7 +37,7 @@ export class NotificationsService {
   read(header:string|undefined,id:string,key:string){return this.tx.run(header,`readNotification:${id}`,key,{},async(db,a)=>{
     const {rowCount}=await db.query('UPDATE notifications SET read_at=clock_timestamp() WHERE id=$1 AND user_id=$2 AND read_at IS NULL',[id,a.user.id]);
     if(rowCount)await event(db,`notice-read:${id}`,id,2,'notification.read.v1',{notification_id:id});return {id,version:1,state:'read'};
-  },async(db,a)=>{if(!(await db.query("SELECT 1 FROM notifications WHERE id=$1 AND user_id=$2 AND kind NOT LIKE 'conversation.%'",[id,a.user.id])).rowCount)throw new NotFoundException();});}
+  },async(db,a)=>{if(!(await db.query("SELECT 1 FROM notifications WHERE id=$1 AND user_id=$2 AND kind NOT LIKE 'conversation.%'",[id,a.user.id])).rowCount)throw new NotFoundException({reason:'NOTIFICATION_NOT_FOUND'});});}
 }
 
-export function deviceInput(value:unknown){const v=object(value,['token','platform','android_calls']);if(typeof v.token!=='string'||! /^(ExponentPushToken|ExpoPushToken)\[[a-zA-Z0-9_-]{10,200}\]$/.test(v.token)||!['ios','android'].includes(String(v.platform)))throw new BadRequestException();if(v.android_calls!==undefined&&(typeof v.android_calls!=='boolean'||v.platform!=='android'))throw new BadRequestException();return {token:v.token,platform:String(v.platform),...(v.android_calls!==undefined?{android_calls:v.android_calls as boolean}:{})};}
+export function deviceInput(value:unknown){const v=object(value,['token','platform','android_calls']);if(typeof v.token!=='string'||! /^(ExponentPushToken|ExpoPushToken)\[[a-zA-Z0-9_-]{10,200}\]$/.test(v.token))throw new BadRequestException({reason:'PUSH_TOKEN_INVALID',field:'token'});if(!['ios','android'].includes(String(v.platform)))throw new BadRequestException({reason:'PUSH_PLATFORM_INVALID',field:'platform'});if(v.android_calls!==undefined&&(typeof v.android_calls!=='boolean'||v.platform!=='android'))throw new BadRequestException({reason:'PUSH_ANDROID_CALLS_INVALID',field:'android_calls'});return {token:v.token,platform:String(v.platform),...(v.android_calls!==undefined?{android_calls:v.android_calls as boolean}:{})};}

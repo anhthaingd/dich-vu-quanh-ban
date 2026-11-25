@@ -114,3 +114,11 @@ test('second-device UI does not fail or end the call accepted on the first devic
  await act(async()=>{jest.advanceTimersByTime(20000);});await flush();expect(api.heartbeat).not.toHaveBeenCalled();expect(api.get).toHaveBeenCalled();expect(api.action).not.toHaveBeenCalled();
  expect(screen.queryByTestId('call-end')).toBeNull();fireEvent.press(screen.getByTestId('call-close'));await flush();expect(api.action).not.toHaveBeenCalled();
 });
+test('a refused call action shows the exact API reason while keeping the conflict branch',async()=>{
+ api.action.mockRejectedValueOnce(new ApiError('STATE_CONFLICT',409,undefined,undefined,undefined,'CALL_NOT_RINGING'));render(<CallsProvider api={api}/>);await flush();fireEvent.press(screen.getByTestId('call-accept'));await flush();
+ expect(screen.getByTestId('call-error')).toHaveTextContent(/không còn đổ chuông/);expect(screen.queryByTestId('call-retry')).toBeNull();
+});
+test('a call error without a reason keeps the call-specific sentence',async()=>{
+ api.action.mockRejectedValueOnce(new ApiError('TIMEOUT'));render(<CallsProvider api={api}/>);await flush();fireEvent.press(screen.getByTestId('call-accept'));await flush();
+ expect(screen.getByTestId('call-error')).toHaveTextContent(/Chưa xác nhận được kết quả/);
+});

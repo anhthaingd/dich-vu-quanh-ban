@@ -16,6 +16,7 @@ import {PartnerProfileScreen} from '../../partners/screens/PartnerProfileScreen'
 import {ConversationScreen} from '../../chat/screens/ConversationScreen';
 import {workFixture,job,message,room} from '../../../../test/helpers/work';
 import {ApiError} from '../../../lib/http/api-error';
+import {jobsReasons} from '../../../lib/errors/reasons/jobs';
 jest.mock('../../location/components/LocationField',()=>({LocationField:({onChange}:{onChange:(v:unknown)=>void})=>{const {Button}=jest.requireActual('../../../components/ui/Button');return <Button testID="test-place" label="DEMO place" onPress={()=>onChange({text:'DEMO place',point:{latitude:21,longitude:105},source:'saved'})}/>;}}));
 const Stack=createNativeStackNavigator<RootStackParamList>();
 function mount(f:ReturnType<typeof workFixture>,initial: 'Jobs'|'JobDetail'|'JobCreate'|'Conversations'|'Conversation'|'PartnerProfile'='Jobs',realtime=false){
@@ -54,10 +55,10 @@ test('conflict preserves reason, reloads version, and uncertain retry retains it
  expect(f.jobs.change.mock.calls[1][3].expected_version).toBe(2);expect(f.jobs.change.mock.calls[2].slice(2)).toEqual(f.jobs.change.mock.calls[1].slice(2));
 });
 test.each(['at_customer','at_shop','custom'] as const)('create %s validates draft and sends selected skill/address/schedule',async mode=>{
- const f=workFixture();mount(f,'JobCreate');await screen.findByTestId('job-submit');fireEvent.press(screen.getByTestId('job-submit'));expect(f.jobs.create).not.toHaveBeenCalled();
+ const f=workFixture();mount(f,'JobCreate');await screen.findByTestId('job-submit');fireEvent.press(screen.getByTestId('job-submit'));expect(f.jobs.create).not.toHaveBeenCalled();await screen.findByText(jobsReasons.vi.JOB_SKILLS_REQUIRED);
  fireEvent.press(screen.getByTestId('job-skill-skill'));fireEvent.changeText(screen.getByLabelText('Count'),'2');fireEvent.changeText(screen.getByLabelText('Details'),'DEMO detail');fireEvent.changeText(screen.getByLabelText('Needed'),'true');
  fireEvent.press(screen.getByTestId('job-mode-'+mode));fireEvent.press(screen.getByTestId(mode==='at_shop'?'job-location-shop':'test-place'));
- fireEvent.press(screen.getByTestId('job-time-scheduled'));fireEvent.changeText(screen.getByTestId('job-date'),'2000-01-01');fireEvent.changeText(screen.getByTestId('job-time'),'10:30');fireEvent.press(screen.getByTestId('job-submit'));expect(f.jobs.create).not.toHaveBeenCalled();
+ fireEvent.press(screen.getByTestId('job-time-scheduled'));fireEvent.changeText(screen.getByTestId('job-date'),'2000-01-01');fireEvent.changeText(screen.getByTestId('job-time'),'10:30');fireEvent.press(screen.getByTestId('job-submit'));expect(f.jobs.create).not.toHaveBeenCalled();await screen.findByText(jobsReasons.vi.JOB_SCHEDULED_AT_PAST);
  fireEvent.changeText(screen.getByTestId('job-date'),'2099-12-10');fireEvent.changeText(screen.getByTestId('job-note'),'DEMO note');
  f.jobs.create.mockRejectedValueOnce(new ApiError('NETWORK'));fireEvent.press(screen.getByTestId('job-submit'));fireEvent.press(await screen.findByTestId('work-retry'));await screen.findByTestId('job-state');
  expect(f.jobs.create.mock.calls[1]).toEqual(f.jobs.create.mock.calls[0]);expect(f.jobs.create.mock.calls[0][1]).toMatchObject({service_mode:mode,time_mode:'scheduled',note:'DEMO note',skills:[{skill_id:'skill',answers:{count:2,details:'DEMO detail',needed:true}}]});
@@ -172,4 +173,12 @@ test('job detail renders status and action groups without raw text beneath nativ
  const f=workFixture();const view=mount(f,'JobDetail');await enabled('job-reload');
  function check(node:unknown):void{if(!node||typeof node!=='object')return;if(Array.isArray(node)){node.forEach(check);return;}const n=node as {type?:string;children?:unknown[]};if(n.type==='View')expect((n.children??[]).filter(c=>typeof c==='string')).toEqual([]);n.children?.forEach(check);}
  check(view.toJSON());fireEvent.press(screen.getByTestId('job-action-withdraw'));check(view.toJSON());
+});
+test('a rejected job action shows the exact blocking state and the app checks name the field',async()=>{
+ const f=workFixture();mount(f,'JobDetail');await enabled('job-reload');fireEvent.press(screen.getByTestId('job-action-accept'));
+ fireEvent.changeText(screen.getByTestId('job-eta'),'');fireEvent.press(screen.getByTestId('job-action-confirm'));await screen.findByText(jobsReasons.vi.JOB_ETA_REQUIRED);
+ fireEvent.changeText(screen.getByTestId('job-eta'),'25');
+ f.jobs.change.mockRejectedValueOnce(new ApiError('STATE_CONFLICT',409,'req',undefined,undefined,'JOB_ALREADY_ACCEPTED'));
+ fireEvent.press(screen.getByTestId('job-action-confirm'));await screen.findByText(jobsReasons.vi.JOB_ALREADY_ACCEPTED);
+ expect(screen.queryByText('Dữ liệu hoặc điều kiện đã đổi. Tải lại và kiểm tra trước khi thao tác tiếp.')).toBeNull();expect(screen.queryByTestId('work-retry')).toBeNull();
 });

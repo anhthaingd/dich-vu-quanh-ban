@@ -1,12 +1,13 @@
 import type { PartnersApi } from '../../partners/api/partners-api';
 import type { PartnerCard, SearchInput } from '../../partners/models';
-import { ApiError, type ApiErrorCode } from '../../../lib/http/api-error';
+import { ApiError } from '../../../lib/http/api-error';
+import { toErrorInfo, type ErrorInfo } from '../../../lib/errors/describe';
 type State = {
   criteria: SearchInput | null;
   items: PartnerCard[];
   next: string | null;
   busy: boolean;
-  error: ApiErrorCode | null;
+  error: ErrorInfo | null;
   searched: boolean;
 };
 export class PartnerSearch {
@@ -90,7 +91,7 @@ export class PartnerSearch {
       });
     } catch (e) {
       if (this.request === controller)
-        this.update({ error: e instanceof ApiError ? e.code : 'NETWORK' });
+        this.update({ error: toErrorInfo(e) });
     } finally {
       if (this.request === controller) this.update({ busy: false });
     }

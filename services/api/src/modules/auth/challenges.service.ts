@@ -21,15 +21,16 @@ export class ChallengesService {
   for(const lock of [contact,ip].sort()) await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[lock]);
   const rows=(await db.query(`SELECT actor_id,contact_hash,ip_hash,created_at FROM auth_rate_events
    WHERE purpose=$1 AND created_at>clock_timestamp()-interval '1 hour' AND (actor_id=$2 OR contact_hash=$3 OR ip_hash=$4)`,[purpose,user,contact,ip])).rows;
-  if(rows.filter(r=>r.actor_id===user).length>=20 || rows.filter(r=>r.contact_hash===contact).length>=5 || rows.filter(r=>r.ip_hash===ip).length>=100 ||
-   rows.some(r=>r.contact_hash===contact&&r.created_at>new Date(Date.now()-60000))) throw new HttpException({code:'RATE_LIMITED'},429);
+  const quota=rows.filter(r=>r.actor_id===user).length>=20 || rows.filter(r=>r.contact_hash===contact).length>=5 || rows.filter(r=>r.ip_hash===ip).length>=100;
+  if(quota || rows.some(r=>r.contact_hash===contact&&r.created_at>new Date(Date.now()-60000))) throw new HttpException({code:'RATE_LIMITED',reason:quota?'CODE_REQUEST_LIMIT':'CODE_RESEND_TOO_SOON'},429);
   await db.query('INSERT INTO auth_rate_events(actor_id,contact_hash,ip_hash,purpose) VALUES($1,$2,$3,$4)',[user,contact,ip,purpose]);
  }
  request(header:string|undefined,input:ReturnType<typeof challengeInput>,ip:string) {
   this.messages.requireContact(input.contact);
   return this.tx(header,async(db,a,family)=>{
    const existing=(await db.query('SELECT subject FROM identities WHERE user_id=$1 AND provider=$2',[a.user.id,input.provider])).rows[0];
-   if((input.provider==='email'&&!existing)||existing&&existing.subject!==input.contact)throw new BadRequestException();
+   // Only the account's own email, or its own/first phone, can be verified here (actor's own data, no enumeration).
+   if((input.provider==='email'&&!existing)||existing&&existing.subject!==input.contact)throw new BadRequestException({reason:input.provider==='email'?'VERIFY_EMAIL_MISMATCH':'VERIFY_PHONE_MISMATCH',field:'contact'});
    const hash=this.messages.secrets.hash(input.contact);
    await this.rate(db,a.user.id,hash,this.messages.secrets.hash(ip),'verify');
    await db.query("UPDATE auth_challenges SET invalidated_at=clock_timestamp() WHERE user_id=$1 AND provider=$2 AND purpose='verify' AND consumed_at IS NULL",[a.user.id,input.provider]);
@@ -43,15 +44,20 @@ export class ChallengesService {
  async verify(header:string|undefined,input:ReturnType<typeof verifyInput>) {
   const result=await this.tx(header,async(db,a,family)=>{
    const c=(await db.query('SELECT * FROM auth_challenges WHERE id=$1 AND user_id=$2 FOR UPDATE',[input.challenge_id,a.user.id])).rows[0];
-   if(!c||c.purpose!=='verify'||c.family_id!==family||c.consumed_at||c.invalidated_at||c.attempts>=5)return 'CHALLENGE_INVALID';
-   if(c.expires_at<=new Date())return 'CHALLENGE_EXPIRED';
+   if(!c||c.purpose!=='verify'||c.family_id!==family)return {code:'CHALLENGE_INVALID',reason:'CODE_NOT_FOUND'};
+   if(c.consumed_at)return {code:'CHALLENGE_INVALID',reason:'CODE_ALREADY_USED'};
+   if(c.invalidated_at)return {code:'CHALLENGE_INVALID',reason:'CODE_SUPERSEDED'};
+   if(c.attempts>=5)return {code:'CHALLENGE_INVALID',reason:'CODE_TOO_MANY_ATTEMPTS'};
+   if(c.expires_at<=new Date())return {code:'CHALLENGE_EXPIRED',reason:'CODE_EXPIRED'};
    if(c.code_hash!==this.messages.secrets.hash(input.code)){
-    await db.query('UPDATE auth_challenges SET attempts=attempts+1 WHERE id=$1',[c.id]);return 'CHALLENGE_INVALID';
+    await db.query('UPDATE auth_challenges SET attempts=attempts+1 WHERE id=$1',[c.id]);return {code:'CHALLENGE_INVALID',reason:'CODE_WRONG'};
    }
    const contact=this.messages.secrets.decrypt(c.contact_cipher);this.messages.requireContact(contact);
    await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[c.contact_hash]);
    const existing=(await db.query('SELECT user_id,subject FROM identities WHERE provider=$1 AND (subject=$2 OR user_id=$3)',[c.provider,contact,a.user.id])).rows;
-   if(existing.some(i=>i.user_id!==a.user.id||i.subject!==contact)) return 'CHALLENGE_INVALID';
+   // The code holder controls this contact, so saying it is taken leaks nothing new.
+   if(existing.some(i=>i.user_id!==a.user.id)) return {code:'CHALLENGE_INVALID',reason:'CONTACT_IN_USE'};
+   if(existing.some(i=>i.subject!==contact)) return {code:'CHALLENGE_INVALID',reason:c.provider==='email'?'VERIFY_EMAIL_MISMATCH':'VERIFY_PHONE_MISMATCH'};
    await db.query(`INSERT INTO identities(user_id,provider,subject,verified_at) VALUES($1,$2,$3,clock_timestamp())
     ON CONFLICT(user_id,provider) DO UPDATE SET verified_at=EXCLUDED.verified_at`,[a.user.id,c.provider,contact]);
    await db.query('UPDATE auth_challenges SET consumed_at=clock_timestamp() WHERE id=$1',[c.id]);
@@ -59,13 +65,13 @@ export class ChallengesService {
    return {id:c.id,version:1,state:'verified'};
   });
   // Return the failure after committing the attempt counter.
-  if(typeof result==='string')throw new BadRequestException({code:result});return result;
+  if('reason' in result)throw new BadRequestException(result);return result;
  }
  async reauthenticate(header:string|undefined,password:string,ip:string) {
   const result=await this.tx(header,async(db,a,family)=>{
    // Persist failed password attempts as well; no raw secret in snapshots/logs.
    const count=(await db.query("SELECT count(*) FROM auth_rate_events WHERE actor_id=$1 AND purpose='reauth' AND created_at>clock_timestamp()-interval '15 minutes'",[a.user.id])).rows[0];
-   if(Number(count.count)>=5)throw new HttpException({code:'RATE_LIMITED'},429);
+   if(Number(count.count)>=5)throw new HttpException({code:'RATE_LIMITED',reason:'REAUTH_TOO_MANY_ATTEMPTS'},429);
    await db.query("INSERT INTO auth_rate_events(actor_id,contact_hash,ip_hash,purpose) VALUES($1,'reauth',$2,'reauth')",[a.user.id,this.messages.secrets.hash(ip)]);
    const identity=(await db.query("SELECT password_hash FROM identities WHERE user_id=$1 AND provider='email'",[a.user.id])).rows[0];
    if(!await verifyPassword(password,identity?.password_hash??null))return null;
@@ -73,6 +79,6 @@ export class ChallengesService {
    const row=(await db.query("INSERT INTO reauth_grants(grant_hash,user_id,family_id,scope,expires_at) VALUES($1,$2,$3,'membership.grants',clock_timestamp()+interval '5 minutes') RETURNING expires_at",[this.messages.secrets.hash(grant),a.user.id,family])).rows[0];
    return {grant,expires_at:row.expires_at.toISOString()};
   });
-  if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED'});return result;
+  if(!result)throw new ForbiddenException({code:'REAUTH_REQUIRED',reason:'REAUTH_PASSWORD_WRONG'});return result;
  }
 }

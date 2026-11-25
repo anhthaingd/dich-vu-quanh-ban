@@ -23408,6 +23408,11 @@
             "type": "string",
             "description": "Mã ổn định. Endpoint đã triển khai: VALIDATION (400), NOT_FOUND (404), INTERNAL (500), SERVICE_UNAVAILABLE (503). Không dùng message làm logic."
           },
+          "reason": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{1,63}$",
+            "description": "B00-35 (25/11/2026, theo yêu cầu chủ dự án hiển thị lỗi chính xác): nguyên nhân cụ thể, hằng số UPPER_SNAKE (ví dụ JOB_ALREADY_ACCEPTED). Tùy chọn, chỉ có ở lỗi 4xx/503; không chứa dữ liệu người dùng. Client vẫn rẽ nhánh theo code; reason chỉ để chọn câu hiển thị. field_errors[].code mang reason của ô nhập."
+          },
           "message": {
             "type": "string",
             "description": "Bản VI mặc định"

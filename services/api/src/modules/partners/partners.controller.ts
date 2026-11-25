@@ -8,13 +8,13 @@ import {
   Param,
   Post,
   Put,
-  Query,
-  BadRequestException
+  Query
 } from '@nestjs/common';
 import { PartnersService } from './partners.service.js';
 import { createInput, deactivationInput, editInput, type Edit } from './partners.input.js';
 import { parseQuery } from '../catalog/catalog.query.js';
-import { identifier, object } from '../accounts/accounts.input.js';
+import { identifier, idempotencyKey, object } from '../accounts/accounts.input.js';
+import { invalid } from './partners.errors.js';
 import { SearchService } from '../search/search.service.js';
 import { searchInput } from '../search/search.query.js';
 @Controller('partners')
@@ -60,12 +60,12 @@ export class PartnersController {
     @Headers('idempotency-key') key: string | undefined,
     @Body() body: unknown
   ) {
-    return this.service.create(auth, createInput(body), identifier(key));
+    return this.service.create(auth, createInput(body), idempotencyKey(key));
   }
   @Post(':id/deactivation')
   @Header('Cache-Control', 'no-store')
   deactivate(@Headers('authorization') auth:string|undefined,@Headers('idempotency-key') key:string|undefined,@Param('id') id:string,@Body() body:unknown){
-    return this.service.deactivate(auth,identifier(id),deactivationInput(body),identifier(key));
+    return this.service.deactivate(auth,identifier(id),deactivationInput(body),idempotencyKey(key));
   }
   @Put(':id/:action')
   @Header('Cache-Control', 'no-store')
@@ -87,12 +87,12 @@ export class PartnersController {
         'availability'
       ].includes(action)
     )
-      throw new BadRequestException();
+      throw invalid('PARTNER_EDIT_ACTION_INVALID', 'action');
     return this.service.edit(
       auth,
       identifier(id),
       editInput(action as Edit['action'], body),
-      identifier(key)
+      idempotencyKey(key)
     );
   }
 }
